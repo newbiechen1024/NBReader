@@ -1,0 +1,82 @@
+ext.deps = [:]
+
+// 版本号
+def versions = [:]
+versions.androidx = "1.0.2"
+versions.android = "3.4.0"
+versions.kotlin = "1.3.21"
+versions.constraintlayout = "1.1.3"
+versions.junit = "4.12"
+versions.runner = "1.2.0"
+versions.espresso_core = "3.2.0"
+versions.room = "1.1.1"
+versions.rxjava2 = "2.2.2"
+versions.rxandroid = "2.1.0"
+versions.stetho = "1.5.0"
+versions.lifecycle = "1.1.1"
+versions.dagger = "2.19"
+
+// 依赖
+def deps = [:]
+
+// androidx 依赖
+def androidx = [:]
+androidx.plugin = "com.android.tools.build:gradle:$versions.android"
+androidx.appcompat = "androidx.appcompat:appcompat:$versions.androidx"
+androidx.ktx = "androidx.core:core-ktx:$versions.androidx"
+androidx.constraintlayout = "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
+deps.androidx = androidx
+
+// kotlin 依赖
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+deps.kotlin = kotlin
+
+// 测试相关
+def testing = [:]
+testing.junit = "junit:junit:$versions.junit"
+testing.runner = "androidx.test:runner:$versions.runner"
+testing.espresso_core = "androidx.test.espresso:espresso-core:$versions.espresso_core"
+deps.testing = testing
+
+// room 数据库
+def room = [:]
+room.runtime = "android.arch.persistence.room:runtime:$versions.room"
+room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room"
+room.compiler = "android.arch.persistence.room:compiler:$versions.room"
+deps.room = room
+
+// dagger2 依赖注入
+
+def dagger = [:]
+dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android_processor = "com.google.dagger:dagger-android-processor:$versions.dagger"
+deps.dagger = dagger
+
+// rxjava
+def reactivex = [:]
+reactivex.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+reactivex.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+deps.reactivex = reactivex
+
+// debug
+def stetho = [:]
+stetho.runtime = "com.facebook.stetho:stetho:$versions.stetho"
+stetho.okhttp = "com.facebook.stetho:stetho-okhttp3:$versions.stetho"
+deps.stetho = stetho
+
+def lifecycle = [:]
+lifecycle.extensions = "android.arch.lifecycle:extensions:$versions.lifecycle"
+lifecycle.compiler = "android.arch.lifecycle:compiler:$versions.lifecycle"
+deps.lifecycle = lifecycle
+
+ext.deps = deps
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.target_sdk = 28
+ext.build_versions = build_versions
