@@ -36,6 +36,7 @@ dependencies {
     implementation deps.androidx.appcompat
     implementation deps.androidx.ktx
     implementation deps.androidx.constraintlayout
+    implementation deps.androidx.material
 
     // room 数据库
     implementation deps.room.runtime

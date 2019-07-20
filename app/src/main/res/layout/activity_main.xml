@@ -2,21 +2,41 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-
+        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.main.MainViewModel"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MainActivity">
-
+            tools:context=".ui.page.main.MainActivity">
+        
         <androidx.viewpager.widget.ViewPager
-                android:id="@+id/main_vp"
+                android:id="@+id/view_pager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:currentPos="@{viewModel.mCurPagePos.get()}"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
-
+        
+        <View
+                android:layout_width="wrap_content"
+                android:layout_height="5dp"
+                android:background="@drawable/shadow_bottom"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+        
+        <com.google.android.material.tabs.TabLayout
+                android:id="@+id/bottom_bar"
+                android:layout_width="0dp"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="2dp"
+                app:tabIndicatorHeight="0dp"
+                app:currentPos="@{viewModel.mCurPagePos.get()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_pager"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

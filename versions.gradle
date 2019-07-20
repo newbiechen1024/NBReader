@@ -15,6 +15,7 @@ versions.rxandroid = "2.1.0"
 versions.stetho = "1.5.0"
 versions.lifecycle = "1.1.1"
 versions.dagger = "2.19"
+versions.material = "1.0.0-rc01"
 
 // 依赖
 def deps = [:]
@@ -25,6 +26,7 @@ androidx.plugin = "com.android.tools.build:gradle:$versions.android"
 androidx.appcompat = "androidx.appcompat:appcompat:$versions.androidx"
 androidx.ktx = "androidx.core:core-ktx:$versions.androidx"
 androidx.constraintlayout = "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
+androidx.material = "com.google.android.material:material:$versions.material"
 deps.androidx = androidx
 
 // kotlin 依赖
