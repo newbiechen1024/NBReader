@@ -9,15 +9,37 @@
             android:layout_height="match_parent"
             tools:context=".ui.page.main.MainActivity">
         
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="0dp"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="6dp"
+                app:title="@null"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/view_pager">
+            
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@{viewModel.curPageTitle}"
+                    android:textColor="@color/main_action_bar_title"
+                    android:textSize="@dimen/size_action_bar_title"
+                    tools:text="标题"/>
+        
+        </androidx.appcompat.widget.Toolbar>
+        
         <androidx.viewpager.widget.ViewPager
                 android:id="@+id/view_pager"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:currentPos="@{viewModel.mCurPagePos.get()}"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
         
         <View
                 android:layout_width="wrap_content"
@@ -33,7 +55,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:elevation="2dp"
                 app:tabIndicatorHeight="0dp"
-                app:currentPos="@{viewModel.mCurPagePos.get()}"
+                app:currentPos="@{viewModel.curPagePos}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

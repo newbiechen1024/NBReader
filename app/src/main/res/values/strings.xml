@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NBReader</string>
+    <string name="common_search">搜索</string>
+    <string name="common_more">更多</string>
+    <string name="common_book_shelf">书架</string>
+    <string name="common_find">发现</string>
+    <string name="common_personal_center">个人中心</string>
 </resources>

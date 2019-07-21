@@ -13,6 +13,7 @@ object TabLayoutBinding {
         for (i in 0 until tabCount) {
             tabView = getTabAt(i)?.customView as TabView?
             if (i == selectedTabPosition) {
+                getTabAt(i)!!.select()
                 tabView?.setChecked(true)
             } else {
                 tabView?.setChecked(false)

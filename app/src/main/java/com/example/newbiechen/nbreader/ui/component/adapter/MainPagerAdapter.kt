@@ -13,4 +13,7 @@ class MainPagerAdapter(fm: FragmentManager, var factory: FragmentFactory) : Frag
     }
 
     override fun getCount(): Int = factory.getCount()
+
+
+
 }
