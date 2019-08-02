@@ -3,6 +3,8 @@
     <color name="colorPrimary">#FFFE960E</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorBlack">#FF000000</color>
     
-    <color name="main_action_bar_title">#FF000000</color>
+    
+    <color name="bg_find">#F7F7F7</color>
 </resources>

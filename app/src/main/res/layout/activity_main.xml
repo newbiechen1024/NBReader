@@ -26,7 +26,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@{viewModel.curPageTitle}"
-                    android:textColor="@color/main_action_bar_title"
+                    android:textColor="@color/colorBlack"
                     android:textSize="@dimen/size_action_bar_title"
                     tools:text="标题"/>
         

@@ -18,6 +18,7 @@ import com.youtubedl.ui.main.base.BaseActivity
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
+
     companion object {
         const val TAG = "MainActivity"
     }
@@ -62,9 +63,9 @@ class MainActivity : BaseActivity() {
             addOnTabSelectedListener(mTabSelectedListener)
             // 重置 Tab 按钮
             for (i in 0 until tabCount) {
-                    getTabAt(i)!!.customView = mFragmentFactory.createFragmentTabView(
-                        context, i
-                    )
+                getTabAt(i)!!.customView = mFragmentFactory.createFragmentTabView(
+                    context, i
+                )
             }
         }
     }

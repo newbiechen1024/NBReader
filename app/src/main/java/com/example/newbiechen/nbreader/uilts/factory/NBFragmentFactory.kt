@@ -8,7 +8,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.BookShelfTabView
 import com.example.newbiechen.nbreader.ui.component.widget.FindTabView
 import com.example.newbiechen.nbreader.ui.component.widget.MineTabView
 import com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfFragment
-import com.example.newbiechen.nbreader.ui.page.category.FindFragment
+import com.example.newbiechen.nbreader.ui.page.find.FindFragment
 import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
 import javax.inject.Inject
 

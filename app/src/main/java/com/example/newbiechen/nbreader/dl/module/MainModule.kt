@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.dl.module
 
 import com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfFragment
-import com.example.newbiechen.nbreader.ui.page.category.FindFragment
+import com.example.newbiechen.nbreader.ui.page.find.FindFragment
 import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
 import com.example.newbiechen.nbreader.uilts.factory.FragmentFactory
 import com.example.newbiechen.nbreader.uilts.factory.NBFragmentFactory

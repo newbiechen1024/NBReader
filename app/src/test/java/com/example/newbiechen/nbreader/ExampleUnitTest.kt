@@ -3,6 +3,7 @@ package com.example.newbiechen.nbreader
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Example local unit test, which will execute on the development machine (host).

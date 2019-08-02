@@ -15,6 +15,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                //room的数据库概要、记录
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -32,6 +40,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // androidx
     implementation deps.kotlin.stdlib
     implementation deps.androidx.appcompat
     implementation deps.androidx.ktx
@@ -61,6 +70,19 @@ dependencies {
     // ViewModel
     implementation deps.lifecycle.extensions
     kapt deps.lifecycle.compiler
+
+    // OkHttp and Retrofit
+    implementation deps.okhttp.runtime
+    implementation deps.okhttp.logging
+    implementation deps.retrofit.runtime
+    implementation deps.retrofit.rxjava2
+    implementation deps.retrofit.gson
+
+    implementation deps.glide.runtime
+    annotationProcessor deps.glide.compiler
+
+    // circle_image_view
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     // 测试
     testImplementation deps.testing.junit
