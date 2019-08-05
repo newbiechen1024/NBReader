@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8874f2761e3d7fe222975ac12e4ddaf9",
+    "identityHash": "3a67790861698291067adb462007fa94",
     "entities": [
       {
         "tableName": "catalog_entity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `bookCover` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`alias` TEXT NOT NULL, `name` TEXT NOT NULL, `bookCover` TEXT NOT NULL, PRIMARY KEY(`alias`))",
         "fields": [
+          {
+            "fieldPath": "alias",
+            "columnName": "alias",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "name",
             "columnName": "name",
@@ -23,7 +29,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "name"
+            "alias"
           ],
           "autoGenerate": false
         },
@@ -33,7 +39,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8874f2761e3d7fe222975ac12e4ddaf9\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3a67790861698291067adb462007fa94\")"
     ]
   }
 }

@@ -17,8 +17,6 @@ class CatalogRemoteDataSource @Inject constructor(private val bookApi: BookApi) 
             ArrayList<CatalogEntity>().apply {
                 addAll(it.male)
                 addAll(it.female)
-                addAll(it.picture)
-                addAll(it.other)
             }
         }
     }

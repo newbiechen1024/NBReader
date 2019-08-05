@@ -1,12 +1,8 @@
 package com.example.newbiechen.nbreader.ui.page.main
 
-import android.os.Bundle
 import android.view.Menu
 import androidx.core.view.forEach
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityMainBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.MainPagerAdapter
@@ -14,10 +10,10 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.factory.FragmentFactory
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
-import com.youtubedl.ui.main.base.BaseActivity
+import com.youtubedl.ui.main.base.BaseBindingActivity
 import javax.inject.Inject
 
-class MainActivity : BaseActivity() {
+class MainBindingActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     companion object {
         const val TAG = "MainActivity"
@@ -32,24 +28,15 @@ class MainActivity : BaseActivity() {
 
     private lateinit var mViewModel: MainViewModel
 
-    private lateinit var mDataBinding: ActivityMainBinding
+    override fun initContentView(): Int = R.layout.activity_main
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+    override fun initView() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
         mDataBinding.viewModel = mViewModel
+
+        LogHelper.i(TAG, "initView")
         initToolbar()
-        initView()
-    }
 
-    private fun initToolbar() {
-        setSupportActionBar(mDataBinding.toolbar)
-        supportActionBar?.title = ""
-        mViewModel.curPageTitle.set(getString(R.string.common_book_shelf))
-    }
-
-    private fun initView() {
         // 初始化 ViewPager
         mDataBinding.viewPager.apply {
             adapter = MainPagerAdapter(supportFragmentManager, mFragmentFactory)
@@ -68,6 +55,12 @@ class MainActivity : BaseActivity() {
                 )
             }
         }
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(mDataBinding.toolbar)
+        supportActionBar?.title = ""
+        mViewModel.curPageTitle.set(getString(R.string.common_book_shelf))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
