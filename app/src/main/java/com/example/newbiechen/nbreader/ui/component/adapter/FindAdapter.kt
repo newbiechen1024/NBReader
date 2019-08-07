@@ -37,7 +37,7 @@ class FindAdapter : BaseAdapter<CatalogEntity>() {
 
         override fun onBind(value: CatalogEntity, pos: Int) {
             itemFindBinding.apply {
-                root.apply {
+                root.setOnClickListener {
                     mOnItemClickListener?.let {
                         it(pos, value)
                     }

@@ -4,7 +4,10 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class BookCoverConverter {
+/**
+ * String 列表转换器
+ */
+class StringListConverter {
 
     @TypeConverter
     fun jsonToObject(json: String): List<String> {

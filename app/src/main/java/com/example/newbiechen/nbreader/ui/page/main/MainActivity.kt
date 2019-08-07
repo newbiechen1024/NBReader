@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayout
 import com.youtubedl.ui.main.base.BaseBindingActivity
 import javax.inject.Inject
 
-class MainBindingActivity : BaseBindingActivity<ActivityMainBinding>() {
+class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     companion object {
         const val TAG = "MainActivity"

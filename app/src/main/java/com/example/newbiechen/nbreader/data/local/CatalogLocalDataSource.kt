@@ -11,5 +11,6 @@ class CatalogLocalDataSource @Inject constructor(private val catalogDao: Catalog
     override fun getCatalogItems(): Flowable<List<CatalogEntity>> = catalogDao.getAllCatalogs().toFlowable()
 
     override fun saveCatalogItems(entities: List<CatalogEntity>) {
+        catalogDao.insertCatalogs(entities)
     }
 }

@@ -10,4 +10,9 @@
     
     <!--Find 页面-->
     <dimen name="item_find_space">16dp</dimen>
+    
+    
+    <!--BookList 页面-->
+    <dimen name="height_book_list_filter_btn">44dp</dimen>
+    <dimen name="radius_book_list_filter_tag">6dp</dimen>
 </resources>

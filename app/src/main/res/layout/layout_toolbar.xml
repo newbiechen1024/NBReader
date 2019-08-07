@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="6dp"
-        app:navigationIcon="@drawable/selector_back"
-        app:title="@null">
+        xmlns:tools="http://schemas.android.com/tools">
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="6dp"
+            app:navigationIcon="@drawable/selector_back"
+            app:title="@null">
+        
+        <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/size_action_bar_title"
+                tools:text="标题"/>
     
-    <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/colorBlack"
-            android:textSize="@dimen/size_action_bar_title"
-            tools:text="标题"/>
-    
-</androidx.appcompat.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
+</layout>

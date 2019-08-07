@@ -78,12 +78,17 @@ dependencies {
     implementation deps.retrofit.rxjava2
     implementation deps.retrofit.gson
 
+    // paging
+    implementation deps.paging.runtime
+    implementation deps.paging.rxjava2
+
     implementation deps.glide.runtime
     annotationProcessor deps.glide.compiler
 
     // circle_image_view
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-
+    // flowlayout
+    implementation 'com.hyman:flowlayout-lib:1.1.2'
     // 测试
     testImplementation deps.testing.junit
     androidTestImplementation deps.testing.runner

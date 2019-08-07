@@ -1,8 +1,24 @@
 <resources>
     <string name="app_name">NBReader</string>
+    
     <string name="common_search">搜索</string>
     <string name="common_more">更多</string>
     <string name="common_book_shelf">书架</string>
     <string name="common_find">发现</string>
     <string name="common_personal_center">个人中心</string>
+    <string name="common_sure">确定</string>
+    <string name="common_reset">重置</string>
+    <string name="common_filter">筛选</string>
+    
+    <string name="common_catalog">类别</string>
+    <string name="common_status">状态</string>
+    <string name="common_update_time">更新时间</string>
+    
+    <string name="common_serial">连载</string>
+    <string name="common_complete">完结</string>
+    
+    <string name="book_brief">%1$s | %2$s</string>
+    <string name="book_hot">热度：%1$s</string>
+    <string name="ten_thousand">%1$.2f 万</string>
+    <string name="during_day">%1$d 天内</string>
 </resources>

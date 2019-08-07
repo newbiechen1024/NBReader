@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="coverUrl" type="String"/>
+        <variable name="title" type="String"/>
+        <variable name="brief" type="String"/>
+        <variable name="hot" type="String"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:src="@drawable/icon_find_catalog"/>
+        
+        <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="@dimen/text_size_large"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintTop_toBottomOf="@+id/iv_cover"
+                app:layout_constraintBottom_toTopOf="@+id/tv_brief"
+                app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
+                app:layout_constraintRight_toRightOf="@+id/iv_cover"
+                tools:text="标题"/>
+        
+        <TextView
+                android:id="@+id/tv_brief"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_hot"
+                app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
+                app:layout_constraintRight_toRightOf="@+id/iv_cover"
+                tools:text="介绍"/>
+        
+        <TextView
+                android:id="@+id/tv_hot"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_brief"
+                app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
+                app:layout_constraintRight_toRightOf="@+id/iv_cover"
+                tools:text="热度"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

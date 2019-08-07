@@ -9,16 +9,17 @@ versions.constraintlayout = "1.1.3"
 versions.junit = "4.12"
 versions.runner = "1.2.0"
 versions.espresso_core = "3.2.0"
-versions.room = "2.1.0-rc01"
+versions.room = "2.0.0-rc01"
 versions.retrofit = "2.6.0"
 versions.okhttp = "4.0.1"
 versions.rxjava2 = "2.2.10"
 versions.rxandroid = "2.1.1"
 versions.stetho = "1.5.0"
-versions.lifecycle = "1.1.1"
+versions.lifecycle = "2.0.0-rc01"
 versions.dagger = "2.19"
 versions.material = "1.0.0-rc01"
 versions.glide = "4.9.0"
+versions.paging = "2.0.0-rc01"
 
 // 依赖
 def deps = [:]
@@ -31,6 +32,12 @@ androidx.ktx = "androidx.core:core-ktx:$versions.androidx"
 androidx.constraintlayout = "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
 androidx.material = "com.google.android.material:material:$versions.material"
 deps.androidx = androidx
+
+def paging = [:]
+paging.common = "androidx.paging:paging-common:$versions.paging"
+paging.runtime = "androidx.paging:paging-runtime:$versions.paging"
+paging.rxjava2 = "androidx.paging:paging-rxjava2:$versions.paging"
+deps.paging = paging
 
 // kotlin 依赖
 def kotlin = [:]
@@ -47,9 +54,9 @@ deps.testing = testing
 
 // room 数据库
 def room = [:]
-room.runtime = "android.arch.persistence.room:runtime:$versions.room"
-room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room"
-room.compiler = "android.arch.persistence.room:compiler:$versions.room"
+room.runtime = "androidx.room:room-runtime:$versions.room"
+room.rxjava2 = "androidx.room:room-rxjava2:$versions.room"
+room.compiler = "androidx.room:room-compiler:$versions.room"
 deps.room = room
 
 // 网络请求库
@@ -86,8 +93,8 @@ stetho.okhttp = "com.facebook.stetho:stetho-okhttp3:$versions.stetho"
 deps.stetho = stetho
 
 def lifecycle = [:]
-lifecycle.extensions = "android.arch.lifecycle:extensions:$versions.lifecycle"
-lifecycle.compiler = "android.arch.lifecycle:compiler:$versions.lifecycle"
+lifecycle.extensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+lifecycle.compiler = "androidx.lifecycle:lifecycle-compiler:$versions.lifecycle"
 deps.lifecycle = lifecycle
 
 // 图片加载库

@@ -4,7 +4,23 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorBlack">#FF000000</color>
+    <color name="colorWhite">#FFFFFFFF</color>
     
     
+    <color name="text_orange">#fffe960e</color>
+    <color name="text_emphasized">#fffe960e</color>
+    <color name="text_emphasized_light">#fff5a623</color>
+    
+    
+    <!--find-->
     <color name="bg_find">#F7F7F7</color>
+    
+    <!--book_list-->
+    <color name="bg_book_list_filter_sure">#fffe960e</color>
+    
+    <!--tag-->
+    <color name="bg_tag_normal">#EEEEEE</color>
+    <color name="bg_book_list_filter">#F8F8F8</color>
+    <color name="text_book_list_filter_title">#A7A7A7</color>
+    <color name="stroken_tag_selected">#fffe960e</color>
 </resources>
