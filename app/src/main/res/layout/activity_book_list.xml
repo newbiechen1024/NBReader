@@ -3,6 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
+        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.booklist.BookListViewModel"/>
     </data>
     
     <androidx.drawerlayout.widget.DrawerLayout
@@ -17,15 +18,53 @@
                     android:id="@+id/toolbar_include"
                     layout="@layout/layout_toolbar"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/rv_book"
+                    app:layout_constraintBottom_toTopOf="@id/cl_book_tag"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_book_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@color/colorWhite"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/toolbar_include"
+                    app:layout_constraintBottom_toTopOf="@id/rv_book"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent">
+                
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_book_sort"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@id/tv_filter">
+                </androidx.recyclerview.widget.RecyclerView>
+                
+                <TextView
+                        android:id="@+id/tv_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:text="@string/common_filter"
+                        android:textSize="@dimen/text_size_small"
+                        android:textColor="@color/text_book_list_sort"
+                        android:drawableRight="@drawable/ic_filter"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@id/rv_book_sort"
+                        app:layout_constraintRight_toRightOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
             
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_book"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_book_tag"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>

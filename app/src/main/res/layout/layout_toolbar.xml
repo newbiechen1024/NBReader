@@ -6,7 +6,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:elevation="6dp"
+            android:background="@color/colorWhite"
             app:navigationIcon="@drawable/selector_back"
             app:title="@null">
         

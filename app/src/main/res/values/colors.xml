@@ -13,7 +13,7 @@
     
     
     <!--find-->
-    <color name="bg_find">#F7F7F7</color>
+    <color name="common_background">#FCFCFC</color>
     
     <!--book_list-->
     <color name="bg_book_list_filter_sure">#fffe960e</color>
@@ -22,5 +22,10 @@
     <color name="bg_tag_normal">#EEEEEE</color>
     <color name="bg_book_list_filter">#F8F8F8</color>
     <color name="text_book_list_filter_title">#A7A7A7</color>
-    <color name="stroken_tag_selected">#fffe960e</color>
+    <color name="stroke_tag_selected">#fffe960e</color>
+    
+    <color name="bg_divider">#F1F1F1</color>
+    <color name="text_book_list_sort">#7A7A7A</color>
+    
+    <!--bababa 的 筛选图-->
 </resources>

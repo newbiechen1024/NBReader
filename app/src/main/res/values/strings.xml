@@ -17,6 +17,11 @@
     <string name="common_serial">连载</string>
     <string name="common_complete">完结</string>
     
+    <string name="common_popularity">人气</string>
+    <string name="common_remain">留存</string>
+    <string name="common_comment_rate">评分</string>
+    <string name="common_word_count">字数</string>
+    
     <string name="book_brief">%1$s | %2$s</string>
     <string name="book_hot">热度：%1$s</string>
     <string name="ten_thousand">%1$.2f 万</string>

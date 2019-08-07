@@ -17,6 +17,7 @@ import com.example.newbiechen.nbreader.data.entity.CatalogEntity
 import com.example.newbiechen.nbreader.databinding.ActivityBookListBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListFilterAdapter
+import com.example.newbiechen.nbreader.ui.component.adapter.BookListSortAdapter
 import com.youtubedl.ui.main.base.BaseBindingActivity
 
 // 书籍列表页面
@@ -35,6 +36,9 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
     // 状态 tag 列表
     private lateinit var mStatusTagList: List<String>
+
+    // 书籍排序列表
+    private lateinit var mSortList: List<String>
 
     // 更新时间 tag 列表
     private val mUpdateTagList = listOf(3, 7, 15, 30)
@@ -69,6 +73,13 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
         mStatusTagList = listOf(
             getString(R.string.common_serial), getString(R.string.common_complete)
         )
+
+        mSortList = listOf(
+            getString(R.string.common_popularity),
+            getString(R.string.common_remain),
+            getString(R.string.common_comment_rate),
+            getString(R.string.common_word_count)
+        )
     }
 
     override fun initView() {
@@ -76,6 +87,14 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
         initDrawerLayout()
         initBookList()
         initBookFilter()
+        initBookSort()
+
+        mDataBinding.apply {
+            tvFilter.setOnClickListener {
+                // 展开侧滑栏
+                dlSlide.openDrawer(Gravity.RIGHT, true)
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -172,21 +191,28 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
         }
     }
 
+    private fun initBookSort() {
+        mDataBinding.rvBookSort.apply {
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            addItemDecoration(BookListSortAdapter.BookListSortDecoration())
+
+            adapter = BookListSortAdapter().apply {
+                refreshItems(mSortList)
+                setOnItemClickListener { pos, value ->
+                    mViewModel.selectedSortPos.set(pos)
+                }
+            }
+        }
+    }
+
 
     override fun processLogic() {
         mViewModel = ViewModelProviders.of(this).get(BookListViewModel::class.java)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_book_list, menu)
-        return true
+        mDataBinding.viewModel = mViewModel
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item!!.itemId == R.id.book_list_filter) {
-            mDataBinding.dlSlide.openDrawer(Gravity.RIGHT, true)
-            return true
-        } else if (item!!.itemId == android.R.id.home) {
+        if (item!!.itemId == android.R.id.home) {
             finish()
             return true
         }

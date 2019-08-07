@@ -15,4 +15,6 @@
     <!--BookList 页面-->
     <dimen name="height_book_list_filter_btn">44dp</dimen>
     <dimen name="radius_book_list_filter_tag">6dp</dimen>
+    
+    <dimen name="height_book_list_feature_divider">16sp</dimen>
 </resources>

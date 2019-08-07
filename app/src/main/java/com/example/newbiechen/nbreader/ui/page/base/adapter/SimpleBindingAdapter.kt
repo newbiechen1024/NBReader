@@ -7,7 +7,10 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
 
 typealias OnItemClickListener<T> = (pos: Int, value: T) -> Unit
 
-abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseAdapter.WrapViewHolder<T>>() {
+/**
+ * 简单封装基于 DataBinding 的 Adapter
+ */
+abstract class SimpleBindingAdapter<T> : RecyclerView.Adapter<SimpleBindingAdapter.WrapViewHolder<T>>() {
     private val mItemList: ArrayList<T> = ArrayList()
 
     abstract fun createViewHolder(type: Int): IViewHolder<T>

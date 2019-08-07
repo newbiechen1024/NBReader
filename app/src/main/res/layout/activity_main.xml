@@ -13,7 +13,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="6dp"
+                android:background="@color/colorWhite"
                 app:title="@null"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -40,7 +40,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
-        
+    
         <View
                 android:layout_width="wrap_content"
                 android:layout_height="5dp"
@@ -48,12 +48,13 @@
                 app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"/>
+
         
         <com.google.android.material.tabs.TabLayout
                 android:id="@+id/bottom_bar"
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
-                android:elevation="2dp"
+                android:background="@color/colorWhite"
                 app:tabIndicatorHeight="0dp"
                 app:currentPos="@{viewModel.curPagePos}"
                 app:layout_constraintBottom_toBottomOf="parent"
