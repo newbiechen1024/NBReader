@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.newbiechen.nbreader.R
 
 import com.example.newbiechen.nbreader.databinding.FragmentFindBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.FindAdapter
@@ -14,7 +15,7 @@ import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 
 import com.youtubedl.ui.main.base.BaseFragment
 import javax.inject.Inject
-import com.example.newbiechen.nbreader.ui.component.adapter.FindItemDecoration
+import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity
 
 
@@ -39,7 +40,7 @@ class FindFragment : BaseFragment() {
             viewModel = mViewModel
             rvBookCatalog.apply {
                 layoutManager = GridLayoutManager(activity, 3)
-                addItemDecoration(FindItemDecoration())
+                addItemDecoration(SpaceItemDecoration(verticalSpace = context.resources.getDimensionPixelSize(R.dimen.item_find_space)))
                 adapter = FindAdapter().apply {
                     setOnItemClickListener { pos, value ->
                         BookListActivity.startActivity(context, value)

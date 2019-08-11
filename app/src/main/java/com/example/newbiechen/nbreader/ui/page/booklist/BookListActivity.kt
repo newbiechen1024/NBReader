@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,11 +17,21 @@ import com.example.newbiechen.nbreader.databinding.ActivityBookListBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListFilterAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListSortAdapter
+import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
+import com.example.newbiechen.nbreader.uilts.LogHelper
+import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
+import com.github.jdsjlzx.ItemDecoration.SpacesItemDecoration
+import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
+import com.github.jdsjlzx.view.LoadingFooter
 import com.youtubedl.ui.main.base.BaseBindingActivity
+import javax.inject.Inject
 
 // 书籍列表页面
 
 class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
+
+    @Inject
+    lateinit var mViewModelFactory: ViewModelFactory
 
     private lateinit var mCatalogEntity: CatalogEntity
     private lateinit var mViewModel: BookListViewModel
@@ -45,14 +54,15 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
     // 当前选中的 tag 记录
     private var mLastSelectedTagMap: Map<String, List<Int>>? = null
-
-    // 设置
+    // 当前选中的 sort 记录
+    private var mSelectedSort: Int = 0
 
     // tag 是否改变
     private var isTagChange = false
 
     companion object {
         private const val EXTRA_CATALOG = "extra_catalog"
+        private const val TAG = "BookListActivity"
 
         fun startActivity(context: Context, catalogEntity: CatalogEntity) {
             val intent = Intent(context, BookListActivity::class.java)
@@ -136,11 +146,25 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
     }
 
     private fun initBookList() {
+        val bookAdapter = BookListAdapter()
+
         // 初始化 book 的 recyclerView
         mDataBinding.rvBook.apply {
+            val itemSpace = context.resources.getDimensionPixelSize(R.dimen.space_item_book_list)
             layoutManager = GridLayoutManager(context, 3)
-            adapter = BookListAdapter().apply {
-                // 设置点击事件监听
+
+            adapter = LRecyclerViewAdapter(bookAdapter).apply {
+                setOnItemClickListener { _, position ->
+                    LogHelper.i(TAG, "onItemClick:$position")
+                }
+            }
+            addItemDecoration(SpaceItemDecoration(itemSpace, itemSpace))
+
+            setPullRefreshEnabled(false)
+            // 设置点击事件
+            // 加载更多监听
+            setOnLoadMoreListener {
+                LogHelper.i(TAG, "setOnLoadMoreListener")
             }
         }
     }
@@ -178,16 +202,18 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
             if (!isTagChange) {
                 return@setOnClickListener
             }
+
             // 获取选中的 tag
             mLastSelectedTagMap = mFilterAdapter.getFilterResult()
-            // 刷新 ViewModel
-
 
             // 设置 tag 未改变，防止 drawer 重置
             isTagChange = false
 
             // 关闭 drawer
             mDataBinding.dlSlide.closeDrawer(Gravity.RIGHT, true)
+
+            // 刷新 ViewModel
+            refreshBookList()
         }
     }
 
@@ -198,17 +224,59 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
             adapter = BookListSortAdapter().apply {
                 refreshItems(mSortList)
-                setOnItemClickListener { pos, value ->
-                    mViewModel.selectedSortPos.set(pos)
+                setOnItemClickListener { pos, _ ->
+                    // 更新数据
+                    mSelectedSort = pos
+                    refreshBookList()
                 }
             }
         }
     }
 
-
     override fun processLogic() {
-        mViewModel = ViewModelProviders.of(this).get(BookListViewModel::class.java)
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(BookListViewModel::class.java)
         mDataBinding.viewModel = mViewModel
+        // 请求书籍信息
+        refreshBookList()
+    }
+
+    private fun refreshBookList() {
+        if (mLastSelectedTagMap != null) {
+            // 获取标签
+            var cat: String? = null
+            mLastSelectedTagMap!![mLabelTagTitle]?.map {
+                // 根据索引获取对应的 label
+                mCatalogEntity.labels[it]
+            }?.forEach {
+                // 将标签使用 , 分隔符连接
+                cat += "$it,"
+            }
+            // 删除最后的, 分隔符
+            cat = cat?.replaceAfterLast(",", "")
+
+            // 获取书籍状态
+            var isserial: Boolean? = null
+            var isserialResult = mLastSelectedTagMap!![mStatusTagTitle]?.get(0)
+            if (isserialResult != null) {
+                isserial = isserialResult == 0
+            }
+
+            var update: Int? = null
+
+            // 获取更新时间
+            var updateResult = mLastSelectedTagMap!![mUpdateTagTitle]?.get(0)
+            if (updateResult != null) {
+                update = mUpdateTagList[updateResult!!]
+            }
+
+            mViewModel.refreshBookList(
+                this, mCatalogEntity.alias,
+                mSelectedSort, cat, isserial, update
+            )
+
+        } else {
+            mViewModel.refreshBookList(this, mCatalogEntity.alias, mSelectedSort)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

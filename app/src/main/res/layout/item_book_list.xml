@@ -8,13 +8,18 @@
         <variable name="brief" type="String"/>
         <variable name="hot" type="String"/>
     </data>
+    
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+        
         <ImageView
                 android:id="@+id/iv_cover"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="fitXY"
+                app:url="@{coverUrl}"
+                app:layout_constraintDimensionRatio="1:1.2"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/tv_title"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -25,8 +30,11 @@
                 android:id="@+id/tv_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="@dimen/text_size_large"
+                android:layout_marginTop="14dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="@{title}"
+                android:textSize="@dimen/text_size_small"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintTop_toBottomOf="@+id/iv_cover"
                 app:layout_constraintBottom_toTopOf="@+id/tv_brief"
@@ -39,6 +47,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@{brief}"
+                android:textSize="@dimen/text_size_more_small"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title"
                 app:layout_constraintBottom_toTopOf="@+id/tv_hot"
                 app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
@@ -50,6 +62,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@{hot}"
+                android:textSize="@dimen/text_size_more_small"
                 app:layout_constraintTop_toBottomOf="@+id/tv_brief"
                 app:layout_constraintLeft_toLeftOf="@+id/iv_cover"
                 app:layout_constraintRight_toRightOf="@+id/iv_cover"

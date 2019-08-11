@@ -44,8 +44,6 @@ abstract class SimpleBindingAdapter<T> : RecyclerView.Adapter<SimpleBindingAdapt
         mItemList.clear()
         mItemList.addAll(items)
         notifyDataSetChanged()
-
-        LogHelper.i("BaseAdapter", "refreshItems")
     }
 
     // 用于封装的真正 ViewHolder 的 ViewHolder

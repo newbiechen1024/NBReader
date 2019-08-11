@@ -2,13 +2,18 @@ package com.example.newbiechen.nbreader.ui.component.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.SimpleAdapter
+import androidx.databinding.ViewDataBinding
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.ItemBookListBinding
+import com.example.newbiechen.nbreader.ui.page.base.adapter.IViewHolder
+import com.example.newbiechen.nbreader.ui.page.base.adapter.SimpleBindingAdapter
 import com.example.newbiechen.nbreader.uilts.Constants
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.StringUtil
 
 /**
@@ -17,41 +22,33 @@ import com.example.newbiechen.nbreader.uilts.StringUtil
  *  description :
  */
 
-class BookListAdapter : PagedListAdapter<BookEntity, BookListAdapter.BookListViewHolder>(diffCallback) {
+class BookListAdapter : SimpleBindingAdapter<BookEntity>() {
 
-    companion object {
-        private val diffCallback = object : DiffUtil.ItemCallback<BookEntity>() {
-            override fun areItemsTheSame(oldItem: BookEntity, newItem: BookEntity): Boolean {
-                return oldItem._id == newItem._id
-            }
+    override fun createViewHolder(type: Int): IViewHolder<BookEntity> {
+        return BookListViewHolder()
+    }
 
-            override fun areContentsTheSame(oldItem: BookEntity, newItem: BookEntity): Boolean {
-                // BookList 不做刷新处理，所以只需要判断 id 就行了，内容没有必要判断。
-                return oldItem == newItem
-            }
+    inner class BookListViewHolder : IViewHolder<BookEntity> {
+        private lateinit var dataBinding: ItemBookListBinding
+
+        override fun createBinding(parent: ViewGroup): ViewDataBinding {
+            dataBinding = ItemBookListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return dataBinding
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookListViewHolder {
-        val dataBinding = ItemBookListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BookListViewHolder(dataBinding)
-    }
+        override fun onBind(value: BookEntity, pos: Int) {
+            dataBinding.apply {
+                val context = root.context
+                coverUrl = Constants.IMG_BASE_URL + value.cover
+                title = value.title
+                brief = context.getString(R.string.book_brief, value.author, value.minorCate)
+                hot = context.getString(
+                    R.string.book_hot,
+                    StringUtil.number2Str(context, value.latelyFollower)
+                )
 
-    override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, position)
-    }
-
-    inner class BookListViewHolder(private val dataBinding: ItemBookListBinding) :
-        RecyclerView.ViewHolder(dataBinding.root) {
-
-        fun bind(bookEntity: BookEntity, pos: Int) {
-            dataBinding.coverUrl = Constants.IMG_BASE_URL + bookEntity.cover
-            dataBinding.title = bookEntity.title
-            dataBinding.brief = itemView.context.getString(R.string.book_brief, bookEntity.author, bookEntity.minorCate)
-            dataBinding.hot = itemView.context.getString(
-                R.string.book_hot,
-                StringUtil.number2Str(itemView.context, bookEntity.latelyFollower)
-            )
+                executePendingBindings()
+            }
         }
     }
 }

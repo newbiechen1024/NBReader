@@ -9,6 +9,8 @@
     <string name="common_sure">确定</string>
     <string name="common_reset">重置</string>
     <string name="common_filter">筛选</string>
+    <string name="common_retry">重试</string>
+    <string name="common_loading">正在加载 ...</string>
     
     <string name="common_catalog">类别</string>
     <string name="common_status">状态</string>
@@ -26,4 +28,7 @@
     <string name="book_hot">热度：%1$s</string>
     <string name="ten_thousand">%1$.2f 万</string>
     <string name="during_day">%1$d 天内</string>
+    
+    <string name="tip_page_empty">暂无数据</string>
+    <string name="tip_network_error">无法连接到网络，请重试</string>
 </resources>

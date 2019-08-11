@@ -64,6 +64,8 @@ class BookListSortAdapter : SimpleBindingAdapter<String>() {
         mItemClickListener = itemClickListener
     }
 
+    fun getSelectedPos(): Int = mSelectedPos
+
     class BookListSortDecoration : RecyclerView.ItemDecoration() {
         private val mPaint: Paint = Paint().apply {
             strokeCap = Paint.Cap.ROUND
@@ -102,7 +104,7 @@ class BookListSortAdapter : SimpleBindingAdapter<String>() {
             super.getItemOffsets(outRect, view, parent, state)
 
             // 不处理最后一个元素
-            if (parent.getChildAdapterPosition(view) < (parent.childCount - 1)) {
+            if (parent.getChildAdapterPosition(view) < (parent.adapter!!.itemCount - 1)) {
                 // 设置一个像素
                 outRect.right = 1
             }

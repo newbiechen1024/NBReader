@@ -49,19 +49,3 @@ class FindAdapter : SimpleBindingAdapter<CatalogEntity>() {
         mOnItemClickListener = itemClickListener
     }
 }
-
-class FindItemDecoration : RecyclerView.ItemDecoration() {
-    // 设置第一行的顶部间距
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        // 获取当前 LayoutManager 类型
-        val layoutManager = parent.layoutManager as? GridLayoutManager ?: return
-        // 获取表格数据的列数
-        val spanCount = layoutManager.spanCount
-        val space = parent.context.resources.getDimensionPixelSize(R.dimen.item_find_space)
-        // 判断如果是第一行的数据
-        if (parent.getChildAdapterPosition(view) < spanCount) {
-            outRect.top = space
-        }
-        outRect.bottom = space
-    }
-}
