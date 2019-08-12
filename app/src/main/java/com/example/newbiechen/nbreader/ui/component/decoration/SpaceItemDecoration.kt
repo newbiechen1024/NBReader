@@ -49,6 +49,7 @@ class SpaceItemDecoration(private val horizonSpace: Int? = null, private val ver
                 }
 
                 // 解决 divider 导致 item 大小不同的问题
+                // 参考:https://blog.csdn.net/u013394527/article/details/78474706
                 if (horizonSpace != null && position < footStartPosition) {
                     // 计算这个child 处于第几列
                     val column = (position - headLastPosition) % layoutManager.spanCount

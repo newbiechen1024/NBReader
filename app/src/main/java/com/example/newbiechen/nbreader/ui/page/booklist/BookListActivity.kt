@@ -159,12 +159,26 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
                 }
             }
             addItemDecoration(SpaceItemDecoration(itemSpace, itemSpace))
-
+            // 禁止刷新
             setPullRefreshEnabled(false)
-            // 设置点击事件
             // 加载更多监听
             setOnLoadMoreListener {
-                LogHelper.i(TAG, "setOnLoadMoreListener")
+                loadMoreBook()
+            }
+        }
+    }
+
+    private fun loadMoreBook() {
+        mViewModel.loadMoreBookList(this) {
+            when (it) {
+                LoadingFooter.State.NetWorkError -> {
+                    mDataBinding.rvBook.setOnNetWorkErrorListener {
+                        loadMoreBook()
+                    }
+                }
+                else -> {
+                    mDataBinding.rvBook.setNoMore(true)
+                }
             }
         }
     }
