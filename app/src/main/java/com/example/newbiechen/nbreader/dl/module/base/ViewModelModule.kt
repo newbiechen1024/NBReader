@@ -3,6 +3,7 @@ package com.example.newbiechen.nbreader.dl.module.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.newbiechen.nbreader.dl.annotation.key.ViewModelKey
+import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailViewModel
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListViewModel
 import com.example.newbiechen.nbreader.ui.page.find.FindViewModel
 import com.example.newbiechen.nbreader.ui.page.main.MainViewModel
@@ -33,4 +34,9 @@ abstract class ViewModelModule {
     @Binds
     @ViewModelKey(BookListViewModel::class)
     abstract fun bindBookListViewModel(model: BookListViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(BookDetailViewModel::class)
+    abstract fun bindBookDetailViewModel(model: BookDetailViewModel): ViewModel
 }

@@ -7,7 +7,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import dagger.android.support.DaggerAppCompatActivity
 
-
+/**
+ * 由于使用到了 DaggerAppCompatActivity，创建的 Activity 必须在 ActivityBindingModule 进行注册
+ */
 abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivity() {
 
     protected lateinit var mDataBinding: T

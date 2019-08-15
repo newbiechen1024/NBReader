@@ -55,9 +55,4 @@ class FindFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         mViewModel.loadCatalog()
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mViewModel.dispose()
-    }
 }

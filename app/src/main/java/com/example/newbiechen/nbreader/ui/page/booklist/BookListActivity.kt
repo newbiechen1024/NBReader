@@ -18,6 +18,7 @@ import com.example.newbiechen.nbreader.ui.component.adapter.BookListAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListFilterAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListSortAdapter
 import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
+import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.github.jdsjlzx.ItemDecoration.SpacesItemDecoration
@@ -147,7 +148,6 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
     private fun initBookList() {
         val bookAdapter = BookListAdapter()
-
         // 初始化 book 的 recyclerView
         mDataBinding.rvBook.apply {
             val itemSpace = context.resources.getDimensionPixelSize(R.dimen.space_item_book_list)
@@ -155,7 +155,10 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
             adapter = LRecyclerViewAdapter(bookAdapter).apply {
                 setOnItemClickListener { _, position ->
-                    LogHelper.i(TAG, "onItemClick:$position")
+                    val book = bookAdapter.getItem(position)
+                    if (book != null) {
+                        BookDetailActivity.startActivity(this@BookListActivity, book._id)
+                    }
                 }
             }
             addItemDecoration(SpaceItemDecoration(itemSpace, itemSpace))

@@ -5,4 +5,9 @@
         <attr name="layout_loading" format="reference"/>
         <attr name="layout_error" format="reference"/>
     </declare-styleable>
+    
+    <declare-styleable name="FoldableTextView">
+        <attr name="foldEllipse" format="string"/>
+        <attr name="foldLines" format="integer"/>
+    </declare-styleable>
 </resources>

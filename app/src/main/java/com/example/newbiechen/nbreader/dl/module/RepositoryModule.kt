@@ -1,10 +1,13 @@
 package com.example.newbiechen.nbreader.dl.module
 
 import com.example.newbiechen.nbreader.data.local.CatalogLocalDataSource
+import com.example.newbiechen.nbreader.data.remote.BookDetailRemoteDataSource
 import com.example.newbiechen.nbreader.data.remote.BookListRemoteDataSource
 import com.example.newbiechen.nbreader.data.remote.CatalogRemoteDataSource
+import com.example.newbiechen.nbreader.data.repository.BookDetailRepository
 import com.example.newbiechen.nbreader.data.repository.BookListRepository
 import com.example.newbiechen.nbreader.data.repository.CatalogRepository
+import com.example.newbiechen.nbreader.data.repository.impl.IBookDetailRepository
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
 import com.example.newbiechen.nbreader.data.repository.impl.ICatalogRepository
 import com.example.newbiechen.nbreader.dl.annotation.qualifier.LocalData
@@ -17,13 +20,13 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
 
     @Singleton
-    @LocalData
     @Binds
+    @LocalData
     abstract fun bindCatalogLocalDataSource(localDataSource: CatalogLocalDataSource): ICatalogRepository
 
     @Singleton
-    @RemoteData
     @Binds
+    @RemoteData
     abstract fun bindCatalogRemoteDataSource(remoteDataSource: CatalogRemoteDataSource): ICatalogRepository
 
     @Singleton
@@ -31,11 +34,20 @@ abstract class RepositoryModule {
     abstract fun bindCatalogRepository(catalogRepository: CatalogRepository): ICatalogRepository
 
     @Singleton
-    @RemoteData
     @Binds
+    @RemoteData
     abstract fun bindBookListRemoteDataSource(remoteDataSource: BookListRemoteDataSource): IBookListRepository
 
     @Singleton
     @Binds
     abstract fun bindBookListRepository(bookListRepository: BookListRepository): IBookListRepository
+
+    @Singleton
+    @Binds
+    @RemoteData
+    abstract fun bindBookDetailRemoteDataSource(remoteDataSource: BookDetailRemoteDataSource): IBookDetailRepository
+
+    @Singleton
+    @Binds
+    abstract fun bookBookDetailRepository(bookDetailRepository: BookDetailRepository): IBookDetailRepository
 }

@@ -17,4 +17,9 @@
     <dimen name="radius_book_list_filter_tag">6dp</dimen>
     <dimen name="height_book_list_feature_divider">16sp</dimen>
     <dimen name="space_item_book_list">8dp</dimen>
+    
+    <!--BookDetail 页面-->
+    <dimen name="padding_horizon_book_detail">12dp</dimen>
+    <dimen name="padding_vertical_book_detail">8dp</dimen>
+    <dimen name="margin_book_detail_space">8dp</dimen>
 </resources>

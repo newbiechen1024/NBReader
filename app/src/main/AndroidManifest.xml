@@ -21,5 +21,6 @@
         </activity>
         
         <activity android:name=".ui.page.booklist.BookListActivity"/>
+        <activity android:name=".ui.page.bookdetail.BookDetailActivity"/>
     </application>
 </manifest>

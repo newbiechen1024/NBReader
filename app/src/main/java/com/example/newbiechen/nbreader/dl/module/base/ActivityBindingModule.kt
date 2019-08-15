@@ -1,6 +1,7 @@
 package com.example.newbiechen.nbreader.dl.module.base
 
 import com.example.newbiechen.nbreader.dl.module.MainModule
+import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity
 import com.example.newbiechen.nbreader.ui.page.main.MainActivity
 import com.youtubedl.di.ActivityScoped
@@ -18,4 +19,7 @@ internal abstract class ActivityBindingModule {
 
     @ContributesAndroidInjector
     internal abstract fun bindBookListActivity(): BookListActivity
+
+    @ContributesAndroidInjector
+    internal abstract fun bindBookDetailActivity(): BookDetailActivity
 }

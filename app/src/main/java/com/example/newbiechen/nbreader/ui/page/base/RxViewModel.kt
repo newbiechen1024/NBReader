@@ -7,7 +7,8 @@ abstract class RxViewModel : ViewModel() {
 
     protected var compositeDisposable = CompositeDisposable()
 
-    fun dispose() {
+    override fun onCleared() {
+        super.onCleared()
         compositeDisposable.clear()
     }
 }

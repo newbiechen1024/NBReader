@@ -13,6 +13,7 @@
     <string name="common_loading">正在加载 ...</string>
     
     <string name="common_catalog">类别</string>
+    <string name="common_category">目录</string>
     <string name="common_status">状态</string>
     <string name="common_update_time">更新时间</string>
     
@@ -23,6 +24,16 @@
     <string name="common_remain">留存</string>
     <string name="common_comment_rate">评分</string>
     <string name="common_word_count">字数</string>
+    
+    <string name="text_fold_tip">...
+        <Data><![CDATA[<font color='#3CE4BC'>展开</font>]]></Data>
+    </string>
+    
+    <string name="common_add_collection">+ 添加收藏</string>
+    <string name="common_start_read">开始阅读</string>
+    
+    <string name="common_brief">简介</string>
+    <string name="common_label">标签</string>
     
     <string name="book_brief">%1$s | %2$s</string>
     <string name="book_hot">热度：%1$s</string>

@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.dl.module
 
 import com.example.newbiechen.nbreader.data.remote.api.BookApi
 import com.example.newbiechen.nbreader.uilts.Constants
+import com.example.newbiechen.nbreader.uilts.interceptor.MoreBaseUrlInterceptor
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import dagger.Module
 import dagger.Provides
@@ -22,6 +23,7 @@ class NetworkModule {
         .connectTimeout(15L, TimeUnit.SECONDS)
         .writeTimeout(15L, TimeUnit.SECONDS)
         .readTimeout(30L, TimeUnit.SECONDS)
+        .addInterceptor(MoreBaseUrlInterceptor(mapOf(Constants.LABEL_MORE_BASE_URL to Constants.API_MORE_BASE_URL)))
         .build()
 
     @Provides

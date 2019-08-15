@@ -1,0 +1,32 @@
+package com.example.newbiechen.nbreader.data.entity
+
+/**
+ *  author : newbiechen
+ *  date : 2019-08-14 14:27
+ *  description :
+ */
+
+data class BookDetailWrapper(
+    val _id: String,
+    val author: String,
+    val chaptersCount: Int,
+    val contentType: String,
+    val cover: String,
+    val followerCount: Int,
+    val isSerial: Boolean,
+    val lastChapter: String,
+    val longIntro: String,
+    val majorCate: String,
+    val minorCate: String,
+    val rating: Rating,
+    val tags: List<String>,
+    val title: String,
+    val updated: String,
+    val wordCount: Int
+)
+
+data class Rating(
+    val count: Int,
+    val score: Double,
+    val tip: String
+)
