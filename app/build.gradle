@@ -85,6 +85,7 @@ dependencies {
     implementation deps.glide.runtime
     annotationProcessor deps.glide.compiler
 
+    implementation 'jp.wasabeef:glide-transformations:4.1.0'
     // circle_image_view
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     // flowlayout

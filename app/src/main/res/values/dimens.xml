@@ -19,7 +19,8 @@
     <dimen name="space_item_book_list">8dp</dimen>
     
     <!--BookDetail 页面-->
-    <dimen name="padding_horizon_book_detail">12dp</dimen>
-    <dimen name="padding_vertical_book_detail">8dp</dimen>
-    <dimen name="margin_book_detail_space">8dp</dimen>
+    <dimen name="padding_horizon_book_detail">14dp</dimen>
+    <dimen name="padding_vertical_book_detail">10dp</dimen>
+    <dimen name="margin_book_detail_space">14dp</dimen>
+    <dimen name="height_book_detail_title">290dp</dimen>
 </resources>

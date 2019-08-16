@@ -2,9 +2,12 @@ package com.youtubedl.ui.main.base
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import dagger.android.support.DaggerAppCompatActivity
 
 /**
@@ -24,6 +27,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivit
         processLogic()
     }
 
+
     internal open fun initData(savedInstanceState: Bundle?) {
     }
 
@@ -31,6 +35,27 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivit
     }
 
     internal open fun processLogic() {
+    }
+
+    protected fun supportActionBar(toolbar: Toolbar): ActionBar? {
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setDisplayShowHomeEnabled(true)
+            actionBar.title = ""
+        }
+
+        toolbar.setNavigationOnClickListener { finish() }
+        return actionBar
+    }
+
+    /**
+     * 显示到 statusbar 上
+     */
+    protected fun overStatusBar() {
+        SystemBarUtil.transparentStatusBar(this)
     }
 
     internal fun startActivity(cls: Class<in AppCompatActivity>) {

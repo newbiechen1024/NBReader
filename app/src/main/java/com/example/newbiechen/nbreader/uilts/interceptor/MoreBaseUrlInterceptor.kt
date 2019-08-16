@@ -1,7 +1,6 @@
 package com.example.newbiechen.nbreader.uilts.interceptor
 
-import androidx.core.net.toUri
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -31,7 +30,7 @@ class MoreBaseUrlInterceptor(private val urlMap: Map<String, String>) : Intercep
             // 获取匹配到的第一个 baseUrl 路径，并从 map 中查找
             val newUrl = urlMap[urlHeaders[0]]
             return if (newUrl != null) {
-                val newUri = newUrl.toUri()
+                val newUri = newUrl.toHttpUrl()
                 // 生成新的 httpUrl
                 val newHttpUrl = originHttpUrl.newBuilder()
                     .scheme(newUri.scheme)

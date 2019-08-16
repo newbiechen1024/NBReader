@@ -25,8 +25,14 @@
     <string name="common_comment_rate">评分</string>
     <string name="common_word_count">字数</string>
     
+    <string name="common_book_detail">书籍详情</string>
+    
+    <string name="common_ten_thousand">万</string>
+    <string name="common_word">%1$s字</string>
+    <string name="common_percent">%1$s %%</string>
+    
     <string name="text_fold_tip">...
-        <Data><![CDATA[<font color='#3CE4BC'>展开</font>]]></Data>
+        <Data><![CDATA[<font color='#0089EF'>展开</font>]]></Data>
     </string>
     
     <string name="common_add_collection">+ 添加收藏</string>
@@ -42,4 +48,6 @@
     
     <string name="tip_page_empty">暂无数据</string>
     <string name="tip_network_error">无法连接到网络，请重试</string>
+    
+    <string name="book_detail_category_brief">连载至%1$d章 • %2$s</string>
 </resources>

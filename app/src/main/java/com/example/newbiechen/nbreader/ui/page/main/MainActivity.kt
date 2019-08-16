@@ -34,9 +34,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
         mDataBinding.viewModel = mViewModel
 
-        LogHelper.i(TAG, "initView")
         initToolbar()
-
         // 初始化 ViewPager
         mDataBinding.viewPager.apply {
             adapter = MainPagerAdapter(supportFragmentManager, mFragmentFactory)

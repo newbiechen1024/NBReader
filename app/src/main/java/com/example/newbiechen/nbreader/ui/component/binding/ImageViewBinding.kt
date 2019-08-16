@@ -1,17 +1,25 @@
 package com.example.newbiechen.nbreader.ui.component.binding
 
+import android.text.TextUtils
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.example.newbiechen.nbreader.R
 
 object ImageViewBinding {
 
     @BindingAdapter("app:url")
     @JvmStatic
-    fun ImageView.loadImage(url: String) {
-        if (url.isEmpty()) {
+    fun ImageView.loadImage(url: String?) {
+        if (TextUtils.isEmpty(url)) {
             return
         }
-        Glide.with(context).load(url).override(200, 200).into(this)
+
+        Glide.with(context)
+            .load(url)
+            .placeholder(R.drawable.ic_image_load)
+            .error(R.drawable.ic_image_load_error)
+            .override(200, 200)
+            .into(this)
     }
 }

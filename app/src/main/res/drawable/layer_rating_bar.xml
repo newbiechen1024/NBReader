@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list>
+    <item xmlns:n1="http://schemas.android.com/apk/res/android" n1:id="@android:id/background"
+          n1:drawable="@drawable/ic_rating_disable"/>
+    <item xmlns:n2="http://schemas.android.com/apk/res/android" n2:id="@android:id/secondaryProgress"
+          n2:drawable="@drawable/ic_rating_disable"/>
+    <item xmlns:n3="http://schemas.android.com/apk/res/android" n3:id="@android:id/progress"
+          n3:drawable="@drawable/ic_rating_enable"/>
+</layer-list>

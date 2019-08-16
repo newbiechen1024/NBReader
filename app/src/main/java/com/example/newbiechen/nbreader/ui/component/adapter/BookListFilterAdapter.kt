@@ -87,15 +87,7 @@ class BookListFilterAdapter : RecyclerView.Adapter<BookListFilterAdapter.BookLis
             dataBinding.apply {
                 tvTitle.text = title
                 flFilter.apply {
-                    val tagAdapter = object : TagAdapter<String>(filters) {
-                        override fun getView(parent: FlowLayout?, position: Int, t: String?): View {
-                            val tvTag = LayoutInflater.from(parent!!.context)
-                                .inflate(R.layout.item_tag, parent, false) as TextView
-                            tvTag.text = t
-                            return tvTag
-                        }
-                    }
-
+                    val tagAdapter = SimpleTagAdapter(filters)
                     // 设置预选中的 tag
                     if (preSelectedList != null) {
                         tagAdapter.setSelectedList(preSelectedList.toSet())
