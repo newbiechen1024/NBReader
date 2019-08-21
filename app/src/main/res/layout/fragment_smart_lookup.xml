@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupViewModel"/>
+    </data>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_book_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="22dp"
+                android:paddingRight="22dp"
+                android:overScrollMode="never"
+                app:items="@{viewModel.bookInfoGroups}">
+        </androidx.recyclerview.widget.RecyclerView>
+        
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.isLoading() ? View.VISIBLE : View.GONE}"
+                android:background="@color/common_background"
+                android:text="@string/common_scanning"
+                android:textSize="@dimen/text_size_super_large"
+                android:gravity="center"/>
+    </RelativeLayout>
+</layout>

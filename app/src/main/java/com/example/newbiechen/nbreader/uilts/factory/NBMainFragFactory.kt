@@ -12,7 +12,7 @@ import com.example.newbiechen.nbreader.ui.page.find.FindFragment
 import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
 import javax.inject.Inject
 
-class NBFragmentFactory @Inject constructor() : FragmentFactory {
+class NBMainFragFactory @Inject constructor() : MainFragFactory {
     override fun getFragmentTitle(context: Context, index: Int): String {
         return context.getString(
             when (index) {

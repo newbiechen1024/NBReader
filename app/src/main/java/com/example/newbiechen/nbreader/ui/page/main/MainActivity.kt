@@ -1,15 +1,18 @@
 package com.example.newbiechen.nbreader.ui.page.main
 
 import android.view.Menu
+import android.view.MenuItem
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityMainBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.MainPagerAdapter
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import com.example.newbiechen.nbreader.uilts.factory.FragmentFactory
+import com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemActivity
+import com.example.newbiechen.nbreader.uilts.factory.MainFragFactory
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
+import com.yanzhenjie.permission.AndPermission
+import com.yanzhenjie.permission.runtime.Permission
 import com.youtubedl.ui.main.base.BaseBindingActivity
 import javax.inject.Inject
 
@@ -21,7 +24,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     // Fragment 工厂
     @Inject
-    lateinit var mFragmentFactory: FragmentFactory
+    lateinit var mFragmentFactory: MainFragFactory
     // ViewModel 工厂
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
@@ -69,6 +72,25 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
             }
         }
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item!!.itemId) {
+            R.id.main_add -> {
+                AndPermission.with(this)
+                    .runtime()
+                    .permission(Permission.Group.STORAGE[0])
+                    .onGranted {
+                        startActivity(FileSystemActivity::class)
+                    }
+                    .onDenied {
+                        // 暂时不处理
+                    }
+                    .start()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private val mTabSelectedListener = object : TabLayout.OnTabSelectedListener {

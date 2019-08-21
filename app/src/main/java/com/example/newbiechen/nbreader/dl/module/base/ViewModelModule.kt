@@ -7,6 +7,7 @@ import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailViewModel
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListViewModel
 import com.example.newbiechen.nbreader.ui.page.find.FindViewModel
 import com.example.newbiechen.nbreader.ui.page.main.MainViewModel
+import com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupViewModel
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import dagger.Binds
 import dagger.Module

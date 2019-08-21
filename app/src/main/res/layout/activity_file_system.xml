@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.text.Html"/>
+        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemViewModel"/>
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        
+        <!--toolbar-->
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorWhite"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/fl_content"
+                app:navigationIcon="@drawable/selector_back"
+                app:title="@null">
+            
+            <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/size_action_bar_title"
+                    android:drawableRight="@drawable/ic_drop_down_arrow"
+                    tools:text="@string/common_smart_import"/>
+        
+        </androidx.appcompat.widget.Toolbar>
+        
+        <!--fragment-->
+        <FrameLayout
+                android:id="@+id/fl_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintBottom_toTopOf="@id/rl_bottom"/>
+    
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_shadow"
+                android:background="@drawable/shape_shadow_bottom"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/rl_bottom"/>
+        <!--bottom-->
+        <RelativeLayout
+                android:id="@+id/rl_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/colorWhite"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fl_content"
+                app:layout_constraintBottom_toBottomOf="parent">
+            <TextView
+                    android:id="@+id/tv_select_book_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@{Html.fromHtml(String.format(@string/file_system_selected,viewModel.checkedCount))}"
+                    android:textColor="@color/colorBlack"
+                    android:layout_centerVertical="true"
+                    tools:text="已选  3  项"/>
+            
+            <TextView
+                    android:id="@+id/tv_checked_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:gravity="center"
+                    android:text="@{viewModel.isCheckedAll() ? @string/common_cancel_select_all : @string/common_select_all}"
+                    android:textColor="@color/colorBlack"
+                    android:layout_toRightOf="@id/tv_select_book_count"/>
+            
+            <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/common_delete"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textColor="@color/selector_text_enable"
+                    android:enabled="@{viewModel.checkedCount != 0}"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:layout_toLeftOf="@id/tv_add_bookshelf"/>
+            
+            <TextView
+                    android:id="@+id/tv_add_bookshelf"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:enabled="@{viewModel.checkedCount != 0}"
+                    android:background="@drawable/selector_bg_accent_enable"
+                    android:textColor="@color/colorWhite"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_size_normal"
+                    android:text="@string/common_add_bookshelf"
+                    android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

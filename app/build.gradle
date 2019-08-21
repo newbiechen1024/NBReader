@@ -90,8 +90,13 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     // flowlayout
     implementation 'com.hyman:flowlayout-lib:1.1.2'
-    // 下拉刷新
+    // 滑动刷新
     implementation 'com.github.jdsjlzx:LRecyclerView:1.5.4.3'
+    // 权限检测库
+    implementation 'com.yanzhenjie.permission:x:2.0.1'
+    // 汉字转拼音
+    implementation 'com.github.promeg:tinypinyin:2.0.3'
+
     // 测试
     testImplementation deps.testing.junit
     androidTestImplementation deps.testing.runner

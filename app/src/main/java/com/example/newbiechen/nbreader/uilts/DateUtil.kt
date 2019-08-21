@@ -10,10 +10,9 @@ import java.util.*
  *  description :
  */
 object DateUtil {
-
-    val FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss"
-    val FORMAT_TIME = "HH:mm"
-    val FORMAT_FILE_DATE = "yyyy-MM-dd"
+    const val FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss"
+    const val FORMAT_TIME = "HH:mm"
+    const val FORMAT_FILE_DATE = "yyyy-MM-dd"
 
     private const val TAG = "StringUtils"
     private const val HOUR_OF_DAY = 24

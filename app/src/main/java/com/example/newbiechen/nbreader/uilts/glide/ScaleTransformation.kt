@@ -33,7 +33,6 @@ class ScaleTransformation(private val scale: Float) : BitmapTransformation() {
         // 放大并绘制图片
         val paint = Paint().apply {
             flags = Paint.FILTER_BITMAP_FLAG
-            isAntiAlias = true
         }
 
         canvas.scale(scale, scale, toTransform.width / 2.0f, toTransform.height / 2.0f)

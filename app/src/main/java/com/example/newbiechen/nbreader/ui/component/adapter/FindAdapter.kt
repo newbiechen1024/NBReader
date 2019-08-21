@@ -1,18 +1,13 @@
 package com.example.newbiechen.nbreader.ui.component.adapter
 
-import android.graphics.Rect
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
 import com.example.newbiechen.nbreader.databinding.ItemFindBinding
-import com.example.newbiechen.nbreader.ui.page.base.adapter.SimpleBindingAdapter
-import com.example.newbiechen.nbreader.ui.page.base.adapter.IViewHolder
-import com.example.newbiechen.nbreader.ui.page.base.adapter.OnItemClickListener
+import com.example.newbiechen.nbreader.ui.component.adapter.base.SimpleBindingAdapter
+import com.example.newbiechen.nbreader.ui.component.adapter.base.IViewHolder
+import com.example.newbiechen.nbreader.ui.component.adapter.base.OnItemClickListener
 import com.example.newbiechen.nbreader.uilts.Constants
 
 class FindAdapter : SimpleBindingAdapter<CatalogEntity>() {

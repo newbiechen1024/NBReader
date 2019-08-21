@@ -1,6 +1,5 @@
-package com.example.newbiechen.nbreader.ui.page.base.adapter
+package com.example.newbiechen.nbreader.ui.component.adapter.base
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 

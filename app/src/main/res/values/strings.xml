@@ -11,43 +11,46 @@
     <string name="common_filter">筛选</string>
     <string name="common_retry">重试</string>
     <string name="common_loading">正在加载 ...</string>
-    
     <string name="common_catalog">类别</string>
     <string name="common_category">目录</string>
     <string name="common_status">状态</string>
     <string name="common_update_time">更新时间</string>
-    
     <string name="common_serial">连载</string>
     <string name="common_complete">完结</string>
-    
     <string name="common_popularity">人气</string>
     <string name="common_remain">留存</string>
     <string name="common_comment_rate">评分</string>
     <string name="common_word_count">字数</string>
-    
     <string name="common_book_detail">书籍详情</string>
-    
     <string name="common_ten_thousand">万</string>
     <string name="common_word">%1$s字</string>
     <string name="common_percent">%1$s %%</string>
-    
-    <string name="text_fold_tip">...
-        <Data><![CDATA[<font color='#0089EF'>展开</font>]]></Data>
-    </string>
-    
+    <string name="common_phone_catalog">手机目录</string>
+    <string name="common_smart_import">智能导入</string>
     <string name="common_add_collection">+ 添加收藏</string>
     <string name="common_start_read">开始阅读</string>
-    
+    <string name="common_add_bookshelf">加入书架</string>
+    <string name="common_select_all">全选</string>
+    <string name="common_cancel_select_all">取消全选</string>
+    <string name="common_delete">删除</string>
     <string name="common_brief">简介</string>
     <string name="common_label">标签</string>
+    <string name="common_scanning">扫描中 ...</string>
+    <string name="common_sort">排序</string>
     
     <string name="book_brief">%1$s | %2$s</string>
     <string name="book_hot">热度：%1$s</string>
     <string name="ten_thousand">%1$.2f 万</string>
     <string name="during_day">%1$d 天内</string>
-    
     <string name="tip_page_empty">暂无数据</string>
     <string name="tip_network_error">无法连接到网络，请重试</string>
     
     <string name="book_detail_category_brief">连载至%1$d章 • %2$s</string>
+    
+    <string name="text_fold_tip">...
+        <Data><![CDATA[<font color='#0089EF'>展开</font>]]></Data>
+    </string>
+    
+    <string name="file_system_selected">已选  <Data><![CDATA[<font color='#FE960E'>%1$d</font>]]></Data>  项
+    </string>
 </resources>

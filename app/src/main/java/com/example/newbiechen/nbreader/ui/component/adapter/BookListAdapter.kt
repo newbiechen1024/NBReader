@@ -2,19 +2,14 @@ package com.example.newbiechen.nbreader.ui.component.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.SimpleAdapter
 import androidx.databinding.ViewDataBinding
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.ItemBookListBinding
-import com.example.newbiechen.nbreader.ui.page.base.adapter.IViewHolder
-import com.example.newbiechen.nbreader.ui.page.base.adapter.SimpleBindingAdapter
+import com.example.newbiechen.nbreader.ui.component.adapter.base.IViewHolder
+import com.example.newbiechen.nbreader.ui.component.adapter.base.SimpleBindingAdapter
 import com.example.newbiechen.nbreader.uilts.Constants
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import com.example.newbiechen.nbreader.uilts.StringUtil
+import com.example.newbiechen.nbreader.uilts.NumberUtil
 
 /**
  *  author : newbiechen
@@ -44,7 +39,7 @@ class BookListAdapter : SimpleBindingAdapter<BookEntity>() {
                 brief = context.getString(R.string.book_brief, value.author, value.minorCate)
                 hot = context.getString(
                     R.string.book_hot,
-                    StringUtil.number2Str(context, value.latelyFollower)
+                    NumberUtil.convertNumber(context, value.latelyFollower.toLong())
                 )
 
                 executePendingBindings()

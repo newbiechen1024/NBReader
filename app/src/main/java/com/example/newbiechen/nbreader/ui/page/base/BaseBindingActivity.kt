@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import dagger.android.support.DaggerAppCompatActivity
+import kotlin.reflect.KClass
 
 /**
  * 由于使用到了 DaggerAppCompatActivity，创建的 Activity 必须在 ActivityBindingModule 进行注册
@@ -58,7 +59,7 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivit
         SystemBarUtil.transparentStatusBar(this)
     }
 
-    internal fun startActivity(cls: Class<in AppCompatActivity>) {
-        startActivity(Intent(this, cls))
+    internal fun startActivity(kCls: KClass<*>) {
+        startActivity(Intent(this, kCls.java))
     }
 }

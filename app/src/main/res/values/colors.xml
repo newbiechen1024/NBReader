@@ -7,16 +7,22 @@
     <color name="colorWhite">#FFFFFFFF</color>
     
     
-    <color name="text_orange">#fffe960e</color>
-    <color name="text_emphasized">#fffe960e</color>
+    <color name="text_orange">#FFFE960E</color>
+    <color name="text_emphasized">#FFFE960E</color>
     <color name="text_emphasized_light">#fff5a623</color>
+    <color name="text_disable">#59222222</color>
     
-    
+    <color name="light_pink">#fb9090</color>
+    <color name="light_white">#EEEEEE</color>
+    <color name="light_coffee">#A58D5E</color>
+    <color name="light_red">#EC4A48</color>
+    <color name="light_blue">#039BE5</color>
     <!--find-->
     <color name="common_background">#FCFCFC</color>
     
     <!--book_list-->
     <color name="bg_book_list_filter_sure">#fffe960e</color>
+    
     
     <!--tag-->
     <color name="bg_tag_normal">#EEEEEE</color>
@@ -26,4 +32,12 @@
     
     <color name="bg_divider">#F1F1F1</color>
     <color name="text_book_list_sort">#7A7A7A</color>
+    
+    <color name="type_txt">#ff60a6f8</color>
+    <color name="type_epub">#ff56bb36</color>
+    <color name="type_pdf">#ffe8554d</color>
+    <color name="type_mobi">#ffa45fdf</color>
+    
+    <color name="bg_accent">@color/text_orange</color>
+    <color name="bg_accent_disable">#59E79F42</color>
 </resources>

@@ -3,8 +3,8 @@ package com.example.newbiechen.nbreader.dl.module
 import com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfFragment
 import com.example.newbiechen.nbreader.ui.page.find.FindFragment
 import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
-import com.example.newbiechen.nbreader.uilts.factory.FragmentFactory
-import com.example.newbiechen.nbreader.uilts.factory.NBFragmentFactory
+import com.example.newbiechen.nbreader.uilts.factory.MainFragFactory
+import com.example.newbiechen.nbreader.uilts.factory.NBMainFragFactory
 import com.youtubedl.di.ActivityScoped
 import com.youtubedl.di.FragmentScoped
 import dagger.Binds
@@ -15,7 +15,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class MainModule {
     @ActivityScoped
     @Binds
-    abstract fun bindFragmentFactory(fragmentFactory: NBFragmentFactory): FragmentFactory
+    abstract fun bindFragmentFactory(fragmentFactory: NBMainFragFactory): MainFragFactory
 
     @FragmentScoped
     @ContributesAndroidInjector
