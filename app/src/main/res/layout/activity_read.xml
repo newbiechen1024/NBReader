@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <variable
+            name="viewModel"
+            type="com.example.newbiechen.nbreader.ui.page.read.ReadViewModel" />
+    </data>
+    
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/dl_slide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_read_menu"
+                app:enterAnim="@{viewModel.topInAnim}"
+                app:exitAnim="@{viewModel.topOutAnim}"
+                app:visible="@{viewModel.isShowMenu}">
+                
+                <!--标题-->
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    style="@style/NBToolbar" />
+            </com.google.android.material.appbar.AppBarLayout>
+            
+            <!--绘制内容-->
+            <Button
+                android:id="@+id/btn_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="打开" />
+            
+            <!--底部页面-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_bottom_menu"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/bg_read_menu"
+                android:clickable="true"
+                app:enterAnim="@{viewModel.bottomInAnim}"
+                app:exitAnim="@{viewModel.bottomOutAnim}"
+                app:visible="@{viewModel.isShowMenu}"
+                tools:visibility="visible">
+                
+                <TextView
+                    android:id="@+id/tv_prev_chapter"
+                    style="@style/NBTextAppearance.ReadMenu"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:text="@string/common_prev_chapter"
+                    app:layout_constraintBottom_toTopOf="@id/gl_read_bottom"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/sb_chapter"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <SeekBar
+                    android:id="@+id/sb_chapter"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:max="100"
+                    android:maxHeight="3dp"
+                    android:minHeight="3dp"
+                    android:progressDrawable="@drawable/bg_seek_ba_progress"
+                    android:thumb="@drawable/selector_seek_bar_thumb"
+                    android:thumbOffset="10dp"
+                    app:layout_constraintBottom_toTopOf="@id/gl_read_bottom"
+                    app:layout_constraintLeft_toRightOf="@id/tv_prev_chapter"
+                    app:layout_constraintRight_toLeftOf="@id/tv_next_chapter"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <TextView
+                    android:id="@+id/tv_next_chapter"
+                    style="@style/NBTextAppearance.ReadMenu"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="@string/common_next_chapter"
+                    app:layout_constraintBottom_toTopOf="@id/gl_read_bottom"
+                    app:layout_constraintLeft_toRightOf="@id/sb_chapter"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/gl_read_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="70dp" />
+                
+                <TextView
+                    android:id="@+id/tv_category"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:drawableTop="@drawable/ic_category"
+                    android:text="@string/common_category"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/tv_night_mode"
+                    app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
+                
+                <TextView
+                    android:id="@+id/tv_night_mode"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:drawableTop="@{viewModel.isNightMode ? @drawable/ic_sun : @drawable/ic_moon}"
+                    android:text="@{viewModel.isNightMode ? @string/common_morning : @string/common_night}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_category"
+                    app:layout_constraintRight_toLeftOf="@id/tv_setting"
+                    app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
+                
+                <TextView
+                    android:id="@+id/tv_setting"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:drawableTop="@drawable/ic_setting"
+                    android:text="@string/common_setting"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_night_mode"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
+            
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        </RelativeLayout>
+        
+        <!--侧滑栏-->
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorPrimary"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/common_category"
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp" />
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_category"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</layout>

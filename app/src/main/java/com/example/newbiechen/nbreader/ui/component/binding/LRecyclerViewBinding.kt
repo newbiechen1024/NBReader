@@ -19,7 +19,6 @@ object LRecyclerViewBinding {
     fun LRecyclerView.setBookList(bookList: List<BookEntity>) {
         var lAdapter = adapter as LRecyclerViewAdapter
         (lAdapter.innerAdapter as? BookListAdapter)?.refreshItems(bookList)
-
         // 通知数据加载完成
         // 默认设置为 21，传入参数主要用来处理数据未满一页的情况，不考虑这种情况，设置为 0 也是 ok 的。
         refreshComplete(21)

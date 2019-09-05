@@ -40,4 +40,10 @@
     
     <color name="bg_accent">@color/text_orange</color>
     <color name="bg_accent_disable">#59E79F42</color>
+    
+    <!--read-->
+    <color name="bg_read_menu">#191919</color>
+    <color name="text_read_menu">#CBCBCB</color>
+    
+    <color name="seek_bar_stroke">#1e000000</color>
 </resources>

@@ -6,6 +6,32 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorWhite</item>
         <item name="android:windowBackground">@color/common_background</item>
+    </style>
+    
+    <style name="NBToolbar" parent="ThemeOverlay.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:title">@null</item>
+    </style>
+    
+    <style name="NBToolbar.Light" parent="NBToolbar">
+        <item name="android:background">@color/colorWhite</item>
+        <item name="navigationIcon">@drawable/selector_back</item>
+    </style>
+    
+    <style name="NBTextAppearance"></style>
+    
+    <style name="NBTextAppearance.ReadMenu">
+        <item name="android:textColor">@color/text_read_menu</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    
+    <style name="NBTextAppearance.ReadMenuButton" parent="NBTextAppearance.ReadMenu">
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:gravity">center_horizontal|bottom</item>
     </style>
 </resources>

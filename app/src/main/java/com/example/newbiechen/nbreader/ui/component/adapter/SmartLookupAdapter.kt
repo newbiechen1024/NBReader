@@ -1,5 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.adapter
 
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.LongSparseArray
 import android.util.SparseArray
@@ -106,7 +107,6 @@ class SmartLookupAdapter : PinnedHeaderAdapter<String, BookInfo>() {
             mDataBinding.apply {
                 var typeBackground = root.resources.getDrawable(R.drawable.bg_book_type) as GradientDrawable
                 typeBackground.setColor(root.resources.getColor(colorId))
-
                 tvName.text = value.name
                 tvType.background = typeBackground
                 tvType.text = value.type.name

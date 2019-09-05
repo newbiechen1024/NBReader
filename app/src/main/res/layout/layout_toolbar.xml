@@ -18,6 +18,5 @@
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/size_action_bar_title"
                 tools:text="标题"/>
-    
     </androidx.appcompat.widget.Toolbar>
 </layout>

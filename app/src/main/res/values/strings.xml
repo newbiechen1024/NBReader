@@ -37,6 +37,12 @@
     <string name="common_label">标签</string>
     <string name="common_scanning">扫描中 ...</string>
     <string name="common_sort">排序</string>
+    <string name="common_night">夜间</string>
+    <string name="common_morning">日间</string>
+    <string name="common_setting">设置</string>
+    
+    <string name="common_prev_chapter">上一章</string>
+    <string name="common_next_chapter">下一章</string>
     
     <string name="book_brief">%1$s | %2$s</string>
     <string name="book_hot">热度：%1$s</string>

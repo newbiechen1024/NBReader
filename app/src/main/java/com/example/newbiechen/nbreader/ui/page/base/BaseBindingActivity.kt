@@ -1,12 +1,13 @@
 package com.youtubedl.ui.main.base
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.example.newbiechen.nbreader.ui.component.extension.overlayStatusBar
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import dagger.android.support.DaggerAppCompatActivity
 import kotlin.reflect.KClass
@@ -55,8 +56,11 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivit
     /**
      * 显示到 statusbar 上
      */
-    protected fun overStatusBar() {
+    protected fun overStatusBar(toolbar: Toolbar? = null) {
         SystemBarUtil.transparentStatusBar(this)
+        if (Build.VERSION.SDK_INT >= 19) {
+            toolbar?.overlayStatusBar()
+        }
     }
 
     internal fun startActivity(kCls: KClass<*>) {

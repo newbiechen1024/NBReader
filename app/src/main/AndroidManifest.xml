@@ -24,5 +24,6 @@
         <activity android:name=".ui.page.booklist.BookListActivity"/>
         <activity android:name=".ui.page.bookdetail.BookDetailActivity"/>
         <activity android:name=".ui.page.filesystem.FileSystemActivity"/>
+        <activity android:name=".ui.page.read.ReadActivity"/>
     </application>
 </manifest>

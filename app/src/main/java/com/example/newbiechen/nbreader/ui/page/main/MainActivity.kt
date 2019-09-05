@@ -1,13 +1,16 @@
 package com.example.newbiechen.nbreader.ui.page.main
 
+import android.os.Build
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.view.forEach
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityMainBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.MainPagerAdapter
 import com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemActivity
+import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.uilts.factory.MainFragFactory
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
@@ -34,10 +37,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun initContentView(): Int = R.layout.activity_main
 
     override fun initView() {
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
-        mDataBinding.viewModel = mViewModel
-
         initToolbar()
+
         // 初始化 ViewPager
         mDataBinding.viewPager.apply {
             adapter = MainPagerAdapter(supportFragmentManager, mFragmentFactory)
@@ -61,7 +62,18 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     private fun initToolbar() {
         setSupportActionBar(mDataBinding.toolbar)
         supportActionBar?.title = ""
+        overStatusBar(mDataBinding.toolbar)
+        // 设置 statusbar 字体为黑色
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SystemBarUtil.setFlag(this, View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
+        }
+    }
+
+    override fun processLogic() {
+        super.processLogic()
+        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
         mViewModel.curPageTitle.set(getString(R.string.common_book_shelf))
+        mDataBinding.viewModel = mViewModel
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
