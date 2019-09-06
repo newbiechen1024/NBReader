@@ -21,3 +21,10 @@ data class ReleasePageAction(
     val x: Int,
     val y: Int
 )
+
+data class TapPageAction(
+    val x: Int,
+    val y: Int
+)
+
+class ReadMenuAction

@@ -19,6 +19,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             
+            <!--绘制内容-->
+            <com.example.newbiechen.nbreader.ui.component.widget.page.PageView
+                android:id="@+id/pv_book"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+    
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -26,20 +32,12 @@
                 app:enterAnim="@{viewModel.topInAnim}"
                 app:exitAnim="@{viewModel.topOutAnim}"
                 app:visible="@{viewModel.isShowMenu}">
-                
+        
                 <!--标题-->
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     style="@style/NBToolbar" />
             </com.google.android.material.appbar.AppBarLayout>
-            
-            <!--绘制内容-->
-            <Button
-                android:id="@+id/btn_test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="打开" />
             
             <!--底部页面-->
             <androidx.constraintlayout.widget.ConstraintLayout

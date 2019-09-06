@@ -10,7 +10,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
  *  description :
  */
 
-class NonePageAnimation(pageManager: PageManager, view: View) : PageAnimation(view, pageManager) {
+class NonePageAnimation(view: View, pageManager: PageManager) : PageAnimation(view, pageManager) {
 
     override fun drawStatic(canvas: Canvas) {
         // 绘制当前页

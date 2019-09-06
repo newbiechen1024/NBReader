@@ -33,8 +33,15 @@ class PageManager(private var pageListener: OnPageListener) {
 
             // 等以后看情况是否 GC
             // System.gc()
+
+            // 通知页面改变
+            pageListener.onPageSizeChange(w, h)
         }
     }
+
+    fun getPageWidth() = mPageWidth
+
+    fun getPageHeight() = mPageHeight
 
     // 是否页面存在
     fun hasPage(type: PageType): Boolean {
@@ -108,6 +115,9 @@ class PageManager(private var pageListener: OnPageListener) {
     }
 
     interface OnPageListener {
+        // 页面改变监听
+        fun onPageSizeChange(w: Int, h: Int)
+
         // 是否页面存在
         fun hasPage(type: PageType): Boolean
 

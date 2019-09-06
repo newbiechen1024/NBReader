@@ -14,13 +14,22 @@ import kotlin.math.abs
 
 class SlidePageAnimation(view: View, pageManager: PageManager) : PageAnimation(view, pageManager) {
     // 图片在屏幕的可展示区域
-    private var mFromSpaceRect = Rect(0, 0, mViewWidth, mViewHeight)
+    private var mFromSpaceRect = Rect()
     // 选取图片的片段区域
-    private var mFromBitmapRect = Rect(0, 0, mViewWidth, mViewHeight)
+    private var mFromBitmapRect = Rect()
 
-    private var mToSpaceRect = Rect(0, 0, mViewWidth, mViewHeight)
+    private var mToSpaceRect = Rect()
 
-    private var mToBitmapRect = Rect(0, 0, mViewWidth, mViewHeight)
+    private var mToBitmapRect = Rect()
+
+    override fun setup(w: Int, h: Int) {
+        super.setup(w, h)
+        // 设置宽高
+        mFromSpaceRect.set(0, 0, w, h)
+        mFromBitmapRect.set(0, 0, w, h)
+        mToSpaceRect.set(0, 0, w, h)
+        mToBitmapRect.set(0, 0, w, h)
+    }
 
     override fun drawStatic(canvas: Canvas) {
         canvas.drawBitmap(getFromPage(), 0f, 0f, null)

@@ -7,6 +7,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -16,24 +17,29 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
  */
 
 abstract class PageAnimation(view: View, pageManager: PageManager) {
+    companion object {
+        private const val TAG = "PageAnimation"
+    }
+
     // 指定动画的视图
-    protected val mView = view
+    private val mView = view
     // 页面管理器
     // 动画滑动器
     protected val mScroller = Scroller(view.context, LinearInterpolator())
     // 动画方向
-    open protected var mDirection = Direction.NONE
+    protected open var mDirection = Direction.NONE
     // 动画状态
     protected var mStatus = Status.NONE
     //起始点
-    protected var mStartX: Float = 0f
-    protected var mStartY: Float = 0f
+    protected var mStartX: Int = 0
+    protected var mStartY: Int = 0
     //触碰点
-    protected var mTouchX: Float = 0f
-    protected var mTouchY: Float = 0f
+    protected open var mTouchX: Int = 0
+    protected open var mTouchY: Int = 0
+
     //上一个触碰点
-    protected var mLastX: Float = 0f
-    protected var mLastY: Float = 0f
+    protected var mLastX: Int = 0
+    protected var mLastY: Int = 0
 
     // 视图的宽高
     protected var mViewWidth = 0
@@ -54,10 +60,19 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
 
     // 设置宽高 ==> 因为宽高可变的
     open fun setup(w: Int, h: Int) {
+        if (w == 0 || h == 0
+            || mViewWidth == w || mViewHeight == h
+        ) {
+            return
+        }
+
         mViewWidth = w
         mViewHeight = h
 
-        // TODO：宽高重置，是否要重新绘制？？？
+
+        LogHelper.i(TAG, "setup: $mViewWidth  $mViewHeight")
+
+        abortAnim()
     }
 
     // 触碰页面
@@ -75,13 +90,13 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
         isCancel = false
     }
 
-    open protected fun setStartPoint(x: Int, y: Int) {
+    protected open fun setStartPoint(x: Int, y: Int) {
         // 设置起始点
-        mStartX = x.toFloat()
-        mStartY = y.toFloat()
+        mStartX = x
+        mStartY = y
         // 设置触碰点
-        mTouchX = x.toFloat()
-        mTouchY = y.toFloat()
+        mTouchX = x
+        mTouchY = y
     }
 
     // 滑动页面
@@ -129,12 +144,12 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
         mView.postInvalidate()
     }
 
-    open protected fun setTouchPoint(x: Int, y: Int) {
+    protected open fun setTouchPoint(x: Int, y: Int) {
         mLastX = mTouchX
         mLastY = mTouchY
 
-        mTouchX = x.toFloat()
-        mTouchY = y.toFloat()
+        mTouchX = x
+        mTouchY = y
     }
 
 
@@ -200,7 +215,7 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
     }
 
     // 实际翻页处理
-    open protected fun startAnimInternal(isCancelAnim: Boolean) {
+    protected open fun startAnimInternal(isCancelAnim: Boolean) {
         mStatus = if (isCancelAnim) Status.AutoBackward else Status.AutoForward
     }
 
@@ -254,7 +269,7 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
     }
 
     // 页面动画方向
-    enum class Direction private constructor(val isHorizontal: Boolean) {
+    enum class Direction constructor(val isHorizontal: Boolean) {
         NONE(true),
         PREVIOUS(true), // 上一页
         NEXT(true), // 下一页

@@ -1,6 +1,12 @@
 package com.example.newbiechen.nbreader.ui.component.widget.page
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**
@@ -16,10 +22,19 @@ import com.example.newbiechen.nbreader.uilts.TouchProcessor
  *  不过我还没有全部理解，所以比较好的方式还是先先到一起，然后慢慢分割。
  */
 
-class PageController : TouchProcessor.OnTouchListener, PageManager.OnPageListener {
+typealias PageActionListener = (action: Any) -> Unit
+
+class PageController(var context: Context) : TouchProcessor.OnTouchListener, PageManager.OnPageListener {
 
     private var mPageActionList = mutableSetOf<PageActionListener>()
 
+    private var mPageWidth = 0
+    private var mPageHeight = 0
+    private var mMenuRect = Rect()
+
+    companion object {
+        private const val TAG = "PageController"
+    }
 
     fun addPageActionListener(pageAction: PageActionListener) {
         mPageActionList.add(pageAction)
@@ -29,25 +44,20 @@ class PageController : TouchProcessor.OnTouchListener, PageManager.OnPageListene
         mPageActionList.remove(pageAction)
     }
 
-    override fun hasPage(type: PageType): Boolean {
-        return false
-    }
-
-    override fun drawPage(bitmap: Bitmap, type: PageType) {
-
-    }
-
     override fun onPress(x: Int, y: Int) {
-
+        dispatchAction(PressPageAction(x, y))
     }
 
     override fun onMove(x: Int, y: Int) {
+        dispatchAction(MovePageAction(x, y))
     }
 
     override fun onRelease(x: Int, y: Int) {
+        dispatchAction(ReleasePageAction(x, y))
     }
 
     override fun onLongPress(x: Int, y: Int) {
+
     }
 
     override fun onMoveAfterLongPress(x: Int, y: Int) {
@@ -57,15 +67,41 @@ class PageController : TouchProcessor.OnTouchListener, PageManager.OnPageListene
     }
 
     override fun onSingleTap(x: Int, y: Int) {
+        val action: Any = if (mMenuRect.contains(x, y)) {
+            ReadMenuAction()
+        } else {
+            // 检测当前点击区域是否
+            TapPageAction(x, y)
+        }
+
+        dispatchAction(action)
     }
 
     override fun onDoubleTap(x: Int, y: Int) {
     }
 
     override fun onCancelTap() {
+        // TODO:处理 cancel 的情况
     }
 
-    interface PageActionListener {
-        fun onPageAction(action: Any)
+    private fun dispatchAction(action: Any) {
+        mPageActionList.forEach {
+            it(action)
+        }
+    }
+
+    override fun onPageSizeChange(w: Int, h: Int) {
+        mPageWidth = w
+        mPageHeight = h
+        mMenuRect.set((w / 5), (h / 3), w * 4 / 5, h * 2 / 3)
+    }
+
+    override fun hasPage(type: PageType): Boolean {
+        return true
+    }
+
+    override fun drawPage(bitmap: Bitmap, type: PageType) {
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(context.resources.getColor(R.color.read_background))
     }
 }

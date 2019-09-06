@@ -46,4 +46,7 @@
     <color name="text_read_menu">#CBCBCB</color>
     
     <color name="seek_bar_stroke">#1e000000</color>
+    
+    <!--read-->
+    <color name="read_background">#FFCEC29C</color>
 </resources>

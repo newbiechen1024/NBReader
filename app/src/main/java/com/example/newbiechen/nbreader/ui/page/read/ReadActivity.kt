@@ -8,6 +8,9 @@ import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageAnimType
+import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.youtubedl.ui.main.base.BaseBindingActivity
 
@@ -18,6 +21,10 @@ import com.youtubedl.ui.main.base.BaseBindingActivity
  */
 
 class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickListener {
+
+    companion object {
+        private const val TAG = "ReadActivity"
+    }
 
     private lateinit var mViewModel: ReadViewModel
 
@@ -34,11 +41,18 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             hideSystemBar()
             // 初始化侧滑栏
             dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
             // 初始化点击事件
             tvCategory.setOnClickListener(this@ReadActivity)
             tvNightMode.setOnClickListener(this@ReadActivity)
             tvSetting.setOnClickListener(this@ReadActivity)
-            btnTest.setOnClickListener(this@ReadActivity)
+
+            // 添加页面事件回调
+            pvBook.addPageActionListener {
+                onPageAction(it)
+            }
+
+            pvBook.setPageAnim(PageAnimType.COVER)
         }
     }
 
@@ -79,6 +93,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             } else {
                 showSystemBar()
             }
+
             isShowMenu.set(!isShowMenu.get()!!)
         }
     }
@@ -92,9 +107,6 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     override fun onClick(v: View?) {
         mViewModel.apply {
             when (v!!.id) {
-                R.id.btn_test -> {
-                    toggleMenu()
-                }
                 R.id.tv_night_mode -> {
                     toggleNightMode()
                 }
@@ -107,6 +119,14 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 R.id.tv_setting -> {
                     // 创建 dialog
                 }
+            }
+        }
+    }
+
+    private fun onPageAction(action: Any) {
+        when (action) {
+            is ReadMenuAction -> {
+                toggleMenu()
             }
         }
     }

@@ -50,6 +50,8 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
     private var mIsRTandLB: Boolean = false // 是否属于右上左下
     private var mMaxLength: Float? = null
     private val mPaint: Paint = Paint()
+
+
     private lateinit var mBackShadowColors: IntArray// 背面颜色组
     private lateinit var mFrontShadowColors: IntArray// 前面颜色组
     private lateinit var mBackShadowDrawableLR: GradientDrawable // 有阴影的GradientDrawable
@@ -62,6 +64,22 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
     private lateinit var mFrontShadowDrawableVLR: GradientDrawable
     private lateinit var mFrontShadowDrawableVRL: GradientDrawable
 
+    private var mFloatTouchX: Float = 0f
+    private var mFloatTouchY: Float = 0f
+
+    // 将 int 类型转换成 float 类型
+    override var mTouchX: Int
+        get() = mFloatTouchX.toInt()
+        set(value) {
+            mFloatTouchX = value.toFloat()
+        }
+
+    override var mTouchY: Int
+        get() = mFloatTouchY.toInt()
+        set(value) {
+            mFloatTouchY = value.toFloat()
+        }
+
     override var mDirection: Direction = Direction.NONE
         get() = super.mDirection
         set(value) {
@@ -70,9 +88,9 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
                 Direction.PREVIOUS ->
                     //上一页滑动不出现对角
                     if (mStartX > mViewWidth / 2) {
-                        calcCornerXY(mStartX, mViewHeight.toFloat())
+                        calcCornerXY(mStartX, mViewHeight)
                     } else {
-                        calcCornerXY(mViewWidth - mStartX, mViewHeight.toFloat())
+                        calcCornerXY(mViewWidth - mStartX, mViewHeight)
                     }
                 Direction.NEXT -> if (mViewWidth / 2 > mStartX) {
                     calcCornerXY(mViewWidth - mStartX, mStartY)
@@ -86,8 +104,8 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         // 创建阴影
         createDrawable()
         // 不让x,y为0,否则在点计算时会有问题
-        mTouchX = 0.01f
-        mTouchY = 0.01f
+        mFloatTouchX = 0.01f
+        mFloatTouchY = 0.01f
     }
 
     private fun createDrawable() {
@@ -141,18 +159,18 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
 
     override fun setStartPoint(x: Int, y: Int) {
         super.setStartPoint(x, y)
-        calcCornerXY(x.toFloat(), y.toFloat())
+        calcCornerXY(x, y)
     }
 
     override fun setTouchPoint(x: Int, y: Int) {
         super.setTouchPoint(x, y)
         //触摸y中间位置吧y变成屏幕高度
         if (mStartY > mViewHeight / 3 && mStartY < mViewHeight * 2 / 3 || mDirection == Direction.PREVIOUS) {
-            mTouchY = mViewHeight.toFloat()
+            mFloatTouchY = mViewHeight.toFloat()
         }
 
         if (mStartY > mViewHeight / 3 && mStartY < mViewHeight / 2 && mDirection == Direction.NEXT) {
-            mTouchY = 1.toFloat()
+            mFloatTouchY = 1.toFloat()
         }
     }
 
@@ -182,40 +200,40 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
     override fun startAnimInternal(isCancelAnim: Boolean) {
         super.startAnimInternal(isCancelAnim)
 
-        var dx: Int
-        var dy: Int
+        var dx: Float
+        var dy: Float
         // dx 水平方向滑动的距离，负值会使滚动向左滚动
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
         if (mStatus == Status.AutoBackward) {
             dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
-                (mViewWidth - mTouchX).toInt()
+                (mViewWidth - mFloatTouchX)
             } else {
-                -mTouchX.toInt()
+                -mFloatTouchX
             }
 
             if (mDirection != Direction.NEXT) {
-                dx = -(mViewWidth + mTouchX).toInt()
+                dx = -(mViewWidth + mFloatTouchX)
             }
 
             dy = if (mCornerY > 0) {
-                (mViewHeight - mTouchY).toInt()
+                (mViewHeight - mFloatTouchY)
             } else {
-                -mTouchY.toInt() // 防止mTouchY最终变为0
+                -mFloatTouchY // 防止 mFloatTouchY 最终变为0
             }
         } else {
             dx = if (mCornerX > 0 && mDirection == Direction.NEXT) {
-                -(mViewWidth + mTouchX).toInt()
+                -(mViewWidth + mFloatTouchX)
             } else {
-                (mViewWidth - mTouchX + mViewWidth).toInt()
+                (mViewWidth - mFloatTouchX + mViewWidth)
             }
 
             dy = if (mCornerY > 0) {
-                (mViewHeight - mTouchY).toInt()
+                (mViewHeight - mFloatTouchY)
             } else {
-                (1 - mTouchY).toInt() // 防止mTouchY最终变为0
+                (1 - mFloatTouchY) // 防止 mFloatTouchY 最终变为0
             }
         }
-        mScroller.startScroll(mTouchX.toInt(), mTouchY.toInt(), dx, dy, 400)
+        mScroller.startScroll(mFloatTouchX.toInt(), mFloatTouchY.toInt(), dx.toInt(), dy.toInt(), 400)
     }
 
     /**
@@ -234,7 +252,7 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         mPath1.moveTo(mBezierVertex2.x, mBezierVertex2.y)
         mPath1.lineTo(mBezierVertex1.x, mBezierVertex1.y)
         mPath1.lineTo(mBezierEnd1.x, mBezierEnd1.y)
-        mPath1.lineTo(mTouchX, mTouchY)
+        mPath1.lineTo(mFloatTouchX, mFloatTouchY)
         mPath1.lineTo(mBezierEnd2.x, mBezierEnd2.y)
         mPath1.close()
         val mFolderShadowDrawable: GradientDrawable
@@ -304,22 +322,22 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
      */
     private fun drawCurrentPageShadow(canvas: Canvas) {
         val degree: Double = if (mIsRTandLB) {
-            Math.PI / 4 - atan2(mBezierControl1.y - mTouchY, mTouchX - mBezierControl1.x)
+            Math.PI / 4 - atan2(mBezierControl1.y - mFloatTouchY, mFloatTouchX - mBezierControl1.x)
         } else {
-            Math.PI / 4 - atan2(mTouchY - mBezierControl1.y, mTouchX - mBezierControl1.x)
+            Math.PI / 4 - atan2(mFloatTouchY - mBezierControl1.y, mFloatTouchX - mBezierControl1.x)
         }
         // 翻起页阴影顶点与touch点的距离
         val d1 = 25.toFloat().toDouble() * 1.414 * cos(degree)
         val d2 = 25.toFloat().toDouble() * 1.414 * sin(degree)
-        val x = (mTouchX + d1) as Float
+        val x = (mFloatTouchX + d1) as Float
         val y = if (mIsRTandLB) {
-            (mTouchY + d2) as Float
+            (mFloatTouchY + d2) as Float
         } else {
-            (mTouchY - d2) as Float
+            (mFloatTouchY - d2) as Float
         }
         mPath1.reset()
         mPath1.moveTo(x, y)
-        mPath1.lineTo(mTouchX, mTouchY)
+        mPath1.lineTo(mFloatTouchX, mFloatTouchY)
         mPath1.lineTo(mBezierControl1.x, mBezierControl1.y)
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.close()
@@ -345,7 +363,8 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
             mCurrentPageShadow = mFrontShadowDrawableVRL
         }
 
-        rotateDegrees = toDegrees(atan2(mTouchX - mBezierControl1.x, mBezierControl1.y - mTouchY).toDouble()).toFloat()
+        rotateDegrees =
+            toDegrees(atan2(mFloatTouchX - mBezierControl1.x, mBezierControl1.y - mFloatTouchY).toDouble()).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
             leftX,
@@ -357,7 +376,7 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
 
         mPath1.reset()
         mPath1.moveTo(x, y)
-        mPath1.lineTo(mTouchX, mTouchY)
+        mPath1.lineTo(mFloatTouchX, mFloatTouchY)
         mPath1.lineTo(mBezierControl2.x, mBezierControl2.y)
         mPath1.lineTo(mBezierStart2.x, mBezierStart2.y)
         mPath1.close()
@@ -377,7 +396,8 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
             rightY = (mBezierControl2.y + 1).toInt()
             mCurrentPageShadow = mFrontShadowDrawableHBT
         }
-        rotateDegrees = toDegrees(atan2(mBezierControl2.y - mTouchY, mBezierControl2.x - mTouchX).toDouble()).toFloat()
+        rotateDegrees =
+            toDegrees(atan2(mBezierControl2.y - mFloatTouchY, mBezierControl2.x - mFloatTouchX).toDouble()).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y)
         val temp: Float = if (mBezierControl2.y < 0)
             mBezierControl2.y - mViewHeight
@@ -453,7 +473,7 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
             mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x,
             mBezierEnd1.y
         )
-        mPath0.lineTo(mTouchX, mTouchY)
+        mPath0.lineTo(mFloatTouchX, mFloatTouchY)
         mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y)
         mPath0.quadTo(
             mBezierControl2.x, mBezierControl2.y, mBezierStart2.x,
@@ -474,15 +494,15 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
      * @param x
      * @param y
      */
-    fun calcCornerXY(x: Float, y: Float) {
+    fun calcCornerXY(x: Int, y: Int) {
         mCornerX = if (x <= mViewWidth / 2) 0 else mViewWidth
         mCornerY = if (y <= mViewHeight / 2) 0 else mViewHeight
         mIsRTandLB = (mCornerX == 0 && mCornerY == mViewHeight || mCornerX == mViewWidth && mCornerY == 0)
     }
 
     private fun calcPoints() {
-        mMiddleX = (mTouchX + mCornerX) / 2
-        mMiddleY = (mTouchY + mCornerY) / 2
+        mMiddleX = (mFloatTouchX + mCornerX) / 2
+        mMiddleY = (mFloatTouchY + mCornerY) / 2
         mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
         mBezierControl2.x = mCornerX.toFloat()
@@ -499,20 +519,20 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
 
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (mTouchX > 0 && mTouchX < mViewWidth) {
+        if (mFloatTouchX > 0 && mFloatTouchX < mViewWidth) {
             if (mBezierStart1.x < 0 || mBezierStart1.x > mViewWidth) {
                 if (mBezierStart1.x < 0)
                     mBezierStart1.x = mViewWidth - mBezierStart1.x
 
-                val f1 = abs(mCornerX - mTouchX)
+                val f1 = abs(mCornerX - mFloatTouchX)
                 val f2 = mViewWidth * f1 / mBezierStart1.x
-                mTouchX = abs(mCornerX - f2)
+                mFloatTouchX = abs(mCornerX - f2)
 
-                val f3 = abs(mCornerX - mTouchX) * abs(mCornerY - mTouchY) / f1
-                mTouchY = abs(mCornerY - f3)
+                val f3 = abs(mCornerX - mFloatTouchX) * abs(mCornerY - mFloatTouchY) / f1
+                mFloatTouchY = abs(mCornerY - f3)
 
-                mMiddleX = (mTouchX + mCornerX) / 2
-                mMiddleY = (mTouchY + mCornerY) / 2
+                mMiddleX = (mFloatTouchX + mCornerX) / 2
+                mMiddleY = (mFloatTouchY + mCornerY) / 2
 
                 mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
                 mBezierControl1.y = mCornerY.toFloat()
@@ -533,16 +553,16 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y) / 2
 
         mTouchToCornerDis = hypot(
-            mTouchX - mCornerX,
-            mTouchY - mCornerY
+            mFloatTouchX - mCornerX,
+            mFloatTouchY - mCornerY
         )
 
         mBezierEnd1 = getCross(
-            PointF(mTouchX, mTouchY), mBezierControl1, mBezierStart1,
+            PointF(mFloatTouchX, mFloatTouchY), mBezierControl1, mBezierStart1,
             mBezierStart2
         )
         mBezierEnd2 = getCross(
-            PointF(mTouchX, mTouchY), mBezierControl2, mBezierStart1,
+            PointF(mFloatTouchX, mFloatTouchY), mBezierControl2, mBezierStart1,
             mBezierStart2
         )
 
