@@ -18,11 +18,16 @@ class NonePageAnimation(view: View, pageManager: PageManager) : PageAnimation(vi
     }
 
     override fun drawMove(canvas: Canvas) {
-        canvas.drawBitmap(getToPage(), 0f, 0f, null)
+        canvas.drawBitmap(getFromPage(), 0f, 0f, null)
     }
 
     override fun startAnimInternal() {
-        // TODO:假装滑动  ==> 不知道有没有效果
-        mScroller.startScroll(0, 0, 0, 0, 100)
+        // 预加载 toPage todo: 放这里似乎不太妥当，下次找个比较好的地方吧
+        getToPage()
+
+        // 直接结束动画
+        finishAnim()
+
+        mView.postInvalidate()
     }
 }

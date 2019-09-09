@@ -25,7 +25,7 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
     }
 
     // 指定动画的视图
-    private val mView = view
+    protected val mView = view
     // 页面管理器
     // 动画滑动器
     protected val mScroller = Scroller(view.context, LinearInterpolator())
@@ -256,7 +256,8 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
     /**
      * 通知动画完成
      */
-    private fun finishAnim() {
+    protected fun finishAnim() {
+        LogHelper.i(TAG, "finishAnim: $mStatus    $mDirection")
         // 如果是恢复原样，则不交换页面
         if (mStatus == Status.AutoForward) {
             when (mDirection) {

@@ -5,6 +5,8 @@
     
     <data>
         
+        <import type="android.view.View" />
+        
         <variable
             name="viewModel"
             type="com.example.newbiechen.nbreader.ui.page.read.ReadViewModel" />
@@ -15,29 +17,48 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             
             <!--绘制内容-->
             <com.example.newbiechen.nbreader.ui.component.widget.page.PageView
                 android:id="@+id/pv_book"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-    
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
             <com.google.android.material.appbar.AppBarLayout
-                android:layout_width="match_parent"
+                android:id="@+id/abl_top_menu"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/bg_read_menu"
                 app:enterAnim="@{viewModel.topInAnim}"
                 app:exitAnim="@{viewModel.topOutAnim}"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:visible="@{viewModel.isShowMenu}">
-        
+                
                 <!--标题-->
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     style="@style/NBToolbar" />
             </com.google.android.material.appbar.AppBarLayout>
+            
+            <!--处理菜单的点击事件-->
+            <View
+                android:id="@+id/menu_frame"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{viewModel.isShowMenu ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toTopOf="@id/cl_bottom_menu"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/abl_top_menu" />
             
             <!--底部页面-->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +70,9 @@
                 android:clickable="true"
                 app:enterAnim="@{viewModel.bottomInAnim}"
                 app:exitAnim="@{viewModel.bottomOutAnim}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
                 app:visible="@{viewModel.isShowMenu}"
                 tools:visibility="visible">
                 
@@ -135,7 +159,7 @@
             
             </androidx.constraintlayout.widget.ConstraintLayout>
         
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
         
         <!--侧滑栏-->
         <LinearLayout

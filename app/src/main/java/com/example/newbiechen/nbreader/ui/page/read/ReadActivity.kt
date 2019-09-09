@@ -46,12 +46,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             tvCategory.setOnClickListener(this@ReadActivity)
             tvNightMode.setOnClickListener(this@ReadActivity)
             tvSetting.setOnClickListener(this@ReadActivity)
-
+            menuFrame.setOnClickListener(this@ReadActivity)
             // 添加页面事件回调
             pvBook.addPageActionListener {
                 onPageAction(it)
             }
-            pvBook.setPageAnim(PageAnimType.SIMULATION)
         }
     }
 
@@ -117,6 +116,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 }
                 R.id.tv_setting -> {
                     // 创建 dialog
+                }
+                R.id.menu_frame -> {
+                    toggleMenu()
                 }
             }
         }
