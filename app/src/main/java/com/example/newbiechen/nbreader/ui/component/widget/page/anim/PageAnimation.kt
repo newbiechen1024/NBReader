@@ -3,11 +3,13 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.example.newbiechen.nbreader.uilts.LogHelper
+import kotlin.math.abs
 
 /**
  *  author : newbiechen
@@ -19,6 +21,7 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
 abstract class PageAnimation(view: View, pageManager: PageManager) {
     companion object {
         private const val TAG = "PageAnimation"
+        private const val MIN_SCROLL_SLOP = 5
     }
 
     // 指定动画的视图
@@ -69,9 +72,6 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
         mViewWidth = w
         mViewHeight = h
 
-
-        LogHelper.i(TAG, "setup: $mViewWidth  $mViewHeight")
-
         abortAnim()
     }
 
@@ -90,7 +90,7 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
         isCancel = false
     }
 
-    protected open fun setStartPoint(x: Int, y: Int) {
+    private fun setStartPoint(x: Int, y: Int) {
         // 设置起始点
         mStartX = x
         mStartY = y
@@ -124,27 +124,30 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
                     if (mPageManager.hasPage(PageType.NEXT)) Direction.NEXT else Direction.NONE
                 }
             }
-
             // 请求翻页
-
         } else {
-            // 如果不是第一次滑动，判断是否取消滑动
-            when (mDirection) {
-                Direction.PREVIOUS -> {
-                    isCancel = x - mLastX < 0
-                }
-                Direction.NEXT -> {
-                    isCancel = x - mLastX > 0
+
+            // TODO:翻页灵敏度有问题 ==> 需要之后改
+            if (abs(x - mLastX) > MIN_SCROLL_SLOP) {
+                // 如果不是第一次滑动，判断是否取消滑动
+                when (mDirection) {
+                    Direction.PREVIOUS -> {
+                        isCancel = x - mLastX < 0
+                    }
+                    Direction.NEXT -> {
+                        isCancel = x - mLastX > 0
+                    }
                 }
             }
         }
+
         // 设置状态
         mStatus = Status.ManualMove
         // 请求刷新
         mView.postInvalidate()
     }
 
-    protected open fun setTouchPoint(x: Int, y: Int) {
+    private fun setTouchPoint(x: Int, y: Int) {
         mLastX = mTouchX
         mLastY = mTouchY
 
@@ -177,8 +180,9 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
                 mStatus = Status.NONE
             }
             else -> {
+                mStatus = if (isCancel) Status.AutoBackward else Status.AutoForward
                 // 启动动画
-                startAnimInternal(isCancel)
+                startAnimInternal()
             }
         }
 
@@ -215,9 +219,7 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
     }
 
     // 实际翻页处理
-    protected open fun startAnimInternal(isCancelAnim: Boolean) {
-        mStatus = if (isCancelAnim) Status.AutoBackward else Status.AutoForward
-    }
+    abstract fun startAnimInternal()
 
     // 取消动画
     fun abortAnim() {

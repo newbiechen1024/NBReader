@@ -51,8 +51,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             pvBook.addPageActionListener {
                 onPageAction(it)
             }
-
-            pvBook.setPageAnim(PageAnimType.COVER)
+            pvBook.setPageAnim(PageAnimType.SIMULATION)
         }
     }
 

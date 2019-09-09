@@ -4,8 +4,10 @@ import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import java.lang.Math.toDegrees
 import kotlin.math.*
+import kotlin.properties.Delegates
 
 /**
  *  author : newbiechen
@@ -14,6 +16,11 @@ import kotlin.math.*
  */
 
 class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimation(view, pageManager) {
+
+    companion object {
+        private const val TAG = "SimulationPageAnimation"
+    }
+
     private var mCornerX = 1 // 拖拽点对应的页脚
     private var mCornerY = 1
     private val mPath0: Path = Path()
@@ -29,10 +36,10 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
     private var mBezierVertex2 = PointF()
     private var mBezierEnd2 = PointF()
 
-    private var mMiddleX: Float = 0.toFloat()
-    private var mMiddleY: Float = 0.toFloat()
-    private var mDegrees: Float = 0.toFloat()
-    private var mTouchToCornerDis: Float = 0.toFloat()
+    private var mMiddleX: Float = 0f
+    private var mMiddleY: Float = 0f
+    private var mDegrees: Float = 0f
+    private var mTouchToCornerDis: Float = 0f
     private var mColorMatrixFilter: ColorMatrixColorFilter = ColorMatrixColorFilter(
         ColorMatrix(
             floatArrayOf(
@@ -78,25 +85,33 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         get() = mFloatTouchY.toInt()
         set(value) {
             mFloatTouchY = value.toFloat()
-        }
 
-    override var mDirection: Direction = Direction.NONE
-        get() = super.mDirection
-        set(value) {
-            field = value
-            when (value) {
-                Direction.PREVIOUS ->
-                    //上一页滑动不出现对角
-                    if (mStartX > mViewWidth / 2) {
-                        calcCornerXY(mStartX, mViewHeight)
-                    } else {
-                        calcCornerXY(mViewWidth - mStartX, mViewHeight)
-                    }
-                Direction.NEXT -> if (mViewWidth / 2 > mStartX) {
-                    calcCornerXY(mViewWidth - mStartX, mStartY)
-                }
+            // 限制范围
+            if (mStartY > mViewHeight / 3 && mStartY < mViewHeight * 2 / 3 || mDirection == Direction.PREVIOUS) {
+                mFloatTouchY = mViewHeight.toFloat()
+            }
+
+            if (mStartY > mViewHeight / 3 && mStartY < mViewHeight / 2 && mDirection == Direction.NEXT) {
+                mFloatTouchY = 1.0f
             }
         }
+
+    override var mDirection: Direction by Delegates.observable(Direction.NONE, { _, _, newValue ->
+        when (newValue) {
+            Direction.PREVIOUS ->
+                //上一页滑动不出现对角
+                if (mStartX > mViewWidth / 2) {
+                    calcCornerXY(mStartX, mViewHeight)
+                } else {
+                    calcCornerXY(mViewWidth - mStartX, mViewHeight)
+                }
+            Direction.NEXT -> if (mViewWidth / 2 > mStartX) {
+                calcCornerXY(mViewWidth - mStartX, mStartY)
+            } else {
+                calcCornerXY(mStartX, mStartY)
+            }
+        }
+    })
 
     init {
         // 初始化 paint
@@ -157,23 +172,6 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         mMaxLength = hypot(w.toDouble(), h.toDouble()).toFloat()
     }
 
-    override fun setStartPoint(x: Int, y: Int) {
-        super.setStartPoint(x, y)
-        calcCornerXY(x, y)
-    }
-
-    override fun setTouchPoint(x: Int, y: Int) {
-        super.setTouchPoint(x, y)
-        //触摸y中间位置吧y变成屏幕高度
-        if (mStartY > mViewHeight / 3 && mStartY < mViewHeight * 2 / 3 || mDirection == Direction.PREVIOUS) {
-            mFloatTouchY = mViewHeight.toFloat()
-        }
-
-        if (mStartY > mViewHeight / 3 && mStartY < mViewHeight / 2 && mDirection == Direction.NEXT) {
-            mFloatTouchY = 1.toFloat()
-        }
-    }
-
     override fun drawStatic(canvas: Canvas) {
         canvas.drawBitmap(getFromPage(), 0f, 0f, null)
     }
@@ -197,9 +195,7 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         }
     }
 
-    override fun startAnimInternal(isCancelAnim: Boolean) {
-        super.startAnimInternal(isCancelAnim)
-
+    override fun startAnimInternal() {
         var dx: Float
         var dy: Float
         // dx 水平方向滑动的距离，负值会使滚动向左滚动
@@ -329,11 +325,11 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
         // 翻起页阴影顶点与touch点的距离
         val d1 = 25.toFloat().toDouble() * 1.414 * cos(degree)
         val d2 = 25.toFloat().toDouble() * 1.414 * sin(degree)
-        val x = (mFloatTouchX + d1) as Float
+        val x = (mFloatTouchX + d1).toFloat()
         val y = if (mIsRTandLB) {
-            (mFloatTouchY + d2) as Float
+            (mFloatTouchY + d2).toFloat()
         } else {
-            (mFloatTouchY - d2) as Float
+            (mFloatTouchY - d2).toFloat()
         }
         mPath1.reset()
         mPath1.moveTo(x, y)
@@ -494,10 +490,11 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
      * @param x
      * @param y
      */
-    fun calcCornerXY(x: Int, y: Int) {
+    private fun calcCornerXY(x: Int, y: Int) {
         mCornerX = if (x <= mViewWidth / 2) 0 else mViewWidth
         mCornerY = if (y <= mViewHeight / 2) 0 else mViewHeight
-        mIsRTandLB = (mCornerX == 0 && mCornerY == mViewHeight || mCornerX == mViewWidth && mCornerY == 0)
+
+        mIsRTandLB = ((mCornerX == 0 && mCornerY == mViewHeight) || (mCornerX == mViewWidth && mCornerY == 0))
     }
 
     private fun calcPoints() {
@@ -561,6 +558,7 @@ class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimat
             PointF(mFloatTouchX, mFloatTouchY), mBezierControl1, mBezierStart1,
             mBezierStart2
         )
+
         mBezierEnd2 = getCross(
             PointF(mFloatTouchX, mFloatTouchY), mBezierControl2, mBezierStart1,
             mBezierStart2

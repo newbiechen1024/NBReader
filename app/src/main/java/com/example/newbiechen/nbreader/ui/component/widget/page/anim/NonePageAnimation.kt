@@ -21,8 +21,7 @@ class NonePageAnimation(view: View, pageManager: PageManager) : PageAnimation(vi
         canvas.drawBitmap(getToPage(), 0f, 0f, null)
     }
 
-    override fun startAnimInternal(isCancelAnim: Boolean) {
-        super.startAnimInternal(isCancelAnim)
+    override fun startAnimInternal() {
         // TODO:假装滑动  ==> 不知道有没有效果
         mScroller.startScroll(0, 0, 0, 0, 100)
     }

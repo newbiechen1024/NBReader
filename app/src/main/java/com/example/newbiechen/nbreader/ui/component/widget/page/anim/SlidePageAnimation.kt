@@ -45,14 +45,14 @@ class SlidePageAnimation(view: View, pageManager: PageManager) : PageAnimation(v
                     mStartX = mTouchX
                 }
 
-                mFromSpaceRect.right = mViewWidth - dis
-                mFromBitmapRect.left = dis
+                mFromSpaceRect.left = mViewWidth - dis
+                mFromBitmapRect.right = dis
 
-                mToSpaceRect.left = mViewWidth - dis
-                mToBitmapRect.right = dis
+                mToSpaceRect.right = mViewWidth - dis
+                mToBitmapRect.left = dis
 
-                canvas.drawBitmap(getFromPage(), mFromSpaceRect, mFromBitmapRect, null)
-                canvas.drawBitmap(getToPage(), mToSpaceRect, mToBitmapRect, null)
+                canvas.drawBitmap(getFromPage(), mToSpaceRect, mToBitmapRect, null)
+                canvas.drawBitmap(getToPage(), mFromSpaceRect, mFromBitmapRect, null)
             }
             Direction.NEXT -> {
                 //左半边的剩余区域
@@ -75,8 +75,7 @@ class SlidePageAnimation(view: View, pageManager: PageManager) : PageAnimation(v
         }
     }
 
-    override fun startAnimInternal(isCancelAnim: Boolean) {
-        super.startAnimInternal(isCancelAnim)
+    override fun startAnimInternal() {
         var dx = 0
         when (mDirection) {
             Direction.PREVIOUS -> dx = if (mStatus == Status.AutoBackward) {

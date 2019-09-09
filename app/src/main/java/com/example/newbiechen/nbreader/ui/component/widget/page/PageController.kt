@@ -3,10 +3,8 @@ package com.example.newbiechen.nbreader.ui.component.widget.page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
 import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**
@@ -102,6 +100,10 @@ class PageController(var context: Context) : TouchProcessor.OnTouchListener, Pag
 
     override fun drawPage(bitmap: Bitmap, type: PageType) {
         val canvas = Canvas(bitmap)
-        canvas.drawColor(context.resources.getColor(R.color.read_background))
+        val colorId = when (type) {
+            PageType.NEXT -> context.resources.getColor(R.color.read_background_1)
+            else -> context.resources.getColor(R.color.read_background_2)
+        }
+        canvas.drawColor(colorId)
     }
 }

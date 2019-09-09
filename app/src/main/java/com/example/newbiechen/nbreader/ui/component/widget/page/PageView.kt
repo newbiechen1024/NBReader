@@ -42,7 +42,6 @@ class PageView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         // 设置页面大小
         mPageManager.setPageSize(w, h)
-        LogHelper.i(TAG, "onSizeChanged: $w  $h")
         mPageAnim.setup(w, h)
     }
 

@@ -48,5 +48,6 @@
     <color name="seek_bar_stroke">#1e000000</color>
     
     <!--read-->
-    <color name="read_background">#FFCEC29C</color>
+    <color name="read_background_1">#FFCEC29C</color>
+    <color name="read_background_2">#FFCCEBCC</color>
 </resources>

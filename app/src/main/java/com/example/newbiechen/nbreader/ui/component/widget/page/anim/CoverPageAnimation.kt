@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.abs
 
 /**
@@ -18,6 +19,10 @@ class CoverPageAnimation(view: View, pageManager: PageManager) : PageAnimation(v
     private val mBackShadowDrawableLR: GradientDrawable
     private val mSpaceRect: Rect = Rect()
     private val mBitmapRect: Rect = Rect()
+
+    companion object {
+        private const val TAG = "CoverPageAnimation"
+    }
 
     init {
         val mBackShadowColors = intArrayOf(0x66000000, 0x00000000)
@@ -69,8 +74,7 @@ class CoverPageAnimation(view: View, pageManager: PageManager) : PageAnimation(v
         mBackShadowDrawableLR.draw(canvas)
     }
 
-    override fun startAnimInternal(isCancelAnim: Boolean) {
-        super.startAnimInternal(isCancelAnim)
+    override fun startAnimInternal() {
         var dx = 0
         when (mDirection) {
             Direction.PREVIOUS -> dx = if (mStatus == Status.AutoBackward) {
