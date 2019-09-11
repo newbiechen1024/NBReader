@@ -10,6 +10,12 @@
         <item name="android:windowBackground">@color/common_background</item>
     </style>
     
+    <style name="StandardSwitch" parent="TextAppearance.AppCompat.Widget.Switch">
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:thumb">@drawable/selector_switch_thumb</item>
+        <item name="android:track">@drawable/selector_switch_track</item>
+    </style>
+    
     <style name="NBToolbar" parent="ThemeOverlay.AppCompat">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?attr/actionBarSize</item>

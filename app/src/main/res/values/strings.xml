@@ -40,6 +40,13 @@
     <string name="common_night">夜间</string>
     <string name="common_morning">日间</string>
     <string name="common_setting">设置</string>
+    <string name="common_bright">亮度</string>
+    <string name="common_system_bright">系统亮度</string>
+    <string name="common_typeface">字体</string>
+    <string name="common_auto_read">自动翻页</string>
+    <string name="common_horizon_screen_mode">横屏模式</string>
+    <string name="common_vertical_screen_mode">竖屏模式</string>
+    <string name="common_more_setting">更多设置</string>
     
     <string name="common_prev_chapter">上一章</string>
     <string name="common_next_chapter">下一章</string>
@@ -59,4 +66,7 @@
     
     <string name="file_system_selected">已选  <Data><![CDATA[<font color='#FE960E'>%1$d</font>]]></Data>  项
     </string>
+    
+    <string name="read_setting_menu_tradition_chinese">繁</string>
+
 </resources>

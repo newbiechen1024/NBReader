@@ -31,6 +31,17 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             
+            <!--处理菜单的点击事件-->
+            <View
+                android:id="@+id/menu_frame"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="@{viewModel.isShowMenu || viewModel.isShowBrightMenu || viewModel.isShowSettingMenu ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/abl_top_menu"
                 android:layout_width="0dp"
@@ -49,18 +60,7 @@
                     style="@style/NBToolbar" />
             </com.google.android.material.appbar.AppBarLayout>
             
-            <!--处理菜单的点击事件-->
-            <View
-                android:id="@+id/menu_frame"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="@{viewModel.isShowMenu ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toTopOf="@id/cl_bottom_menu"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/abl_top_menu" />
-            
-            <!--底部页面-->
+            <!--底部菜单栏-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_bottom_menu"
                 android:layout_width="match_parent"
@@ -94,7 +94,7 @@
                     android:max="100"
                     android:maxHeight="3dp"
                     android:minHeight="3dp"
-                    android:progressDrawable="@drawable/bg_seek_ba_progress"
+                    android:progressDrawable="@drawable/bg_seek_bar_progress"
                     android:thumb="@drawable/selector_seek_bar_thumb"
                     android:thumbOffset="10dp"
                     app:layout_constraintBottom_toTopOf="@id/gl_read_bottom"
@@ -130,6 +130,18 @@
                     android:text="@string/common_category"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/tv_bright"
+                    app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
+                
+                <TextView
+                    android:id="@+id/tv_bright"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:drawableTop="@drawable/ic_bright"
+                    android:text="@string/common_bright"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_category"
                     app:layout_constraintRight_toLeftOf="@id/tv_night_mode"
                     app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
                 
@@ -141,7 +153,7 @@
                     android:drawableTop="@{viewModel.isNightMode ? @drawable/ic_sun : @drawable/ic_moon}"
                     android:text="@{viewModel.isNightMode ? @string/common_morning : @string/common_night}"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/tv_category"
+                    app:layout_constraintLeft_toRightOf="@id/tv_bright"
                     app:layout_constraintRight_toLeftOf="@id/tv_setting"
                     app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
                 
@@ -156,6 +168,218 @@
                     app:layout_constraintLeft_toRightOf="@id/tv_night_mode"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/gl_read_bottom" />
+            
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            
+            <!--底部亮度菜单栏-->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_read_menu"
+                android:orientation="vertical"
+                app:enterAnim="@{viewModel.bottomInAnim}"
+                app:exitAnim="@{viewModel.bottomOutAnim}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:visible="@{viewModel.isShowBrightMenu}"
+                tools:visibility="gone">
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/padding_horizon_read_bright_menu"
+                    android:paddingVertical="@dimen/padding_vertical_read_bright_menu">
+                    
+                    <ImageView
+                        android:id="@+id/iv_bright_minus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:src="@drawable/ic_bright_small" />
+                    
+                    <SeekBar
+                        android:id="@+id/sb_bright"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:maxHeight="3dp"
+                        android:minHeight="3dp"
+                        android:progressDrawable="@drawable/bg_seek_bar_progress"
+                        android:thumb="@drawable/selector_seek_bar_thumb"
+                        android:thumbOffset="10dp" />
+                    
+                    <ImageView
+                        android:id="@+id/iv_bright_plus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:src="@drawable/ic_bright_large" />
+                </LinearLayout>
+                
+                <View
+                    android:id="@+id/divider_bright"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/space_default_deliver"
+                    android:background="@color/read_bright_menu_divider" />
+                
+                <Switch
+                    android:id="@+id/switch_system_bright"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/padding_horizon_read_bright_menu"
+                    android:paddingTop="@dimen/padding_vertical_read_bright_menu"
+                    android:paddingRight="@dimen/padding_horizon_read_bright_menu"
+                    android:paddingBottom="@dimen/padding_vertical_read_bright_menu"
+                    android:text="@string/common_system_bright"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/colorWhite"
+                    android:thumb="@drawable/selector_switch_thumb"
+                    android:track="@drawable/selector_switch_track" />
+            </LinearLayout>
+            
+            <!--底部设置菜单栏-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/bg_read_menu"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="@dimen/margin_read_setting_menu_list"
+                app:enterAnim="@{viewModel.bottomInAnim}"
+                app:exitAnim="@{viewModel.bottomOutAnim}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:visible="@{viewModel.isShowSettingMenu}"
+                tools:visibility="gone">
+                
+                <ImageView
+                    android:id="@+id/iv_font_minus"
+                    android:layout_width="@dimen/width_vertical_read_setting_menu_image"
+                    android:layout_height="@dimen/height_vertical_read_setting_menu_item"
+                    android:background="@drawable/shape_read_setting_item_normal"
+                    android:paddingVertical="6dp"
+                    android:src="@drawable/ic_font_size_minus"
+                    app:layout_constraintRight_toLeftOf="@id/tv_font_size"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+                <TextView
+                    android:id="@+id/tv_font_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="40"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_font_minus"
+                    app:layout_constraintLeft_toRightOf="@id/iv_font_minus"
+                    app:layout_constraintRight_toLeftOf="@id/iv_font_plus"
+                    app:layout_constraintTop_toTopOf="@id/iv_font_minus" />
+                
+                <ImageView
+                    android:id="@+id/iv_font_plus"
+                    android:layout_width="@dimen/width_vertical_read_setting_menu_image"
+                    android:layout_height="0dp"
+                    android:background="@drawable/shape_read_setting_item_normal"
+                    android:paddingVertical="6dp"
+                    android:src="@drawable/ic_font_size_plus"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_font_minus"
+                    app:layout_constraintLeft_toRightOf="@id/tv_font_size"
+                    app:layout_constraintRight_toLeftOf="@id/tv_traditional_chinese"
+                    app:layout_constraintTop_toTopOf="@id/iv_font_minus" />
+                
+                <TextView
+                    android:id="@+id/tv_traditional_chinese"
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selector_read_setting_menu"
+                    android:gravity="center"
+                    android:paddingHorizontal="18dp"
+                    android:text="@string/read_setting_menu_tradition_chinese"
+                    android:textColor="@color/selector_read_setting_menu"
+                    android:textSize="@dimen/text_size_small"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_font_minus"
+                    app:layout_constraintLeft_toRightOf="@id/iv_font_plus"
+                    app:layout_constraintRight_toLeftOf="@id/tv_typeface"
+                    app:layout_constraintTop_toTopOf="@id/iv_font_minus" />
+                
+                <TextView
+                    android:id="@+id/tv_typeface"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selector_read_setting_menu"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="@string/common_typeface"
+                    android:textColor="@color/selector_read_setting_menu"
+                    android:textSize="@dimen/text_size_small"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_font_minus"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_traditional_chinese"
+                    app:layout_constraintTop_toTopOf="@id/iv_font_minus" />
+                
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_read_anim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_read_setting_menu_list"
+                    app:layout_constraintBottom_toTopOf="@id/rv_read_background"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_font_minus" />
+                
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_read_background"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_read_setting_menu_list"
+                    app:layout_constraintBottom_toTopOf="@id/tv_auto_read"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rv_read_anim" />
+                
+                <TextView
+                    android:id="@+id/tv_auto_read"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_read_setting_menu_button"
+                    android:layout_marginTop="@dimen/margin_read_setting_menu_list"
+                    android:drawableTop="@drawable/ic_read_menu_auto_read"
+                    android:text="@string/common_auto_read"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/tv_horizon_screen"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rv_read_background" />
+                
+                <TextView
+                    android:id="@+id/tv_horizon_screen"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_read_setting_menu_button"
+                    android:drawableTop="@drawable/ic_read_menu_screen"
+                    android:text="@string/common_horizon_screen_mode"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_auto_read"
+                    app:layout_constraintRight_toLeftOf="@id/tv_more_setting"
+                    app:layout_constraintTop_toTopOf="@id/tv_auto_read" />
+                
+                <TextView
+                    android:id="@+id/tv_more_setting"
+                    style="@style/NBTextAppearance.ReadMenuButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_read_setting_menu_button"
+                    android:drawableTop="@drawable/ic_read_menu_more"
+                    android:text="@string/common_more_setting"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/tv_horizon_screen"
+                    app:layout_constraintTop_toTopOf="@id/tv_auto_read" />
             
             </androidx.constraintlayout.widget.ConstraintLayout>
         
@@ -185,7 +409,7 @@
                 android:id="@+id/rv_category"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"></androidx.recyclerview.widget.RecyclerView>
+                android:layout_weight="1" />
         </LinearLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

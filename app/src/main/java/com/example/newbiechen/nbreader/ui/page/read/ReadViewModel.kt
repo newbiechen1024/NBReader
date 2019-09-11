@@ -18,6 +18,8 @@ class ReadViewModel : ViewModel() {
 
     val isNightMode = ObservableField(false)
     val isShowMenu = ObservableField(false)
+    val isShowBrightMenu = ObservableField(false)
+    val isShowSettingMenu = ObservableField(false)
 
     val topInAnim = ObservableField<Animation>()
     val topOutAnim = ObservableField<Animation>()

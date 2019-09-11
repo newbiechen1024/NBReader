@@ -10,10 +10,10 @@
     <dimen name="text_size_more_large">20sp</dimen>
     <dimen name="text_size_super_large">24dp</dimen>
     <dimen name="height_shadow">5dp</dimen>
+    <dimen name="radius_corner">30dp</dimen>
     
     <!--Find 页面-->
     <dimen name="item_find_space">16dp</dimen>
-    
     
     <!--BookList 页面-->
     <dimen name="height_book_list_filter_btn">44dp</dimen>
@@ -26,4 +26,14 @@
     <dimen name="padding_vertical_book_detail">10dp</dimen>
     <dimen name="margin_book_detail_space">14dp</dimen>
     <dimen name="height_book_detail_title">290dp</dimen>
+    
+    <!--read bright menu-->
+    <dimen name="padding_horizon_read_bright_menu">16dp</dimen>
+    <dimen name="padding_vertical_read_bright_menu">20dp</dimen>
+    
+    <!--read setting menu-->
+    <dimen name="width_vertical_read_setting_menu_image">80dp</dimen>
+    <dimen name="height_vertical_read_setting_menu_item">36dp</dimen>
+    <dimen name="height_read_setting_menu_button">74dp</dimen>
+    <dimen name="margin_read_setting_menu_list">20dp</dimen>
 </resources>

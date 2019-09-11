@@ -42,11 +42,30 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             // 初始化侧滑栏
             dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
+            // 允许手势关闭侧滑栏
+            dlSlide.addDrawerListener(object : DrawerLayout.DrawerListener {
+                override fun onDrawerStateChanged(newState: Int) {
+                }
+
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                }
+
+                override fun onDrawerClosed(drawerView: View) {
+                    dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+
+                override fun onDrawerOpened(drawerView: View) {
+                    dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+            })
+
             // 初始化点击事件
             tvCategory.setOnClickListener(this@ReadActivity)
             tvNightMode.setOnClickListener(this@ReadActivity)
             tvSetting.setOnClickListener(this@ReadActivity)
+            tvBright.setOnClickListener(this@ReadActivity)
             menuFrame.setOnClickListener(this@ReadActivity)
+
             // 添加页面事件回调
             pvBook.addPageActionListener {
                 onPageAction(it)
@@ -116,9 +135,19 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 }
                 R.id.tv_setting -> {
                     // 创建 dialog
+                    isShowMenu.set(false)
+                    isShowSettingMenu.set(true)
+                }
+                R.id.tv_bright -> {
+                    isShowMenu.set(false)
+                    isShowBrightMenu.set(true)
                 }
                 R.id.menu_frame -> {
-                    toggleMenu()
+                    when {
+                        isShowSettingMenu.get()!! -> isShowSettingMenu.set(false)
+                        isShowBrightMenu.get()!! -> isShowBrightMenu.set(false)
+                        else -> toggleMenu()
+                    }
                 }
             }
         }

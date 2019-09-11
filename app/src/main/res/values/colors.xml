@@ -5,7 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBlack">#FF000000</color>
     <color name="colorWhite">#FFFFFFFF</color>
-    
+    <color name="colorTransparent">@android:color/transparent</color>
     
     <color name="text_orange">#FFFE960E</color>
     <color name="text_emphasized">#FFFE960E</color>
@@ -50,4 +50,10 @@
     <!--read-->
     <color name="read_background_1">#FFCEC29C</color>
     <color name="read_background_2">#FFCCEBCC</color>
+    
+    <color name="switch_thumb_on">@color/colorPrimary</color>
+    <color name="switch_thumb_off">@color/colorWhite</color>
+    <color name="switch_track_on">#59FE960E</color>
+    <color name="switch_track_off">#B9B9B9</color>
+    <color name="read_bright_menu_divider">#424242</color>
 </resources>
