@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
 import com.example.newbiechen.nbreader.ui.component.adapter.FindAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter
-import com.example.newbiechen.nbreader.uilts.mediastore.BookInfo
+import com.example.newbiechen.nbreader.uilts.mediastore.LocalBookInfo
 
 object RecyclerViewBinding {
 
@@ -19,7 +19,7 @@ object RecyclerViewBinding {
 
     @BindingAdapter("app:items")
     @JvmStatic
-    fun RecyclerView.setBookInfoGroup(groups: List<Pair<String, List<BookInfo>>>?) {
+    fun RecyclerView.setBookInfoGroup(groups: List<Pair<String, List<LocalBookInfo>>>?) {
         if (groups == null) {
             return
         }

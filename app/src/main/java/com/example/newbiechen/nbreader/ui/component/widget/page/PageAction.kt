@@ -6,25 +6,34 @@ package com.example.newbiechen.nbreader.ui.component.widget.page
  *  description :页面行为的集合
  */
 
-// 点击页面事件
+// 下压页面事件
 data class PressPageAction(
     val x: Int,
     val y: Int
 )
 
+// 移动页面事件
 data class MovePageAction(
     val x: Int,
     val y: Int
 )
 
+// 释放页面事件
 data class ReleasePageAction(
     val x: Int,
     val y: Int
 )
 
+// 单击页面事件
 data class TapPageAction(
     val x: Int,
     val y: Int
 )
 
+// 翻页事件
+data class TurnPageAction(
+    val pageType: PageType
+)
+
+// 点击页面菜单事件
 class ReadMenuAction

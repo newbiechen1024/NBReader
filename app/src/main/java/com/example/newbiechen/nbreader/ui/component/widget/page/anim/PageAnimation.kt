@@ -257,7 +257,6 @@ abstract class PageAnimation(view: View, pageManager: PageManager) {
      * 通知动画完成
      */
     protected fun finishAnim() {
-        LogHelper.i(TAG, "finishAnim: $mStatus    $mDirection")
         // 如果是恢复原样，则不交换页面
         if (mStatus == Status.AutoForward) {
             when (mDirection) {

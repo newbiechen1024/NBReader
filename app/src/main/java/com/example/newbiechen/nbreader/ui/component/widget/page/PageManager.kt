@@ -101,6 +101,8 @@ class PageManager(private var pageListener: OnPageListener) {
                 continue
             }
             mBitmapTypes[i] = if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
+            // 通知回调
+            pageListener.onPageTurn(if (isNext) PageType.NEXT else PageType.PREVIOUS)
         }
     }
 
@@ -117,6 +119,9 @@ class PageManager(private var pageListener: OnPageListener) {
     interface OnPageListener {
         // 页面改变监听
         fun onPageSizeChange(w: Int, h: Int)
+
+        // 通知翻页
+        fun onPageTurn(pageType: PageType)
 
         // 是否页面存在
         fun hasPage(type: PageType): Boolean

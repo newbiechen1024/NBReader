@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.data.other
+package com.example.newbiechen.nbreader.ui.component.book.type
 
 /**
  *  author : newbiechen

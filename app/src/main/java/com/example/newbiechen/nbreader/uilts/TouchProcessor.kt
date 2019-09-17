@@ -12,7 +12,7 @@ import kotlin.math.abs
  *  description : 点击事件处理器
  */
 
-class TouchProcessor(context: Context, var fingerTouch: OnTouchListener) {
+class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener) {
     // 是否允许双击
     var isEnableDoubleTap = false
     // 延迟按下标记

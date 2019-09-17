@@ -7,8 +7,7 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.annotation.NonNull
 import androidx.loader.content.CursorLoader
-import com.example.newbiechen.nbreader.data.other.BookType
-import com.example.newbiechen.nbreader.uilts.LogHelper
+import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import java.io.File
 import java.lang.StringBuilder
 import java.sql.Blob
@@ -59,8 +58,8 @@ class LocalBookLoader constructor(context: Context) :
         sortOrder = FILE_ORDER
     }
 
-    fun parseData(cursor: Cursor?): List<BookInfo> {
-        val bookInfos = mutableListOf<BookInfo>()
+    fun parseData(cursor: Cursor?): List<LocalBookInfo> {
+        val bookInfos = mutableListOf<LocalBookInfo>()
         if (cursor == null) {
             return bookInfos
         }
@@ -93,7 +92,7 @@ class LocalBookLoader constructor(context: Context) :
             }
 
             // 时间统一转换成 ms
-            val bookInfo = BookInfo(id, name, bookType, size, createTime * 1000, path)
+            val bookInfo = LocalBookInfo(id, name, bookType, size, createTime * 1000, path)
             bookInfos.add(bookInfo)
         }
         return bookInfos
@@ -181,7 +180,7 @@ class LocalBookLoader constructor(context: Context) :
     }
 }
 
-data class BookInfo(
+data class LocalBookInfo(
     val id: Long,
     val name: String, // 书籍名
     val type: BookType, // 书籍类型

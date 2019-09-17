@@ -22,7 +22,7 @@ import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 typealias PageActionListener = (action: Any) -> Unit
 
-class PageController(var context: Context) : TouchProcessor.OnTouchListener, PageManager.OnPageListener {
+class PageController(private var pageView: PageView) : TouchProcessor.OnTouchListener, PageManager.OnPageListener {
 
     private var mPageActionList = mutableSetOf<PageActionListener>()
 
@@ -94,6 +94,13 @@ class PageController(var context: Context) : TouchProcessor.OnTouchListener, Pag
         mMenuRect.set((w / 5), (h / 3), w * 4 / 5, h * 2 / 3)
     }
 
+    override fun onPageTurn(pageType: PageType) {
+        // 处理翻页
+
+        // 发送页面翻页事件
+        dispatchAction(TurnPageAction(pageType))
+    }
+
     override fun hasPage(type: PageType): Boolean {
         return true
     }
@@ -101,8 +108,8 @@ class PageController(var context: Context) : TouchProcessor.OnTouchListener, Pag
     override fun drawPage(bitmap: Bitmap, type: PageType) {
         val canvas = Canvas(bitmap)
         val colorId = when (type) {
-            PageType.NEXT -> context.resources.getColor(R.color.read_background_1)
-            else -> context.resources.getColor(R.color.read_background_2)
+            PageType.NEXT -> pageView.context.resources.getColor(R.color.read_background_1)
+            else -> pageView.context.resources.getColor(R.color.read_background_2)
         }
         canvas.drawColor(colorId)
     }

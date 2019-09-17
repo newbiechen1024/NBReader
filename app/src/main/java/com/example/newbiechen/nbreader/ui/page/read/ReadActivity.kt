@@ -5,14 +5,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
+import com.example.newbiechen.nbreader.ui.component.book.BookManager
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageAnimType
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.youtubedl.ui.main.base.BaseBindingActivity
+import javax.inject.Inject
 
 /**
  *  author : newbiechen
@@ -25,6 +25,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     companion object {
         private const val TAG = "ReadActivity"
     }
+
+    @Inject
+    lateinit var mBookManager: BookManager
 
     private lateinit var mViewModel: ReadViewModel
 
@@ -70,6 +73,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             pvBook.addPageActionListener {
                 onPageAction(it)
             }
+
+            // 初始化 BookManager
+            mBookManager.initPageController(pvBook.getPageController())
+
+            // 加载本地书籍
         }
     }
 
@@ -85,14 +93,19 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         // SystemBarUtil.hideStableNavBar(this)
     }
 
-
     override fun processLogic() {
         super.processLogic()
         mViewModel = ViewModelProviders.of(this).get(ReadViewModel::class.java)
         // 需要对 viewmodel 做一次初始化操作
         mViewModel.init(this)
-
         mDataBinding.viewModel = mViewModel
+    }
+
+    private fun openBook() {
+        // 根据 intent 获取 book 信息
+        // 将 book 信息转换成 Book 对象
+        // 判断该 Book 对象对应的文件是否存在
+        // 等待 BookCursor Service 开启，并调用 BookManager 的 openBook()
     }
 
     override fun onBackPressed() {

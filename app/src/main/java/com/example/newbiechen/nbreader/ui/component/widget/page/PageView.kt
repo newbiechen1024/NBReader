@@ -25,7 +25,8 @@ class PageView @JvmOverloads constructor(
         private const val TAG = "PageView"
     }
 
-    private var mPageController = PageController(context).also {
+    // 页面控制器
+    private var mPageController = PageController(this).also {
         it.addPageActionListener(this::onDispatchAction)
     }
 
@@ -55,6 +56,8 @@ class PageView @JvmOverloads constructor(
         // 绘制动画
         mPageAnim.draw(canvas!!)
     }
+
+    fun getPageController() = mPageController
 
     /**
      * 设置页面动画类型

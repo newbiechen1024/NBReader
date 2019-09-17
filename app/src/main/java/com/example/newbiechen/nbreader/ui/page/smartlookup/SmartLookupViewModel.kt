@@ -4,7 +4,7 @@ import android.text.TextUtils
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import com.example.newbiechen.nbreader.uilts.mediastore.BookInfo
+import com.example.newbiechen.nbreader.uilts.mediastore.LocalBookInfo
 import com.example.newbiechen.nbreader.uilts.mediastore.MediaStoreHelper
 import com.github.promeg.pinyinhelper.Pinyin
 
@@ -16,7 +16,7 @@ import com.github.promeg.pinyinhelper.Pinyin
 
 class SmartLookupViewModel : ViewModel() {
     val isLoading = ObservableField(true)
-    val bookInfoGroups = ObservableField<List<Pair<String, List<BookInfo>>>>()
+    val bookInfoGroups = ObservableField<List<Pair<String, List<LocalBookInfo>>>>()
     /**
      * 加载本地书籍
      */
@@ -37,7 +37,7 @@ class SmartLookupViewModel : ViewModel() {
         var groups = bookInfoGroups.get()
         if (groups != null) {
             for (i in 0 until groups.size) {
-                var bookInfoIt = (groups[i].second as MutableList<BookInfo>).iterator()
+                var bookInfoIt = (groups[i].second as MutableList<LocalBookInfo>).iterator()
                 // 遍历 bookInfo
                 while (bookInfoIt.hasNext()) {
                     var bookInfo = bookInfoIt.next()
@@ -52,13 +52,13 @@ class SmartLookupViewModel : ViewModel() {
         }
     }
 
-    private fun createGroupByLetter(bookInfos: List<BookInfo>): List<Pair<String, List<BookInfo>>> {
+    private fun createGroupByLetter(bookInfos: List<LocalBookInfo>): List<Pair<String, List<LocalBookInfo>>> {
         // TODO：是否应该异步处理？？
 
         var curGroupType: String? = null
-        var groupList: MutableList<Pair<String, List<BookInfo>>> = mutableListOf()
-        var groupItem: Pair<String, List<BookInfo>>? = null
-        var itemList: MutableList<BookInfo>? = null
+        var groupList: MutableList<Pair<String, List<LocalBookInfo>>> = mutableListOf()
+        var groupItem: Pair<String, List<LocalBookInfo>>? = null
+        var itemList: MutableList<LocalBookInfo>? = null
         bookInfos.forEach {
             var type = Pinyin.toPinyin(it.name[0])
             // 如果 type 为空则不处理

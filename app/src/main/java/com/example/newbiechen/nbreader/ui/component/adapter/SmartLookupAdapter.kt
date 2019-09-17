@@ -1,25 +1,21 @@
 package com.example.newbiechen.nbreader.ui.component.adapter
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.LongSparseArray
-import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.util.contains
-import androidx.core.util.containsKey
 import androidx.core.util.forEach
 import androidx.databinding.ViewDataBinding
 import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.data.other.BookType
+import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.databinding.ItemSmartLookupContentBinding
 import com.example.newbiechen.nbreader.databinding.ItemSmartLookupHeadBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.base.IViewHolder
 import com.example.newbiechen.nbreader.ui.component.adapter.base.PinnedHeaderAdapter
 import com.example.newbiechen.nbreader.uilts.DateUtil
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.StringUtil
-import com.example.newbiechen.nbreader.uilts.mediastore.BookInfo
+import com.example.newbiechen.nbreader.uilts.mediastore.LocalBookInfo
 
 /**
  *  author : newbiechen
@@ -29,18 +25,18 @@ import com.example.newbiechen.nbreader.uilts.mediastore.BookInfo
 
 typealias OnCheckChangeCallback = (position: Int, isChecked: Boolean) -> Unit
 
-class SmartLookupAdapter : PinnedHeaderAdapter<String, BookInfo>() {
+class SmartLookupAdapter : PinnedHeaderAdapter<String, LocalBookInfo>() {
 
     companion object {
         private const val TAG = "SmartLookupAdapter"
     }
 
-    private var mCheckedList = LongSparseArray<BookInfo>()
+    private var mCheckedList = LongSparseArray<LocalBookInfo>()
     private var mCheckChangeCallback: OnCheckChangeCallback? = null
 
     override fun createHeaderViewHolder(): IViewHolder<String> = HeaderViewHolder()
 
-    override fun createContentViewHolder(): IViewHolder<BookInfo> = ContentViewHolder()
+    override fun createContentViewHolder(): IViewHolder<LocalBookInfo> = ContentViewHolder()
 
     fun setCheckedAll(isChecked: Boolean) {
         if (isChecked) {
@@ -60,8 +56,8 @@ class SmartLookupAdapter : PinnedHeaderAdapter<String, BookInfo>() {
 
     fun getCheckedCount() = mCheckedList.size()
 
-    fun getCheckedBookInfo(): List<BookInfo> {
-        var bookInfos = mutableListOf<BookInfo>()
+    fun getCheckedBookInfo(): List<LocalBookInfo> {
+        var bookInfos = mutableListOf<LocalBookInfo>()
         mCheckedList.forEach { key, value ->
             bookInfos.add(value)
         }
@@ -89,7 +85,7 @@ class SmartLookupAdapter : PinnedHeaderAdapter<String, BookInfo>() {
         }
     }
 
-    inner class ContentViewHolder : IViewHolder<BookInfo> {
+    inner class ContentViewHolder : IViewHolder<LocalBookInfo> {
         private lateinit var mDataBinding: ItemSmartLookupContentBinding
         override fun createBinding(parent: ViewGroup): ViewDataBinding {
             mDataBinding = ItemSmartLookupContentBinding.inflate(
@@ -98,7 +94,7 @@ class SmartLookupAdapter : PinnedHeaderAdapter<String, BookInfo>() {
             return mDataBinding
         }
 
-        override fun onBind(value: BookInfo, pos: Int) {
+        override fun onBind(value: LocalBookInfo, pos: Int) {
             var colorId = when (value.type) {
                 BookType.EPUB -> R.color.type_epub
                 else -> R.color.type_txt

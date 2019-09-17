@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
-import java.io.File
 
 /**
  *  author : newbiechen
@@ -21,7 +20,7 @@ object MediaStoreHelper {
 
     fun cursorLocalBooks(
         activity: FragmentActivity,
-        resultCallback: OnMediaResultCallback<List<BookInfo>>
+        resultCallback: OnMediaResultCallback<List<LocalBookInfo>>
     ) {
         val loaderManager: LoaderManager = LoaderManager.getInstance(activity)
         loaderManager.initLoader(
