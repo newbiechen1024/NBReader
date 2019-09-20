@@ -48,9 +48,11 @@ public:
     static const JavaBasicType Void;
     static const JavaBasicType Int;
     static const JavaBasicType Long;
+    static const JavaBasicType Float;
+    static const JavaBasicType Double;
     static const JavaBasicType Boolean;
 
-    JavaBasicType(std::string &signature);
+    JavaBasicType(const std::string &signature);
 
     std::string getSignature() const;
 
@@ -58,12 +60,11 @@ private:
     const std::string mSignature;
 };
 
-inline std::string JavaBasicType::JavaBasicType(std::string &signature):mSignature(signature) {}
+inline JavaBasicType::JavaBasicType(const std::string &signature) : mSignature(signature) {}
 
 inline std::string JavaBasicType::getSignature() const {
     return mSignature;
 }
-
 
 /**
  * 将 c++ 层的 string 转换成 jstring
@@ -103,7 +104,7 @@ public:
 
 private:
     const std::string mName;
-    mutable jclass mJNIClass;
+    mutable jclass mJClass;
 
     friend class JavaAny;
 };
@@ -117,7 +118,7 @@ public:
     virtual ~JavaAny();
 
 protected:
-    JavaAny(const JavaClass *cls);
+    JavaAny(const JavaClass &cls);
 
     jclass getJClass() const;
 
@@ -166,7 +167,7 @@ protected:
 /**
  * Java 方法
  */
-class JavaMethod : public JavaMethod {
+class JavaMethod : public JavaAny {
 public:
     JavaMethod(const JavaClass &cls, const std::string &name, const JavaType &returnType,
                const std::string &param);
@@ -186,7 +187,7 @@ public:
     JavaStaticMethod(const JavaClass &cls, const std::string &name, const JavaType &returnType,
                      const std::string &param);
 
-    virtual ~StaticMethod();
+    virtual ~JavaStaticMethod();
 
 protected:
     const std::string mName;
@@ -266,7 +267,7 @@ public:
     jobjectArray call(jobject base, ...);
 };
 
-class StaticObjectMethod : public JavaMethod {
+class StaticObjectMethod : public JavaStaticMethod {
 
 public:
     StaticObjectMethod(const JavaClass &cls, const std::string &name, const JavaClass &returnType,

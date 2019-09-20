@@ -42,6 +42,8 @@ public:
     static JavaClass Class_String;
     static JavaClass Class_NativeFormatPlugin;
     static JavaClass Class_FormatPluginManager;
+    static JavaClass Class_BookModel;
+    static JavaClass Class_Book;
     static std::shared_ptr<StringMethod> Method_NativeFormatPlugin_getSupportTypeByStr;
     static std::shared_ptr<ObjectMethod> Method_BookModel_getBook;
 
