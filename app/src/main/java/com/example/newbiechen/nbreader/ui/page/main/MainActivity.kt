@@ -16,7 +16,7 @@ import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
-import com.youtubedl.ui.main.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import javax.inject.Inject
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {

@@ -1,4 +1,4 @@
-package com.youtubedl.ui.main.base
+package com.example.newbiechen.nbreader.ui.page.base
 
 import android.content.Intent
 import android.os.Build

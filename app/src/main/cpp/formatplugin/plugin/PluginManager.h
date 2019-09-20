@@ -21,7 +21,7 @@ public:
     std::vector<std::shared_ptr<FormatPlugin>> getPlugins() const;
 
     // 根据 type 获取相应插件
-    std::shared_ptr<FormatPlugin> findPluginByType() const;
+    std::shared_ptr<FormatPlugin> getPluginByType(FormatType type) const;
 
 private:
     static PluginManager *sInstance;

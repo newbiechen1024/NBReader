@@ -8,6 +8,10 @@
 #include <string>
 #include "FormatType.h"
 
+class BookModel;
+
+class Book;
+
 class FormatPlugin {
 protected:
     FormatPlugin();
@@ -15,9 +19,9 @@ protected:
 public:
     virtual ~FormatPlugin();
 
-    virtual bool readMetaInfo() const = 0;
+    virtual bool readMetaInfo(Book &book) const = 0;
 
-    virtual bool readModel() const = 0;
+    virtual bool readModel(BookModel &bookModel) const = 0;
 
     virtual const FormatType supportType() const = 0;
 };

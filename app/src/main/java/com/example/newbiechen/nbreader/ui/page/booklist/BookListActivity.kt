@@ -19,12 +19,10 @@ import com.example.newbiechen.nbreader.ui.component.adapter.BookListFilterAdapte
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListSortAdapter
 import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
 import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
-import com.github.jdsjlzx.ItemDecoration.SpacesItemDecoration
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
 import com.github.jdsjlzx.view.LoadingFooter
-import com.youtubedl.ui.main.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import javax.inject.Inject
 
 // 书籍列表页面

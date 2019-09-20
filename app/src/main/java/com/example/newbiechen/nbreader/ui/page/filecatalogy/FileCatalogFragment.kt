@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.ui.page.filecatalogy
 
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.FragmentFileCatalogBinding
-import com.youtubedl.ui.main.base.BaseBindingFragment
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 
 /**
  *  author : newbiechen

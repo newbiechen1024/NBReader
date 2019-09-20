@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.ui.page.mine
 
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.FragmentMineBinding
-import com.youtubedl.ui.main.base.BaseBindingFragment
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 
 class MineFragment : BaseBindingFragment<FragmentMineBinding>() {
     companion object {

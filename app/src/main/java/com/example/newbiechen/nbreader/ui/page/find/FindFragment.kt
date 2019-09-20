@@ -8,7 +8,7 @@ import com.example.newbiechen.nbreader.databinding.FragmentFindBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.FindAdapter
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 
-import com.youtubedl.ui.main.base.BaseBindingFragment
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 import javax.inject.Inject
 import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity

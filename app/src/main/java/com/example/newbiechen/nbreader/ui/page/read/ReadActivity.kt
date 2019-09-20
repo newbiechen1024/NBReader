@@ -15,7 +15,7 @@ import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
-import com.youtubedl.ui.main.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import javax.inject.Inject
 
 /**
@@ -122,9 +122,8 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     }
 
     private fun openBook() {
-
         // TODO:需要有加载完成动画
-        mBookManager.openBook(mBook)
+        mBookManager.openBook(this, mBook)
     }
 
     override fun onBackPressed() {

@@ -76,7 +76,5 @@ class BookManager constructor(private val bookDao: BookDao) {
         // 根据 Book 获取到 Plugin
         val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
 
-        // 根据 book 和 plugin 创建 BookModel
-
     }
 }

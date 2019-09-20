@@ -1,4 +1,4 @@
-package com.youtubedl.di
+package com.example.newbiechen.nbreader.dl.annotation.scope
 
 import javax.inject.Scope
 

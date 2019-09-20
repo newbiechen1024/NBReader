@@ -2,14 +2,9 @@ package com.example.newbiechen.nbreader.ui.page.bookdetail
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.opengl.Visibility
 import android.os.Bundle
-import android.service.autofill.Transformation
 import android.text.Html
 import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -17,20 +12,16 @@ import androidx.databinding.Observable
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityBookDetailBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.SimpleTagAdapter
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.example.newbiechen.nbreader.uilts.glide.ScaleTransformation
 import com.google.android.material.appbar.AppBarLayout
-import com.youtubedl.ui.main.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import jp.wasabeef.glide.transformations.BlurTransformation
-import java.security.MessageDigest
 import javax.inject.Inject
 import kotlin.math.abs
 

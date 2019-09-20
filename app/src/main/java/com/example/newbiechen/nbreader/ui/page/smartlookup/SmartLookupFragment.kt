@@ -1,6 +1,5 @@
 package com.example.newbiechen.nbreader.ui.page.smartlookup
 
-import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,14 +8,9 @@ import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.FragmentSmartLookupBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter
 import com.example.newbiechen.nbreader.ui.component.decoration.PinnedHeaderItemDecoration
-import com.example.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
 import com.example.newbiechen.nbreader.ui.page.filesystem.IFileSystem
 import com.example.newbiechen.nbreader.ui.page.filesystem.IFileSystemCallback
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
-import com.example.newbiechen.nbreader.uilts.mediastore.MediaStoreHelper
-import com.youtubedl.ui.main.base.BaseBindingFragment
-import javax.inject.Inject
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 
 /**
  *  author : newbiechen

@@ -24,6 +24,11 @@ abstract class FormatPlugin(context: Context, private val bookType: BookType) {
 
     fun getSupportType() = bookType
 
+    /**
+     * 主要用于方便给 native 调用
+     */
+    fun getSupportTypeByStr() = bookType.toString().toLowerCase()
+
     // 获取书籍元数据信息
     abstract fun readMetaInfo(book: Book)
 

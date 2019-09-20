@@ -1,16 +1,14 @@
 package com.example.newbiechen.nbreader.ui.page.filesystem
 
-import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityFileSystemBinding
 import com.example.newbiechen.nbreader.ui.page.filecatalogy.FileCatalogFragment
 import com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupFragment
-import com.youtubedl.ui.main.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 
 /**
  *  author : newbiechen

@@ -21,5 +21,11 @@ open class NativeFormatPlugin(context: Context, bookType: BookType) : FormatPlug
 
     }
 
-
+    /**
+     * @return  1 ==> 表示不支持该书本的解析格式
+     *          2 ==> 表示插件解析错误
+     *          3 ==>
+     *
+     */
+    private external fun readModelNative(bookModel: BookModel, cacheDir: String): Int
 }

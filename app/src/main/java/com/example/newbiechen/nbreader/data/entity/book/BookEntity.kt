@@ -15,9 +15,9 @@ data class BookEntity(
     // 书籍元数据信息
     val id: Long, // 书本 id
     val name: String, // 书本名
-    val author: String, // 作者名
     val type: BookType, // 书本类型
     val url: String, // 书籍来源
+    var author: String? = null, // 作者名
     var cover: String? = null, // 书籍封面
     var encoding: String, // 书籍编码
     var lang: String,// 书籍语言
@@ -35,8 +35,8 @@ data class BookEntity(
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString(),
-        parcel.readString(),
         BookType.valueOf(parcel.readString()),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -77,5 +77,4 @@ data class BookEntity(
             return arrayOfNulls(size)
         }
     }
-
 }

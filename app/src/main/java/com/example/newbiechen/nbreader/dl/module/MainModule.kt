@@ -6,7 +6,7 @@ import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
 import com.example.newbiechen.nbreader.uilts.factory.MainFragFactory
 import com.example.newbiechen.nbreader.uilts.factory.NBMainFragFactory
 import com.youtubedl.di.ActivityScoped
-import com.youtubedl.di.FragmentScoped
+import com.example.newbiechen.nbreader.dl.annotation.scope.FragmentScoped
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

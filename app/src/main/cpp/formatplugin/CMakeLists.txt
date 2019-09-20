@@ -9,10 +9,15 @@ cmake_minimum_required(VERSION 3.4.1)
 aux_source_directory(. DIR_SOURCE)
 aux_source_directory(./util UTIL_SOURCE)
 aux_source_directory(./plugin PLUGIN_SOURCE)
+aux_source_directory(./entity/book BOOK_ENTITY_SOURCE)
+aux_source_directory(./entity/bookmodel BOOK_MODEL_ENTITY_SOURCE)
+aux_source_directory(./entity/textmodel TEXT_MODEL_ENTITY_SOURCE)
 
 add_library( # Sets the name of the library.
         FormatPlugin
         # Sets the library as a shared library.
         SHARED
         # Provides a relative path to your source file(s).
-        ${DIR_SOURCE} ${PLUGIN_SOURCE} ${UTIL_SOURCE})
+        ${DIR_SOURCE} ${PLUGIN_SOURCE} ${UTIL_SOURCE}
+        ${BOOK_ENTITY_SOURCE} ${BOOK_MODEL_ENTITY_SOURCE}
+        ${TEXT_MODEL_ENTITY_SOURCE})
