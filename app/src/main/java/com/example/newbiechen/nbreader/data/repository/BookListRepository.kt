@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.data.repository
 
-import com.example.newbiechen.nbreader.data.entity.BookListWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookListWrapper
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
 import com.example.newbiechen.nbreader.dl.annotation.qualifier.RemoteData
 import io.reactivex.Flowable
@@ -22,6 +22,6 @@ class BookListRepository @Inject constructor(@RemoteData private val remoteDataS
         cat: String?,
         isserial: Boolean?,
         updated: Int?
-    ): Flowable<BookListWrapper> = remoteDataSource.getBookList(alias, sort, start, limit, cat, isserial, updated)
+    ): Flowable<NetBookListWrapper> = remoteDataSource.getBookList(alias, sort, start, limit, cat, isserial, updated)
 }
 

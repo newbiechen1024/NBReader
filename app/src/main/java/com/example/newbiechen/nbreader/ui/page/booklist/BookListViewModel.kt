@@ -3,7 +3,7 @@ package com.example.newbiechen.nbreader.ui.page.booklist
 import android.content.Context
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
-import com.example.newbiechen.nbreader.data.entity.BookEntity
+import com.example.newbiechen.nbreader.data.entity.NetBookEntity
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
 import com.example.newbiechen.nbreader.ui.page.base.RxViewModel
 import com.example.newbiechen.nbreader.ui.component.widget.StatusView
@@ -28,7 +28,7 @@ class BookListViewModel @Inject constructor(private val repository: IBookListRep
     // 当前页面状态
     val pageStatus = ObservableField(StatusView.STATUS_LOADING)
 
-    val bookList = ObservableArrayList<BookEntity>()
+    val bookList = ObservableArrayList<NetBookEntity>()
 
     private var curItemPos = 0
     private var totalCount = 0

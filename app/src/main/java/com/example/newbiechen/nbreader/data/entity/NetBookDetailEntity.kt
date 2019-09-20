@@ -6,7 +6,7 @@ package com.example.newbiechen.nbreader.data.entity
  *  description :
  */
 
-data class BookDetailWrapper(
+data class NetBookDetailWrapper(
     val _id: String,
     val author: String,
     val chaptersCount: Int,
@@ -19,14 +19,14 @@ data class BookDetailWrapper(
     val majorCate: String,
     val minorCate: String,
     val retentionRatio: String,
-    val rating: Rating,
+    val rating: BookRating,
     val tags: List<String>,
     val title: String,
     val updated: String,
     val wordCount: Int
 )
 
-data class Rating(
+data class BookRating(
     val count: Int,
     val score: Double,
     val tip: String

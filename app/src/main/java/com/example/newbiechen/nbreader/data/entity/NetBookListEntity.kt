@@ -3,7 +3,7 @@ package com.example.newbiechen.nbreader.data.entity
 /**
  *  author : newbiechen
  *  date : 2019-08-05 19:51
- *  description :书籍列表数据
+ *  description :网络书籍列表数据
  */
 
 /**
@@ -41,13 +41,13 @@ package com.example.newbiechen.nbreader.data.entity
 }
  **/
 
-data class BookListWrapper(
-    val books: List<BookEntity>,
+data class NetBookListWrapper(
+    val books: List<NetBookEntity>,
     val ok: Boolean,
     val total: Int
 )
 
-data class BookEntity(
+data class NetBookEntity(
     val _id: String,
     val author: String,
     val cat: String,

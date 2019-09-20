@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.binding
 
 import androidx.databinding.BindingAdapter
-import com.example.newbiechen.nbreader.data.entity.BookEntity
+import com.example.newbiechen.nbreader.data.entity.NetBookEntity
 import com.example.newbiechen.nbreader.ui.component.adapter.BookListAdapter
 import com.github.jdsjlzx.recyclerview.LRecyclerView
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
@@ -16,7 +16,7 @@ object LRecyclerViewBinding {
 
     @BindingAdapter("app:items")
     @JvmStatic
-    fun LRecyclerView.setBookList(bookList: List<BookEntity>) {
+    fun LRecyclerView.setBookList(bookList: List<NetBookEntity>) {
         var lAdapter = adapter as LRecyclerViewAdapter
         (lAdapter.innerAdapter as? BookListAdapter)?.refreshItems(bookList)
         // 通知数据加载完成

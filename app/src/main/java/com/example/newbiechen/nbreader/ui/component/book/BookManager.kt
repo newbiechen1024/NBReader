@@ -1,7 +1,14 @@
 package com.example.newbiechen.nbreader.ui.component.book
 
+import android.content.Context
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
+import com.example.newbiechen.nbreader.ui.component.book.entity.Book
+import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
+import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPlugin
+import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPluginManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import javax.inject.Inject
 
 /**
@@ -12,11 +19,19 @@ import javax.inject.Inject
  *  1. 需要获取书籍信息
  *  2. 需要重新进行解析
  *  3. 需要重新绘制
+ *
+ *  TODO:应该添加书籍加载错误的监听回调
  */
 
 class BookManager constructor(private val bookDao: BookDao) {
 
-    private var mPageController: PageController? = null
+
+    companion object {
+        private const val TAG = "BookManager"
+    }
+
+    private lateinit var mPageController: PageController
+    private var mBookModel: BookModel? = null
 
     /**
      * 需要加载页面控制器
@@ -39,8 +54,8 @@ class BookManager constructor(private val bookDao: BookDao) {
      */
 
     // 打开书籍
-    fun openBook() {
-
+    fun openBook(context: Context, book: BookEntity) {
+        openBookInternal(context, book)
     }
 
     /**
@@ -55,7 +70,13 @@ class BookManager constructor(private val bookDao: BookDao) {
      * 7. 利用 LibraryService 设置为最近阅读书籍
      * 8. 通知 PageView 进行重绘
      */
-    private fun openBookInternal() {
+    // TODO: 在子线程中调用
+    private fun openBookInternal(context: Context, book: BookEntity) {
+        val pluginManager = FormatPluginManager.getInstance(context)
+        // 根据 Book 获取到 Plugin
+        val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
+
+        // 根据 book 和 plugin 创建 BookModel
 
     }
 }

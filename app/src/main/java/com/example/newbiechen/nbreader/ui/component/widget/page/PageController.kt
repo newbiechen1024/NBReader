@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**
@@ -32,6 +33,11 @@ class PageController(private var pageView: PageView) : TouchProcessor.OnTouchLis
 
     companion object {
         private const val TAG = "PageController"
+    }
+
+
+    fun setBookModel(bookModel: BookModel) {
+
     }
 
     fun addPageActionListener(pageAction: PageActionListener) {

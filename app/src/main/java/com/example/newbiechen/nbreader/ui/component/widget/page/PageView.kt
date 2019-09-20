@@ -13,6 +13,8 @@ import com.example.newbiechen.nbreader.uilts.TouchProcessor
  *  author : newbiechen
  *  date : 2019-08-30 16:26
  *  description :页面展示View
+ *
+ *  TODO:需要设置默认的背景
  */
 
 class PageView @JvmOverloads constructor(

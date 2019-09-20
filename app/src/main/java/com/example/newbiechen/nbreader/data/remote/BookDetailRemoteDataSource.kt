@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.data.remote
 
-import com.example.newbiechen.nbreader.data.entity.BookDetailWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookDetailWrapper
 import com.example.newbiechen.nbreader.data.remote.api.BookApi
 import com.example.newbiechen.nbreader.data.repository.impl.IBookDetailRepository
 import io.reactivex.Flowable
@@ -13,5 +13,5 @@ import javax.inject.Inject
  */
 
 class BookDetailRemoteDataSource @Inject constructor(private val api: BookApi) : IBookDetailRepository {
-    override fun getBookDetail(bookId: String): Flowable<BookDetailWrapper> = api.getBookDetail(bookId)
+    override fun getBookDetail(bookId: String): Flowable<NetBookDetailWrapper> = api.getBookDetail(bookId)
 }

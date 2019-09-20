@@ -3,15 +3,12 @@ package com.example.newbiechen.nbreader.ui.page.bookdetail
 import android.content.Context
 import androidx.databinding.ObservableField
 import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.data.entity.BookDetailWrapper
 import com.example.newbiechen.nbreader.data.repository.impl.IBookDetailRepository
 import com.example.newbiechen.nbreader.ui.component.widget.StatusView
 import com.example.newbiechen.nbreader.ui.page.base.RxViewModel
 import com.example.newbiechen.nbreader.uilts.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 /**
@@ -76,8 +73,6 @@ class BookDetailViewModel @Inject constructor(private val repository: IBookDetai
                             NumberUtil.convertNumber(context, it.latelyFollower.toLong()),
                             context.getString(R.string.common_percent, it.retentionRatio)
                         )
-
-                        LogHelper.i(TAG, "data:$bookDetailBean")
 
                         bookDetail.set(bookDetailBean)
                     }, {

@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.data.repository.impl
 
-import com.example.newbiechen.nbreader.data.entity.BookListWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookListWrapper
 import io.reactivex.Flowable
 
 /**
@@ -18,5 +18,5 @@ interface IBookListRepository {
         cat: String? = null,
         isserial: Boolean? = null,
         updated: Int? = null
-    ): Flowable<BookListWrapper>
+    ): Flowable<NetBookListWrapper>
 }

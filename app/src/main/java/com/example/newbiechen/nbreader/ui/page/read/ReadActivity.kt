@@ -1,9 +1,13 @@
 package com.example.newbiechen.nbreader.ui.page.read
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
 import com.example.newbiechen.nbreader.ui.component.book.BookManager
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
@@ -24,6 +28,13 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
     companion object {
         private const val TAG = "ReadActivity"
+        private const val EXTRA_BOOK = "extra_book"
+
+        fun startActivity(context: Context, book: BookEntity) {
+            val intent = Intent(context, ReadActivity::class.java)
+            intent.putExtra(EXTRA_BOOK, book)
+            context.startActivity(intent)
+        }
     }
 
     @Inject
@@ -32,6 +43,13 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     private lateinit var mViewModel: ReadViewModel
 
     override fun initContentView(): Int = R.layout.activity_read
+
+    private lateinit var mBook: BookEntity
+
+    override fun initData(savedInstanceState: Bundle?) {
+        super.initData(savedInstanceState)
+        mBook = intent.getParcelableExtra(EXTRA_BOOK)
+    }
 
     override fun initView() {
         super.initView()
@@ -76,10 +94,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
             // 初始化 BookManager
             mBookManager.initPageController(pvBook.getPageController())
-
-            // 加载本地书籍
         }
     }
+
 
     private fun showSystemBar() {
         //显示
@@ -99,13 +116,15 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         // 需要对 viewmodel 做一次初始化操作
         mViewModel.init(this)
         mDataBinding.viewModel = mViewModel
+
+        // 打开书籍
+        openBook()
     }
 
     private fun openBook() {
-        // 根据 intent 获取 book 信息
-        // 将 book 信息转换成 Book 对象
-        // 判断该 Book 对象对应的文件是否存在
-        // 等待 BookCursor Service 开启，并调用 BookManager 的 openBook()
+
+        // TODO:需要有加载完成动画
+        mBookManager.openBook(mBook)
     }
 
     override fun onBackPressed() {

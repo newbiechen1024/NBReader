@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.data.remote.api
 
-import com.example.newbiechen.nbreader.data.entity.BookDetailWrapper
-import com.example.newbiechen.nbreader.data.entity.BookListWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookDetailWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookListWrapper
 import com.example.newbiechen.nbreader.data.entity.CatalogLabelWrapper
 import com.example.newbiechen.nbreader.data.entity.CatalogWrapper
 import com.example.newbiechen.nbreader.uilts.Constants
@@ -40,9 +40,9 @@ interface BookApi {
         @Query("alias") alias: String, @Query("sort") sort: Int, @Query("cat") cat: String?,
         @Query("isserial") isserial: Boolean?, @Query("updated") updated: Int?,
         @Query("start") start: Int, @Query("limit") limit: Int
-    ): Flowable<BookListWrapper>
+    ): Flowable<NetBookListWrapper>
 
     @Headers("baseUrl:${Constants.LABEL_MORE_BASE_URL}")
     @GET("book/{bookId}?useNewCat=true")
-    fun getBookDetail(@Path("bookId") bookId: String): Flowable<BookDetailWrapper>
+    fun getBookDetail(@Path("bookId") bookId: String): Flowable<NetBookDetailWrapper>
 }

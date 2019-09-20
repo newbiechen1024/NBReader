@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.data.repository.impl
 
-import com.example.newbiechen.nbreader.data.entity.BookDetailWrapper
+import com.example.newbiechen.nbreader.data.entity.NetBookDetailWrapper
 import io.reactivex.Flowable
 
 /**
@@ -10,5 +10,5 @@ import io.reactivex.Flowable
  */
 
 interface IBookDetailRepository {
-    fun getBookDetail(bookId: String): Flowable<BookDetailWrapper>
+    fun getBookDetail(bookId: String): Flowable<NetBookDetailWrapper>
 }

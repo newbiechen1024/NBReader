@@ -24,4 +24,5 @@ class NBApplication : DaggerApplication() {
     }
 
     public override fun applicationInjector(): AndroidInjector<out DaggerApplication> = androidInjector
+
 }
