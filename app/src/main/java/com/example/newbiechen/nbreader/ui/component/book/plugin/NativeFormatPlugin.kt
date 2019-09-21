@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
-import com.example.newbiechen.nbreader.ui.component.book.entity.Book
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 
@@ -13,7 +13,7 @@ import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 
 open class NativeFormatPlugin(context: Context, bookType: BookType) : FormatPlugin(context, bookType) {
 
-    override fun readMetaInfo(book: Book) {
+    override fun readMetaInfo(book: BookEntity) {
 
     }
 

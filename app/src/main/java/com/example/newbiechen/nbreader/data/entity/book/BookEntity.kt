@@ -2,6 +2,11 @@ package com.example.newbiechen.nbreader.data.entity.book
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.newbiechen.nbreader.data.local.room.converter.BookTypeConverter
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 
 /**
@@ -10,22 +15,36 @@ import com.example.newbiechen.nbreader.ui.component.book.type.BookType
  *  description :书本信息
  */
 
-
+@Entity(tableName = "book_entity")
+@TypeConverters(BookTypeConverter::class)
 data class BookEntity(
     // 书籍元数据信息
-    val id: Long, // 书本 id
+    @PrimaryKey
+    val id: String, // 书本 id
+    @ColumnInfo(name = "name")
     val name: String, // 书本名
+    @ColumnInfo(name = "type")
     val type: BookType, // 书本类型
+    @ColumnInfo(name = "url")
     val url: String, // 书籍来源
-    var author: String? = null, // 作者名
-    var cover: String? = null, // 书籍封面
-    var encoding: String, // 书籍编码
-    var lang: String,// 书籍语言
+    @ColumnInfo(name = "isLocal")
     val isLocal: Boolean,// 是否是本地书籍
-    val curChapter: String? = null, // 当前章节名
+    @ColumnInfo(name = "author")
+    var author: String? = null, // 作者名
+    @ColumnInfo(name = "cover")
+    var cover: String? = null, // 书籍封面
+    @ColumnInfo(name = "encoding")
+    var encoding: String? = null, // 书籍编码
+    @ColumnInfo(name = "lang")
+    var lang: String? = null,// 书籍语言
+    @ColumnInfo(name = "curChapter")
+    var curChapter: String? = null, // 当前章节名
+    @ColumnInfo(name = "totalChapter")
     var totalChapter: Int? = null, // 章节总数
-    val lastChapter: String? = null, // 最新章节名
-    val isUpdate: Boolean = true // 是否更新
+    @ColumnInfo(name = "lastChapter")
+    var lastChapter: String? = null, // 最新章节名
+    @ColumnInfo(name = "isUpdate")
+    var isUpdate: Boolean = true // 是否更新
 
     // 暂时不需要，以后加
     // val updateTime: String, // 书本更新时间
@@ -33,15 +52,15 @@ data class BookEntity(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readLong(),
+        parcel.readString(),
         parcel.readString(),
         BookType.valueOf(parcel.readString()),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
         parcel.readByte() != 0.toByte(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
@@ -49,15 +68,15 @@ data class BookEntity(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(id)
+        parcel.writeString(id)
         parcel.writeString(name)
-        parcel.writeString(author)
         parcel.writeString(type.name)
         parcel.writeString(url)
+        parcel.writeByte(if (isLocal) 1 else 0)
+        parcel.writeString(author)
         parcel.writeString(cover)
         parcel.writeString(encoding)
         parcel.writeString(lang)
-        parcel.writeByte(if (isLocal) 1 else 0)
         parcel.writeString(curChapter)
         parcel.writeValue(totalChapter)
         parcel.writeString(lastChapter)

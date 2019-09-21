@@ -54,7 +54,7 @@ public:
 
     JavaBasicType(const std::string &signature);
 
-    std::string getSignature() const;
+    std::string signature() const;
 
 private:
     const std::string mSignature;
@@ -62,7 +62,7 @@ private:
 
 inline JavaBasicType::JavaBasicType(const std::string &signature) : mSignature(signature) {}
 
-inline std::string JavaBasicType::getSignature() const {
+inline std::string JavaBasicType::signature() const {
     return mSignature;
 }
 

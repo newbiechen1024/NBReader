@@ -8,10 +8,9 @@
 
 #include <string>
 #include <jni.h>
-
-class Book;
-
-class TextModel;
+#include <entity/book/Book.h>
+#include <entity/textmodel/TextModel.h>
+#include <memory>
 
 class BookModel {
 public:

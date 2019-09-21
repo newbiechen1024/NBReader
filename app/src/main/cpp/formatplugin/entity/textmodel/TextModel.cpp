@@ -4,3 +4,10 @@
 //
 
 #include "TextModel.h"
+
+TextModel::TextModel() {
+
+}
+
+TextModel::~TextModel() {
+}

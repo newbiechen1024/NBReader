@@ -8,6 +8,7 @@
 
 #include <string>
 #include <jni.h>
+#include <memory>
 
 /**
  * TODO:
@@ -17,8 +18,12 @@
  */
 class Book {
 public:
+    static std::shared_ptr<Book> createBook(
+            const std::string &encoding,
+            const std::string &language,
+            const std::string &title);
 
-    static std::shared_ptr<Book> createByJavaBook(JNIEnv *env, jobject jBook);
+    static std::shared_ptr<Book> createByJavaBook(jobject jBook);
 
     Book();
 
@@ -30,8 +35,6 @@ public:
 
     const std::string &getEncoding() const;
 
-    int getBookId() const;
-
     const std::string &getAuthor() const;
 
     void setTitle(const std::string &title);
@@ -40,13 +43,13 @@ public:
 
     void setEncoding(const std::string &encoding);
 
-    void setAuthor(std::string *author);
+    void setAuthor(const std::string &author);
 
 private:
-    int mBookId;
     std::string mTitle;
     std::string mLanguage;
     std::string mEncoding;
+    std::string mAuthor;
 
     Book(const Book &);
 

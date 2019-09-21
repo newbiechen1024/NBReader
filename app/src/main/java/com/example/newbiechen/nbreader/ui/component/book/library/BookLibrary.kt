@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.library
 
 import android.os.Binder
-import com.example.newbiechen.nbreader.ui.component.book.entity.Book
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 
 /**
  *  author : newbiechen
@@ -9,25 +9,25 @@ import com.example.newbiechen.nbreader.ui.component.book.entity.Book
  *  description :书籍存取
  */
 
-class BookLibrary:IBookLibrary {
+class BookLibrary : IBookLibrary {
 
-    override fun getBookById(id: Long): Book {
+    override fun getBookById(id: String): BookEntity {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getBookByPath(path: String): Book {
+    override fun getBookByPath(path: String): BookEntity {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getRecentBook(): Book {
+    override fun getRecentBook(): BookEntity {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun saveBook(book: Book) {
+    override fun saveBook(book: BookEntity) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun removeBookById(id: Long) {
+    override fun removeBookById(id: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

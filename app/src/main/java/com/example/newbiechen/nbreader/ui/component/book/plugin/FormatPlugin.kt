@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
-import com.example.newbiechen.nbreader.ui.component.book.entity.Book
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.component.book.util.BookFileUtil
 
@@ -30,7 +30,7 @@ abstract class FormatPlugin(context: Context, private val bookType: BookType) {
     fun getSupportTypeByStr() = bookType.toString().toLowerCase()
 
     // 获取书籍元数据信息
-    abstract fun readMetaInfo(book: Book)
+    abstract fun readMetaInfo(book: BookEntity)
 
 /*    // 获取书籍封面信息
     abstract fun readCover()

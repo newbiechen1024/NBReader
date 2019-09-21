@@ -7,11 +7,11 @@
 TxtPlugin::~TxtPlugin() {
 }
 
-bool TxtPlugin::readMetaInfo() const {
+bool TxtPlugin::readMetaInfo(Book &book) const {
     return true;
 }
 
-bool TxtPlugin::readModel() const {
+bool TxtPlugin::readModel(BookModel &bookModel) const {
     return true;
 }
 

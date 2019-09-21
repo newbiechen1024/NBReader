@@ -3,7 +3,6 @@
 //
 
 #include "AndroidUtil.h"
-#include "JNIEnvelope.h"
 
 const std::string PKG_NAME = "com/example/newbiechen/nbreader/";
 
@@ -30,6 +29,13 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_NativeFormatPlugin_getSupportTypeByStr = new StringMethod(Class_NativeFormatPlugin, "getSupportTypeByStr",
                                                                      "()");
     Method_BookModel_getBook = new ObjectMethod(Class_BookModel, "getBook", Class_Book, "()");
+
+    /*Book*/
+    Method_Book_getTitle = new StringMethod(Class_Book, "getTitle", "()");
+    Method_Book_getUrl = new StringMethod(Class_Book, "getUrl", "()");
+    Method_Book_getEncoding = new StringMethod(Class_Book, "getEncoding", "()");
+    Method_Book_getLang = new StringMethod(Class_Book, "getLang", "()");
+
     return true;
 }
 

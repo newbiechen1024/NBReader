@@ -12,9 +12,9 @@ class TxtPlugin : public FormatPlugin {
 public:
     ~TxtPlugin();
 
-    bool readMetaInfo() const;
+    bool readMetaInfo(Book &book) const ;
 
-    bool readModel() const;
+    bool readModel(BookModel &bookModel) const ;
 
     virtual const FormatType supportType() const;
 };

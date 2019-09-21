@@ -9,30 +9,7 @@
 #include <jni.h>
 #include <string>
 #include <vector>
-
-class JavaClass;
-
-class JavaArray;
-
-class JavaConstructor;
-
-class ObjectField;
-
-class VoidMethod;
-
-class IntMethod;
-
-class LongMethod;
-
-class BooleanMethod;
-
-class StringMethod;
-
-class ObjectMethod;
-
-class ObjectArrayMethod;
-
-class StaticObjectMethod;
+#include "JNIEnvelope.h"
 
 class AndroidUtil {
 private:
@@ -44,8 +21,13 @@ public:
     static JavaClass Class_FormatPluginManager;
     static JavaClass Class_BookModel;
     static JavaClass Class_Book;
+
     static std::shared_ptr<StringMethod> Method_NativeFormatPlugin_getSupportTypeByStr;
     static std::shared_ptr<ObjectMethod> Method_BookModel_getBook;
+    static std::shared_ptr<StringMethod> Method_Book_getTitle;
+    static std::shared_ptr<StringMethod> Method_Book_getUrl;
+    static std::shared_ptr<StringMethod> Method_Book_getEncoding;
+    static std::shared_ptr<StringMethod> Method_Book_getLang;
 
 public:
     static bool init(JavaVM *jvm);
@@ -56,9 +38,9 @@ public:
 
     static jstring toJString(JNIEnv *env, const std::string &str);
 
-    static jintArray createJavaIntArray(JNIEnv *env, const std::vector<jint> &data);
+/*    static jintArray createJavaIntArray(JNIEnv *env, const std::vector<jint> &data);
 
-    static jbyteArray createJavaByteArray(JNIEnv *env, const std::vector<jbyte> &data);
+    static jbyteArray createJavaByteArray(JNIEnv *env, const std::vector<jbyte> &data);*/
 };
 
 #endif //NBREADER_ANDROIDUTIL_H

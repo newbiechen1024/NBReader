@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6634652da89e9fa21abea43265cbcdd4",
+    "identityHash": "d5041ea02db0e4a10dd7a1cc4de16337",
     "entities": [
       {
         "tableName": "catalog_entity",
@@ -43,26 +43,50 @@
         "foreignKeys": []
       },
       {
-        "tableName": "nb_book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `path` TEXT NOT NULL, `title` TEXT NOT NULL, `encoding` TEXT, `lang` TEXT)",
+        "tableName": "book_entity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `url` TEXT NOT NULL, `isLocal` INTEGER NOT NULL, `author` TEXT, `cover` TEXT, `encoding` TEXT, `lang` TEXT, `curChapter` TEXT, `totalChapter` INTEGER, `lastChapter` TEXT, `isUpdate` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLocal",
+            "columnName": "isLocal",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "path",
-            "columnName": "path",
+            "fieldPath": "author",
+            "columnName": "author",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
-            "fieldPath": "title",
-            "columnName": "title",
+            "fieldPath": "cover",
+            "columnName": "cover",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "encoding",
@@ -75,13 +99,37 @@
             "columnName": "lang",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "curChapter",
+            "columnName": "curChapter",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "totalChapter",
+            "columnName": "totalChapter",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastChapter",
+            "columnName": "lastChapter",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isUpdate",
+            "columnName": "isUpdate",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "columnNames": [
             "id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -89,7 +137,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6634652da89e9fa21abea43265cbcdd4\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d5041ea02db0e4a10dd7a1cc4de16337\")"
     ]
   }
 }

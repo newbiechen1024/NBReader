@@ -6,9 +6,8 @@
 #include <string>
 #include "util/AndroidUtil.h"
 #include "plugin/PluginManager.h"
-#include "FormatPlugin.h"
 #include "util/JNIEnvelope.h"
-#include "FormatType.h"
+#include "plugin/FormatPlugin.h"
 
 /**
  * 初始化 JNI
@@ -30,8 +29,6 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_FormatPluginManage
     // 获取插件列表
     vector<shared_ptr<FormatPlugin>> plugins = PluginManager::getInstance().getPlugins();
     size_t pluginSize = plugins.size();
-
-    // 创建 JavaString 对象
 
     // 创建 Java 层的数组
     jobjectArray jPluginTypes = env->NewObjectArray(pluginSize, AndroidUtil::Class_String.getJClass(), 0);

@@ -3,13 +3,9 @@ package com.example.newbiechen.nbreader.ui.component.book
 import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
-import com.example.newbiechen.nbreader.ui.component.book.entity.Book
 import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
-import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPlugin
 import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPluginManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import javax.inject.Inject
 
 /**
  *  author : newbiechen
@@ -75,6 +71,7 @@ class BookManager constructor(private val bookDao: BookDao) {
         val pluginManager = FormatPluginManager.getInstance(context)
         // 根据 Book 获取到 Plugin
         val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
-
+        // 根据 Book 实例化
+        // mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
     }
 }

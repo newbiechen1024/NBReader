@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.library
 
-import com.example.newbiechen.nbreader.ui.component.book.entity.Book
+import com.example.newbiechen.nbreader.data.entity.book.BookEntity
 
 /**
  *  author : newbiechen
@@ -10,14 +10,14 @@ import com.example.newbiechen.nbreader.ui.component.book.entity.Book
 
 interface IBookLibrary {
     // 查询操作
-    fun getBookById(id: Long): Book
+    fun getBookById(id: String): BookEntity
 
-    fun getBookByPath(path: String): Book
-    fun getRecentBook(): Book
+    fun getBookByPath(path: String): BookEntity
+    fun getRecentBook(): BookEntity
 
     // 存储操作
-    fun saveBook(book: Book)
+    fun saveBook(book: BookEntity)
 
     // 移除操作
-    fun removeBookById(id: Long)
+    fun removeBookById(id: String)
 }

@@ -1,5 +1,6 @@
 package com.example.newbiechen.nbreader.dl.module.base
 
+import com.example.newbiechen.nbreader.dl.annotation.scope.ActivityScoped
 import com.example.newbiechen.nbreader.dl.module.FileSystemModule
 import com.example.newbiechen.nbreader.dl.module.MainModule
 import com.example.newbiechen.nbreader.dl.module.ReadModule
@@ -8,7 +9,6 @@ import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity
 import com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemActivity
 import com.example.newbiechen.nbreader.ui.page.main.MainActivity
 import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
-import com.youtubedl.di.ActivityScoped
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

@@ -6,11 +6,9 @@
 #define NBREADER_FORMATPLUGIN_H
 
 #include <string>
+#include <entity/book/Book.h>
+#include <entity/bookmodel/BookModel.h>
 #include "FormatType.h"
-
-class BookModel;
-
-class Book;
 
 class FormatPlugin {
 protected:
@@ -18,9 +16,9 @@ protected:
 
 public:
     virtual ~FormatPlugin();
-
+    /*写入书籍的元数据信息*/
     virtual bool readMetaInfo(Book &book) const = 0;
-
+    /*写入 BookModel 信息*/
     virtual bool readModel(BookModel &bookModel) const = 0;
 
     virtual const FormatType supportType() const = 0;

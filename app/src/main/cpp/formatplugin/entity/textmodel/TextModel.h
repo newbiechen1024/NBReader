@@ -8,6 +8,10 @@
 
 
 class TextModel {
+public:
+    TextModel();
+
+    ~TextModel();
 };
 
 
