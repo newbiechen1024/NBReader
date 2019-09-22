@@ -3,7 +3,7 @@ package com.example.newbiechen.nbreader.data.local.room
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.data.local.room.dao.CatalogDao
 

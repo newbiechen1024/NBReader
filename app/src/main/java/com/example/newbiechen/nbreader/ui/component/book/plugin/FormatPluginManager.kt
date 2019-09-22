@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
+import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -14,7 +15,7 @@ class FormatPluginManager {
     companion object {
         @Volatile
         private var instance: FormatPluginManager? = null
-
+        private const val TAG = "FormatPluginManager"
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 instance ?: FormatPluginManager(context.applicationContext).also { instance = it }
@@ -25,6 +26,7 @@ class FormatPluginManager {
 
     private constructor(context: Context) {
         getPluginTypes().forEach {
+            LogHelper.i(TAG, "pluginTypes: $it")
             // 根据 type 创建插件
             val plugin: NativeFormatPlugin = when (it.toUpperCase()) {
                 BookType.TXT.toString() -> NativeFormatPlugin(context, BookType.TXT)

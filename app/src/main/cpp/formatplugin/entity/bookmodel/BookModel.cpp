@@ -11,7 +11,7 @@ BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
     // TODO:创建 textModel
-    mTextModel = new TextModel();
+    mTextModel = std::make_shared<TextModel>();
 }
 
 BookModel::~BookModel() {

@@ -15,7 +15,7 @@ Book::~Book() {
 
 std::shared_ptr<Book> Book::createBook(const std::string &encoding, const std::string &language,
                                        const std::string &title) {
-    Book *book = new Book();
+    std::shared_ptr<Book> book = std::make_shared<Book>();
     book->setTitle(title);
     book->setEncoding(encoding);
     book->setLanguage(language);

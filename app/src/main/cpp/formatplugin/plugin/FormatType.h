@@ -16,7 +16,7 @@ enum FormatType {
     EPUB
 };
 
-std::string formatTypeToStr(FormatType &type) {
+inline std::string formatTypeToStr(FormatType &type) {
     std::string str;
     switch (type) {
         case TXT:
@@ -27,7 +27,7 @@ std::string formatTypeToStr(FormatType &type) {
     return str;
 }
 
-FormatType strToFormatType(std::string &name) {
+inline FormatType strToFormatType(std::string &name) {
     if (name == FORMAT_TYPE_TXT) {
         return TXT;
     } else if (name == FORMAT_TYPE_EPUB) {

@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.entity
 
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.entity.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 

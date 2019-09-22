@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book
 
 import android.content.Context
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPluginManager

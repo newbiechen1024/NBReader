@@ -6,18 +6,21 @@
 #define NBREADER_TXTPLUGIN_H
 
 
+#include <entity/book/Book.h>
+#include <entity/bookmodel/BookModel.h>
 #include "../FormatPlugin.h"
 
 class TxtPlugin : public FormatPlugin {
 public:
+    TxtPlugin();
+
     ~TxtPlugin();
 
-    bool readMetaInfo(Book &book) const ;
+    bool readMetaInfo(Book &book) const;
 
-    bool readModel(BookModel &bookModel) const ;
+    bool readModel(BookModel &bookModel) const;
 
-    virtual const FormatType supportType() const;
+    const FormatType supportType() const;
 };
-
 
 #endif //NBREADER_TXTPLUGIN_H

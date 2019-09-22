@@ -19,16 +19,21 @@ static std::shared_ptr<FormatPlugin> findCppPlugin(jobject base) {
     return PluginManager::getInstance().getPluginByType(strToFormatType(formatTypeStr));
 }
 
-static jobject createJavaTextModel(JNIEnv *env,jobject jBookModel,TextModel &textModel) {
+/*static jobject createJavaTextModel(JNIEnv *env, jobject jBookModel, TextModel &textModel) {
     // 创建一块本地作用域
-    env->PushLocalFrame(16);
+    // env->PushLocalFrame(16);
     // 将 bookModel 中的实例转成 jObject
-}
+}*/
 
 
 
 /**
  * 解析 book 并将数据赋值给 BookModel
+ * @return
+ *
+ * 0: 正常
+ * 1: 没有与 Book 匹配的解析器
+ * 2: 解析书本失败
  */
 extern "C"
 JNIEXPORT jint JNICALL
@@ -41,7 +46,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     shared_ptr<FormatPlugin> formatPlugin = findCppPlugin(instance);
 
     // 如果查找不到对应的 plugin
-    if (formatPlugin == 0) {
+    if (!formatPlugin) {
         return 1;
     }
 
@@ -50,9 +55,9 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // 获取 BookModel 中的 book 实例
     jobject jBook = AndroidUtil::Method_BookModel_getBook->call(jBookModel);
     // 根据 Java 层的 book 创建 C++ 层的 Book
-    shared_ptr<Book> book = Book::createByJavaBook(env, jBook);
+    shared_ptr<Book> book = Book::createByJavaBook(jBook);
     // 创建 C++ 层的 BookModel
-    shared_ptr<BookModel> bookModel = new BookModel(book, jBookModel, cacheDir);
+    shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir);
     // 将 C++ 层的 BookModel 填充到 Plugin 中
     if (!formatPlugin->readModel(*bookModel)) {
         return 2;
@@ -67,4 +72,5 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // footnotes ==> 注脚是啥东西
 
     // 字体设置
+    return 0;
 }

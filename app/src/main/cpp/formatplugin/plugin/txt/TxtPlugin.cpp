@@ -4,6 +4,9 @@
 
 #include "TxtPlugin.h"
 
+TxtPlugin::TxtPlugin() {
+}
+
 TxtPlugin::~TxtPlugin() {
 }
 

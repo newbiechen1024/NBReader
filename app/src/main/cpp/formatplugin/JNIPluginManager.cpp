@@ -10,15 +10,6 @@
 #include "plugin/FormatPlugin.h"
 
 /**
- * 初始化 JNI
- */
-extern "C"
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
-    AndroidUtil::init(jvm);
-    return JNI_VERSION_1_6;
-}
-
-/**
  * 获取当前项目中可用的插件类型
  */
 extern "C"

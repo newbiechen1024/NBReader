@@ -5,6 +5,7 @@
 #include <plugin/txt/TxtPlugin.h>
 #include "PluginManager.h"
 
+PluginManager *PluginManager::sInstance = 0;
 
 PluginManager &PluginManager::getInstance() {
     // 如果 sInstance 未初始化
@@ -23,10 +24,19 @@ void PluginManager::deleteInstance() {
 
 PluginManager::PluginManager() {
     // 初始化插件
-    mPluginList.push_back(new TxtPlugin());
+    mPluginList.push_back(std::make_shared<TxtPlugin>());
 }
 
 PluginManager::~PluginManager() {
     // 不处理
 }
 
+std::shared_ptr<FormatPlugin> PluginManager::getPluginByType(FormatType type) const {
+    for (auto it = mPluginList.begin(); it != mPluginList.end(); ++it) {
+        if (type == (*it)->supportType()) {
+            return *it;
+        }
+    }
+
+    return nullptr;
+}

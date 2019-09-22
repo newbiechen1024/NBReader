@@ -17,12 +17,17 @@ import com.google.android.material.tabs.TabLayout
 import com.yanzhenjie.permission.AndPermission
 import com.yanzhenjie.permission.runtime.Permission
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import javax.inject.Inject
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     companion object {
         const val TAG = "MainActivity"
+        // Used to load the 'native-lib' library on application startup.
+        init {
+            System.loadLibrary("native-lib")
+        }
     }
 
     // Fragment 工厂
@@ -38,7 +43,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     override fun initView() {
         initToolbar()
-
         // 初始化 ViewPager
         mDataBinding.viewPager.apply {
             adapter = MainPagerAdapter(supportFragmentManager, mFragmentFactory)

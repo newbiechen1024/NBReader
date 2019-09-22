@@ -7,7 +7,7 @@ import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
 import com.example.newbiechen.nbreader.ui.component.book.BookManager
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer

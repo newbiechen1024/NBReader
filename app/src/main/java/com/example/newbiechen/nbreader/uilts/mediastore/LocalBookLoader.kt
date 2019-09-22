@@ -189,6 +189,6 @@ data class LocalBookInfo(
     val path: String // 文件路径
 ) {
     override fun toString(): String {
-        return "BookInfo(id=$id, name='$name', type=$type, size=$size, lastModified=$lastModified, path='$path')"
+        return "BookInfo(id=$id, title='$name', type=$type, size=$size, lastModified=$lastModified, path='$path')"
     }
 }

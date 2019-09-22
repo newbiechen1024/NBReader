@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.data.entity.book
+package com.example.newbiechen.nbreader.data.entity
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -21,8 +21,8 @@ data class BookEntity(
     // 书籍元数据信息
     @PrimaryKey
     val id: String, // 书本 id
-    @ColumnInfo(name = "name")
-    val name: String, // 书本名
+    @ColumnInfo(name = "title")
+    val title: String, // 书本名
     @ColumnInfo(name = "type")
     val type: BookType, // 书本类型
     @ColumnInfo(name = "url")
@@ -69,7 +69,7 @@ data class BookEntity(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
-        parcel.writeString(name)
+        parcel.writeString(title)
         parcel.writeString(type.name)
         parcel.writeString(url)
         parcel.writeByte(if (isLocal) 1 else 0)

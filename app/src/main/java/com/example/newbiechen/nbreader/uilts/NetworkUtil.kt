@@ -184,7 +184,7 @@ object NetworkUtil {
                         val ip = inetAddr.hostAddress
                         if (!inetAddr.isLoopbackAddress && !TextUtils.isEmpty(ip)) {
                             LogHelper.i(
-                                TAG, "Host name: " + inetAddr.hostName
+                                TAG, "Host title: " + inetAddr.hostName
                                         + ", IP: " + ip
                             )
                             return ip

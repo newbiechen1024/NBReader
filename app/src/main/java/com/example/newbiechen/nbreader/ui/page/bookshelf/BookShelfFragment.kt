@@ -1,7 +1,9 @@
 package com.example.newbiechen.nbreader.ui.page.bookshelf
 
 import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.FragmentBookShelfBinding
+import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 
@@ -19,12 +21,6 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
     external fun test(): String
 
     companion object {
-
-        // Used to load the 'native-lib' library on application startup.
-        init {
-            System.loadLibrary("native-lib")
-        }
-
         fun newInstance() = BookShelfFragment()
     }
 
@@ -34,7 +30,9 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
         mDataBinding.tvRead.text = stringFromJNI()
 
         mDataBinding.tvRead.setOnClickListener {
-            startActivity(ReadActivity::class)
+            ReadActivity.startActivity(context!!,
+                BookEntity("asda", "zxczxc", BookType.TXT, "zxczxc", true)
+            )
         }
     }
 }

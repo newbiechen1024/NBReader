@@ -4,6 +4,8 @@
 
 #include "AndroidUtil.h"
 
+JavaVM *AndroidUtil::sJavaVM = 0;
+
 const std::string PKG_NAME = "com/example/newbiechen/nbreader/";
 
 JavaClass AndroidUtil::Class_String("java/lang/String");
@@ -16,7 +18,15 @@ JavaClass AndroidUtil::Class_FormatPluginManager(
 
 JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/entity/BookModel");
 
-JavaClass AndroidUtil::Class_Book(PKG_NAME + "data/entity/book");
+JavaClass AndroidUtil::Class_Book(PKG_NAME + "data/entity/BookEntity");
+
+// 初始化静态成员。。
+std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
+std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
+std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getTitle;
+std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getUrl;
+std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getEncoding;
+std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -26,16 +36,17 @@ JNIEnv *AndroidUtil::getEnv() {
 
 bool AndroidUtil::init(JavaVM *jvm) {
     sJavaVM = jvm;
-    Method_NativeFormatPlugin_getSupportTypeByStr = new StringMethod(Class_NativeFormatPlugin, "getSupportTypeByStr",
-                                                                     "()");
-    Method_BookModel_getBook = new ObjectMethod(Class_BookModel, "getBook", Class_Book, "()");
+
+    Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(Class_NativeFormatPlugin,
+                                                                                   "getSupportTypeByStr",
+                                                                                   "()");
+    Method_BookModel_getBook = std::make_shared<ObjectMethod>(Class_BookModel, "getBook", Class_Book, "()");
 
     /*Book*/
-    Method_Book_getTitle = new StringMethod(Class_Book, "getTitle", "()");
-    Method_Book_getUrl = new StringMethod(Class_Book, "getUrl", "()");
-    Method_Book_getEncoding = new StringMethod(Class_Book, "getEncoding", "()");
-    Method_Book_getLang = new StringMethod(Class_Book, "getLang", "()");
-
+    Method_Book_getTitle = std::make_shared<StringMethod>(Class_Book, "getTitle", "()");
+    Method_Book_getUrl = std::make_shared<StringMethod>(Class_Book, "getUrl", "()");
+    Method_Book_getEncoding = std::make_shared<StringMethod>(Class_Book, "getEncoding", "()");
+    Method_Book_getLang = std::make_shared<StringMethod>(Class_Book, "getLang", "()");
     return true;
 }
 

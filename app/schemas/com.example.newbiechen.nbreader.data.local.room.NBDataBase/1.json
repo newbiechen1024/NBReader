@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d5041ea02db0e4a10dd7a1cc4de16337",
+    "identityHash": "895bb822f3a35d96dd86974c52f18637",
     "entities": [
       {
         "tableName": "catalog_entity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`alias` TEXT NOT NULL, `name` TEXT NOT NULL, `bookCover` TEXT NOT NULL, `labels` TEXT NOT NULL, PRIMARY KEY(`alias`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`alias` TEXT NOT NULL, `title` TEXT NOT NULL, `bookCover` TEXT NOT NULL, `labels` TEXT NOT NULL, PRIMARY KEY(`alias`))",
         "fields": [
           {
             "fieldPath": "alias",
@@ -16,7 +16,7 @@
           },
           {
             "fieldPath": "name",
-            "columnName": "name",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "book_entity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `type` TEXT NOT NULL, `url` TEXT NOT NULL, `isLocal` INTEGER NOT NULL, `author` TEXT, `cover` TEXT, `encoding` TEXT, `lang` TEXT, `curChapter` TEXT, `totalChapter` INTEGER, `lastChapter` TEXT, `isUpdate` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `type` TEXT NOT NULL, `url` TEXT NOT NULL, `isLocal` INTEGER NOT NULL, `author` TEXT, `cover` TEXT, `encoding` TEXT, `lang` TEXT, `curChapter` TEXT, `totalChapter` INTEGER, `lastChapter` TEXT, `isUpdate` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -53,8 +53,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
+            "fieldPath": "title",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -137,7 +137,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d5041ea02db0e4a10dd7a1cc4de16337\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"895bb822f3a35d96dd86974c52f18637\")"
     ]
   }
 }

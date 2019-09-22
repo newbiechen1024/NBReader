@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 
@@ -27,5 +27,5 @@ open class NativeFormatPlugin(context: Context, bookType: BookType) : FormatPlug
      *          3 ==>
      *
      */
-    private external fun readModelNative(bookModel: BookModel, cacheDir: String): Int
+    // private external fun readModelNative(bookModel: BookModel, cacheDir: String): Int
 }

@@ -1,7 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.library
 
-import android.os.Binder
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 
 /**
  *  author : newbiechen

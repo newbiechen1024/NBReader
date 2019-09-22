@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.data.local.room.dao
 
 import androidx.room.*
-import com.example.newbiechen.nbreader.data.entity.book.BookEntity
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 
 /**
  *  author : newbiechen
