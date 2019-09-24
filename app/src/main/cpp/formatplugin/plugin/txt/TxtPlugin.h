@@ -20,6 +20,8 @@ public:
 
     bool readModel(BookModel &bookModel) const;
 
+    bool readLanguageAndEncoding(Book &book) const;
+
     const FormatType supportType() const;
 };
 

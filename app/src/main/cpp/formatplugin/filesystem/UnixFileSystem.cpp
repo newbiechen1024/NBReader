@@ -21,9 +21,8 @@ static std::string getHomeDir() {
 }
 
 // 标准化路径
-static std::string normalizeReal(const std::string &path) {
-    static std::string HomeDir = getHomeDir();
-    static std::string PwdDir = getPwdDir();
+
+std::string UnixFileSystem::normalizePath(const std::string &path) const {
     std::string nPath = path;
     while (nPath.length() >= 2 && nPath.substr(2) == "./") {
         nPath.erase(0, 2);
@@ -52,7 +51,7 @@ static std::string normalizeReal(const std::string &path) {
         nPath.erase(index, 2);
     }
     while (nPath.length() >= 2 &&
-            nPath.substr(nPath.length() - 2) == "/.") {
+           nPath.substr(nPath.length() - 2) == "/.") {
         nPath.erase(nPath.length() - 2);
     }
     while ((index = nPath.find("//")) != -1) {
@@ -61,8 +60,7 @@ static std::string normalizeReal(const std::string &path) {
     return nPath;
 }
 
-// 标准化主路径
-static void normalizeMain(std::string &path) {
+void UnixFileSystem::normalizeInternal(std::string &path) const {
     static std::string homeDir = getHomeDir();
     static std::string pwdDir = getPwdDir();
 
@@ -83,27 +81,7 @@ static void normalizeMain(std::string &path) {
         path = path.substr(0, last + 1);
     }
 
-    normalizeReal(path);
-}
-
-std::string UnixFileSystem::normalizePath(std::string &path) const {
-    std::string nPath = path;
-    // 进行初始化
-    normalizeReal(nPath);
-    return nPath;
-}
-
-void UnixFileSystem::normalize(std::string &path) {
-    int archiveIndex = path.rfind(FileSystem::archiveSeparator);
-
-    if (archiveIndex == -1) {
-        normalizeMain(path);
-    } else {
-        std::string realPath = path.substr(0, archiveIndex);
-        std::string archivePath = path.substr(archiveIndex + 1);
-        normalizeMain(realPath);
-        path = realPath + ':' + normalizeReal(archivePath);
-    }
+    path = normalizePath(path);
 }
 
 bool UnixFileSystem::createDirectory(const std::string &path) const {

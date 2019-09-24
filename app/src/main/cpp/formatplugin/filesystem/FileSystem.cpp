@@ -6,8 +6,8 @@
 #include "FileSystem.h"
 
 #if defined(__linux__)
-std::string FileSystem::separator= "/";
-std::string FileSystem::archiveSeparator = ":";
+const std::string FileSystem::separator = "/";
+const std::string FileSystem::archiveSeparator = ":";
 #elif defined(_WIN32)
 std::string FileSystem::separator = "\\";
 std::string FileSystem::archiveSeparator = ":";
@@ -16,8 +16,33 @@ std::string FileSystem::archiveSeparator = ":";
 FileSystem *FileSystem::sInstance = nullptr;
 
 void FileSystem::deleteInstance() {
-    if (sInstance != nullptr){
+    if (sInstance != nullptr) {
         delete (sInstance);
         sInstance = nullptr;
     }
+}
+
+void FileSystem::normalize(std::string &path) {
+    // 处理压缩包的问题
+    int archiveIndex = findArchiveNameDelimiter(path);
+    if (archiveIndex == -1) {
+        normalizeInternal(path);
+    } else {
+        std::string realPath = path.substr(0, archiveIndex);
+        std::string archivePath = path.substr(archiveIndex + 1);
+        normalizeInternal(realPath);
+        path = realPath + FileSystem::archiveSeparator + normalizePath(archivePath);
+    }
+}
+
+int FileSystem::findArchiveNameDelimiter(const std::string &path) const {
+    return path.rfind(archiveSeparator);
+}
+
+int FileSystem::findLastNameDelimiter(const std::string &path) const {
+    int index = findArchiveNameDelimiter(path);
+    if (index == -1) {
+        index = path.rfind(separator);
+    }
+    return index;
 }

@@ -6,6 +6,8 @@ import com.example.newbiechen.nbreader.databinding.FragmentBookShelfBinding
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
+import java.io.File
+import java.io.FileInputStream
 
 class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
 
@@ -24,9 +26,9 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
         fun newInstance() = BookShelfFragment()
     }
 
+
     override fun initView() {
         super.initView()
-
         mDataBinding.tvRead.text = stringFromJNI()
 
         mDataBinding.tvRead.setOnClickListener {

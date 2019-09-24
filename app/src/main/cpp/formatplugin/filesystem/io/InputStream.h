@@ -6,7 +6,7 @@
 #ifndef NBREADER_INPUTSTREAM_H
 #define NBREADER_INPUTSTREAM_H
 
-#include <string>
+#include <stddef.h>
 
 class InputStream {
 
@@ -17,13 +17,13 @@ public:
     virtual bool open() = 0;
 
     // 读取数据
-    virtual std::size_t read(char *buffer, std::size_t maxSize) = 0;
+    virtual size_t read(char *buffer, size_t maxSize) = 0;
 
     // 跳到具体位置
     virtual void seek(int offset, bool absoluteOffset) = 0;
 
     // 当前位置
-    virtual std::size_t offset() const = 0;
+    virtual size_t offset() const = 0;
 
     // 关闭输入流
     virtual void close() = 0;

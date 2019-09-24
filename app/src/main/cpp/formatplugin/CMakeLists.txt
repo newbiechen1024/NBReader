@@ -25,7 +25,8 @@ add_library( # Sets the title of the library.
         ${FILE_SYSTEM_SOURCE}
         ${FILE_SYSTEM_IO_SOURCE}
         ${UTIL_SOURCE}
-        ${PLUGIN_SOURCE} ${TXT_PLUGIN_SOURCE}
+        ${PLUGIN_SOURCE}
+        ${TXT_PLUGIN_SOURCE}
         ${BOOK_ENTITY_SOURCE}
         ${BOOK_MODEL_ENTITY_SOURCE}
         ${TEXT_MODEL_ENTITY_SOURCE})

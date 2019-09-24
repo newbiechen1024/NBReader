@@ -16,12 +16,20 @@ protected:
 
 public:
     virtual ~FormatPlugin();
+
     /*写入书籍的元数据信息*/
     virtual bool readMetaInfo(Book &book) const = 0;
+
     /*写入 BookModel 信息*/
     virtual bool readModel(BookModel &bookModel) const = 0;
 
+    // 读取语言和编码并写入到 Book 中
+    virtual bool readLanguageAndEncoding(Book &book) const = 0;
+
     virtual const FormatType supportType() const = 0;
+
+protected:
+    static bool detectEncodingAndLanguage(Book &book, InputStream &inputStream, bool force = false);
 };
 
 inline FormatPlugin::FormatPlugin() {

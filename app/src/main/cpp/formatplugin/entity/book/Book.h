@@ -9,6 +9,7 @@
 #include <string>
 #include <jni.h>
 #include <memory>
+#include <filesystem/File.h>
 
 /**
  * TODO:
@@ -19,13 +20,14 @@
 class Book {
 public:
     static std::shared_ptr<Book> createBook(
+            const File &file,
             const std::string &encoding,
             const std::string &language,
             const std::string &title);
 
     static std::shared_ptr<Book> createByJavaBook(jobject jBook);
 
-    Book();
+    Book(const File &file);
 
     ~Book();
 
@@ -37,6 +39,8 @@ public:
 
     const std::string &getAuthor() const;
 
+    File &getFile() const;
+
     void setTitle(const std::string &title);
 
     void setLanguage(const std::string &language);
@@ -46,6 +50,7 @@ public:
     void setAuthor(const std::string &author);
 
 private:
+    File mFile; // 文件
     std::string mTitle;
     std::string mLanguage;
     std::string mEncoding;

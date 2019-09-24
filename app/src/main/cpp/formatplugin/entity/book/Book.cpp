@@ -7,15 +7,16 @@
 #include <util/AndroidUtil.h>
 #include "Book.h"
 
-Book::Book() {
+Book::Book(const File &file) : mFile(file) {
 }
 
 Book::~Book() {
 }
 
-std::shared_ptr<Book> Book::createBook(const std::string &encoding, const std::string &language,
+std::shared_ptr<Book> Book::createBook(const File &file,
+                                       const std::string &encoding, const std::string &language,
                                        const std::string &title) {
-    std::shared_ptr<Book> book = std::make_shared<Book>();
+    std::shared_ptr<Book> book = std::make_shared<Book>(file);
     book->setTitle(title);
     book->setEncoding(encoding);
     book->setLanguage(language);
@@ -30,7 +31,7 @@ std::shared_ptr<Book> Book::createByJavaBook(jobject jBook) {
     string encoding = AndroidUtil::Method_Book_getEncoding->callForCppString(jBook);
     string language = AndroidUtil::Method_Book_getLang->callForCppString(jBook);
     // 创建 Book
-    return createBook(encoding, language, title);
+    return createBook(File(path), encoding, language, title);
 }
 
 void Book::setTitle(const std::string &title) {
@@ -64,4 +65,8 @@ const std::string &Book::getLanguage() const {
 
 const std::string &Book::getAuthor() const {
     return mAuthor;
+}
+
+File &Book::getFile() const {
+    return mFile;
 }

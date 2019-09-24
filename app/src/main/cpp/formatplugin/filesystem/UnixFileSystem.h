@@ -10,13 +10,12 @@
 #include "FileSystem.h"
 
 class UnixFileSystem : public FileSystem {
+public:
+    // 对其他 path 进行标准化
+    virtual std::string normalizePath(const std::string &path) const;
 
 protected:
-    // 对当前 path 进行标准化
-    virtual void normalize(std::string &path);
-
-    // 对其他 path 进行标准化
-    virtual std::string normalizePath(std::string &path) const;
+    virtual void normalizeInternal(std::string &path) const;
 
     // 创建目录
     virtual bool createDirectory(const std::string &path) const;

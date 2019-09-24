@@ -59,7 +59,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     shared_ptr<Book> book = Book::createByJavaBook(jBook);
     // 创建 C++ 层的 BookModel
     shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir);
-    // 将 C++ 层的 BookModel 填充到 Plugin 中
+    // 使用 plugin 解析 BookModel
     if (!formatPlugin->readModel(*bookModel)) {
         return 2;
     }

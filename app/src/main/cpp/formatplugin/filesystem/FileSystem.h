@@ -20,6 +20,9 @@ public:
 
     static void deleteInstance();
 
+    // 对其他 path 进行标准化
+    virtual std::string normalizePath(const std::string &path) const = 0;
+
 protected:
     static FileSystem *sInstance;
 
@@ -28,10 +31,9 @@ protected:
     ~FileSystem();
 
     // 对当前 path 进行标准化
-    virtual void normalize(std::string &path) = 0;
+    void normalize(std::string &path);
 
-    // 对其他 path 进行标准化
-    virtual std::string normalizePath(std::string &path) const = 0;
+    virtual void normalizeInternal(std::string &path) const = 0;
 
     // 创建目录
     virtual bool createDirectory(const std::string &path) const = 0;
@@ -44,6 +46,12 @@ protected:
 
     // 获取文件状态信息
     virtual FileStat getFileStat(const std::string &path) const = 0;
+
+    int findArchiveNameDelimiter(const std::string &path) const;
+
+    int findLastNameDelimiter(const std::string &path) const;
+
+    friend class File;
 };
 
 inline FileSystem &FileSystem::getInstance() {

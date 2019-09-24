@@ -27,6 +27,8 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getTitle;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getUrl;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getEncoding;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
+std::shared_ptr<StringMethod> Method_String_toLowerCase;
+std::shared_ptr<StringMethod> Method_String_toUpperCase;
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -36,6 +38,10 @@ JNIEnv *AndroidUtil::getEnv() {
 
 bool AndroidUtil::init(JavaVM *jvm) {
     sJavaVM = jvm;
+
+    // string
+    Method_String_toLowerCase = new StringMethod(Class_String, "toLowerCase", "()");
+    Method_String_toUpperCase = new StringMethod(Class_String, "toUpperCase", "()");
 
     Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(Class_NativeFormatPlugin,
                                                                                    "getSupportTypeByStr",

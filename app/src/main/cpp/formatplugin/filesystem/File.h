@@ -7,6 +7,10 @@
 #define NBREADER_FILE_H
 
 #include <string>
+#include <stddef.h>
+#include <filesystem/io/InputStream.h>
+#include <filesystem/io/OutputStream.h>
+#include "FileStat.h"
 
 class File {
 public:
@@ -19,39 +23,62 @@ public:
         ARCHIVE = 0xff00,
     };
 
+    static const std::string SUFFIX_ZIP = ".zip";
+    static const std::string SUFFIX_GZIP = ".gz";
+
     File(const std::string &path);
 
-    ~File();
-
-    // 文件是否存在
-    bool exists() const;
+    ~File() {}
 
     // 获取文件名,如：xx/xx/file.txt ，返回 file
-    std::string &getName() const;
+    std::string &getName() const {
+        return mName;
+    };
 
     // 获取完整名称，如：xx/xx/file.txt ，返回 file.txt
-    std::string &getFullName() const;
+    std::string &getFullName() const {
+        return mFullName;
+    };
 
     // 获取扩展名，如：xx/xx/file.txt ，返回 txt
-    std::string *getExtension() const;
+    std::string &getExtension() const {
+        return mExtension;
+    };
 
     // 获取绝对路径
-    std::string &getAbsolutePath() const;
+    std::string &getPath() const {
+        return mPath;
+    };
 
-    // 判断是否是目录
-    bool isDirectory() const;
+    // 文件是否存在
+    bool exists() const {
+        return mFileStat.exists;
+    };
 
     // 判断是否是压缩文件
-    bool isArchive() const;
+    bool isArchive() const {
+        return (mArchiveType & ARCHIVE) != 0;
+    };
+
+    // 判断是否是目录
+    bool isDirectory() const {
+        return mFileStat.isDirectory;
+    }
 
     // 判断是否是文件
-    bool isFile() const;
+    bool isFile() const {
+        return !mFileStat.isDirectory;
+    }
 
     // 最后的修改时间
-    std::size_t lastModified() const;
+    size_t lastModified() const {
+        return mFileStat.lastModifiedTime;
+    };
 
     // 文件的大小
-    std::size_t length() const;
+    size_t length() const {
+        return mFileStat.size;
+    }
 
     // 创建文件
     bool createFile() const;
@@ -59,22 +86,34 @@ public:
     // 删除文件
     bool deleteFile() const;
 
-    // TODO:返回文件夹的内容 ==> 怎么返回是个问题
-    std::vector<File *> list() const;
-
     // 创建整个文件目录
     bool mkdirs() const;
 
-    bool operator==(const File &other) const;
+    // TODO:返回文件夹的内容 ==> 怎么返回是个问题
+    std::vector<File> list() const;
 
-    bool operator!=(const File &other) const;
+    std::shared_ptr<InputStream> getInputStream() const;
+
+    std::shared_ptr<OutputStream> getOutputStream() const;
+
+    bool operator==(const File &other) const {
+        return mPath == other.mPath;
+    }
+
+    bool operator!=(const File &other) const {
+        return mPath != other.mPath;
+    }
 
 private:
     std::string mPath;
     std::string mName;
     std::string mFullName;
     std::string mExtension;
-};
+    FileStat mFileStat;
+    ArchiveType mArchiveType;
+    bool isInitFileStat;
 
+    FileStat &getFileStat();
+};
 
 #endif //NBREADER_FILE_H
