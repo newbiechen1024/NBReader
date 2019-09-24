@@ -20,7 +20,7 @@ abstract class FormatPlugin(context: Context, private val bookType: BookType) {
 
     private var tempDir: String = BookFileUtil.getPluginTempDir(context)
 
-    fun getTempDir() = tempDir
+    fun getCacheDir() = tempDir
 
     fun getSupportType() = bookType
 

@@ -42,6 +42,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
                                                                                                  jobject jBookModel,
                                                                                                  jstring cacheDir_) {
     using namespace std;
+
     // 根据当前 Plugin 查找对应的 cpp Plugin
     shared_ptr<FormatPlugin> formatPlugin = findCppPlugin(instance);
 

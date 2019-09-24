@@ -4,7 +4,8 @@ import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
-import com.example.newbiechen.nbreader.ui.component.book.plugin.FormatPluginManager
+import com.example.newbiechen.nbreader.ui.component.book.plugin.BookPluginManager
+import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
 
 /**
@@ -68,10 +69,10 @@ class BookManager constructor(private val bookDao: BookDao) {
      */
     // TODO: 在子线程中调用
     private fun openBookInternal(context: Context, book: BookEntity) {
-        val pluginManager = FormatPluginManager.getInstance(context)
+        val pluginManager = BookPluginManager.getInstance(context)
         // 根据 Book 获取到 Plugin
         val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
         // 根据 Book 实例化
-        // mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
+        mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
     }
 }

@@ -9,7 +9,7 @@ PluginManager *PluginManager::sInstance = 0;
 
 PluginManager &PluginManager::getInstance() {
     // 如果 sInstance 未初始化
-    if (sInstance == 0) {
+    if (sInstance == nullptr) {
         sInstance = new PluginManager();
     }
     return *sInstance;
@@ -17,8 +17,9 @@ PluginManager &PluginManager::getInstance() {
 
 void PluginManager::deleteInstance() {
     // 释放实例
-    if (sInstance != 0) {
+    if (sInstance != nullptr) {
         delete (sInstance);
+        sInstance == nullptr;
     }
 }
 

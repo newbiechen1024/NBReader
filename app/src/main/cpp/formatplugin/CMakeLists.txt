@@ -5,9 +5,11 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-# 获取 c++ 文件写入到变量中
+# 获取目录下的 c++ 文件写入到变量中
 aux_source_directory(. DIR_SOURCE)
 aux_source_directory(./util UTIL_SOURCE)
+aux_source_directory(./filesystem FILE_SYSTEM_SOURCE)
+aux_source_directory(./filesystem/io FILE_SYSTEM_IO_SOURCE)
 aux_source_directory(./plugin PLUGIN_SOURCE)
 aux_source_directory(./plugin/txt TXT_PLUGIN_SOURCE)
 aux_source_directory(./entity/book BOOK_ENTITY_SOURCE)
@@ -20,6 +22,8 @@ add_library( # Sets the title of the library.
         SHARED
         # Provides a relative path to your source file(s).
         ${DIR_SOURCE}
+        ${FILE_SYSTEM_SOURCE}
+        ${FILE_SYSTEM_IO_SOURCE}
         ${UTIL_SOURCE}
         ${PLUGIN_SOURCE} ${TXT_PLUGIN_SOURCE}
         ${BOOK_ENTITY_SOURCE}

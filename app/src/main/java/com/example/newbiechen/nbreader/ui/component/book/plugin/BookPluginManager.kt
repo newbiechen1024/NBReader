@@ -10,15 +10,15 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
  *  description :文本插件管理类
  */
 
-class FormatPluginManager {
+class BookPluginManager {
 
     companion object {
         @Volatile
-        private var instance: FormatPluginManager? = null
+        private var instance: BookPluginManager? = null
         private const val TAG = "FormatPluginManager"
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
-                instance ?: FormatPluginManager(context.applicationContext).also { instance = it }
+                instance ?: BookPluginManager(context.applicationContext).also { instance = it }
             }
     }
 
