@@ -3,6 +3,7 @@
 //
 
 #include "AndroidUtil.h"
+#include "UnicodeUtil.h"
 
 JavaVM *AndroidUtil::sJavaVM = 0;
 
@@ -70,5 +71,25 @@ std::string AndroidUtil::toCString(JNIEnv *env, jstring from) {
     const char *data = env->GetStringUTFChars(from, 0);
     const std::string result(data);
     env->ReleaseStringUTFChars(from, data);
+    return result;
+}
+
+std::string AndroidUtil::convertNonUtfString(const std::string &str) {
+    if (UnicodeUtil::isUtf8String(str)) {
+        return str;
+    }
+
+    JNIEnv *env = getEnv();
+
+    const int len = str.length();
+    jchar *chars = new jchar[len];
+    for (int i = 0; i < len; ++i) {
+        chars[i] = (unsigned char) str[i];
+    }
+    jstring javaString = env->NewString(chars, len);
+    const std::string result = toCString(env, javaString);
+    env->DeleteLocalRef(javaString);
+    delete[] chars;
+
     return result;
 }

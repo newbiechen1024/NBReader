@@ -7,7 +7,7 @@
 #define NBREADER_ANDROIDFILESYSTEM_H
 
 
-#include "UnixFileSystem.h"
+#include <filesystem/UnixFileSystem.h>
 
 class AndroidFileSystem: UnixFileSystem {
 public:

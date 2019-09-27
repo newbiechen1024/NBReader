@@ -20,6 +20,9 @@ protected:
     // 创建目录
     virtual bool createDirectory(const std::string &path) const;
 
+    // 创建并返回目录
+    virtual FileDir *getDirectory(const std::string &path) const;
+
     // 创建文件
     virtual bool createFile(const std::string &path) const;
 

@@ -9,6 +9,7 @@
 #include <string>
 #include "File.h"
 #include "FileStat.h"
+#include "FileDir.h"
 #include <cstdio>
 
 class FileSystem {
@@ -38,6 +39,9 @@ protected:
     // 创建目录
     virtual bool createDirectory(const std::string &path) const = 0;
 
+    // 创建并返回目录
+    virtual FileDir *getDirectory(const std::string &path) const = 0;
+
     // 创建文件
     virtual bool createFile(const std::string &path) const = 0;
 
@@ -52,6 +56,8 @@ protected:
     int findLastNameDelimiter(const std::string &path) const;
 
     friend class File;
+
+    friend class FileDir;
 };
 
 inline FileSystem &FileSystem::getInstance() {

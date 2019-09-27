@@ -4,6 +4,7 @@
 //
 
 #include "UnixFileSystem.h"
+#include "UnixFileDir.h"
 #include <vector>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -87,6 +88,12 @@ void UnixFileSystem::normalizeInternal(std::string &path) const {
 bool UnixFileSystem::createDirectory(const std::string &path) const {
     std::vector<std::string> subPaths;
     std::string current = path;
+
+    // 判断路径是否正确
+    if (current.length() < 1) {
+        return false;
+    }
+
     // 是否 path 正确
     while (current.length() > 1) {
         struct stat fileStat;
@@ -112,12 +119,21 @@ bool UnixFileSystem::createDirectory(const std::string &path) const {
     for (int i = subPaths.size() - 1; i >= 0; --i) {
         // 0x1FF 表示 777 ==> 授予全部权限
         if (mkdir(subPaths[i].c_str(), 0x1FF) != 0) {
-            // 如果创建失败
+            // 如果创建失败直接返回
             return false;
         }
     }
 
     return true;
+}
+
+FileDir* UnixFileSystem::getDirectory(const std::string &path) const {
+    // 判断目录是否创建成功
+    bool isSuccess = createDirectory(path);
+    if (isSuccess) {
+        return new UnixFileDir(path);
+    }
+    return nullptr;
 }
 
 bool UnixFileSystem::createFile(const std::string &path) const {
@@ -151,8 +167,8 @@ FileStat UnixFileSystem::getFileStat(const std::string &path) const {
     struct stat fileStat;
 
     // 获取文件信息
-    fileStatInfo.exist = stat(path.c_str(), &fileStat) == 0;
-    if (fileStatInfo.exist) {
+    fileStatInfo.exists = stat(path.c_str(), &fileStat) == 0;
+    if (fileStatInfo.exists) {
         fileStatInfo.size = fileStat.st_size;
         fileStatInfo.lastModifiedTime = fileStat.st_mtime;
         fileStatInfo.isDirectory = S_ISDIR(fileStat.st_mode);

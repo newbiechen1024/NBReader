@@ -5,7 +5,7 @@ import androidx.annotation.Nullable
 import com.example.newbiechen.nbreader.BuildConfig
 
 object LogHelper {
-    val TAG = "NBReader"
+    const val TAG = "NBReader"
     var isLogEnabled = BuildConfig.DEBUG
 
     fun i(subTag: String, msg: String) {
