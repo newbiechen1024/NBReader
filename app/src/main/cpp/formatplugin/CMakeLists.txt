@@ -13,10 +13,11 @@ aux_source_directory(./filesystem/io FILE_SYSTEM_IO_SOURCE)
 aux_source_directory(./filesystem/zip FILE_SYSTEM_ZIP_SOURCE)
 aux_source_directory(./plugin PLUGIN_SOURCE)
 aux_source_directory(./plugin/txt TXT_PLUGIN_SOURCE)
-aux_source_directory(./entity/book BOOK_ENTITY_SOURCE)
-aux_source_directory(./entity/bookmodel BOOK_MODEL_ENTITY_SOURCE)
-aux_source_directory(./entity/textmodel TEXT_MODEL_ENTITY_SOURCE)
+aux_source_directory(./reader/book BOOK_ENTITY_SOURCE)
+aux_source_directory(./reader/bookmodel BOOK_MODEL_ENTITY_SOURCE)
+aux_source_directory(./reader/textmodel TEXT_MODEL_ENTITY_SOURCE)
 aux_source_directory(./android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
+aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -34,4 +35,5 @@ add_library( # Sets the title of the library.
         ${BOOK_ENTITY_SOURCE}
         ${BOOK_MODEL_ENTITY_SOURCE}
         ${TEXT_MODEL_ENTITY_SOURCE}
+        ${TOOLS_FONT_SOURCE}
         )

@@ -1,6 +1,6 @@
 // author : newbiechen
 // date : 2019-09-24 14:51
-// description : 
+// description : 文本编码处理 ==> 暂时不管
 //
 
 #ifndef NBREADER_ENCODINGTEXTREADER_H
