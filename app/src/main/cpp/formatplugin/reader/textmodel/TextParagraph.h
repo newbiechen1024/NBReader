@@ -57,7 +57,6 @@ private:
 
     friend class TextModel;
 
-    // TODO：待定
     friend class TextPlainModel;
 };
 
@@ -79,7 +78,6 @@ public:
 private:
     Type mType;
 
-    // TODO:对应 ZLTextPlainModel ==> 这个还没实现
     friend class TextPlainModel;
 };
 

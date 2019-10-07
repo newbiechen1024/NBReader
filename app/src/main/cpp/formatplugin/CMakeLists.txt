@@ -18,6 +18,8 @@ aux_source_directory(./reader/bookmodel BOOK_MODEL_ENTITY_SOURCE)
 aux_source_directory(./reader/textmodel TEXT_MODEL_ENTITY_SOURCE)
 aux_source_directory(./android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
 aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
+aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
+
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -36,4 +38,5 @@ add_library( # Sets the title of the library.
         ${BOOK_MODEL_ENTITY_SOURCE}
         ${TEXT_MODEL_ENTITY_SOURCE}
         ${TOOLS_FONT_SOURCE}
+        ${TOOLS_ENCODING_SOURCE}
         )

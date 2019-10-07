@@ -6,11 +6,11 @@
 #ifndef NBREADER_TEXTPARAGRAPH_H
 #define NBREADER_TEXTPARAGRAPH_H
 
-#include <entity/bookmodel/NBTextMark.h>
+#include <reader/bookmodel/NBTextMark.h>
 #include <memory>
 #include <map>
 #include <string>
-#include <entity/bookmodel/NBHyperlinkType.h>
+#include <reader/bookmodel/NBHyperlinkType.h>
 
 // 段落元素
 class TextParagraphEntry {
@@ -46,24 +46,7 @@ private: // 禁止复制
     const TextParagraphEntry &operator=(const TextParagraphEntry &entry);
 };
 
-class TextControlEntryPool {
-public:
-    static TextControlEntryPool sControlEntryPool;
-public:
-    TextControlEntryPool() {
-    }
-
-    ~ZLTextControlEntryPool() {
-    }
-
-    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextMark mark, bool isStart);
-
-private:
-    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mStartEntries;
-    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mEndEntries;
-};
-
-class TextControlEntry : public TextParagraphEntry {
+/*class TextControlEntry : public TextParagraphEntry {
 
 protected:
     TextControlEntry(NBTextMark mark, bool isStart) : mMark(mark), hasStart(isStart) {
@@ -90,6 +73,28 @@ private:
     bool hasStart;
 
     friend class TextControlEntryPool;
+};*/
+
+
+
+
+
+
+/*class TextControlEntryPool {
+public:
+    static TextControlEntryPool sControlEntryPool;
+public:
+    TextControlEntryPool() {
+    }
+
+    ~ZLTextControlEntryPool() {
+    }
+
+    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextMark mark, bool isStart);
+
+private:
+    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mStartEntries;
+    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mEndEntries;
 };
 
 class TextFixedHSpaceEntry : public TextParagraphEntry {
@@ -106,7 +111,7 @@ private:
     const unsigned char mLength;
 };
 
-/*class TextHyperlinkControlEntry : public TextControlEntry {
+class TextHyperlinkControlEntry : public TextControlEntry {
 
 public:
     TextHyperlinkControlEntry();
@@ -129,7 +134,7 @@ public:
 private:
     std::string mLabel;
     NBHyperlinkType mHyperlinkType;
-};*/
+};
 
 class TextEntry : public TextParagraphEntry {
 
@@ -191,15 +196,19 @@ public:
 private:
     std::string mAction;
     std::string mData;
-};
+};*/
 
 
 class VideoEntry : public TextParagraphEntry {
 
 public:
-    void addSource(const std::string &type, const std::string &path);
+    void addSource(const std::string &type, const std::string &path) {
+        mSources.insert(std::make_pair(type, path));
+    }
 
-    const std::map<std::string, std::string> &getSources() const;
+    const std::map<std::string, std::string> &getSources() const {
+        return mSources;
+    }
 
 private:
     std::map<std::string, std::string> mSources;
