@@ -8,12 +8,13 @@
 
 #include <string>
 #include <tools/encoding/EncodingConverter.h>
+#include <tools/encoding/Charset.h>
 
 class EncodingTextReader {
 
 protected:
     // 传入编码类型
-    EncodingTextReader(const std::string &encoding);
+    EncodingTextReader(Charset charset);
 
     virtual ~EncodedTextReader() {
     }

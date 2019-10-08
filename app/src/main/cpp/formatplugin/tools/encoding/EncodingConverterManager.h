@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 #include "EncodingConverter.h"
+#include "Charset.h"
 
 class EncodingConverterManager {
 public:
@@ -20,9 +21,7 @@ public:
         }
     }
 
-    std::shared_ptr<EncodingConverter> getEncodingConverter(const std::string &name) const;
-
-    std::shared_ptr<EncodingConverter> getEncodingConverter(int code) const;
+    std::shared_ptr<EncodingConverter> getEncodingConverter(Charset charset) const;
 
     std::shared_ptr<EncodingConverter> getDefaultConverter() const;
 

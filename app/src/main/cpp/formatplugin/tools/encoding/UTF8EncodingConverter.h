@@ -13,9 +13,9 @@
 
 class UTF8EncodingConvertProvider : EncodingConvertProvider {
 public:
-    bool isSupportConverter(const std::string &encoding) override;
+    bool isSupportConverter(Charset charset) override;
 
-    std::shared_ptr<EncodingConverter> createConverter(const std::string &encoding) override;
+    std::shared_ptr<EncodingConverter> createConverter(Charset charset) override;
 
     ~UTF8EncodingConvertProvider();
 

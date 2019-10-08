@@ -8,8 +8,8 @@
 
 #include <string>
 #include <jni.h>
-#include <entity/book/Book.h>
-#include <entity/textmodel/TextModel.h>
+#include <reader/book/Book.h>
+#include <reader/textmodel/TextModel.h>
 #include <memory>
 
 class BookModel {

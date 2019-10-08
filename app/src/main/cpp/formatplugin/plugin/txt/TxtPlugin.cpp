@@ -33,7 +33,6 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
     // 创建文本阅读器
-
     return true;
 }
 

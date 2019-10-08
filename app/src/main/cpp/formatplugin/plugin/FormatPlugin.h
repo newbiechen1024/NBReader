@@ -6,8 +6,8 @@
 #define NBREADER_FORMATPLUGIN_H
 
 #include <string>
-#include <entity/book/Book.h>
-#include <entity/bookmodel/BookModel.h>
+#include <reader/book/Book.h>
+#include <reader/bookmodel/BookModel.h>
 #include "FormatType.h"
 
 class FormatPlugin {
