@@ -9,9 +9,9 @@
 /**
  * 从命名上看：Mark 包含了文本样式、文本作用
  */
-enum NBTextMark {
+enum class NBTextStyle {
     // all the values MUST be in the range 0..127
-    // 不过我从作者上它用的是 unsigned char 类型，应该能标记到 255
+    // 不过我从作者上它用的是 unsigned char 类型，应该能标记到 255 ==> 详见 TextModel
 
     REGULAR = 0, // 常规
     TITLE = 1, // 标题
@@ -42,15 +42,13 @@ enum NBTextMark {
     BOLD = 28, // 加粗
     DEFINITION = 29, // 定义
     DEFINITION_DESCRIPTION = 30, // 定义的描述
-    // Html 的标题
-    H1 = 31,
+    H1 = 31,// Html 的标题
     H2 = 32,
     H3 = 33,
     H4 = 34,
     H5 = 35,
     H6 = 36,
-    // 外部超链接
-    EXTERNAL_HYPERLINK = 37,
+    EXTERNAL_HYPERLINK = 37, // 外部超链接
     XHTML_TAG_P = 51,
 };
 

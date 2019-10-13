@@ -14,7 +14,7 @@ PlainTextFormat::PlainTextFormat(const File &file)
           mBreakType(ParagraphBreakType::BREAK_PARAGRAPH_AT_NEW_LINE),
           mIgnoredIndent(1),
           mEmptyLinesBeforeNewSection(1),
-          isCreateContentsTable(false) {
+          isExistTitle(false) {
 }
 
 void PlainTextDetector::detect(InputStream &inputStream, PlainTextFormat &format) {
@@ -147,22 +147,22 @@ void PlainTextDetector::detect(InputStream &inputStream, PlainTextFormat &format
         format.mBreakType = (breakType);
     }
 
-
     // 记录，文本中的段落一般间隔多少行
     {
-        // 最多的空行次数
+        // 最多的空行值
         unsigned int max = 0;
 
         unsigned index;
-        // 到达非空行的时，最多的空行
+        // 到达非空行的时，最大的空行值
         int emptyLinesBeforeNewSection = -1;
         for (index = 2; index < tableSize; ++index) {
             if (max < emptyLinesBeforeShortStringTable[index]) {
                 max = emptyLinesBeforeShortStringTable[index];
+                // 最大的连续空行
                 emptyLinesBeforeNewSection = index;
             }
         }
-        // 如果空行大于 0
+        // 如果最大空行索引 > 0
         if (emptyLinesBeforeNewSection > 0) {
             // 将值向前相加。
             for (index = tableSize - 1; index > 0; --index) {
@@ -182,11 +182,13 @@ void PlainTextDetector::detect(InputStream &inputStream, PlainTextFormat &format
             emptyLinesBeforeNewSection = (index == tableSize) ? -1 : (int) index;
         }
 
+        // TODO:这是用来之后判断是否是标题的依据，FBReader 判断标题的方式太简单了，必须保证别人的 txt 是按照标准来走的，否则就会出问题。不适合中文判断，以后需要改进。
+
         // 设置新片段前的空行数
-        format.mEmptyLinesBeforeNewSection = (emptyLinesBeforeNewSection);
-        format.isCreateContentsTable = (emptyLinesBeforeNewSection > 0);
+        format.mEmptyLinesBeforeNewSection = emptyLinesBeforeNewSection;
+        format.isExistTitle = (emptyLinesBeforeNewSection > 0);
     }
 
     // 设置初始化成功
-    format.isInitialized = (true);
+    format.isInitialized = true;
 }

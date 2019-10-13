@@ -15,7 +15,7 @@
 #include "TextStyleEntry.h"
 
 typedef unsigned char HyperlinkType;
-typedef unsigned char TextMark;
+typedef unsigned char TextStyle;
 
 class VideoEntry;
 
@@ -40,7 +40,7 @@ public:
         return mLanguage;
     }
 
-    std::size_t paragraphsNumber() const {
+    std::size_t getParagraphCount() const {
         return mParagraphs.size();
     }
 
@@ -56,7 +56,7 @@ public:
         return mStartEntryOffsets;
     }
 
-    const std::vector<jint> &paragraphLengths() const {
+    const std::vector<jint> &getParagraphLengths() const {
         return mParagraphLengths;
     }
 
@@ -68,7 +68,7 @@ public:
         mParagraphTypes;
     }
 
-    void addControl(TextMark textMark, bool isStart);
+    void addControl(TextStyle textStyle, bool isStart);
 
     void addStyleEntry(const TextStyleEntry &entry, unsigned char depth);
 
@@ -77,7 +77,7 @@ public:
 
     void addStyleCloseEntry();
 
-    void addHyperlinkControl(TextMark textMark, HyperlinkType hyperlinkType,
+    void addHyperlinkControl(TextStyle textStyle, HyperlinkType hyperlinkType,
                              const std::string &label);
 
     void addText(const std::string &text);

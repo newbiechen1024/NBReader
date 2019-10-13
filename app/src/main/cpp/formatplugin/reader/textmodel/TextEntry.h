@@ -6,7 +6,7 @@
 #ifndef NBREADER_TEXTPARAGRAPH_H
 #define NBREADER_TEXTPARAGRAPH_H
 
-#include <reader/bookmodel/NBTextMark.h>
+#include <reader/bookmodel/NBTextStyle.h>
 #include <memory>
 #include <map>
 #include <string>
@@ -49,14 +49,14 @@ private: // 禁止复制
 /*class TextControlEntry : public TextParagraphEntry {
 
 protected:
-    TextControlEntry(NBTextMark mark, bool isStart) : mMark(mark), hasStart(isStart) {
+    TextControlEntry(NBTextStyle mark, bool isStart) : mMark(mark), hasStart(isStart) {
     }
 
 public:
     virtual ~ZLTextControlEntry() {
     }
 
-    NBTextMark getMark() const {
+    NBTextStyle getMark() const {
         return mMark;
     }
 
@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    NBTextMark mMark;
+    NBTextStyle mMark;
     bool hasStart;
 
     friend class TextControlEntryPool;
@@ -90,11 +90,11 @@ public:
     ~ZLTextControlEntryPool() {
     }
 
-    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextMark mark, bool isStart);
+    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextStyle mark, bool isStart);
 
 private:
-    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mStartEntries;
-    std::map<NBTextMark, std::shared_ptr<TextParagraphEntry>> mEndEntries;
+    std::map<NBTextStyle, std::shared_ptr<TextParagraphEntry>> mStartEntries;
+    std::map<NBTextStyle, std::shared_ptr<TextParagraphEntry>> mEndEntries;
 };
 
 class TextFixedHSpaceEntry : public TextParagraphEntry {

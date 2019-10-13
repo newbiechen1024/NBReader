@@ -68,12 +68,12 @@ size_t ZipDecompressor::decompress(InputStream &stream, char *buffer, size_t max
             }
         }
     }
-    // 将 mBuffer 中的数据复制到 buffer 中
+    // 将 mParagraphBufferList 中的数据复制到 buffer 中
     std::size_t realSize = std::min(maxSize, mBuffer.length());
     if (buffer != 0) {
         std::memcpy(buffer, mBuffer.data(), realSize);
     }
-    // 清空 mBuffer 中的数据
+    // 清空 mParagraphBufferList 中的数据
     mBuffer.erase(0, realSize);
     return realSize;
 }

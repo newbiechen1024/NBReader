@@ -6,8 +6,8 @@
 #include <jni.h>
 #include <string>
 #include <plugin/PluginManager.h>
-#include <entity/book/Book.h>
-#include <entity/bookmodel/BookModel.h>
+#include <reader/book/Book.h>
+#include <reader/bookmodel/BookModel.h>
 #include "util/AndroidUtil.h"
 #include "util/JNIEnvelope.h"
 #include "plugin/FormatPlugin.h"

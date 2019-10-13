@@ -10,8 +10,8 @@ BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const
         : mBook(book), cacheDir(bookCacheDir) {
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
-    // TODO:创建 textModel
     mTextModel = std::make_shared<TextModel>();
+    mTOCTree = std::make_shared<TOCTree>();
 }
 
 BookModel::~BookModel() {
@@ -24,4 +24,8 @@ const std::shared_ptr<Book> BookModel::getBook() const {
 
 std::shared_ptr<TextModel> BookModel::getTextModel() const {
     return mTextModel;
+}
+
+std::shared_ptr<TOCTree> BookModel::getTOCTree() const {
+    return mTOCTree;
 }

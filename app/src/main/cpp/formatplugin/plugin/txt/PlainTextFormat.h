@@ -13,7 +13,7 @@
 // 纯文本参数信息
 class PlainTextFormat {
 public:
-    // 换行类型
+    // 允许更换段落的条件
     enum ParagraphBreakType {
         BREAK_PARAGRAPH_AT_NEW_LINE = 1,
         BREAK_PARAGRAPH_AT_EMPTY_LINE = 2,
@@ -36,14 +36,15 @@ public:
     // 新片段之前的空行数
     int getEmptyLinesBeforeNewSection() const { return mEmptyLinesBeforeNewSection; }
 
-    bool hasCreateContentsTable() const { return isCreateContentsTable; }
+    // 是否存在标题
+    bool existTitle() const { return isExistTitle; }
 
 private:
     bool isInitialized;
     int mBreakType;
     int mIgnoredIndent;
     int mEmptyLinesBeforeNewSection;
-    bool isCreateContentsTable;
+    bool isExistTitle;
 
     // 友元:文本探测器
     friend class PlainTextDetector;

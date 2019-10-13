@@ -11,10 +11,10 @@
 #include <reader/book/Book.h>
 #include <reader/textmodel/TextModel.h>
 #include <memory>
+#include "TOCTree.h"
 
 class BookModel {
 public:
-    const std::string cacheDir;
 
     BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const std::string &cacheDir);
 
@@ -24,10 +24,17 @@ public:
 
     std::shared_ptr<TextModel> getTextModel() const;
 
+    // 获取目录数
+    std::shared_ptr<TOCTree> getTOCTree() const;
+
+public:
+    const std::string cacheDir;
 
 private:
     const std::shared_ptr<Book> mBook;
     std::shared_ptr<TextModel> mTextModel;
+    std::shared_ptr<TOCTree> mTOCTree;
+
     jobject mJavaModel;
 };
 

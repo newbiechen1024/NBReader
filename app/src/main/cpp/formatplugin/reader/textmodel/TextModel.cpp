@@ -30,7 +30,7 @@ TextModel::~TextModel() {
     }
 }
 
-void TextModel::addControl(TextMark textMark, bool isStart) {
+void TextModel::addControl(TextStyle style, bool isStart) {
 
 }
 
@@ -47,7 +47,7 @@ void TextModel::addStyleCloseEntry() {
 
 }
 
-void TextModel::addHyperlinkControl(TextMark textMark, HyperlinkType hyperlinkType, const std::string &label) {
+void TextModel::addHyperlinkControl(TextStyle textStyle, HyperlinkType hyperlinkType, const std::string &label) {
 
 }
 
@@ -76,5 +76,9 @@ void TextModel::addExtensionEntry(const std::string &action, const std::map<std:
 }
 
 void TextModel::flush() {
+
+}
+
+void TextPlainModel::createParagraph(TextParagraph::Type type) {
 
 }

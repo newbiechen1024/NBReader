@@ -12,6 +12,11 @@
 
 class EncodingTextReader {
 
+public:
+    std::shared_ptr<EncodingConverter> getEncodingConverter() {
+        return mConverter;
+    }
+
 protected:
     // 传入编码类型
     EncodingTextReader(Charset charset);
@@ -19,6 +24,7 @@ protected:
     virtual ~EncodedTextReader() {
     }
 
+private:
     // 持有编码转换器
     std::shared_ptr<EncodingConverter> mConverter;
 };
