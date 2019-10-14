@@ -17,10 +17,16 @@ private:
 
 public:
     static JavaClass Class_String;
+    static JavaClass Class_Locale;
+
     static JavaClass Class_NativeFormatPlugin;
     static JavaClass Class_FormatPluginManager;
     static JavaClass Class_BookModel;
     static JavaClass Class_Book;
+
+    static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
+
+    static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
 
     static std::shared_ptr<StringMethod> Method_String_toLowerCase;
     static std::shared_ptr<StringMethod> Method_String_toUpperCase;

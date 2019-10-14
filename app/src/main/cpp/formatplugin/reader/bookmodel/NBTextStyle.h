@@ -7,7 +7,7 @@
 #define NBREADER_TEXTTYPE_H
 
 /**
- * 从命名上看：Mark 包含了文本样式、文本作用
+ * 文本样式标签
  */
 enum class NBTextStyle {
     // all the values MUST be in the range 0..127

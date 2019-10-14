@@ -11,6 +11,8 @@ const std::string PKG_NAME = "com/example/newbiechen/nbreader/";
 
 JavaClass AndroidUtil::Class_String("java/lang/String");
 
+JavaClass AndroidUtil::Class_Locale("java/util/Locale");
+
 JavaClass AndroidUtil::Class_NativeFormatPlugin(
         PKG_NAME + "ui/component/book/plugin/NativeFormatPlugin");
 
@@ -22,6 +24,8 @@ JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/entity/Book
 JavaClass AndroidUtil::Class_Book(PKG_NAME + "data/entity/BookEntity");
 
 // 初始化静态成员。。
+std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
+std::shared_ptr<StringMethod> Method_Locale_getLanguage;
 std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getTitle;
@@ -40,9 +44,14 @@ JNIEnv *AndroidUtil::getEnv() {
 bool AndroidUtil::init(JavaVM *jvm) {
     sJavaVM = jvm;
 
+    StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale, "getDefault",
+                                                                          Class_Locale, "()");
+
+    Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_String, "getLanguage", "()");
+
     // string
-    Method_String_toLowerCase = new StringMethod(Class_String, "toLowerCase", "()");
-    Method_String_toUpperCase = new StringMethod(Class_String, "toUpperCase", "()");
+    Method_String_toLowerCase = std::make_shared<StringMethod>(Class_String, "toLowerCase", "()");
+    Method_String_toUpperCase = std::make_shared<StringMethod>(Class_String, "toUpperCase", "()");
 
     Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(Class_NativeFormatPlugin,
                                                                                    "getSupportTypeByStr",

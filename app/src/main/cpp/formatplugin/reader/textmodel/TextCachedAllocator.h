@@ -12,7 +12,7 @@
 class TextCachedAllocator {
 public:
     TextCachedAllocator(const std::size_t rowSize, const std::string &directoryName,
-                       const std::string &fileExtension);
+                        const std::string &fileExtension);
 
     ~TextCachedAllocator();
 
@@ -71,12 +71,12 @@ public:
     }
 
     // 数据块数量
-    std::size_t blocksNumber() const {
-        return mPool.size();
+    std::size_t getBufferBlockCount() const {
+        return mBufferBlockList.size();
     }
 
-    std::size_t currentBytesOffset() const {
-        return mOffset;
+    std::size_t getCurBufferBlockOffset() const {
+        return mCurBlockOffset;
     }
 
     bool isFailed() const {
@@ -89,10 +89,14 @@ private:
     void writeCache(std::size_t blockLength);
 
 private:
-    const std::size_t mRowSize;
-    std::size_t mCurrentRowSize;
-    std::vector<char *> mPool;
-    std::size_t mOffset;
+    // 默认创建缓冲块的大小
+    const std::size_t mBasicBufferBlockSize;
+    // 实际创建缓冲块的大小
+    std::size_t mActualBufferBlockSize;
+    // 存储创建的所有缓冲区指针
+    std::vector<char *> mBufferBlockList;
+    // 基于当前缓冲块的偏移
+    std::size_t mCurBlockOffset;
 
     bool hasChanges;
     bool hasFailed;

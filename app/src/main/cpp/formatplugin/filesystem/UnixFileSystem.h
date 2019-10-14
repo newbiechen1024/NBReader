@@ -1,6 +1,6 @@
 // author : newbiechen
 // date : 2019-09-23 10:59
-// description : 
+// description : Unix 文件系统
 //
 
 #ifndef NBREADER_UNIXFILESYSTEM_H

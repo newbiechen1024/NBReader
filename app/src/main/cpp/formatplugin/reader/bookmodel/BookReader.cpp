@@ -18,7 +18,7 @@ void BookReader::beginParagraph(TextParagraph::Type type) {
 
     // 将所有的 style 作为标记添加到新创建的段落中
     for (NBTextStyle &textStyle : mTextStyleList) {
-        mTextModel->addControl(static_cast<TextStyle>(textStyle), true);
+        mTextModel->addControlEntry(static_cast<TextStyle>(textStyle), true);
     }
 
     // 标记当前段落正在处理

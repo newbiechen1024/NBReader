@@ -3,6 +3,7 @@
 // description : 
 //
 #include <jni.h>
+#include <android/application/AndroidFormatPluginApp.h>
 #include "util/AndroidUtil.h"
 
 
@@ -11,6 +12,6 @@
  */
 extern "C"
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
-    AndroidUtil::init(jvm);
+    AndroidFormatPluginApp::newInstance();
     return JNI_VERSION_1_6;
 }

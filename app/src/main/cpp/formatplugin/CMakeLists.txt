@@ -17,6 +17,7 @@ aux_source_directory(./reader/book BOOK_READER_SOURCE)
 aux_source_directory(./reader/bookmodel BOOK_MODEL_READER_SOURCE)
 aux_source_directory(./reader/textmodel TEXT_MODEL_READER_SOURCE)
 aux_source_directory(./android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
+aux_source_directory(./android/application ANDROID_APPLICATION_SOURCE)
 aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
 aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 
@@ -31,6 +32,7 @@ add_library( # Sets the title of the library.
         ${FILE_SYSTEM_ZIP_SOURCE}
         ${FILE_SYSTEM_IO_SOURCE}
         ${ANDROID_FILE_SYSTEM_SOURCE}
+        ${ANDROID_APPLICATION_SOURCE}
         ${UTIL_SOURCE}
         ${PLUGIN_SOURCE}
         ${TXT_PLUGIN_SOURCE}

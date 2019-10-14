@@ -1,10 +1,28 @@
 // author : newbiechen
 // date : 2019-09-27 18:15
-// description : 文本包含的元素集合
-//
+// description :  段落块封装 ==> 段落块结构：| 段落类型 | 段落类型对应的数据信息
 
-#ifndef NBREADER_TEXTPARAGRAPH_H
-#define NBREADER_TEXTPARAGRAPH_H
+
+/**
+ * entry 存储到本地文件的结构表：
+ *
+ * CONTROL_ENTRY：占用 4 字节，格式为 | entry 类型 | 未知类型 | 样式标签 | 是开放标签还是闭合标签 |
+ *
+ * 1. entry 类型：占用 1 字节
+ * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过
+ * 3. 样式标签：占用 1 字节 ==> 详见 TextParagraph::Type
+ * 4. 标签类型：占用 1 字节 ==> 0 或者是
+ *
+ * TEXT_ENTRY：占用 (6 + 文本字节数) 格式为 | entry 类型 | 未知类型 | 文本字节长度 | 文本内容
+ *
+ * 1. entry 类型：占用 1 字节
+ * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过
+ * 3. 文本字节长度：占用 4 字节
+ * 4. 文本内容：占用文本长度字节。
+ */
+
+#ifndef NBREADER_TEXTENTRY_H
+#define NBREADER_TEXTENTRY_H
 
 #include <reader/bookmodel/NBTextStyle.h>
 #include <memory>
@@ -12,7 +30,7 @@
 #include <string>
 #include <reader/bookmodel/NBHyperlinkType.h>
 
-// 段落元素
+// 段落元素 ==> 基类
 class TextParagraphEntry {
 
 public:
@@ -214,4 +232,4 @@ private:
     std::map<std::string, std::string> mSources;
 };
 
-#endif //NBREADER_TEXTPARAGRAPH_H
+#endif //NBREADER_TEXTENTRY_H

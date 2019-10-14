@@ -1,7 +1,6 @@
 // author : newbiechen
 // date : 2019-09-27 18:34
-// description : 
-//
+// description : 段落结构封装，包含段落在缓冲区的位置、段落块数据信息
 
 #ifndef NBREADER_TEXTPARAGRAPH_H
 #define NBREADER_TEXTPARAGRAPH_H
@@ -9,9 +8,7 @@
 #include <stddef.h>
 
 // 默认段落
-class TextParagraph {
-
-public:
+struct TextParagraph {
     // 段落类型
     enum Type {
         TEXT_PARAGRAPH = 0, // 文本段落
@@ -25,61 +22,31 @@ public:
         ENCRYPTED_SECTION_PARAGRAPH = 8,
     };
 
-protected:
-    TextParagraph() : mEntryNumber(0) {
+    TextParagraph(Type paragraphType = TEXT_PARAGRAPH) : type(paragraphType),
+                                                         bufferBlockIndex(0),
+                                                         bufferBlockOffset(0),
+                                                         entryCount(0),
+                                                         textLength(0),
+                                                         curTotalTextLength(0) {
     }
 
-public:
-    virtual ~ZLTextParagraph() {
-    }
+    // 段落类型
+    Type type;
 
-    virtual Type getType() const {
-        return TEXT_PARAGRAPH;
-    }
+    // 段落在缓冲块的位置
+    int bufferBlockIndex;
 
-    size_t getEntryNumber() const {
-        return mEntryNumber;
-    }
+    // 段落在缓冲块中的对应位置
+    int bufferBlockOffset;
 
-private:
-    void addEntry(char *address) {
-        if (mEntryNumber == 0) {
-            mFirstEntryAddress = address;
-        }
-        ++mEntryNumber;
-    }
+    // 具有的 TextParagraphEntry 数量
+    int entryCount;
 
-private:
-    // 第一个元素地址
-    char *mFirstEntryAddress;
-    // 元素类型 Number
-    size_t mEntryNumber;
+    // 当前段落文本长度
+    int textLength;
 
-    friend class TextModel;
-
-    friend class TextPlainModel;
+    // 到当前段落总文本的长度
+    int curTotalTextLength;
 };
-
-// 可指定类型段落
-class TextSpecialParagraph : public TextParagraph {
-
-private:
-    TextSpecialParagraph(Type type) : mType(type) {
-    }
-
-public:
-    ~ZLTextSpecialParagraph() {
-    }
-
-    Type getType() const {
-        return mType;
-    }
-
-private:
-    Type mType;
-
-    friend class TextPlainModel;
-};
-
 
 #endif //NBREADER_TEXTPARAGRAPH_H

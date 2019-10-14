@@ -48,27 +48,7 @@ public:
         return *mAllocator;
     }
 
-    const std::vector<jint> &startEntryIndices() const {
-        return mStartEntryIndices;
-    }
-
-    const std::vector<jint> &startEntryOffsets() const {
-        return mStartEntryOffsets;
-    }
-
-    const std::vector<jint> &getParagraphLengths() const {
-        return mParagraphLengths;
-    }
-
-    const std::vector<jint> &textSizes() const {
-        return mTextSizes;
-    }
-
-    const std::vector<jbyte> &paragraphTypes() const {
-        mParagraphTypes;
-    }
-
-    void addControl(TextStyle textStyle, bool isStart);
+    void addControlEntry(TextStyle style, bool isTagStart);
 
     void addStyleEntry(const TextStyleEntry &entry, unsigned char depth);
 
@@ -108,13 +88,8 @@ private:
     const std::string mLanguage;
     std::vector<TextParagraph *> mParagraphs;
     mutable std::shared_ptr<TextCachedAllocator> mAllocator;
-    char *mLastEntryStart;
-    std::vector<jint> mStartEntryIndices;
-    std::vector<jint> mStartEntryOffsets;
-    std::vector<jint> mParagraphLengths;
-    std::vector<jint> mTextSizes;
-    std::vector<jbyte> mParagraphTypes;
-
+    // 当前在缓冲区上创建的 entry 指针位置
+    char *mCurEntryPointer;
     FontManager &mFontManager;
 };
 
