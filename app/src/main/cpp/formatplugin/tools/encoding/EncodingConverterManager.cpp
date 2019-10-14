@@ -8,6 +8,7 @@
 #include "EncodingConverterManager.h"
 #include "ASCIIEncodingConverter.h"
 #include "UTF8EncodingConverter.h"
+#include "UTF16EncodingConverter.h"
 
 
 EncodingConverterManager &EncodingConverterManager::getInstance() {
@@ -19,9 +20,11 @@ EncodingConverterManager &EncodingConverterManager::getInstance() {
 
 EncodingConverterManager::EncodingConverterManager() {
     // ascii 转换器
-    registerProvider(new ASCIIEncodingConvertProvider());
+    registerProvider(std::make_shared<ASCIIEncodingConvertProvider>());
     // utf-8 转换器
-    registerProvider(new UTF8EncodingConvertProvider());
+    registerProvider(std::make_shared<UTF8EncodingConvertProvider>());
+    // utf-16 转换器
+    registerProvider(std::make_shared<UTF16EncodingConvertProvider>());
 }
 
 void EncodingConverterManager::registerProvider(std::shared_ptr<EncodingConvertProvider> provider) {

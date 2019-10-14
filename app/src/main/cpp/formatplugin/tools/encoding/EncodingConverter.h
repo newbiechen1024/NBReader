@@ -13,22 +13,17 @@
 
 class EncodingConverter {
 public:
-    static const std::string ASCII;
-    static const std::string UTF8;
-    static const std::string UTF16;
-    static const std::string UTF16BE;
-
-protected:
-    EncodingConverter() {}
-
-public:
-    virtual ~EncodingConverter(){}
+    virtual ~EncodingConverter() {}
 
     void convert(std::string &dst, const std::string &src);
 
     virtual void convert(std::string &dst, const char *srcStart, const char *srcEnd) = 0;
+
     // 重置
     virtual void reset() = 0;
+
+protected:
+    EncodingConverter() {}
 
 // 禁止复制
 private:
@@ -39,10 +34,10 @@ private:
 
 class EncodingConvertProvider {
 protected:
-    EncodingConvertProvider(){}
+    EncodingConvertProvider() {}
 
 public:
-    virtual ~EncodingConvertProvider(){}
+    virtual ~EncodingConvertProvider() {}
 
     // 该编码是否支持转换
     virtual bool isSupportConverter(Charset charset) = 0;

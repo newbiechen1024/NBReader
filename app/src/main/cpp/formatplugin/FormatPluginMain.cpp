@@ -12,6 +12,9 @@
  */
 extern "C"
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
+    // 创建 Android 类型的 Application
     AndroidFormatPluginApp::newInstance();
+    // 初始化 application
+    FormatPluginApp::getInstance().initApp(jvm);
     return JNI_VERSION_1_6;
 }

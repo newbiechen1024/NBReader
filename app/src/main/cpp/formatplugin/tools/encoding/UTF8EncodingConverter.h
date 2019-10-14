@@ -21,11 +21,10 @@ public:
 
 };
 
-class UTF8EncodingConvert : EncodingConverter {
+class UTF8EncodingConverter : EncodingConverter {
 public:
     void convert(std::string &dst, const char *srcStart, const char *srcEnd) override;
 
-private:
     void reset() override;
 
 private:

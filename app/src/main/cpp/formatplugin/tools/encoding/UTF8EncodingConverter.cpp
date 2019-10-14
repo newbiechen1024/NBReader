@@ -6,7 +6,7 @@
 #include <util/UnicodeUtil.h>
 #include "UTF8EncodingConverter.h"
 
-void UTF8EncodingConvert::convert(std::string &dst, const char *srcStart, const char *srcEnd) {
+void UTF8EncodingConverter::convert(std::string &dst, const char *srcStart, const char *srcEnd) {
 
     if (mBuffer.size() > 0) {
         const std::size_t len = UnicodeUtil::length(mBuffer, 1);
@@ -35,7 +35,7 @@ void UTF8EncodingConvert::convert(std::string &dst, const char *srcStart, const 
     dst.append(srcStart, srcEnd - srcStart);
 }
 
-void UTF8EncodingConvert::reset() {
+void UTF8EncodingConverter::reset() {
     mBuffer.clear();
 }
 
@@ -44,5 +44,5 @@ bool UTF8EncodingConvertProvider::isSupportConverter(Charset charset) {
 }
 
 std::shared_ptr<EncodingConverter> UTF8EncodingConvertProvider::createConverter(Charset charset) {
-    return std::make_shared<UTF8EncodingConvert>();
+    return std::make_shared<UTF8EncodingConverter>();
 }
