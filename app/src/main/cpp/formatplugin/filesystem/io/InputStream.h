@@ -31,9 +31,9 @@ public:
 protected:
     InputStream();
 
-private:
+/*private:
     InputStream(const InputStream & is);
-    const InputStream &operator=(const InputStream &is);
+    const InputStream &operator=(const InputStream &is);*/
 };
 
 inline InputStream::InputStream() {

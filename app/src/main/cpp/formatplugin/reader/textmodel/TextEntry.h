@@ -55,7 +55,7 @@ protected:
     }
 
 public:
-    virtual ~ZLTextParagraphEntry() {
+    virtual ~TextParagraphEntry() {
     }
 
 private: // 禁止复制
@@ -74,7 +74,7 @@ public:
     virtual ~ZLTextControlEntry() {
     }
 
-    NBTextStyle getMark() const {
+    NBTextStyle getStyleTag() const {
         return mMark;
     }
 

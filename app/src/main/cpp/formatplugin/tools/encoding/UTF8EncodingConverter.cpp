@@ -44,5 +44,6 @@ bool UTF8EncodingConvertProvider::isSupportConverter(Charset charset) {
 }
 
 std::shared_ptr<EncodingConverter> UTF8EncodingConvertProvider::createConverter(Charset charset) {
-    return std::make_shared<UTF8EncodingConverter>();
+    std::shared_ptr<UTF8EncodingConverter> converter(new UTF8EncodingConverter());
+    return std::dynamic_pointer_cast<EncodingConverter>(converter);
 }

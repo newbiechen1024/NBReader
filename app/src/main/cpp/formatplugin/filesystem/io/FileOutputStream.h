@@ -11,7 +11,7 @@
 #include <string>
 #include <filesystem/File.h>
 
-class FileOutputStream : OutputStream {
+class FileOutputStream : public OutputStream {
 public:
     FileOutputStream(const std::string &filePath);
 
@@ -19,17 +19,14 @@ public:
 
     ~FileOutputStream();
 
-    ~OutputStream();
+    bool open() override;
 
-    bool open();
+    void write(const char *data, size_t len) override;
 
-    void write(const char *data, size_t len);
+    void write(const std::string &str) override;
 
-    void write(const std::string &str);
+    void close() override;
 
-    void close();
-
-private:
 private:
     std::string mTempPath;
     std::string mPath;

@@ -4,3 +4,7 @@
 //
 
 #include "TextStyleEntry.h"
+
+TextStyleEntry::TextStyleEntry(unsigned char textStyle) : mTextStyleTag(textStyle) {
+
+}

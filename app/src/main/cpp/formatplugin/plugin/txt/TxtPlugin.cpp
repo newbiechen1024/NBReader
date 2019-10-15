@@ -19,7 +19,7 @@ bool TxtPlugin::readMetaInfo(Book &book) const {
 bool TxtPlugin::readModel(BookModel &bookModel) const {
     Book &book = *bookModel.getBook();
     // 获取 Book 对应的 File
-    File &file = book.getFile();
+    const File &file = book.getFile();
     // 获取 InputStream 输入流
     std::shared_ptr<InputStream> fileInputStream = file.getInputStream();
     // 创建文本参数信息

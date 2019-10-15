@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include "JNIEnvelope.h"
+#include "AndroidUtil.h"
 
 class UnicodeUtil {
 

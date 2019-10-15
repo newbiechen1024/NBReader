@@ -6,10 +6,13 @@
 #include <memory>
 #include "ZipEntryManager.h"
 
-ZipEntryManager *ZipEntryManager::getInstance() {
+ZipEntryManager *ZipEntryManager::sInstance = nullptr;
+
+ZipEntryManager &ZipEntryManager::getInstance() {
     if (sInstance == nullptr) {
         sInstance = new ZipEntryManager();
     }
+    return *sInstance;
 }
 
 void ZipEntryManager::deleteInstance() {
@@ -27,7 +30,7 @@ std::shared_ptr<ZipEntry> ZipEntryManager::getZipEntry(const std::string &zipPat
         if (cache != nullptr && cache->getPath() == zipPath) {
             // 如果缓存失效，则重新加载
             if (!cache->isValid()) {
-                cache = std::make_shared(zipPath);
+                cache = std::make_shared<ZipEntry>(zipPath);
                 mZipEntryArr[i] = cache;
             }
             return cache;
@@ -35,7 +38,7 @@ std::shared_ptr<ZipEntry> ZipEntryManager::getZipEntry(const std::string &zipPat
     }
 
     // 如果 entry 不存在
-    std::shared_ptr<ZipEntry> cache = std::make_shared(zipPath);
+    std::shared_ptr<ZipEntry> cache = std::make_shared<ZipEntry>(zipPath);
     mZipEntryArr[mCacheIndex] = cache;
     mCacheIndex = (mCacheIndex + 1) % MAX_CACHE_COUNT;
     return cache;

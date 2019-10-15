@@ -39,7 +39,7 @@ public:
 
     const std::string &getAuthor() const;
 
-    File &getFile() const;
+    const File &getFile() const;
 
     void setTitle(const std::string &title);
 

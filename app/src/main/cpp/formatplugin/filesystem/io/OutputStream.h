@@ -19,9 +19,9 @@ public:
 protected:
     OutputStream();
 
-private:
+/*private:
     OutputStream(const OutputStream&);
-    const OutputStream &operator = (const OutputStream&);
+    const OutputStream &operator = (const OutputStream&);*/
 };
 
 inline OutputStream::OutputStream() {}

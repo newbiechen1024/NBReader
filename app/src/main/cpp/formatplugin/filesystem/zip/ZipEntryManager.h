@@ -11,11 +11,13 @@
 
 class ZipEntryManager {
 public:
-    static ZipEntryManager *getInstance();
+    static ZipEntryManager &getInstance();
 
     static void deleteInstance();
 
-    ~ZipEntryManager();
+    ~ZipEntryManager() {
+
+    }
 
     std::shared_ptr<ZipEntry> getZipEntry(const std::string &zipPath);
 
@@ -27,7 +29,9 @@ private:
     // 缓冲的索引
     int mCacheIndex;
 
-    ZipEntryManager();
+    ZipEntryManager() {
+
+    }
 };
 
 

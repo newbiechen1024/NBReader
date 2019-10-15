@@ -10,10 +10,13 @@ bool UTF16EncodingConvertProvider::isSupportConverter(Charset charset) {
 }
 
 std::shared_ptr<EncodingConverter> UTF16EncodingConvertProvider::createConverter(Charset charset) {
+
     if (Charset::UTF16 == charset) {
-        return std::make_shared<UTF16LEEncodingConverter>();
+        std::shared_ptr<UTF16LEEncodingConverter> converter(new UTF16LEEncodingConverter());
+        return std::dynamic_pointer_cast<EncodingConverter>(converter);
     } else {
-        return std::make_shared<UTF16BEEncodingConverter>();
+        std::shared_ptr<UTF16BEEncodingConverter> converter(new UTF16BEEncodingConverter());
+        return std::dynamic_pointer_cast<EncodingConverter>(converter);
     }
 }
 

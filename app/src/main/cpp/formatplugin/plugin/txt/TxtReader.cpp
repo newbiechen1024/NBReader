@@ -10,9 +10,9 @@ TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset ch
                                                                                          mFormat(format) {
     // 创建核心解析器
     if (charset == Charset::UTF16) {
-        mReaderCore = std::make_shared<TxtReaderCoreUTF16LE>(*this);
+        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(std::make_shared<TxtReaderCoreUTF16LE>(*this));
     } else if (charset == Charset::UTF16BE) {
-        mReaderCore == std::make_shared<TxtReaderCoreUTF16BE>(*this);
+        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(std::make_shared<TxtReaderCoreUTF16BE>(*this));
     } else {
         mReaderCore = std::make_shared<TxtReaderCore>(*this);
     }
@@ -170,7 +170,6 @@ bool TxtReader::receiveText(std::string &str) {
 
 
 TxtReaderCore::TxtReaderCore(TxtReader &reader) : mReader(reader) {
-
 }
 
 /**

@@ -17,7 +17,7 @@ public:
     int familyListIndex(const std::vector<std::string> &familyList);
 
     const std::map<std::string,std::shared_ptr<FontEntry> > &entries() const;
-    const std::vector<std::vector<std::string> > &familyLists() const;
+    // const std::vector<std::vector<std::string> > &familyLists() const;
 
 private:
     std::map<std::string,std::shared_ptr<FontEntry> > mEntries;

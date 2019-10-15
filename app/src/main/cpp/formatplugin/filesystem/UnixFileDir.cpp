@@ -8,7 +8,7 @@
 #include "UnixFileDir.h"
 #include "FileSystem.h"
 
-void UnixFileDir::readFilePaths(std::vector<std::string> &paths, bool fullPath) {
+void UnixFileDir::readFilePaths(std::vector<std::string> &paths, bool fullPath) const {
     DIR *dir = opendir(getPath().c_str());
 
     if (dir != 0) {

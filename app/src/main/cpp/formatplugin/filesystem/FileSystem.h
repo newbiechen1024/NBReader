@@ -14,8 +14,8 @@
 
 class FileSystem {
 public:
-    static std::string separator;
-    static std::string archiveSeparator;
+    static const std::string separator;
+    static const std::string archiveSeparator;
 
     static FileSystem &getInstance();
 
@@ -40,7 +40,7 @@ protected:
     virtual bool createDirectory(const std::string &path) const = 0;
 
     // 创建并返回目录
-    virtual FileDir *getDirectory(const std::string &path) const = 0;
+    virtual std::shared_ptr<FileDir> getDirectory(const std::string &path) const = 0;
 
     // 创建文件
     virtual bool createFile(const std::string &path) const = 0;

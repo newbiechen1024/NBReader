@@ -18,5 +18,6 @@ bool ASCIIEncodingConvertProvider::isSupportConverter(Charset charset) {
 }
 
 std::shared_ptr<EncodingConverter> ASCIIEncodingConvertProvider::createConverter(Charset charset) {
-    return std::make_shared<ASCIIEncodingConverter>();
+    std::shared_ptr<ASCIIEncodingConverter> converter(new ASCIIEncodingConverter());
+    return std::dynamic_pointer_cast<EncodingConverter>(converter);
 }

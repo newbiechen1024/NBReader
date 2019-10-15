@@ -21,7 +21,7 @@ protected:
     // 传入编码类型
     EncodingTextReader(Charset charset);
 
-    virtual ~EncodedTextReader() {
+    virtual ~EncodingTextReader() {
     }
 
 private:

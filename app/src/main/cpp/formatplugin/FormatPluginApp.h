@@ -34,5 +34,4 @@ protected:
     virtual ~FormatPluginApp() {}
 };
 
-
 #endif //NBREADER_FORMATPLUGINAPP_H

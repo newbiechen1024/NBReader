@@ -94,9 +94,9 @@ private:
 };
 
 // 纯文本 model
-class TextPlainModel : TextModel {
+class TextPlainModel : public TextModel {
 public:
-    TextPlainModel(const std::string &id, const std::string &language, const std::size_t rowSize,
+    TextPlainModel(const std::string &id, const std::string &language, const std::size_t defaultBufferSize,
                    const std::string &directoryName, const std::string &fileExtension,
                    FontManager &fontManager);
 

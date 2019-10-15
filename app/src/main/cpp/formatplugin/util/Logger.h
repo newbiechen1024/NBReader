@@ -11,16 +11,18 @@
 
 class Logger {
 public:
-    static const std::string TAG = "NBReader";
-    static void i(const std::string &subTag,const std::string &msg) const;
-    static void w(const std::string &subTag,const std::string &msg) const;
-    static void d(const std::string &subTag,const std::string &msg) const;
-    static void e(const std::string &subTag,const std::string &msg) const;
+    static const std::string TAG;
+
+    static void i(const std::string &subTag,const std::string &msg);
+    static void w(const std::string &subTag,const std::string &msg);
+    static void d(const std::string &subTag,const std::string &msg);
+    static void e(const std::string &subTag,const std::string &msg);
 private:
     Logger();
 
     static void printLogger(android_LogPriority logPriority, const std::string &subTag, const std::string &msg);
 };
 
+const std::string TAG = "NBReader";
 
 #endif //NBREADER_LOGGER_H

@@ -21,6 +21,10 @@ aux_source_directory(./android/application ANDROID_APPLICATION_SOURCE)
 aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
 aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 
+find_library(
+        zip-lib
+        z
+)
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -40,5 +44,10 @@ add_library( # Sets the title of the library.
         ${BOOK_MODEL_READER_SOURCE}
         ${TEXT_MODEL_READER_SOURCE}
         ${TOOLS_FONT_SOURCE}
-        ${TOOLS_ENCODING_SOURCE}
-        )
+        ${TOOLS_ENCODING_SOURCE})
+
+target_link_libraries(
+        FormatPlugin
+
+        ${zip-lib}
+)

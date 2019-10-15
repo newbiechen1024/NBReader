@@ -6,17 +6,16 @@
 #ifndef NBREADER_DUMMYENCODINGCONVERTER_H
 #define NBREADER_DUMMYENCODINGCONVERTER_H
 
-#include <EncodingConverter.h>
 #include "EncodingConverter.h"
 
-class ASCIIEncodingConverter : EncodingConverter {
+class ASCIIEncodingConverter : public EncodingConverter {
 public:
     void convert(std::string &dst, const char *srcStart, const char *srcEnd) override;
 
     void reset() override;
 };
 
-class ASCIIEncodingConvertProvider : EncodingConvertProvider {
+class ASCIIEncodingConvertProvider : public EncodingConvertProvider {
 public:
     bool isSupportConverter(Charset charset) override;
 

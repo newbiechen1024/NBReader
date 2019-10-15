@@ -16,14 +16,11 @@ include_directories(formatplugin)
 # 添加子目录
 add_subdirectory(FormatPlugin)
 
-add_library( # Sets the title of the library.
+add_library(
         native-lib
-
-        # Sets the library as a shared library.
         SHARED
-
-        # Provides a relative path to your source file(s).
-        native-lib.cpp)
+        native-lib.cpp
+)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -33,7 +30,6 @@ add_library( # Sets the title of the library.
 
 find_library( # Sets the title of the path variable.
         log-lib
-
         # Specifies the title of the NDK library that
         # you want CMake to locate.
         log)
@@ -43,7 +39,6 @@ find_library( # Sets the title of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries(
-        # Specifies the target library.
         native-lib
         # Links FormatPlugin
         FormatPlugin

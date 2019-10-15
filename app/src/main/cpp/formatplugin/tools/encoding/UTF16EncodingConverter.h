@@ -11,16 +11,14 @@
 #include "Charset.h"
 #include <memory>
 
-class UTF16EncodingConvertProvider : EncodingConvertProvider {
+class UTF16EncodingConvertProvider : public EncodingConvertProvider {
 public:
     bool isSupportConverter(Charset charset) override;
 
     std::shared_ptr<EncodingConverter> createConverter(Charset charset) override;
-
-    ~UTF16EncodingConvertProvider();
 };
 
-class UTF16EncodingConverter : EncodingConverter {
+class UTF16EncodingConverter : public EncodingConverter {
 
 public:
     void convert(std::string &dst, const char *srcStart, const char *srcEnd) override;
@@ -28,7 +26,8 @@ public:
     void reset() override;
 
 protected:
-    UTF16EncodingConverter();
+    UTF16EncodingConverter() {
+    }
 
     virtual UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) = 0;
 
@@ -38,11 +37,20 @@ private:
 };
 
 class UTF16BEEncodingConverter : public UTF16EncodingConverter {
+public:
+    UTF16BEEncodingConverter() {
+    }
+
 protected:
+
     UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) override;
 };
 
-class UTF16LEEncodingConverter: public UTF16EncodingConverter {
+class UTF16LEEncodingConverter : public UTF16EncodingConverter {
+public:
+    UTF16LEEncodingConverter() {
+    }
+
 protected:
     UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) override;
 };

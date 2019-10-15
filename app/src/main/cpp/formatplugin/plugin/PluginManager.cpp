@@ -19,7 +19,7 @@ void PluginManager::deleteInstance() {
     // 释放实例
     if (sInstance != nullptr) {
         delete (sInstance);
-        sInstance == nullptr;
+        sInstance = nullptr;
     }
 }
 

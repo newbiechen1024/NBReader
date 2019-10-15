@@ -4,3 +4,5 @@
 //
 
 #include "FormatPluginApp.h"
+
+FormatPluginApp *FormatPluginApp::sInstance = nullptr;

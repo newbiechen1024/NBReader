@@ -6,6 +6,13 @@ package com.example.newbiechen.nbreader.ui.component.book.entity.text
  *  description :
  */
 
-class TextModel {
-
+interface TextModel {
+    // 获取 id
+    fun getId(): String
+    // 获取语言
+    fun getLanguage(): String
+    // 获取段落总数
+    fun getParagraphCount(): Int
+    // 获取文本总长度
+    fun getTextLength(index: Int):Int
 }

@@ -9,7 +9,7 @@
 
 #include <filesystem/FileDir.h>
 
-class ZipFileDir : FileDir {
+class ZipFileDir : public FileDir {
 public:
     ZipFileDir(const std::string &path) : FileDir(path) {
     }

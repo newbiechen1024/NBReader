@@ -45,11 +45,11 @@ public:
     // 创建转换器
     virtual std::shared_ptr<EncodingConverter> createConverter(Charset charset) = 0;
 
-    // 禁止复制
+/*    // 禁止复制
 private:
     EncodingConvertProvider(const EncodingConvertProvider &);
 
-    const EncodingConvertProvider &operator=(const EncodingConvertProvider &);
+    const EncodingConvertProvider &operator=(const EncodingConvertProvider &);*/
 };
 
 #endif //NBREADER_ENCODINGCOVERTER_H

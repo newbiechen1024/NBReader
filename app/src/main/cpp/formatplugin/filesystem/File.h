@@ -24,30 +24,30 @@ public:
         ARCHIVE = 0xff00,
     };
 
-    static const std::string SUFFIX_ZIP = ".zip";
-    static const std::string SUFFIX_GZIP = ".gz";
+    const std::string SUFFIX_ZIP = ".zip";
+    const std::string SUFFIX_GZIP = ".gz";
 
     File(const std::string &path);
 
     ~File() {}
 
     // 获取文件名,如：xx/xx/file.txt ，返回 file
-    std::string &getName() const {
+    const std::string &getName() const {
         return mName;
     }
 
     // 获取完整名称，如：xx/xx/file.txt ，返回 file.txt
-    std::string &getFullName() const {
+    const std::string &getFullName() const {
         return mFullName;
     }
 
     // 获取扩展名，如：xx/xx/file.txt ，返回 txt
-    std::string &getExtension() const {
+    const std::string &getExtension() const {
         return mExtension;
     }
 
     // 获取绝对路径
-    std::string &getPath() const {
+    const std::string &getPath() const {
         return mPath;
     }
 

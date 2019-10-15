@@ -10,6 +10,7 @@
 #include <filesystem/io/FileInputStream.h>
 #include <filesystem/zip/ZipInputStream.h>
 #include <filesystem/io/FileOutputStream.h>
+#include <filesystem/zip/ZipFileDir.h>
 
 File::File(const std::string &path) : mPath(path) {
     // 标准化地址
@@ -33,14 +34,14 @@ File::File(const std::string &path) : mPath(path) {
     if (StringUtil::endsWith(lowerCaseName, SUFFIX_GZIP)) {
         int endLength = SUFFIX_GZIP.length();
         mName = mFullName.substr(0, mFullName.length() - endLength);
-        mArchiveType = mArchiveType | GZIP;
+        mArchiveType = static_cast<ArchiveType>(mArchiveType | GZIP);
 
         lowerCaseName = lowerCaseName.substr(0, lowerCaseName.length() - endLength);
     }
 
     // 判断是否是 zip
     if (StringUtil::endsWith(lowerCaseName, SUFFIX_ZIP)) {
-        mArchiveType = mArchiveType | ZIP;
+        mArchiveType = static_cast<ArchiveType>(mArchiveType | ZIP);
     }
 
     // 如果是压缩格式，一般 extension 为 null
@@ -126,7 +127,7 @@ std::shared_ptr<FileDir> File::getDirectory() const {
 
     // 如果是 zip
     if (mArchiveType & ZIP) {
-        return std::make_shared(mPath);
+        return std::dynamic_pointer_cast<FileDir>(std::make_shared<ZipFileDir>(mPath));
     } else if (isDirectory()) {
         return FileSystem::getInstance().getDirectory(mPath);
     } else {
@@ -147,7 +148,7 @@ std::shared_ptr<InputStream> File::getInputStream() const {
             return nullptr;
         }
         // 创建文件输入流
-        stream = std::make_shared<FileInputStream>(mPath);
+        stream = std::dynamic_pointer_cast<InputStream>(std::make_shared<FileInputStream>(mPath));
     } else {
         const std::string baseName = mPath.substr(0, index);
         const File baseFile(baseName);
@@ -155,12 +156,14 @@ std::shared_ptr<InputStream> File::getInputStream() const {
         if (base == nullptr) {
             // 如果是 zip 压缩格式
             if (baseFile.mArchiveType & ZIP) {
-                stream = std::make_shared<ZipInputStream>(base, baseName, mPath.substr(index + 1));
+                std::shared_ptr<ZipInputStream> zipInputStream(
+                        new ZipInputStream(base, baseName, mPath.substr(index + 1)));
+                stream = std::dynamic_pointer_cast<InputStream>(zipInputStream);
             } else {
                 if (isDirectory()) {
                     return 0;
                 }
-                stream = std::make_shared<FileInputStream>(mPath);
+                stream = std::dynamic_pointer_cast<InputStream>(std::make_shared<FileInputStream>(mPath));
             }
         }
     }
@@ -172,6 +175,6 @@ std::shared_ptr<OutputStream> File::getOutputStream() const {
         return nullptr;
     }
 
-    return std::make_shared<FileOutputStream>(mPath);
+    return std::dynamic_pointer_cast<OutputStream>(std::make_shared<FileOutputStream>(mPath));
 }
 

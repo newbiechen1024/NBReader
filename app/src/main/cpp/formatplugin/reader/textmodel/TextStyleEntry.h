@@ -1,17 +1,14 @@
 // author : newbiechen
 // date : 2019-10-06 16:41
 // description : 文本样式元素
-//
+// TODO：TextStyle 逻辑暂时先不处理
 
 #ifndef NBREADER_TEXTSTYLEENTRY_H
 #define NBREADER_TEXTSTYLEENTRY_H
 
-
 #include "TextEntry.h"
-#include "TextModel.h"
-#include "TextAlignmentType.h"
 
-class TextStyleEntry: TextParagraphEntry {
+class TextStyleEntry : public TextParagraphEntry {
 public:
     enum SizeUnit {
         SIZE_UNIT_PIXEL,
@@ -32,32 +29,32 @@ public:
     };
 
     enum FontModifier {
-        FONT_MODIFIER_BOLD =           1 << 0,
-        FONT_MODIFIER_ITALIC =         1 << 1,
-        FONT_MODIFIER_UNDERLINED =     1 << 2,
+        FONT_MODIFIER_BOLD = 1 << 0,
+        FONT_MODIFIER_ITALIC = 1 << 1,
+        FONT_MODIFIER_UNDERLINED = 1 << 2,
         FONT_MODIFIER_STRIKEDTHROUGH = 1 << 3,
-        FONT_MODIFIER_SMALLCAPS =      1 << 4,
-        FONT_MODIFIER_INHERIT =        1 << 5,
-        FONT_MODIFIER_SMALLER =        1 << 6,
-        FONT_MODIFIER_LARGER =         1 << 7,
+        FONT_MODIFIER_SMALLCAPS = 1 << 4,
+        FONT_MODIFIER_INHERIT = 1 << 5,
+        FONT_MODIFIER_SMALLER = 1 << 6,
+        FONT_MODIFIER_LARGER = 1 << 7,
     };
 
     enum Feature {
-        LENGTH_PADDING_LEFT =               0,
-        LENGTH_PADDING_RIGHT =              1,
-        LENGTH_MARGIN_LEFT =                2,
-        LENGTH_MARGIN_RIGHT =               3,
-        LENGTH_FIRST_LINE_INDENT =          4,
-        LENGTH_SPACE_BEFORE =               5,
-        LENGTH_SPACE_AFTER =                6,
-        LENGTH_FONT_SIZE =                  7,
-        LENGTH_VERTICAL_ALIGN =             8,
-        NUMBER_OF_LENGTHS =                 9,
-        ALIGNMENT_TYPE =                    NUMBER_OF_LENGTHS,
-        FONT_FAMILY =                       NUMBER_OF_LENGTHS + 1,
-        FONT_STYLE_MODIFIER =               NUMBER_OF_LENGTHS + 2,
-        NON_LENGTH_VERTICAL_ALIGN =         NUMBER_OF_LENGTHS + 3,
-        DISPLAY =                           NUMBER_OF_LENGTHS + 4 // 11; max = 15
+        LENGTH_PADDING_LEFT = 0,
+        LENGTH_PADDING_RIGHT = 1,
+        LENGTH_MARGIN_LEFT = 2,
+        LENGTH_MARGIN_RIGHT = 3,
+        LENGTH_FIRST_LINE_INDENT = 4,
+        LENGTH_SPACE_BEFORE = 5,
+        LENGTH_SPACE_AFTER = 6,
+        LENGTH_FONT_SIZE = 7,
+        LENGTH_VERTICAL_ALIGN = 8,
+        NUMBER_OF_LENGTHS = 9,
+        ALIGNMENT_TYPE = NUMBER_OF_LENGTHS,
+        FONT_FAMILY = NUMBER_OF_LENGTHS + 1,
+        FONT_STYLE_MODIFIER = NUMBER_OF_LENGTHS + 2,
+        NON_LENGTH_VERTICAL_ALIGN = NUMBER_OF_LENGTHS + 3,
+        DISPLAY = NUMBER_OF_LENGTHS + 4 // 11; max = 15
     };
 
     enum DisplayCode {
@@ -91,11 +88,13 @@ private:
     };
 
 public:
-    TextStyleEntry(unsigned char textMark);
-    
-    ~TextStyleEntry();
+    TextStyleEntry(unsigned char textStyle);
 
-    unsigned char getMark() const;
+    ~TextStyleEntry() {
+
+    }
+/*
+    unsigned char getStyleTag() const;
     
     bool isEmpty() const;
     bool isFeatureSupported(Feature featureId) const;
@@ -105,7 +104,7 @@ public:
     TextAlignmentType getAlignmentType() const;
     void setAlignmentType(TextAlignmentType alignmentType);
     // TODO：我觉得暂时先不处理
-    Boolean3 hasFontModifier(FontModifier modifier) const;
+     Boolean3 hasFontModifier(FontModifier modifier) const;
     void setFontModifier(FontModifier modifier, bool on);
 
     const std::vector<std::string> &getFontFamilies() const;
@@ -119,18 +118,19 @@ public:
 
     std::shared_ptr<TextStyleEntry> start() const;
     std::shared_ptr<TextStyleEntry> end() const;
-    std::shared_ptr<TextStyleEntry> inherited() const;
+    std::shared_ptr<TextStyleEntry> inherited() const;*/
 
 private:
-    const unsigned char mTextMark;
-    unsigned short mFeatureMask;
+    const unsigned char mTextStyleTag;
+
+/*    unsigned short mFeatureMask;
     LengthType mLengths[NUMBER_OF_LENGTHS];
     TextAlignmentType mAlignmentType;
     unsigned char mSupportedFontModifier;
     unsigned char mFontModifier;
     std::vector<std::string> mFontFamilies;
     unsigned char mVerticalAlignCode;
-    DisplayCode mDisplayCode;
+    DisplayCode mDisplayCode;*/
 
     friend class TextModel;
 };

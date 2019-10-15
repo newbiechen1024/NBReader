@@ -21,7 +21,7 @@ public:
     }
 
 protected:
-    virtual void readFilePaths(std::vector<std::string> &paths, bool fullPath);
+    virtual void readFilePaths(std::vector<std::string> &paths, bool fullPath) const ;
 };
 
 

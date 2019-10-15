@@ -11,7 +11,7 @@
 #include <string>
 #include <filesystem/File.h>
 
-class FileInputStream : InputStream {
+class FileInputStream : public InputStream {
 public:
     FileInputStream(const std::string &filePath);
 
@@ -20,19 +20,19 @@ public:
     ~FileInputStream();
 
     // 打开输入流
-    bool open();
+    bool open() override;
 
     // 读取数据
-    size_t read(char *buffer, size_t maxSize);
+    size_t read(char *buffer, size_t maxSize) override;
 
     // 跳到具体位置
-    void seek(int offset, bool absoluteOffset);
+    void seek(int offset, bool absoluteOffset) override;
 
     // 当前位置
-    size_t offset() const;
+    size_t offset() const override;
 
     // 关闭输入流
-    void close();
+    void close() override;
 
 private:
     std::string mFilePath;

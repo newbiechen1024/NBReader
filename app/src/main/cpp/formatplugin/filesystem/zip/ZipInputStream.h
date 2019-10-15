@@ -49,7 +49,7 @@ private:
     ZipInputStream(std::shared_ptr<InputStream> inputStream,
                    const std::string &zipPath, const std::string &itemName);
 
-    friend File;
+    friend class File;
 };
 
 

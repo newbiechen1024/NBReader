@@ -34,7 +34,7 @@ private:
     const std::shared_ptr<Book> mBook;
     std::shared_ptr<TextModel> mTextModel;
     std::shared_ptr<TOCTree> mTOCTree;
-
+    FontManager mFontManager;
     jobject mJavaModel;
 };
 

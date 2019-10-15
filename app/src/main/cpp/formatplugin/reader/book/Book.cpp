@@ -67,6 +67,6 @@ const std::string &Book::getAuthor() const {
     return mAuthor;
 }
 
-File &Book::getFile() const {
+const File &Book::getFile() const {
     return mFile;
 }

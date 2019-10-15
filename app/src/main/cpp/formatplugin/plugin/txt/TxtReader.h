@@ -16,7 +16,7 @@
 
 class TxtReaderCore;
 
-class TxtReader : EncodingTextReader {
+class TxtReader : public EncodingTextReader {
 
 public:
     // 进行文稿分析
@@ -75,7 +75,7 @@ class TxtReaderCore {
 public:
     TxtReaderCore(TxtReader &reader);
 
-    virtual ~TextReaderCore() {
+    virtual ~TxtReaderCore() {
     }
 
     virtual void readDocument(InputStream &stream);
@@ -84,9 +84,12 @@ protected:
     TxtReader &mReader;
 };
 
-class TxtReaderCoreUTF16 : TxtReaderCore {
+class TxtReaderCoreUTF16 : public TxtReaderCore {
 public:
     TxtReaderCoreUTF16(TxtReader &reader);
+
+    virtual ~TxtReaderCoreUTF16() {
+    };
 
     void readDocument(InputStream &stream) override;
 
@@ -97,9 +100,12 @@ protected:
 };
 
 
-class TxtReaderCoreUTF16LE : TxtReaderCoreUTF16 {
+class TxtReaderCoreUTF16LE : public TxtReaderCoreUTF16 {
 public:
     TxtReaderCoreUTF16LE(TxtReader &reader);
+
+    ~TxtReaderCoreUTF16LE() {
+    };
 
 protected:
     char getAscii(const char *ptr) override;
@@ -107,10 +113,12 @@ protected:
     void setAscii(char *ptr, char ascii) override;
 };
 
-class TxtReaderCoreUTF16BE : TxtReaderCoreUTF16 {
+class TxtReaderCoreUTF16BE : public TxtReaderCoreUTF16 {
 public:
     TxtReaderCoreUTF16BE(TxtReader &reader);
 
+    ~TxtReaderCoreUTF16BE() {
+    };
 protected:
     char getAscii(const char *ptr) override;
 

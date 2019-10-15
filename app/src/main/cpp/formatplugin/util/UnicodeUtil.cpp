@@ -29,9 +29,6 @@
 #include <cstdlib>
 #include <map>
 
-#include <AndroidUtil.h>
-#include <JniEnvelope.h>
-
 struct ZLUnicodeData {
     enum SymbolType {
         LETTER_LOWERCASE,

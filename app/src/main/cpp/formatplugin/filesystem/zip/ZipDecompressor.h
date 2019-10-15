@@ -15,7 +15,7 @@ class ZipDecompressor {
 public:
     ZipDecompressor(size_t availableSize);
 
-    ~ZLZDecompressor();
+    ~ZipDecompressor();
 
     size_t decompress(InputStream &stream, char *buffer, size_t maxSize);
 

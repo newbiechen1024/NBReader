@@ -186,6 +186,19 @@ void TextModel::flush() {
     mAllocator->flush();
 }
 
+TextPlainModel::TextPlainModel(const std::string &id, const std::string &language, const std::size_t defaultBufferSize,
+                               const std::string &directoryName, const std::string &fileExtension,
+                               FontManager &fontManager) : TextModel(id, language, defaultBufferSize, directoryName,
+                                                                     fileExtension, fontManager) {
+
+}
+
+TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
+                               std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager)
+        : TextModel(id, language, allocator, fontManager) {
+
+}
+
 /**
  * 创建新段落
  * @param type

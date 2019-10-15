@@ -127,11 +127,11 @@ bool UnixFileSystem::createDirectory(const std::string &path) const {
     return true;
 }
 
-FileDir* UnixFileSystem::getDirectory(const std::string &path) const {
+std::shared_ptr<FileDir> UnixFileSystem::getDirectory(const std::string &path) const {
     // 判断目录是否创建成功
     bool isSuccess = createDirectory(path);
     if (isSuccess) {
-        return new UnixFileDir(path);
+        return std::make_shared<UnixFileDir>(path);
     }
     return nullptr;
 }

@@ -11,17 +11,14 @@
 #include <string>
 #include <memory>
 
-class UTF8EncodingConvertProvider : EncodingConvertProvider {
+class UTF8EncodingConvertProvider : public EncodingConvertProvider {
 public:
     bool isSupportConverter(Charset charset) override;
 
     std::shared_ptr<EncodingConverter> createConverter(Charset charset) override;
-
-    ~UTF8EncodingConvertProvider();
-
 };
 
-class UTF8EncodingConverter : EncodingConverter {
+class UTF8EncodingConverter : public EncodingConverter {
 public:
     void convert(std::string &dst, const char *srcStart, const char *srcEnd) override;
 
@@ -29,6 +26,7 @@ public:
 
 private:
     std::string mBuffer;
+
     friend class UTF8EncodingConvertProvider;
 };
 

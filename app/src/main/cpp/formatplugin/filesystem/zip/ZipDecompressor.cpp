@@ -19,7 +19,7 @@ ZipDecompressor::ZipDecompressor(size_t availableSize) : mAvailableSize(availabl
     mOutBuffer = new char[OUT_BUFFER_SIZE];
 }
 
-ZipDecompressor::~ZLZDecompressor() {
+ZipDecompressor::~ZipDecompressor() {
     delete[](mInBuffer);
     delete[](mOutBuffer);
     inflateEnd(mZStream);

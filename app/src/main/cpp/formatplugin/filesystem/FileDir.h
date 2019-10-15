@@ -21,7 +21,7 @@ public:
     // 获取文件路径
     void readFilePaths(std::vector<std::string> &paths) const;
 
-    std::string &getPath() const {
+    const std::string &getPath() const {
         return mPath;
     }
 
@@ -38,9 +38,9 @@ protected:
 private:
     std::string mPath;
 
-    FileDir(const FileDir &);
+/*    FileDir(const FileDir &);
 
-    const FileDir &operator=(const FileDir &);
+    const FileDir &operator=(const FileDir &);*/
 };
 
 #endif //NBREADER_FILEDIR_H

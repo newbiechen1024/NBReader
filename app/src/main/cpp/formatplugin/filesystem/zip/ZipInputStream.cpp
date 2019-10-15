@@ -22,7 +22,7 @@ ZipInputStream::~ZipInputStream() {
 bool ZipInputStream::open() {
     close();
     // 从管理器中查找对应的ZipItem
-    ZipItemInfo itemInfo = ZipEntryManager::getInstance()->getZipEntry(mZipPath)
+    ZipItemInfo itemInfo = ZipEntryManager::getInstance().getZipEntry(mZipPath)
             ->getItemInfo(mItemName);
     if (!mInputStream->open()) {
         return false;
@@ -48,7 +48,7 @@ bool ZipInputStream::open() {
     }
 
     if (isDeflated) {
-        mDecompressor = std::make_shared(mAvailableSize);
+        mDecompressor = std::make_shared<ZipDecompressor>(mAvailableSize);
     }
 
     mOffset = 0;
