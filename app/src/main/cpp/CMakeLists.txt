@@ -28,12 +28,6 @@ add_library(
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
-find_library( # Sets the title of the path variable.
-        log-lib
-        # Specifies the title of the NDK library that
-        # you want CMake to locate.
-        log)
-
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
@@ -41,7 +35,4 @@ find_library( # Sets the title of the path variable.
 target_link_libraries(
         native-lib
         # Links FormatPlugin
-        FormatPlugin
-        # Links the target library to the log library
-        # included in the NDK.
-        ${log-lib})
+        FormatPlugin)

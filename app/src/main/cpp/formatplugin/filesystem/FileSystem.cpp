@@ -36,13 +36,13 @@ void FileSystem::normalize(std::string &path) {
 }
 
 int FileSystem::findArchiveNameDelimiter(const std::string &path) const {
-    return path.rfind(archiveSeparator);
+    return path.rfind(FileSystem::archiveSeparator);
 }
 
 int FileSystem::findLastNameDelimiter(const std::string &path) const {
     int index = findArchiveNameDelimiter(path);
     if (index == -1) {
-        index = path.rfind(separator);
+        index = path.rfind(FileSystem::separator);
     }
     return index;
 }

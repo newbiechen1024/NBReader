@@ -23,8 +23,13 @@ aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 
 find_library(
         zip-lib
-        z
-)
+        z)
+
+find_library( # Sets the title of the path variable.
+        log-lib
+        # Specifies the title of the NDK library that
+        # you want CMake to locate.
+        log)
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -48,6 +53,6 @@ add_library( # Sets the title of the library.
 
 target_link_libraries(
         FormatPlugin
-
+        ${log-lib}
         ${zip-lib}
 )

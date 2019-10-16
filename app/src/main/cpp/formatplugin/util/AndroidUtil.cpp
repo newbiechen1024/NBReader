@@ -47,7 +47,7 @@ bool AndroidUtil::init(JavaVM *jvm) {
     StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale, "getDefault",
                                                                           Class_Locale, "()");
 
-    Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_String, "getLanguage", "()");
+    Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_Locale, "getLanguage", "()");
 
     // string
     Method_String_toLowerCase = std::make_shared<StringMethod>(Class_String, "toLowerCase", "()");

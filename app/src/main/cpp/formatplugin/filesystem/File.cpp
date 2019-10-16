@@ -11,6 +11,7 @@
 #include <filesystem/zip/ZipInputStream.h>
 #include <filesystem/io/FileOutputStream.h>
 #include <filesystem/zip/ZipFileDir.h>
+#include <util/Logger.h>
 
 File::File(const std::string &path) : mPath(path) {
     // 标准化地址
@@ -51,6 +52,9 @@ File::File(const std::string &path) : mPath(path) {
         mExtension = UnicodeUtil::toLower(mName.substr(index + 1));
         mName = mName.substr(0, index);
     }
+
+    // 进行初始化 ==> 就这么叫吧...
+    mFileStat = getFileStat();
 }
 
 FileStat &File::getFileStat() {
@@ -167,6 +171,7 @@ std::shared_ptr<InputStream> File::getInputStream() const {
             }
         }
     }
+    return stream;
 }
 
 std::shared_ptr<OutputStream> File::getOutputStream() const {

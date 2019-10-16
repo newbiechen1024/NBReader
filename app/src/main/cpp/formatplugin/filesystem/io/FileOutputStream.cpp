@@ -4,9 +4,10 @@
 //
 
 #include <sys/stat.h>
+#include <util/Logger.h>
 #include "FileOutputStream.h"
 
-// TODO:输入输出流，应该分为 Unix 和 XXX ==> 以后改
+// TODO:输入输出流，应该分为 Unix 和 XXX ==> 这是专门针对 unix
 FileOutputStream::FileOutputStream(const std::string &filePath) : mPath(filePath) {
 
 }

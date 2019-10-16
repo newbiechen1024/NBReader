@@ -23,6 +23,5 @@ private:
     static void printLogger(android_LogPriority logPriority, const std::string &subTag, const std::string &msg);
 };
 
-const std::string TAG = "NBReader";
 
 #endif //NBREADER_LOGGER_H

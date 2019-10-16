@@ -5,10 +5,12 @@
 
 #include "Logger.h"
 
+const std::string Logger::TAG = "NBReader";
+
 void Logger::printLogger(android_LogPriority logPriority, const std::string &subTag, const std::string &msg) {
     std::string printStr = "[" + subTag + "]" + msg;
-    printf("%s", printStr.c_str());
-    // __android_log_print(logPriority, TAG.c_str(), "%s", printStr.c_str());
+    // printf("%s", printStr.c_str());
+    __android_log_print(logPriority, TAG.c_str(), "%s", printStr.c_str());
 }
 
 void Logger::i(const std::string &subTag, const std::string &msg) {

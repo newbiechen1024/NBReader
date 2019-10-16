@@ -8,6 +8,7 @@
 #include <plugin/PluginManager.h>
 #include <reader/book/Book.h>
 #include <reader/bookmodel/BookModel.h>
+#include <util/Logger.h>
 #include "util/AndroidUtil.h"
 #include "util/JNIEnvelope.h"
 #include "plugin/FormatPlugin.h"
