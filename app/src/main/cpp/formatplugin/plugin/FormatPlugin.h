@@ -11,9 +11,6 @@
 #include "FormatType.h"
 
 class FormatPlugin {
-protected:
-    FormatPlugin();
-
 public:
     virtual ~FormatPlugin();
 
@@ -30,6 +27,9 @@ public:
 
 protected:
     static bool detectEncodingAndLanguage(Book &book, InputStream &inputStream, bool force = false);
+
+protected:
+    FormatPlugin();
 };
 
 inline FormatPlugin::FormatPlugin() {

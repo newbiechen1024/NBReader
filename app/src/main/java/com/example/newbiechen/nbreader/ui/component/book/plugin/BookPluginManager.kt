@@ -15,7 +15,7 @@ class BookPluginManager {
     companion object {
         @Volatile
         private var instance: BookPluginManager? = null
-        private const val TAG = "FormatPluginManager"
+        private const val TAG = "BookPluginManager"
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 instance ?: BookPluginManager(context.applicationContext).also { instance = it }
@@ -25,6 +25,7 @@ class BookPluginManager {
     private var mNativePluginList: MutableList<NativeFormatPlugin> = mutableListOf()
 
     private constructor(context: Context) {
+        // 进行注册
         getPluginTypes().forEach {
             LogHelper.i(TAG, "pluginTypes: $it")
             // 根据 type 创建插件
@@ -33,7 +34,6 @@ class BookPluginManager {
                 BookType.EPUB.toString() -> OEBNativePlugin(context, BookType.EPUB)
                 else -> NativeFormatPlugin(context, BookType.TXT)
             }
-
             // 存储到列表中
             mNativePluginList.add(plugin)
         }

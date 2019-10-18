@@ -16,8 +16,8 @@ JavaClass AndroidUtil::Class_Locale("java/util/Locale");
 JavaClass AndroidUtil::Class_NativeFormatPlugin(
         PKG_NAME + "ui/component/book/plugin/NativeFormatPlugin");
 
-JavaClass AndroidUtil::Class_FormatPluginManager(
-        PKG_NAME + "ui/component/book/plugin/FormatPluginManager");
+JavaClass AndroidUtil::Class_BoolPluginManager(
+        PKG_NAME + "ui/component/book/plugin/BookPluginManager");
 
 JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/entity/BookModel");
 
@@ -89,7 +89,6 @@ std::string AndroidUtil::convertNonUtfString(const std::string &str) {
     }
 
     JNIEnv *env = getEnv();
-
     const int len = str.length();
     jchar *chars = new jchar[len];
     for (int i = 0; i < len; ++i) {

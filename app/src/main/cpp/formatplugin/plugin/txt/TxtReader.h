@@ -19,15 +19,14 @@ class TxtReaderCore;
 class TxtReader : public EncodingTextReader {
 
 public:
-    // 进行文稿分析
-    void readDocument(InputStream &stream);
 
-protected:
     TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset);
 
     ~TxtReader() {
     }
 
+    // 进行文稿分析
+    void readDocument(InputStream &stream);
 private:
     // 文本信息
     const PlainTextFormat &mFormat;

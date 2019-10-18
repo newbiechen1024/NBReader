@@ -6,6 +6,7 @@
 #include <jni.h>
 #include <util/AndroidUtil.h>
 #include <android/filesystem/AndroidFileSystem.h>
+#include <android/filesystem/AndroidAssetManager.h>
 #include "AndroidFormatPluginApp.h"
 
 void AndroidFormatPluginApp::newInstance() {
@@ -30,4 +31,6 @@ void AndroidFormatPluginApp::initApp(JavaVM *jvm) {
     AndroidUtil::init(jvm);
     // 初始化 android 文件系统
     AndroidFileSystem::newInstance();
+    // 初始化 android 资源文件系统
+    AndroidAssetManager::newInstance();
 }

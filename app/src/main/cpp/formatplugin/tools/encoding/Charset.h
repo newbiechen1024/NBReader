@@ -16,6 +16,7 @@ const std::string CHARSET_ISO8859 = "iso-8859-1";
 const std::string CHARSET_WINDOWS1252 = "windows-1252";
 
 enum class Charset {
+    NONE = 0,
     ASCII,
     UTF8,
     UTF16,
@@ -25,6 +26,10 @@ enum class Charset {
 };
 
 inline Charset strToCharset(const std::string &str) {
+    if (str.empty()) {
+        return Charset::NONE;
+    }
+
     std::string lowerStr = UnicodeUtil::toLower(str);
 
     if (lowerStr == CHARSET_ASCII) {
@@ -63,6 +68,8 @@ inline std::string charsetToStr(Charset charset) {
             return CHARSET_ISO8859;
         case Charset::WINDOWS1252:
             return CHARSET_WINDOWS1252;
+        default:
+            return "";
     }
 }
 

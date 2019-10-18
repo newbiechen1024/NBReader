@@ -11,7 +11,7 @@ BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
     mTextModel = std::make_shared<TextPlainModel>("", book->getLanguage(), 131072, cacheDir,
-                                                  "ncache", mFontManager);
+                                                  "nb", mFontManager);
     mTOCTree = std::make_shared<TOCTree>();
 }
 

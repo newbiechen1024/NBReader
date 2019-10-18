@@ -20,7 +20,7 @@ public:
     static JavaClass Class_Locale;
 
     static JavaClass Class_NativeFormatPlugin;
-    static JavaClass Class_FormatPluginManager;
+    static JavaClass Class_BoolPluginManager;
     static JavaClass Class_BookModel;
     static JavaClass Class_Book;
 

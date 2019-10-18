@@ -74,5 +74,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // footnotes ==> 注脚是啥东西
 
     // 字体设置
+    // 释放
+    env->DeleteLocalRef(jBook);
     return 0;
 }

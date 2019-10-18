@@ -2,7 +2,7 @@
 # documentation: https://d.android.com/studio/projects/add-native-code.html
 
 # Sets the minimum version of CMake required to build the native library.
-
+# 当前 Cmake 只支持 android 平台
 cmake_minimum_required(VERSION 3.4.1)
 
 # 获取目录下的 c++ 文件写入到变量中
@@ -20,6 +20,14 @@ aux_source_directory(./android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
 aux_source_directory(./android/application ANDROID_APPLICATION_SOURCE)
 aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
 aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
+aux_source_directory(./tools/language TOOLS_LANGUAGE_SOURCE)
+aux_source_directory(./tools/xml TOOLS_XML_SOURCE)
+aux_source_directory(./filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
+
+# 添加 expat xml 解析器头文件
+#include_directories(../expat/lib)
+#  添加 expat xml 解析器目录
+#add_subdirectory(../expat)
 
 find_library(
         zip-lib
@@ -40,6 +48,7 @@ add_library( # Sets the title of the library.
         ${FILE_SYSTEM_SOURCE}
         ${FILE_SYSTEM_ZIP_SOURCE}
         ${FILE_SYSTEM_IO_SOURCE}
+        ${FILE_SYSTEM_ASSET_SOURCE}
         ${ANDROID_FILE_SYSTEM_SOURCE}
         ${ANDROID_APPLICATION_SOURCE}
         ${UTIL_SOURCE}
@@ -49,10 +58,13 @@ add_library( # Sets the title of the library.
         ${BOOK_MODEL_READER_SOURCE}
         ${TEXT_MODEL_READER_SOURCE}
         ${TOOLS_FONT_SOURCE}
-        ${TOOLS_ENCODING_SOURCE})
+        ${TOOLS_XML_SOURCE}
+        ${TOOLS_ENCODING_SOURCE}
+        ${TOOLS_LANGUAGE_SOURCE})
 
 target_link_libraries(
         FormatPlugin
         ${log-lib}
         ${zip-lib}
+        android
 )

@@ -5,6 +5,7 @@
 #include <filesystem/io/FileInputStream.h>
 #include "TxtPlugin.h"
 #include "PlainTextFormat.h"
+#include "TxtReader.h"
 
 TxtPlugin::TxtPlugin() {
 }
@@ -33,6 +34,7 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
     // 创建文本阅读器
+    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
     return true;
 }
 
@@ -43,7 +45,7 @@ bool TxtPlugin::readLanguageAndEncoding(Book &book) const {
     }
 
     detectEncodingAndLanguage(book, *stream);
-    return !book.getEncoding().empty();
+    return book.getEncoding() == Charset::NONE;
 }
 
 const FormatType TxtPlugin::supportType() const {

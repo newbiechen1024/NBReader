@@ -16,13 +16,13 @@ public:
 
     ~TxtPlugin();
 
-    bool readMetaInfo(Book &book) const;
+    bool readMetaInfo(Book &book) const override;
 
-    bool readModel(BookModel &bookModel) const;
+    bool readModel(BookModel &bookModel) const override;
 
-    bool readLanguageAndEncoding(Book &book) const;
+    bool readLanguageAndEncoding(Book &book) const override;
 
-    const FormatType supportType() const;
+    const FormatType supportType() const override;
 };
 
 #endif //NBREADER_TXTPLUGIN_H

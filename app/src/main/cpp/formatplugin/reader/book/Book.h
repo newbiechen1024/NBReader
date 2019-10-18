@@ -10,6 +10,7 @@
 #include <jni.h>
 #include <memory>
 #include <filesystem/File.h>
+#include <tools/encoding/Charset.h>
 
 /**
  * TODO:
@@ -21,7 +22,7 @@ class Book {
 public:
     static std::shared_ptr<Book> createBook(
             const File &file,
-            const std::string &encoding,
+            const Charset encoding,
             const std::string &language,
             const std::string &title);
 
@@ -35,7 +36,7 @@ public:
 
     const std::string &getLanguage() const;
 
-    const std::string &getEncoding() const;
+    Charset getEncoding() const;
 
     const std::string &getAuthor() const;
 
@@ -45,7 +46,7 @@ public:
 
     void setLanguage(const std::string &language);
 
-    void setEncoding(const std::string &encoding);
+    void setEncoding(Charset encoding);
 
     void setAuthor(const std::string &author);
 
@@ -53,8 +54,8 @@ private:
     File mFile; // 文件
     std::string mTitle;
     std::string mLanguage;
-    std::string mEncoding;
     std::string mAuthor;
+    Charset mEncoding;
 
     Book(const Book &);
 

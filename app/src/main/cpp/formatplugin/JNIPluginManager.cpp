@@ -4,18 +4,31 @@
 
 #include <jni.h>
 #include <string>
+#include <android/filesystem/AndroidAssetManager.h>
 #include "util/AndroidUtil.h"
 #include "plugin/PluginManager.h"
 #include "util/JNIEnvelope.h"
 #include "plugin/FormatPlugin.h"
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(JNIEnv *env,
+                                                                                                     jobject instance,
+                                                                                                     jobject manager) {
+    // 向下转型 ==> 不知道会不会崩溃....
+    AssetManager *assetManagerPtr = &AndroidAssetManager::getInstance();
+    AndroidAssetManager *androidAssetManager = static_cast<AndroidAssetManager *>(assetManagerPtr);
+    // 注册 asset
+    androidAssetManager->registerAssetManager(manager);
+}
 
 /**
  * 获取当前项目中可用的插件类型
  */
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_FormatPluginManager_getPluginTypes(JNIEnv *env,
-                                                                                                 jobject instance) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getPluginTypes(JNIEnv *env,
+                                                                                               jobject instance) {
     using namespace std;
     // 获取插件列表
     vector<shared_ptr<FormatPlugin>> plugins = PluginManager::getInstance().getPlugins();
@@ -42,7 +55,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_FormatPluginManage
  */
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_FormatPluginManager_freePlugins(JNIEnv *env,
-                                                                                              jobject instance) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_freePlugins(JNIEnv *env,
+                                                                                            jobject instance) {
     PluginManager::deleteInstance();
 }
