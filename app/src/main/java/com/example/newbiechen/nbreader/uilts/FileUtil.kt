@@ -14,7 +14,6 @@ object FileUtil {
 
     // 获取 Cache 文件夹
     fun getCachePath(context: Context): String {
-        val file = File("")
         return if (isSdCardExist()) {
             context.externalCacheDir.absolutePath
         } else {

@@ -7,9 +7,10 @@
 #define NBREADER_STATISTICSXMLREADER_H
 
 
+#include <tools/xml/XMLReader.h>
 #include "StatisticsTag.h"
 
-class StatisticsXMLReader {
+class StatisticsXMLReader : public XMLReader {
 public:
     std::shared_ptr<XMLStatisticsTag> readStatisticsTag(const std::string &fileName);
 
@@ -21,6 +22,7 @@ private:
 private:
     static const std::string ITEM_TAG;
     static const std::string STATISTICS_TAG;
+    static std::map<std::string, std::shared_ptr<XMLStatisticsTag> > statisticsMap;
 };
 
 

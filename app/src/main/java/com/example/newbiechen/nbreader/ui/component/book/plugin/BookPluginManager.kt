@@ -1,6 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
+import android.content.res.AssetManager
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.uilts.LogHelper
 
@@ -37,6 +38,8 @@ class BookPluginManager {
             // 存储到列表中
             mNativePluginList.add(plugin)
         }
+
+        registerAssetManager(context.assets)
     }
 
     fun getPlugin(type: BookType): FormatPlugin? {
@@ -44,6 +47,8 @@ class BookPluginManager {
             it.getSupportType() == type
         }
     }
+
+    private external fun registerAssetManager(assetManager: AssetManager);
 
     /**
      * 获取并初始化 native 层的 plugin

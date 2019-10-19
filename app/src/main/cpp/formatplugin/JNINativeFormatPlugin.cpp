@@ -58,6 +58,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     jobject jBook = AndroidUtil::Method_BookModel_getBook->call(jBookModel);
     // 根据 Java 层的 book 创建 C++ 层的 Book
     shared_ptr<Book> book = Book::createByJavaBook(jBook);
+
     // 创建 C++ 层的 BookModel
     shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir);
     // 使用 plugin 解析 BookModel
@@ -70,7 +71,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // 初始化 toc
 
     // 获取 TextModel 文本，并设置给 BookModel
-    shared_ptr<TextModel> textModel = bookModel->getTextModel();
+    // shared_ptr<TextModel> textModel = bookModel->getTextModel();
     // footnotes ==> 注脚是啥东西
 
     // 字体设置

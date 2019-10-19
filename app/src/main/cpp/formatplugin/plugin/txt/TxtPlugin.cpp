@@ -3,6 +3,8 @@
 //
 
 #include <filesystem/io/FileInputStream.h>
+#include <util/Logger.h>
+#include <sstream>
 #include "TxtPlugin.h"
 #include "PlainTextFormat.h"
 #include "TxtReader.h"
@@ -31,10 +33,11 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
         PlainTextDetector detector;
         detector.detect(*fileInputStream, format);
     }
+
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
-    // 创建文本阅读器
-    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
+/*    // 创建文本阅读器
+    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);*/
     return true;
 }
 
@@ -49,5 +52,5 @@ bool TxtPlugin::readLanguageAndEncoding(Book &book) const {
 }
 
 const FormatType TxtPlugin::supportType() const {
-    return TXT;
+    return FormatType::TXT;
 }

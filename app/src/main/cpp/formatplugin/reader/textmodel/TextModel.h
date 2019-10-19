@@ -103,6 +103,8 @@ public:
     TextPlainModel(const std::string &id, const std::string &language,
                    std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager);
 
+    ~TextPlainModel();
+
     void createParagraph(TextParagraph::Type type);
 };
 

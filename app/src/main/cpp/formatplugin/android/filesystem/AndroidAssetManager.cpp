@@ -34,14 +34,22 @@ std::shared_ptr<InputStream> AndroidAssetManager::open(const std::string &path) 
 }
 
 std::shared_ptr<std::vector<std::string>> AndroidAssetManager::list(const std::string &path, bool fullPath) const {
-    AAssetManager *aAssetManager = AAssetManager_fromJava(AndroidUtil::getEnv(), mAssetManager);
-    AAssetDir *assetDir = AAssetManager_openDir(aAssetManager, path.c_str());
-
     std::shared_ptr<std::vector<std::string>> filePaths(new std::vector<std::string>());
+
+    AAssetManager *aAssetManager = AAssetManager_fromJava(AndroidUtil::getEnv(), mAssetManager);
+    if (aAssetManager == nullptr) {
+        return filePaths;
+    }
+
+    AAssetDir *assetDir = AAssetManager_openDir(aAssetManager, path.c_str());
+    if (assetDir == nullptr) {
+        return filePaths;
+    }
+
     const char *fileName = nullptr;
     // 循环获取文件名
     while ((fileName = AAssetDir_getNextFileName(assetDir)) != nullptr) {
-        std::string filePath(fileName, strlen(fileName));
+        std::string filePath(fileName, fileName + strlen(fileName));
         if (fullPath) {
             filePath = path + filePath;
         }

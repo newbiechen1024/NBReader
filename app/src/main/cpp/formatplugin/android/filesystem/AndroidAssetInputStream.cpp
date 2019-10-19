@@ -3,10 +3,11 @@
 // description : 
 //
 
+#include <util/Logger.h>
 #include "AndroidAssetInputStream.h"
 
 AndroidAssetInputStream::AndroidAssetInputStream(AAssetManager *aAssetManager, const std::string &assetPath)
-        : mAAssetManager(aAssetManager), mAssetPath(assetPath) {
+        : mAAssetManager(aAssetManager), mAssetPath(assetPath), mAssetFile(nullptr) {
 }
 
 AndroidAssetInputStream::~AndroidAssetInputStream() {
@@ -17,7 +18,7 @@ AndroidAssetInputStream::~AndroidAssetInputStream() {
 }
 
 bool AndroidAssetInputStream::open() {
-    if (mAssetFile != nullptr) {
+    if (mAssetFile == nullptr) {
         mAssetFile = AAssetManager_open(mAAssetManager, mAssetPath.c_str(), AASSET_MODE_BUFFER);
     }
     return mAssetFile != nullptr;

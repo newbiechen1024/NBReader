@@ -7,6 +7,11 @@ import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.BookPluginManager
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
+import com.example.newbiechen.nbreader.uilts.LogHelper
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
  *  author : newbiechen
@@ -52,7 +57,15 @@ class BookManager constructor(private val bookDao: BookDao) {
 
     // 打开书籍
     fun openBook(context: Context, book: BookEntity) {
-        openBookInternal(context, book)
+        Observable.create(ObservableOnSubscribe<Int> {
+            openBookInternal(context, book)
+            it.onNext(0)
+            it.onComplete()
+        }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                LogHelper.i(TAG, "openBookInternal success")
+            }
     }
 
     /**
@@ -67,7 +80,7 @@ class BookManager constructor(private val bookDao: BookDao) {
      * 7. 利用 LibraryService 设置为最近阅读书籍
      * 8. 通知 PageView 进行重绘
      */
-    // TODO: 在子线程中调用
+
     private fun openBookInternal(context: Context, book: BookEntity) {
         val pluginManager = BookPluginManager.getInstance(context)
         // 根据 Book 获取到 Plugin

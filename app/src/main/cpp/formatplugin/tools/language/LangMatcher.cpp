@@ -3,7 +3,9 @@
 // description : 
 //
 
+#include <util/Logger.h>
 #include "LangMatcher.h"
+#include "StatisticsXMLReader.h"
 
 
 LangMatcher::LangMatcher(std::shared_ptr<LangDetector::LangInfo> info) : mLangInfo(info) {
@@ -13,9 +15,8 @@ LangMatcher::~LangMatcher() {
 }
 
 StatisticMatcher::StatisticMatcher(const std::string &fileName, std::shared_ptr<LangDetector::LangInfo> info)
-        : LangMatcher(info) {
-    // todo:reader 暂时未实现
-    // mStatisticsTag = ZLStatisticsXMLReader().readStatistics(fileName);
+        : LangMatcher(info), mStatisticsTag(nullptr) {
+    mStatisticsTag = StatisticsXMLReader().readStatisticsTag(fileName);
 }
 
 StatisticMatcher::~StatisticMatcher() {

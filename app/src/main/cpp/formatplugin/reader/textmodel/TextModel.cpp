@@ -9,7 +9,7 @@
 
 TextModel::TextModel(const std::string &id, const std::string &language, const std::size_t rowSize,
                      const std::string &directoryName, const std::string &fileExtension, FontManager &fontManager)
-        : mId(0), mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
+        : mId(id), mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
           mAllocator(std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileExtension)),
           mCurEntryPointer(0),
           mFontManager(fontManager) {
@@ -182,6 +182,20 @@ void TextModel::addExtensionEntry(const std::string &action, const std::map<std:
 
 }
 
+void TextModel::addParagraphInternal(TextParagraph *paragraph) {
+    const std::size_t blockCount = mAllocator->getBufferBlockCount();
+    const std::size_t blockOffset = mAllocator->getCurBufferBlockOffset();
+    // 初始化 TextParagraph
+    paragraph->bufferBlockIndex = (blockCount == 0) ? 0 : (blockCount - 1);
+    paragraph->bufferBlockOffset = blockOffset / 2;
+    paragraph->entryCount = 0;
+    paragraph->textLength = 0;
+    paragraph->curTotalTextLength = mParagraphs.empty() ? 0 : (mParagraphs.back()->curTotalTextLength);
+
+    // 存储每个段落
+    mParagraphs.push_back(paragraph);
+}
+
 void TextModel::flush() {
     mAllocator->flush();
 }
@@ -199,6 +213,9 @@ TextPlainModel::TextPlainModel(const std::string &id, const std::string &languag
 
 }
 
+TextPlainModel::~TextPlainModel() {
+}
+
 /**
  * 创建新段落
  * @param type
@@ -207,18 +224,4 @@ void TextPlainModel::createParagraph(TextParagraph::Type type) {
     // 如果参数的文本行，则创建
     TextParagraph *paragraph = new TextParagraph(type);
     addParagraphInternal(paragraph);
-}
-
-void TextModel::addParagraphInternal(TextParagraph *paragraph) {
-    const std::size_t blockCount = mAllocator->getBufferBlockCount();
-    const std::size_t blockOffset = mAllocator->getCurBufferBlockOffset();
-    // 初始化 TextParagraph
-    paragraph->bufferBlockIndex = (blockCount == 0) ? 0 : (blockCount - 1);
-    paragraph->bufferBlockOffset = blockOffset / 2;
-    paragraph->entryCount = 0;
-    paragraph->textLength = 0;
-    paragraph->curTotalTextLength = mParagraphs.empty() ? 0 : (mParagraphs.back()->curTotalTextLength);
-
-    // 存储每个段落
-    mParagraphs.push_back(paragraph);
 }

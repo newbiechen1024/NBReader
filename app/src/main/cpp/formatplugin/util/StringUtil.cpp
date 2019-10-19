@@ -45,3 +45,9 @@ void StringUtil::appendNumber(std::string &str, unsigned int num) {
         num /= 10;
     }
 }
+
+void StringUtil::asciiToLowerInline(std::string &asciiString) {
+    for (int i = asciiString.size() - 1; i >= 0; --i) {
+        asciiString[i] = std::tolower(asciiString[i]);
+    }
+}

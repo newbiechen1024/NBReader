@@ -5,6 +5,7 @@
 
 #include <filesystem/asset/AssetManager.h>
 #include <filesystem/FileSystem.h>
+#include <util/Logger.h>
 #include "LangDetector.h"
 #include "LangUtil.h"
 #include "LangMatcher.h"
@@ -89,18 +90,19 @@ std::shared_ptr<LangDetector::LangInfo> LangDetector::findLanguage(const char *b
 
 std::shared_ptr<LangDetector::LangInfo>
 LangDetector::findLanguageWithEncoding(Charset encoding, const char *buffer,
-                                       std::size_t length) {
+                                       size_t length) {
     int matchingCriterion = 0;
-    std::shared_ptr<LangInfo> langInfo;
+    std::shared_ptr<LangInfo> langInfo = nullptr;
     std::map<int, std::shared_ptr<NativeStatisticsTag>> statisticsMap;
     StatisticsNativeReader nativeStatisticsReader("\r\n ");
 
     // 遍历所有 Matcher 匹配器
     for (auto matcher : mMatchers) {
         // 如果 encoding 类型为空，或者 matcher 的 encoding 类型与当前 encoding 类型不同
-        if (encoding == Charset::NONE && matcher->getLangInfo()->encoding != encoding) {
+        if (encoding != Charset::NONE && matcher->getLangInfo()->encoding != encoding) {
             continue;
         }
+
         // 获取 matcher 指定的一个字的长度
         const int charSequenceLength = matcher->getCharSequenceLength();
         // 根据长度从 map 中获取解析对应字长度的 NativeStatisticsTag
@@ -108,7 +110,6 @@ LangDetector::findLanguageWithEncoding(Charset encoding, const char *buffer,
 
         if (stat == nullptr) {
             stat = std::make_shared<NativeStatisticsTag>();
-
             // 使用 Native 解析器读取 buffer 信息并填充到 NativeStatisticsTag 中
             nativeStatisticsReader.readNativeStatistics(
                     buffer, length, charSequenceLength, *stat

@@ -5,6 +5,7 @@
 #include <tools/language/LangDetector.h>
 #include "FormatPlugin.h"
 #include "PluginManager.h"
+#include <util/Logger.h>
 
 bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStream, bool force) {
     std::string language = book.getLanguage();
@@ -15,7 +16,6 @@ bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStrea
     }
 
     bool detected = false;
-    PluginManager &pluginManager = PluginManager::getInstance();
     // 如果不知道文本格式，则默认为 UTF-8
     if (encoding == Charset::NONE) {
         encoding = Charset::UTF8;
@@ -26,10 +26,11 @@ bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStrea
         char *buffer = new char[BUFF_SIZE];
         const std::size_t size = inputStream.read(buffer, BUFF_SIZE);
         inputStream.close();
-        // 如何获取
-        std::shared_ptr<LangDetector::LangInfo> langInfo = LangDetector().findLanguage(buffer, size);
         delete[] buffer;
-        if (langInfo == nullptr) {
+
+        // 创建探测器，探测语言
+        std::shared_ptr<LangDetector::LangInfo> langInfo = LangDetector().findLanguage(buffer, size);
+        if (langInfo != nullptr) {
             detected = true;
             if (!langInfo->lang.empty()) {
                 language = langInfo->lang;

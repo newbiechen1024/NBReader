@@ -11,7 +11,7 @@
 const std::string FORMAT_TYPE_TXT = "txt";
 const std::string FORMAT_TYPE_EPUB = "epub";
 
-enum FormatType {
+enum class FormatType {
     TXT,
     EPUB
 };
@@ -19,9 +19,9 @@ enum FormatType {
 inline std::string formatTypeToStr(FormatType &type) {
     std::string str;
     switch (type) {
-        case TXT:
+        case FormatType::TXT:
             return FORMAT_TYPE_TXT;
-        case EPUB:
+        case FormatType::EPUB:
             return FORMAT_TYPE_EPUB;
     }
     return str;
@@ -29,11 +29,11 @@ inline std::string formatTypeToStr(FormatType &type) {
 
 inline FormatType strToFormatType(std::string &name) {
     if (name == FORMAT_TYPE_TXT) {
-        return TXT;
+        return FormatType::TXT;
     } else if (name == FORMAT_TYPE_EPUB) {
-        return EPUB;
+        return FormatType::EPUB;
     }
-    return TXT;
+    return FormatType::TXT;
 }
 
 #endif //NBREADER_FORMATTYPE_H

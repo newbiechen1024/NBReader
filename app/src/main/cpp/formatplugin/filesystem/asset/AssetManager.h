@@ -7,6 +7,7 @@
 #define NBREADER_ASSETMANAGER_H
 
 #include <string>
+#include <util/Logger.h>
 #include "../io/InputStream.h"
 
 class AssetManager {
@@ -33,6 +34,12 @@ public:
 
 protected:
     static AssetManager *sInstance;
+
+    AssetManager() {
+    }
+
+    ~AssetManager() {
+    }
 };
 
 

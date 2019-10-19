@@ -5,6 +5,33 @@
 # 当前 Cmake 只支持 android 平台
 cmake_minimum_required(VERSION 3.4.1)
 
+# 添加 expat 库
+include_directories(include)
+
+set(ABI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs/${ANDROID_ABI})
+
+add_library(
+        expat
+        STATIC
+        IMPORTED
+)
+
+set_target_properties(
+        expat
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
+)
+
+find_library(
+        zip-lib
+        z)
+
+find_library( # Sets the title of the path variable.
+        log-lib
+        # Specifies the title of the NDK library that
+        # you want CMake to locate.
+        log)
+
 # 获取目录下的 c++ 文件写入到变量中
 aux_source_directory(. DIR_SOURCE)
 aux_source_directory(./util UTIL_SOURCE)
@@ -23,21 +50,6 @@ aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 aux_source_directory(./tools/language TOOLS_LANGUAGE_SOURCE)
 aux_source_directory(./tools/xml TOOLS_XML_SOURCE)
 aux_source_directory(./filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
-
-# 添加 expat xml 解析器头文件
-#include_directories(../expat/lib)
-#  添加 expat xml 解析器目录
-#add_subdirectory(../expat)
-
-find_library(
-        zip-lib
-        z)
-
-find_library( # Sets the title of the path variable.
-        log-lib
-        # Specifies the title of the NDK library that
-        # you want CMake to locate.
-        log)
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -67,4 +79,5 @@ target_link_libraries(
         ${log-lib}
         ${zip-lib}
         android
+        expat
 )

@@ -4,6 +4,7 @@ import android.text.TextUtils
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.mediastore.LocalBookInfo
 import com.example.newbiechen.nbreader.uilts.mediastore.MediaStoreHelper
 import com.github.promeg.pinyinhelper.Pinyin
@@ -15,6 +16,10 @@ import com.github.promeg.pinyinhelper.Pinyin
  */
 
 class SmartLookupViewModel : ViewModel() {
+    companion object {
+        private const val TAG = "SmartLookupViewModel"
+    }
+
     val isLoading = ObservableField(true)
     val bookInfoGroups = ObservableField<List<Pair<String, List<LocalBookInfo>>>>()
     /**
@@ -36,8 +41,8 @@ class SmartLookupViewModel : ViewModel() {
 
         var groups = bookInfoGroups.get()
         if (groups != null) {
-            for (i in 0 until groups.size) {
-                var bookInfoIt = (groups[i].second as MutableList<LocalBookInfo>).iterator()
+            for (element in groups) {
+                var bookInfoIt = (element.second as MutableList<LocalBookInfo>).iterator()
                 // 遍历 bookInfo
                 while (bookInfoIt.hasNext()) {
                     var bookInfo = bookInfoIt.next()

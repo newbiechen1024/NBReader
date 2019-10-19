@@ -10,7 +10,7 @@
 #include "UTF8EncodingConverter.h"
 #include "UTF16EncodingConverter.h"
 
-EncodingConverterManager *EncodingConverterManager::sInstance = 0;
+EncodingConverterManager *EncodingConverterManager::sInstance = nullptr;
 
 EncodingConverterManager &EncodingConverterManager::getInstance() {
     if (sInstance == nullptr) {

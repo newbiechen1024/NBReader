@@ -9,13 +9,15 @@
 
 #include <filesystem/UnixFileSystem.h>
 
-class AndroidFileSystem: UnixFileSystem {
+class AndroidFileSystem : UnixFileSystem {
 public:
     static void newInstance();
 };
 
 inline void AndroidFileSystem::newInstance() {
-    sInstance = new AndroidFileSystem();
+    if (sInstance == nullptr) {
+        sInstance = new AndroidFileSystem();
+    }
 }
 
 #endif //NBREADER_ANDROIDFILESYSTEM_H
