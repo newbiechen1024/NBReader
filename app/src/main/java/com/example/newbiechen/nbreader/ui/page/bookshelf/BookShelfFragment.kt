@@ -37,7 +37,7 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
 
             ReadActivity.startActivity(context!!,
                 // /storage/emulated/0/测试书籍/修罗帝尊[www.txt909.com].txt
-                BookEntity("asda", "农女成凤：我家大叔有点皮.txt", BookType.TXT, "/storage/emulated/0/测试书籍/农女成凤：我家大叔有点皮.txt", true)
+                BookEntity("asda", "重生后嫁给克妻皇帝.txt", BookType.TXT, "/storage/emulated/0/测试书籍/重生后嫁给克妻皇帝.txt", true)
             )
         }
     }

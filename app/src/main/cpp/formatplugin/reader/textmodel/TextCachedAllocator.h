@@ -41,7 +41,7 @@ public:
         return ptr;
     }
 
-    static char *writeString(char *ptr, const UnicodeUtil::Unicode2String &str) {
+    static char *writeString(char *ptr, const UnicodeUtil::Ucs2String &str) {
         const std::size_t size = str.size();
         writeUInt16(ptr, size);
         memcpy(ptr + 2, &str.front(), size * 2);

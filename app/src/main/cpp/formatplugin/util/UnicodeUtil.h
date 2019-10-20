@@ -18,11 +18,12 @@ private:
     UnicodeUtil();
 
 public:
-    typedef uint16_t Unicode2Char;
-    typedef uint32_t Unicode4Char;
+    // 表示 unicode char sequence: 一个字占用的字节数。
+    typedef uint16_t Ucs2Char;
+    typedef uint32_t Ucs4Char;
 
-    typedef std::vector<Unicode2Char> Unicode2String;
-    typedef std::vector<Unicode4Char> Unicode4String;
+    typedef std::vector<Ucs2Char> Ucs2String;
+    typedef std::vector<Ucs4Char> UcsString;
 
     enum Breakable {
         NO_BREAKABLE,
@@ -44,33 +45,33 @@ public:
 
     static int length(const std::string &str, int utf8Length);
 
-    static void utf8ToUnicode4(Unicode4String &to, const char *from, int length, int toLength = -1);
+    static void utf8ToUcs4(UcsString &to, const char *from, int length, int toLength = -1);
 
-    static void utf8ToUnicode4(Unicode4String &to, const std::string &from, int toLength = -1);
+    static void utf8ToUcs4(UcsString &to, const std::string &from, int toLength = -1);
 
-    static void utf8ToUnicode2(Unicode2String &to, const char *from, int length, int toLength = -1);
+    static void utf8ToUcs2(Ucs2String &to, const char *from, int length, int toLength = -1);
 
-    static void utf8ToUnicode2(Unicode2String &to, const std::string &from, int toLength = -1);
+    static void utf8ToUcs2(Ucs2String &to, const std::string &from, int toLength = -1);
 
-    static std::size_t firstChar(Unicode4Char &ch, const char *utf8String);
+    static std::size_t firstChar(Ucs4Char &ch, const char *utf8String);
 
-    static std::size_t firstChar(Unicode4Char &ch, const std::string &utf8String);
+    static std::size_t firstChar(Ucs4Char &ch, const std::string &utf8String);
 
-    static std::size_t lastChar(Unicode4Char &ch, const char *utf8String);
+    static std::size_t lastChar(Ucs4Char &ch, const char *utf8String);
 
-    static std::size_t lastChar(Unicode4Char &ch, const std::string &utf8String);
+    static std::size_t lastChar(Ucs4Char &ch, const std::string &utf8String);
 
-    static void unicode4ToUtf8(std::string &to, const Unicode4String &from, int toLength = -1);
+    static void ucs4ToUtf8(std::string &to, const UcsString &from, int toLength = -1);
 
-    static int unicode4ToUtf8(char *to, Unicode4Char ch);
+    static int ucs4ToUtf8(char *to, Ucs4Char ch);
 
-    static void unicode2ToUtf8(std::string &to, const Unicode2String &from, int toLength = -1);
+    static void ucs2ToUtf8(std::string &to, const Ucs2String &from, int toLength = -1);
 
-    static int unicode2ToUtf8(char *to, Unicode2Char ch);
+    static int ucs2ToUtf8(char *to, Ucs2Char ch);
 
-    static bool isSpace(Unicode4Char ch);
+    static bool isSpace(Ucs4Char ch);
 
-    static Breakable isBreakable(Unicode4Char ch);
+    static Breakable isBreakable(Ucs4Char ch);
 
     static std::string toLower(const std::string &utf8String);
 
@@ -78,7 +79,7 @@ public:
 
     static void utf8Trim(std::string &utf8String);
 
-    static bool isNBSpace(Unicode4Char ch) {
+    static bool isNBSpace(Ucs4Char ch) {
         return ch == 160;
     }
 };

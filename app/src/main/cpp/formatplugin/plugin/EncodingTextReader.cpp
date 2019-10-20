@@ -6,12 +6,13 @@
 #include <tools/encoding/EncodingConverterManager.h>
 #include "EncodingTextReader.h"
 
-EncodingTextReader::EncodingTextReader(Charset charset) {
+EncodingTextReader::EncodingTextReader(Charset charset) : mConverter(nullptr) {
+
     EncodingConverterManager &manager = EncodingConverterManager::getInstance();
     // 根据 encoding 获取到 converter
-    std::shared_ptr<EncodingConverter> converter = manager.getEncodingConverter(charset);
+    mConverter = manager.getEncodingConverter(charset);
     // 如果 encoding 对应的 converter 不存在，则使用默认的 converter
-    if (converter == nullptr) {
+    if (mConverter == nullptr) {
         mConverter = manager.getDefaultConverter();
     }
 }

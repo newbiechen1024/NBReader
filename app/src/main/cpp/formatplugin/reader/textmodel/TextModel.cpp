@@ -4,6 +4,7 @@
 //
 
 #include <FormatPluginApp.h>
+#include <util/Logger.h>
 #include "TextModel.h"
 #include "TextEntry.h"
 
@@ -98,9 +99,10 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
     for (const std::string &str : text) {
         // 获取该文本对应 UTF-8 编码的长度
         textTotalLength = UnicodeUtil::utf8Length(str);
+        Logger::i("TextModel", "addTexts:" + str);
     }
 
-    UnicodeUtil::Unicode2String unicode2Str;
+    UnicodeUtil::Ucs2String unicode2Str;
 
     // 如果当前元素类型是文本类型
     if (mCurEntryPointer != 0 && *mCurEntryPointer == TextParagraphEntry::TEXT_ENTRY) {
@@ -119,13 +121,12 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
 
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
-            UnicodeUtil::utf8ToUnicode2(unicode2Str, *it);
+            UnicodeUtil::utf8ToUcs2(unicode2Str, *it);
             // 获取转换后的总长度的字节数
             const std::size_t len = 2 * unicode2Str.size();
             // 进行复制操作
             std::memcpy(mCurEntryPointer + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
-
             // 下一文本的起始偏移位置
             offset += len;
         }
@@ -146,7 +147,7 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
         std::size_t offset = 6;
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
-            UnicodeUtil::utf8ToUnicode2(unicode2Str, *it);
+            UnicodeUtil::utf8ToUcs2(unicode2Str, *it);
             // 获取转换后的总长度的字节数
             const std::size_t len = 2 * unicode2Str.size();
             // 进行复制操作

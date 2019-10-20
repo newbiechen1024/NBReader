@@ -3,6 +3,7 @@
 // description : 
 // TODO：未完成标题的处理
 
+#include <util/Logger.h>
 #include "TxtReader.h"
 
 TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset) : EncodingTextReader(charset),
@@ -72,7 +73,6 @@ bool TxtReader::createNewLine() {
             (mFormat.getBreakType() & PlainTextFormat::BREAK_PARAGRAPH_AT_NEW_LINE) ||
             ((mFormat.getBreakType() & PlainTextFormat::BREAK_PARAGRAPH_AT_EMPTY_LINE) &&
              (mConsecutiveEmptyLineCount > 0));
-
     // 如果文本类型包含标题
     if (mFormat.existTitle()) {
         // 如果当前不为 content 段落，并当前连续空行数等于 format 包含了最大连续空行数
@@ -116,6 +116,7 @@ bool TxtReader::createNewLine() {
         // 通知开启新段落
         mBookReader.beginParagraph();
     }
+    return true;
 }
 
 void TxtReader::endParagraph() {
@@ -131,6 +132,7 @@ void TxtReader::endParagraph() {
 bool TxtReader::receiveText(std::string &str) {
     const char *ptr = str.data();
     const char *end = ptr + str.length();
+    // 统计文本行的空格
     for (; ptr != end; ++ptr) {
         if (std::isspace((unsigned char) *ptr)) {
             if (*ptr != '\t') {
@@ -153,10 +155,8 @@ bool TxtReader::receiveText(std::string &str) {
             endParagraph();
             mBookReader.beginParagraph();
         }
-
         // 将文本添加到 BookReader 中
         mBookReader.addText(str);
-
         // 判断当前行是否是 content 类型
         if (isTitleParagraph) {
             mBookReader.addTitleText(str);
@@ -165,6 +165,7 @@ bool TxtReader::receiveText(std::string &str) {
         // 标记当前文本不是新行了
         isNewLine = false;
     }
+
     return true;
 }
 
@@ -191,11 +192,12 @@ void TxtReaderCore::readDocument(InputStream &stream) {
             // 检测到换行符
             if (*ptr == '\n' || *ptr == '\r') {
                 bool skipNewLine = false;
-                // 检测到换行符不换行的条件
+
                 if (*ptr == '\r' && (ptr + 1) != end && *(ptr + 1) == '\n') {
                     skipNewLine = true;
                     *ptr = '\n';
                 }
+
                 // 将获取到的文本段落，交给 Reader 处理
                 if (start != ptr) {
                     str.erase();
@@ -203,12 +205,14 @@ void TxtReaderCore::readDocument(InputStream &stream) {
                     // 处理文本的代码
                     mReader.receiveText(str);
                 }
+
                 if (skipNewLine) {
                     ++ptr;
                 }
+
                 start = ptr + 1;
-                // 创建一个新行
                 mReader.createNewLine();
+                // 创建一个新行
             } else if (((*ptr) & 0x80) == 0 && std::isspace((unsigned char) *ptr)) {
                 if (*ptr != '\t') {
                     *ptr = ' ';

@@ -38,14 +38,14 @@ struct ZLUnicodeData {
     };
 
     const SymbolType Type;
-    const UnicodeUtil::Unicode4Char LowerCase;
-    const UnicodeUtil::Unicode4Char UpperCase;
+    const UnicodeUtil::Ucs4Char LowerCase;
+    const UnicodeUtil::Ucs4Char UpperCase;
 
-    ZLUnicodeData(const SymbolType type, UnicodeUtil::Unicode4Char lowerCase, UnicodeUtil::Unicode4Char upperCase);
+    ZLUnicodeData(const SymbolType type, UnicodeUtil::Ucs4Char lowerCase, UnicodeUtil::Ucs4Char upperCase);
 };
 
-ZLUnicodeData::ZLUnicodeData(const SymbolType type, UnicodeUtil::Unicode4Char lowerCase,
-                             UnicodeUtil::Unicode4Char upperCase) : Type(type), LowerCase(lowerCase),
+ZLUnicodeData::ZLUnicodeData(const SymbolType type, UnicodeUtil::Ucs4Char lowerCase,
+                             UnicodeUtil::Ucs4Char upperCase) : Type(type), LowerCase(lowerCase),
                                                                     UpperCase(upperCase) {
 }
 
@@ -156,7 +156,7 @@ int UnicodeUtil::length(const std::string &str, int utf8Length) {
     return length(str.data(), utf8Length);
 }
 
-void UnicodeUtil::utf8ToUnicode4(Unicode4String &to, const char *from, int length, int toLength) {
+void UnicodeUtil::utf8ToUcs4(UcsString &to, const char *from, int length, int toLength) {
     to.clear();
     if (toLength < 0) {
         toLength = utf8Length(from, length);
@@ -168,14 +168,14 @@ void UnicodeUtil::utf8ToUnicode4(Unicode4String &to, const char *from, int lengt
             to.push_back(*ptr);
             ++ptr;
         } else if ((*ptr & 0x20) == 0) {
-            Unicode4Char ch = *ptr & 0x1f;
+            Ucs4Char ch = *ptr & 0x1f;
             ++ptr;
             ch <<= 6;
             ch += *ptr & 0x3f;
             to.push_back(ch);
             ++ptr;
         } else if ((*ptr & 0x10) == 0) {
-            Unicode4Char ch = *ptr & 0x0f;
+            Ucs4Char ch = *ptr & 0x0f;
             ++ptr;
             ch <<= 6;
             ch += *ptr & 0x3f;
@@ -192,11 +192,11 @@ void UnicodeUtil::utf8ToUnicode4(Unicode4String &to, const char *from, int lengt
     }
 }
 
-void UnicodeUtil::utf8ToUnicode4(Unicode4String &to, const std::string &from, int toLength) {
-    utf8ToUnicode4(to, from.data(), from.length(), toLength);
+void UnicodeUtil::utf8ToUcs4(UcsString &to, const std::string &from, int toLength) {
+    utf8ToUcs4(to, from.data(), from.length(), toLength);
 }
 
-void UnicodeUtil::utf8ToUnicode2(Unicode2String &to, const char *from, int length, int toLength) {
+void UnicodeUtil::utf8ToUcs2(Ucs2String &to, const char *from, int length, int toLength) {
     to.clear();
     if (toLength < 0) {
         toLength = utf8Length(from, length);
@@ -208,14 +208,14 @@ void UnicodeUtil::utf8ToUnicode2(Unicode2String &to, const char *from, int lengt
             to.push_back(*ptr);
             ++ptr;
         } else if ((*ptr & 0x20) == 0) {
-            Unicode2Char ch = *ptr & 0x1f;
+            Ucs2Char ch = *ptr & 0x1f;
             ++ptr;
             ch <<= 6;
             ch += *ptr & 0x3f;
             to.push_back(ch);
             ++ptr;
         } else if ((*ptr & 0x10) == 0) {
-            Unicode2Char ch = *ptr & 0x0f;
+            Ucs2Char ch = *ptr & 0x0f;
             ++ptr;
             ch <<= 6;
             ch += *ptr & 0x3f;
@@ -232,15 +232,15 @@ void UnicodeUtil::utf8ToUnicode2(Unicode2String &to, const char *from, int lengt
     }
 }
 
-void UnicodeUtil::utf8ToUnicode2(Unicode2String &to, const std::string &from, int toLength) {
-    utf8ToUnicode2(to, from.data(), from.length(), toLength);
+void UnicodeUtil::utf8ToUcs2(Ucs2String &to, const std::string &from, int toLength) {
+    utf8ToUcs2(to, from.data(), from.length(), toLength);
 }
 
-std::size_t UnicodeUtil::firstChar(Unicode4Char &ch, const std::string &utf8String) {
+std::size_t UnicodeUtil::firstChar(Ucs4Char &ch, const std::string &utf8String) {
     return firstChar(ch, utf8String.c_str());
 }
 
-std::size_t UnicodeUtil::firstChar(Unicode4Char &ch, const char *utf8String) {
+std::size_t UnicodeUtil::firstChar(Ucs4Char &ch, const char *utf8String) {
     if ((*utf8String & 0x80) == 0) {
         ch = *utf8String;
         return 1;
@@ -259,11 +259,11 @@ std::size_t UnicodeUtil::firstChar(Unicode4Char &ch, const char *utf8String) {
     }
 }
 
-std::size_t UnicodeUtil::lastChar(Unicode4Char &ch, const std::string &utf8String) {
+std::size_t UnicodeUtil::lastChar(Ucs4Char &ch, const std::string &utf8String) {
     return lastChar(ch, utf8String.data() + utf8String.length());
 }
 
-std::size_t UnicodeUtil::lastChar(Unicode4Char &ch, const char *utf8String) {
+std::size_t UnicodeUtil::lastChar(Ucs4Char &ch, const char *utf8String) {
     const char *ptr = utf8String - 1;
     while ((*ptr & 0xC0) == 0x80) {
         --ptr;
@@ -271,7 +271,7 @@ std::size_t UnicodeUtil::lastChar(Unicode4Char &ch, const char *utf8String) {
     return utf8String - ptr;
 }
 
-int UnicodeUtil::unicode4ToUtf8(char *to, Unicode4Char ch) {
+int UnicodeUtil::ucs4ToUtf8(char *to, Ucs4Char ch) {
     if (ch < 0x80) {
         *to = (char) ch;
         return 1;
@@ -287,18 +287,18 @@ int UnicodeUtil::unicode4ToUtf8(char *to, Unicode4Char ch) {
     }
 }
 
-void UnicodeUtil::unicode4ToUtf8(std::string &to, const Unicode4String &from, int toLength) {
+void UnicodeUtil::ucs4ToUtf8(std::string &to, const UcsString &from, int toLength) {
     char buffer[3];
     to.erase();
     if (toLength > 0) {
         to.reserve(toLength);
     }
-    for (Unicode4String::const_iterator it = from.begin(); it != from.end(); ++it) {
-        to.append(buffer, unicode4ToUtf8(buffer, *it));
+    for (UcsString::const_iterator it = from.begin(); it != from.end(); ++it) {
+        to.append(buffer, ucs4ToUtf8(buffer, *it));
     }
 }
 
-int UnicodeUtil::unicode2ToUtf8(char *to, Unicode2Char ch) {
+int UnicodeUtil::ucs2ToUtf8(char *to, Ucs2Char ch) {
     if (ch < 0x80) {
         *to = (char) ch;
         return 1;
@@ -314,21 +314,21 @@ int UnicodeUtil::unicode2ToUtf8(char *to, Unicode2Char ch) {
     }
 }
 
-void UnicodeUtil::unicode2ToUtf8(std::string &to, const Unicode2String &from, int toLength) {
+void UnicodeUtil::ucs2ToUtf8(std::string &to, const Ucs2String &from, int toLength) {
     char buffer[3];
     to.erase();
     if (toLength > 0) {
         to.reserve(toLength);
     }
-    for (Unicode2String::const_iterator it = from.begin(); it != from.end(); ++it) {
-        to.append(buffer, unicode2ToUtf8(buffer, *it));
+    for (Ucs2String::const_iterator it = from.begin(); it != from.end(); ++it) {
+        to.append(buffer, ucs2ToUtf8(buffer, *it));
     }
 }
 
 /*
-bool UnicodeUtil::isLetter(Unicode4Char ch) {
+bool UnicodeUtil::isLetter(Ucs4Char ch) {
 	initUnicodeTable();
-	std::map<UnicodeUtil::Unicode4Char,ZLUnicodeData>::const_iterator it = UNICODE_TABLE.find(ch);
+	std::map<UnicodeUtil::Ucs4Char,ZLUnicodeData>::const_iterator it = UNICODE_TABLE.find(ch);
 	if (it == UNICODE_TABLE.end()) {
 		return false;
 	}
@@ -343,7 +343,7 @@ bool UnicodeUtil::isLetter(Unicode4Char ch) {
 }
 */
 
-bool UnicodeUtil::isSpace(Unicode4Char ch) {
+bool UnicodeUtil::isSpace(Ucs4Char ch) {
     return
             ((9 <= ch) && (ch <= 13)) ||
             (ch == 32) ||
@@ -357,7 +357,7 @@ bool UnicodeUtil::isSpace(Unicode4Char ch) {
             (ch == 12288);
 }
 
-UnicodeUtil::Breakable UnicodeUtil::isBreakable(Unicode4Char c) {
+UnicodeUtil::Breakable UnicodeUtil::isBreakable(Ucs4Char c) {
     if (c <= 0x2000) {
         return NO_BREAKABLE;
     }
@@ -495,7 +495,7 @@ std::string UnicodeUtil::toUpper(const std::string &utf8String) {
 void UnicodeUtil::utf8Trim(std::string &utf8String) {
     std::size_t counter = 0;
     std::size_t length = utf8String.length();
-    Unicode4Char chr;
+    Ucs4Char chr;
     while (counter < length) {
         const std::size_t l = firstChar(chr, utf8String.data() + counter);
         if (isSpace(chr)) {

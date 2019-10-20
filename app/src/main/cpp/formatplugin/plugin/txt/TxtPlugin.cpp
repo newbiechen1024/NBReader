@@ -27,17 +27,20 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
     std::shared_ptr<InputStream> fileInputStream = file.getInputStream();
     // 创建文本参数信息
     PlainTextFormat format(file);
+    Logger::i("TxtPlugin", "PlainTextDetector:探测文本参数信息");
     // 如果参数信息未初始化
     if (!format.hasInitialized()) {
         // 调用探测器进行探测
         PlainTextDetector detector;
         detector.detect(*fileInputStream, format);
     }
-
+    Logger::i("TxtPlugin", "readLanguageAndEncoding:探测文本语言和编码");
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
-/*    // 创建文本阅读器
-    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);*/
+    Logger::i("TxtPlugin", "readDocument:开始解析文本");
+    // 创建文本阅读器
+    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
+    Logger::i("TxtPlugin", "readDocument:解析文本结束");
     return true;
 }
 

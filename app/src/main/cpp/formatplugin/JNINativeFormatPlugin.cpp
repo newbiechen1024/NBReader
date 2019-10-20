@@ -56,8 +56,10 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     string cacheDir = AndroidUtil::toCString(env, cacheDir_);
     // 获取 BookModel 中的 book 实例
     jobject jBook = AndroidUtil::Method_BookModel_getBook->call(jBookModel);
+
     // 根据 Java 层的 book 创建 C++ 层的 Book
     shared_ptr<Book> book = Book::createByJavaBook(jBook);
+    env->DeleteLocalRef(jBook);
 
     // 创建 C++ 层的 BookModel
     shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir);
@@ -73,9 +75,6 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // 获取 TextModel 文本，并设置给 BookModel
     // shared_ptr<TextModel> textModel = bookModel->getTextModel();
     // footnotes ==> 注脚是啥东西
-
     // 字体设置
-    // 释放
-    env->DeleteLocalRef(jBook);
     return 0;
 }

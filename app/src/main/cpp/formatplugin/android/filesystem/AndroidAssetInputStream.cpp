@@ -11,10 +11,7 @@ AndroidAssetInputStream::AndroidAssetInputStream(AAssetManager *aAssetManager, c
 }
 
 AndroidAssetInputStream::~AndroidAssetInputStream() {
-    if (mAssetFile != nullptr) {
-        AAsset_close(mAssetFile);
-        mAssetFile = nullptr;
-    }
+    close();
 }
 
 bool AndroidAssetInputStream::open() {

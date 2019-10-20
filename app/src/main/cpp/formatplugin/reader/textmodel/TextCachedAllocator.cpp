@@ -8,14 +8,17 @@
 
 #include <filesystem/File.h>
 #include <util/StringUtil.h>
+#include <filesystem/FileSystem.h>
+#include <util/Logger.h>
 #include "TextCachedAllocator.h"
 
 TextCachedAllocator::TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
-                                       const std::string &fileExtension) : mBasicBufferBlockSize(rowSize), mActualBufferBlockSize(0),
-                                                                           mCurBlockOffset(0), hasChanges(false),
-                                                                           hasFailed(false),
-                                                                           mDirectoryName(directoryName),
-                                                                           mFileExtension(fileExtension) {
+                                         const std::string &fileExtension) : mBasicBufferBlockSize(rowSize),
+                                                                             mActualBufferBlockSize(0),
+                                                                             mCurBlockOffset(0), hasChanges(false),
+                                                                             hasFailed(false),
+                                                                             mDirectoryName(directoryName),
+                                                                             mFileExtension(fileExtension) {
     // 在硬盘中创建目录
     File(directoryName).mkdirs();
 }
@@ -107,7 +110,7 @@ void TextCachedAllocator::flush() {
 
 std::string TextCachedAllocator::createFileName(size_t index) {
     std::string name(mDirectoryName);
-    name.append("/");
+    name.append(FileSystem::separator);
     // 将 index 作为 file 的名字
     StringUtil::appendNumber(name, index);
     // 添加尾缀
@@ -127,6 +130,7 @@ void TextCachedAllocator::writeCache(size_t blockLength) {
 
     const size_t index = mBufferBlockList.size() - 1;
     const std::string fileName = createFileName(index);
+
     File file(fileName);
     // 获取文本的输出流
     std::shared_ptr<OutputStream> stream = file.getOutputStream();
@@ -134,6 +138,7 @@ void TextCachedAllocator::writeCache(size_t blockLength) {
         hasFailed = true;
         return;
     }
+
     // 将缓冲区的数据写入到文本中
     stream->write(mBufferBlockList[index], blockLength);
     stream->close();

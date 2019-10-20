@@ -25,6 +25,7 @@ bool FileOutputStream::open() {
     mode_t currentMask = umask(S_IRWXO | S_IRWXG);
     int temporaryFileDescriptor = mkstemp(const_cast<char *>(mTempPath.data()));
     umask(currentMask);
+
     if (temporaryFileDescriptor == -1) {
         return false;
     }

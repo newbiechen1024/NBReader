@@ -13,7 +13,7 @@
 #include <filesystem/zip/ZipFileDir.h>
 #include <util/Logger.h>
 
-File::File(const std::string &path) : mPath(path) {
+File::File(const std::string &path) : mPath(path), mArchiveType(NONE) {
     // 标准化地址
     FileSystem::getInstance().normalize(mPath);
     // 查找文件名的前缀
@@ -61,7 +61,6 @@ FileStat &File::getFileStat() {
     if (isInitFileStat) {
         return mFileStat;
     }
-
     // 判断是否存在 archive 类型
     int index = FileSystem::getInstance().findArchiveNameDelimiter(mPath);
     // 如果不存在
@@ -109,6 +108,8 @@ FileStat &File::getFileStat() {
     } else {
         mFileStat.exists = false;
     }
+    isInitFileStat = true;
+
     return mFileStat;
 }
 
@@ -179,7 +180,6 @@ std::shared_ptr<OutputStream> File::getOutputStream() const {
     if (isArchive() || isCompressed() || isDirectory()) {
         return nullptr;
     }
-
     return std::dynamic_pointer_cast<OutputStream>(std::make_shared<FileOutputStream>(mPath));
 }
 

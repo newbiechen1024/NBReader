@@ -3,6 +3,7 @@
 // description : 
 //
 
+#include <util/Logger.h>
 #include "FileInputStream.h"
 
 FileInputStream::FileInputStream(const File &file) : mFilePath(file.getPath()) {

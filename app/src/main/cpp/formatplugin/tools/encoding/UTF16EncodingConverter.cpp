@@ -27,7 +27,7 @@ void UTF16EncodingConverter::convert(std::string &dst, const char *srcStart, con
     }
     char buffer[3];
     if (hasStoredChar) {
-        dst.append(buffer, UnicodeUtil::unicode2ToUtf8(buffer, unicode2Char(mStoredChar, *srcStart)));
+        dst.append(buffer, UnicodeUtil::ucs2ToUtf8(buffer, unicode2Char(mStoredChar, *srcStart)));
         ++srcStart;
         hasStoredChar = false;
     }
@@ -37,7 +37,7 @@ void UTF16EncodingConverter::convert(std::string &dst, const char *srcStart, con
         hasStoredChar = true;
     }
     for (; srcStart != srcEnd; srcStart += 2) {
-        dst.append(buffer, UnicodeUtil::unicode2ToUtf8(buffer, unicode2Char(*srcStart, *(srcStart + 1))));
+        dst.append(buffer, UnicodeUtil::ucs2ToUtf8(buffer, unicode2Char(*srcStart, *(srcStart + 1))));
     }
 }
 
@@ -45,13 +45,13 @@ void UTF16EncodingConverter::reset() {
     hasStoredChar = false;
 }
 
-UnicodeUtil::Unicode2Char UTF16LEEncodingConverter::unicode2Char(unsigned char c0, unsigned char c1) {
-    return c0 + (((UnicodeUtil::Unicode2Char) c1) << 8);
+UnicodeUtil::Ucs2Char UTF16LEEncodingConverter::unicode2Char(unsigned char c0, unsigned char c1) {
+    return c0 + (((UnicodeUtil::Ucs2Char) c1) << 8);
 
 }
 
-UnicodeUtil::Unicode2Char UTF16BEEncodingConverter::unicode2Char(unsigned char c0, unsigned char c1) {
-    return c1 + (((UnicodeUtil::Unicode2Char) c0) << 8);
+UnicodeUtil::Ucs2Char UTF16BEEncodingConverter::unicode2Char(unsigned char c0, unsigned char c1) {
+    return c1 + (((UnicodeUtil::Ucs2Char) c0) << 8);
 }
 
 

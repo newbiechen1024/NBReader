@@ -29,7 +29,7 @@ protected:
     UTF16EncodingConverter() {
     }
 
-    virtual UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) = 0;
+    virtual UnicodeUtil::Ucs2Char unicode2Char(unsigned char c0, unsigned char c1) = 0;
 
 private:
     bool hasStoredChar;
@@ -43,7 +43,7 @@ public:
 
 protected:
 
-    UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) override;
+    UnicodeUtil::Ucs2Char unicode2Char(unsigned char c0, unsigned char c1) override;
 };
 
 class UTF16LEEncodingConverter : public UTF16EncodingConverter {
@@ -52,7 +52,7 @@ public:
     }
 
 protected:
-    UnicodeUtil::Unicode2Char unicode2Char(unsigned char c0, unsigned char c1) override;
+    UnicodeUtil::Ucs2Char unicode2Char(unsigned char c0, unsigned char c1) override;
 };
 
 #endif //NBREADER_UTF16ENCODINGCONVERTER_H

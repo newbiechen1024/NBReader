@@ -33,12 +33,12 @@ void EncodingConverterManager::registerProvider(std::shared_ptr<EncodingConvertP
 }
 
 std::shared_ptr<EncodingConverter> EncodingConverterManager::getEncodingConverter(Charset charset) const {
-    for (std::vector<std::shared_ptr<EncodingConvertProvider> >::const_iterator it = mProviders.begin();
-         it != mProviders.end(); ++it) {
-        if ((*it)->isSupportConverter(charset)) {
-            return (*it)->createConverter(charset);
+    for (auto provider : mProviders) {
+        if (provider->isSupportConverter(charset)) {
+            return provider->createConverter(charset);
         }
     }
+    return nullptr;
 }
 
 std::shared_ptr<EncodingConverter> EncodingConverterManager::getDefaultConverter() const {
