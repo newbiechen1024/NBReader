@@ -19,7 +19,7 @@ JavaClass AndroidUtil::Class_NativeFormatPlugin(
 JavaClass AndroidUtil::Class_BoolPluginManager(
         PKG_NAME + "ui/component/book/plugin/BookPluginManager");
 
-JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/entity/BookModel");
+JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/BookModel");
 
 JavaClass AndroidUtil::Class_Book(PKG_NAME + "data/entity/BookEntity");
 

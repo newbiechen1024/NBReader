@@ -3,7 +3,6 @@ package com.example.newbiechen.nbreader.ui.component.book
 import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
-import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.BookPluginManager
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
@@ -57,11 +56,12 @@ class BookManager constructor(private val bookDao: BookDao) {
 
     // 打开书籍
     fun openBook(context: Context, book: BookEntity) {
+        // TODO:暂时这么用吧，找不到好的创建线程池的方法。==> 不过应该有一个更好的处理这个问题
         Observable.create(ObservableOnSubscribe<Int> {
             openBookInternal(context, book)
             it.onNext(0)
             it.onComplete()
-        }).subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 LogHelper.i(TAG, "openBookInternal success")
@@ -87,5 +87,6 @@ class BookManager constructor(private val bookDao: BookDao) {
         val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
+        // 将生成的 textModel 赋值给 controller
     }
 }

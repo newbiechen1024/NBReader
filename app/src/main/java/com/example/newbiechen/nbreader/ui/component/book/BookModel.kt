@@ -1,7 +1,7 @@
-package com.example.newbiechen.nbreader.ui.component.book.entity
+package com.example.newbiechen.nbreader.ui.component.book
 
 import com.example.newbiechen.nbreader.data.entity.BookEntity
-import com.example.newbiechen.nbreader.ui.component.book.entity.text.TextModel
+import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 
 /**
@@ -20,5 +20,6 @@ class BookModel private constructor(val book: BookEntity) {
         }
     }
 
+    // TextModel 是在 native 层创建的，native 层调用 java 层赋值。
     var textModel: TextModel? = null
 }

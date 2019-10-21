@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
-import com.example.newbiechen.nbreader.ui.component.book.entity.BookModel
+import com.example.newbiechen.nbreader.ui.component.book.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 
 /**
