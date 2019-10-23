@@ -6,7 +6,7 @@ import java.lang.RuntimeException
 /**
  *  author : newbiechen
  *  date : 2019-08-30 20:51
- *  description :页面管理器
+ *  description :页面图片管理器
  */
 
 class PageManager(private var pageListener: OnPageListener) {

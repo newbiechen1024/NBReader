@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.ui.component.book.BookModel
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**
@@ -30,12 +31,22 @@ class PageController(private var pageView: PageView) : TouchProcessor.OnTouchLis
     private var mPageHeight = 0
     private var mMenuRect = Rect()
 
+    private var mTextProcessor: TextProcessor = TextProcessor()
+
     companion object {
         private const val TAG = "PageController"
     }
 
     fun setBookModel(bookModel: BookModel) {
+        if (bookModel.textModel == null) {
+            return
+        }
 
+        // 设置书籍
+        mTextProcessor.setTextModel(bookModel.textModel!!)
+
+        // 重新绘制
+        pageView.invalidate()
     }
 
     fun addPageActionListener(pageAction: PageActionListener) {
@@ -100,13 +111,14 @@ class PageController(private var pageView: PageView) : TouchProcessor.OnTouchLis
 
     override fun onPageTurn(pageType: PageType) {
         // 处理翻页
-
+        mTextProcessor.turnPage(pageType)
         // 发送页面翻页事件
         dispatchAction(TurnPageAction(pageType))
     }
 
     override fun hasPage(type: PageType): Boolean {
-        return true
+        // 判断是否页面存在
+        return mTextProcessor.hasPage(type)
     }
 
     override fun drawPage(bitmap: Bitmap, type: PageType) {

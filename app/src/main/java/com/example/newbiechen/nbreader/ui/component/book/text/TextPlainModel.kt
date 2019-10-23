@@ -158,7 +158,7 @@ class TextPlainModel : TextModel {
             return mPghInfoList[index]
         }
 
-        override fun getEntryIterator(): TextParagraph.EntryIterator {
+        override fun getIterator(): TextParagraph.EntryIterator {
             return EntryIteratorImpl(index)
         }
     }

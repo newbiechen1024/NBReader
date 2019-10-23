@@ -14,7 +14,7 @@ interface TextParagraph {
     fun getInfo(): TextParagraphInfo
 
     // 获取 Paragraph entry 遍历器
-    fun getEntryIterator(): EntryIterator
+    fun getIterator(): EntryIterator
 
     // TextParagraph 可以认为是由一组 entry 组成的，所以需要有一个 entry 遍历器解析 Parapgrah
     interface EntryIterator {

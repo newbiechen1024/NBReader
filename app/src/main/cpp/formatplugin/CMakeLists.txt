@@ -10,6 +10,7 @@ include_directories(include)
 
 set(ABI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs/${ANDROID_ABI})
 
+# 添加 xml 解析库
 add_library(
         expat
         STATIC
@@ -21,6 +22,20 @@ set_target_properties(
         PROPERTIES
         IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
 )
+
+# 添加字段分割换行库
+add_library(
+        linkBreak
+        SHARED
+        IMPORTED
+)
+
+set_target_properties(
+        linkBreak
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libLinkBreak.so
+)
+
 
 find_library(
         zip-lib
@@ -80,4 +95,5 @@ target_link_libraries(
         ${zip-lib}
         android
         expat
+        linkBreak
 )
