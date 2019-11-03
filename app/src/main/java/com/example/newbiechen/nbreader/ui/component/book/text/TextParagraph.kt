@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.text
 
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphEntry
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphInfo
 
 /**

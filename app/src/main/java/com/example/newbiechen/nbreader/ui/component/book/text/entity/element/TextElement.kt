@@ -1,5 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.entity.element
 
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry
+
 /**
  *  author : newbiechen
  *  date : 2019-10-21 17:27
@@ -17,3 +19,5 @@ open class TextElement {
         val StyleClose: TextElement = TextElement()
     }
 }
+
+data class TextStyleElement(val styleEntry: TextStyleEntry) : TextElement()

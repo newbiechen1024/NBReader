@@ -75,7 +75,7 @@ class TextWordCursor {
      * 光标移动到下一个段落
      */
     fun nextParagraph(): Boolean {
-        return if (mParagraphCursor.isLast()) {
+        return if (mParagraphCursor.isLastParagraph()) {
             false
         } else {
             mParagraphCursor = mParagraphCursor.nextCursor()!!
@@ -90,7 +90,7 @@ class TextWordCursor {
      */
 
     fun preParagraph(): Boolean {
-        return if (mParagraphCursor.isStart()) {
+        return if (mParagraphCursor.isFirstParagraph()) {
             false
         } else {
             mParagraphCursor = mParagraphCursor.preCursor()!!
@@ -102,6 +102,34 @@ class TextWordCursor {
 
     fun moveTo(elementIndex: Int, charIndex: Int) {
 
+    }
+
+    /**
+     * 是否在段落的开头
+     */
+    fun isStartOfParagraph(): Boolean {
+        return mElementIndex == 0 && mCharIndex == 0
+    }
+
+    /**
+     * 是否是文本的开头
+     */
+    fun isStartOfText(): Boolean {
+        return isStartOfParagraph() && mParagraphCursor.isFirstParagraph()
+    }
+
+    /**
+     * 是否在段落的末尾
+     */
+    fun isEndOfParagraph(): Boolean {
+        return mElementIndex == mParagraphCursor.getElementCount() - 1
+    }
+
+    /**
+     * 是否在文本的末尾
+     */
+    fun isEndOfText(): Boolean {
+        return isEndOfParagraph() && mParagraphCursor.isLastParagraph()
     }
 
     /**

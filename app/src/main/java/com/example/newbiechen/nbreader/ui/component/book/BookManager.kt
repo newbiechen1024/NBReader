@@ -88,5 +88,6 @@ class BookManager constructor(private val bookDao: BookDao) {
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
         // 将生成的 textModel 赋值给 controller
+        mPageController.setBookModel(mBookModel!!)
     }
 }

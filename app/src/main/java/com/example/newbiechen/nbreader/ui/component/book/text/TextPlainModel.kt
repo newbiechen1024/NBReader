@@ -1,9 +1,10 @@
 package com.example.newbiechen.nbreader.ui.component.book.text
 
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextEntry
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphEntry
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphEntryType
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextEntry
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntry
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntryType
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphInfo
+import com.example.newbiechen.nbreader.ui.component.book.text.util.TextCacheReader
 import kotlin.math.min
 
 /**
@@ -41,7 +42,11 @@ class TextPlainModel : TextModel {
         mPghInfoList = paragraphInfos
 
         // 创建缓冲块读取器
-        mCacheReader = TextCacheReader(cacheDir, fileExtension, bufferBlockCount)
+        mCacheReader = TextCacheReader(
+            cacheDir,
+            fileExtension,
+            bufferBlockCount
+        )
     }
 
     override fun getId(): String {
@@ -136,7 +141,12 @@ class TextPlainModel : TextModel {
                     textLength += blockData[blockOffset++].toInt() shl 16
                     textLength = min(textLength, blockData.size - blockOffset)
 
-                    textEntry = TextEntry(blockData.copyOfRange(blockOffset, textLength))
+                    textEntry = TextEntry(
+                        blockData.copyOfRange(
+                            blockOffset,
+                            textLength
+                        )
+                    )
 
                     // 读取文本数据，并对 block 进行偏移
                     blockOffset += textLength

@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.ui.component.book.text.entity
+package com.example.newbiechen.nbreader.ui.component.book.text.entity.entry
 
 /**
  *  author : newbiechen

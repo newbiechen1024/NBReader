@@ -2,8 +2,8 @@ package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.text.TextParagraph
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextEntry
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphEntry
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextEntry
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphType
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
@@ -23,21 +23,21 @@ class TextParagraphCursor {
         private const val NON_BREAKABLE_SPACE = 2 // 不间断空格
     }
 
+    val curParagraphIndex: Int
+
     private val mElementList = ArrayList<TextElement>()
 
     private val mTextModel: TextModel
 
     private val mParagraphCursor: TextCursorManager
-    // 当前段落的索引
-    private var mCurParagraphIndex: Int = 0
 
     private var mParagraph: TextParagraph
 
     constructor(cursorManager: TextCursorManager, textModel: TextModel, index: Int) {
         mTextModel = textModel
         mParagraphCursor = cursorManager
-        mCurParagraphIndex = min(index, textModel.getParagraphCount() - 1)
-        mParagraph = mTextModel.getParagraph(mCurParagraphIndex)!!
+        curParagraphIndex = min(index, textModel.getParagraphCount() - 1)
+        mParagraph = mTextModel.getParagraph(curParagraphIndex)!!
         initElement()
     }
 
@@ -108,7 +108,6 @@ class TextParagraphCursor {
                         // 将 index 设置为 word 的起始位置
                         wordStart = index
                     }
-
                     NON_BREAKABLE_SPACE -> wordStart = index
                     // 添加非 Break 字符
                     NO_SPACE -> if (index > 0 &&
@@ -131,23 +130,23 @@ class TextParagraphCursor {
     }
 
     // 是否光标在起始位置
-    fun isStart(): Boolean {
-        return mCurParagraphIndex == 0
+    fun isFirstParagraph(): Boolean {
+        return curParagraphIndex == 0
     }
 
     // 是否光标在终止位置
-    fun isLast(): Boolean {
-        return mCurParagraphIndex == (mTextModel.getParagraphCount() - 1)
+    fun isLastParagraph(): Boolean {
+        return curParagraphIndex == (mTextModel.getParagraphCount() - 1)
     }
 
     // 获取上一段落光标
     fun preCursor(): TextParagraphCursor? {
-        return if (isStart()) null else mParagraphCursor[mCurParagraphIndex - 1]
+        return if (isFirstParagraph()) null else mParagraphCursor[curParagraphIndex - 1]
     }
 
     // 获取下一个段落光标
     fun nextCursor(): TextParagraphCursor? {
-        return if (isLast()) null else mParagraphCursor[mCurParagraphIndex + 1]
+        return if (isLastParagraph()) null else mParagraphCursor[curParagraphIndex + 1]
     }
 
     // 获取当前段落光标
@@ -167,4 +166,6 @@ class TextParagraphCursor {
     fun getElementCount(): Int {
         return mElementList.size
     }
+
+    // 创建一个 Inner Class 处理结果
 }

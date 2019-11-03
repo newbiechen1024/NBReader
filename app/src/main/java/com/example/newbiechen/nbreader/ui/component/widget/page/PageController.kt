@@ -30,7 +30,7 @@ class PageController(private var pageView: PageView) : TouchProcessor.OnTouchLis
     private var mPageWidth = 0
     private var mPageHeight = 0
     private var mMenuRect = Rect()
-
+    // 文本处理器
     private var mTextProcessor: TextProcessor = TextProcessor()
 
     companion object {

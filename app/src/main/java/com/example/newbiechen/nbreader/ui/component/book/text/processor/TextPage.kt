@@ -29,6 +29,8 @@ class TextPage {
     // 存储 Page 包含的行信息
     val lineInfoList: ArrayList<TextLineInfo> = ArrayList()
 
+    // 存储元素展示区域信息
+    val textElementAreaVector = TextElementAreaVector()
     // 页面状态
     private var mPageState = State.NONE
 

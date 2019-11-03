@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.ui.component.book.text
+package com.example.newbiechen.nbreader.ui.component.book.text.util
 
 import java.io.File
 import java.io.FileInputStream
@@ -45,7 +45,9 @@ class TextCacheReader(
                 val size = file.length().toInt()
 
                 if (size <= 0) {
-                    throw TextCacheReaderException(exceptionMessage(index, "size = $size"))
+                    throw TextCacheReaderException(
+                        exceptionMessage(index, "size = $size")
+                    )
                 }
 
                 block = CharArray(size / 2)
@@ -60,7 +62,10 @@ class TextCacheReader(
                 }
                 reader.close()
             } catch (e: IOException) {
-                throw TextCacheReaderException(exceptionMessage(index, null), e)
+                throw TextCacheReaderException(
+                    exceptionMessage(index, null),
+                    e
+                )
             }
 
             mCacheBlockList[index] = WeakReference(block)

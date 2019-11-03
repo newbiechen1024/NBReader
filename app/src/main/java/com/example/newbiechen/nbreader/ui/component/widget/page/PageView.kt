@@ -46,6 +46,8 @@ class PageView @JvmOverloads constructor(
         // 设置页面大小
         mPageManager.setPageSize(w, h)
         mPageAnim.setup(w, h)
+
+        // TODO:需要通知 PageController 的大小改变。
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

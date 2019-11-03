@@ -67,7 +67,7 @@ private: // 禁止复制
 /*class TextControlEntry : public TextParagraphEntry {
 
 protected:
-    TextControlEntry(NBTextStyle mark, bool isStart) : mMark(mark), hasStart(isStart) {
+    TextControlEntry(NBTextStyle mark, bool isFirstParagraph) : mMark(mark), hasStart(isFirstParagraph) {
     }
 
 public:
@@ -78,7 +78,7 @@ public:
         return mMark;
     }
 
-    bool isStart() const {
+    bool isFirstParagraph() const {
         return hasStart;
     }
 
@@ -108,7 +108,7 @@ public:
     ~ZLTextControlEntryPool() {
     }
 
-    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextStyle mark, bool isStart);
+    std::shared_ptr<TextParagraphEntry> getControlEntry(NBTextStyle mark, bool isFirstParagraph);
 
 private:
     std::map<NBTextStyle, std::shared_ptr<TextParagraphEntry>> mStartEntries;
