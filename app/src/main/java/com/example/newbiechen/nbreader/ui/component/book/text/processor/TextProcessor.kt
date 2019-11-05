@@ -10,6 +10,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.T
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHyphenInfo
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextTeXHyphenator
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
 
 /**
  *  author : newbiechen
@@ -17,8 +18,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
  *  description :文本处理器，处理与绘制页面
  */
 
-class TextProcessor : BaseTextProcessor() {
-
+class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
     // 上一页文本
     private var mPrePage = TextPage()
     // 当前页文本
@@ -67,7 +67,7 @@ class TextProcessor : BaseTextProcessor() {
                 // TODO:上一页的信息可能为 KNOW_XXX 的状态，所以下面的代码有问题
 
                 // 根据当前页的状态
-                when(mCurPage.pageState) {
+                when (mCurPage.pageState) {
                     TextPage.State.NONE -> {
                         // 准备下一页
                         preparePage(mNextPage)
@@ -99,7 +99,7 @@ class TextProcessor : BaseTextProcessor() {
                 }
             }
         }
-        
+
         // 切换页面
 
         // 是否需要判断 TextModel
@@ -120,6 +120,13 @@ class TextProcessor : BaseTextProcessor() {
             }
         }
         return true
+    }
+
+    /**
+     * 请求刷新
+     */
+    fun posInvalidate(){
+        pageView.postInvalidate()
     }
 
     /**
@@ -235,7 +242,11 @@ class TextProcessor : BaseTextProcessor() {
     /**
      * 根据光标，填充 page 信息
      */
-    private fun preparePageInternal(page: TextPage, startWordCursor: TextWordCursor, endWordCursor: TextWordCursor) {
+    private fun preparePageInternal(
+        page: TextPage,
+        startWordCursor: TextWordCursor,
+        endWordCursor: TextWordCursor
+    ) {
         // 将结尾光标设置为起始光标，用于进行遍历查找
         val findWordCursor = endWordCursor
 
@@ -489,7 +500,10 @@ class TextProcessor : BaseTextProcessor() {
                         val mid = (wordEndCharIndex + wordCurCharIndex + 1) / 2
                         var tempMid = mid
                         // 从 wordCurCharIndex 到 tempMid 之间查找支持 Hyphenation 的单词
-                        while (tempMid > wordCurCharIndex && !hyphenInfo.isHyphenationPossible(tempMid)) {
+                        while (tempMid > wordCurCharIndex && !hyphenInfo.isHyphenationPossible(
+                                tempMid
+                            )
+                        ) {
                             --tempMid
                         }
 
@@ -517,7 +531,8 @@ class TextProcessor : BaseTextProcessor() {
 
                     if (hyphenIndex == curCharIndex && curLineInfo.endElementIndex == startElementIndex) {
                         subWordWidth = getWordWidth(element, curCharIndex, 1, false)
-                        var right = if (element.length === curCharIndex + 1) element.length else element.length - 1
+                        var right =
+                            if (element.length === curCharIndex + 1) element.length else element.length - 1
                         var left = curCharIndex + 1
                         while (right > left) {
                             val mid = (right + left + 1) / 2
@@ -658,10 +673,18 @@ class TextProcessor : BaseTextProcessor() {
 
         val maxWidth = page.pageWidth
         when (getTextStyle().getAlignment()) {
-            TextAlignmentType.ALIGN_RIGHT -> x += maxWidth - getTextStyle().getRightIndent(getMetrics()) - lineInfo.width
-            TextAlignmentType.ALIGN_CENTER -> x += (maxWidth - getTextStyle().getRightIndent(getMetrics()) - lineInfo.width) / 2
-            TextAlignmentType.ALIGN_JUSTIFY -> if (!endOfParagraph && paragraphCursor.getElement(lineInfo.endElementIndex) !== TextElement.AfterParagraph) {
-                fullCorrection = maxWidth - getTextStyle().getRightIndent(getMetrics()) - lineInfo.width
+            TextAlignmentType.ALIGN_RIGHT -> x += maxWidth - getTextStyle().getRightIndent(
+                getMetrics()
+            ) - lineInfo.width
+            TextAlignmentType.ALIGN_CENTER -> x += (maxWidth - getTextStyle().getRightIndent(
+                getMetrics()
+            ) - lineInfo.width) / 2
+            TextAlignmentType.ALIGN_JUSTIFY -> if (!endOfParagraph && paragraphCursor.getElement(
+                    lineInfo.endElementIndex
+                ) !== TextElement.AfterParagraph
+            ) {
+                fullCorrection =
+                    maxWidth - getTextStyle().getRightIndent(getMetrics()) - lineInfo.width
             }
             TextAlignmentType.ALIGN_LEFT, TextAlignmentType.ALIGN_UNDEFINED -> {
             }
@@ -718,13 +741,19 @@ class TextProcessor : BaseTextProcessor() {
                     }
                     page.textElementAreaVector.add(
                         TextElementArea(
-                            paragraphIndex, wordIndex, charIndex, length - charIndex,
+                            paragraphIndex,
+                            wordIndex,
+                            charIndex,
+                            length - charIndex,
                             isLastElement = true, // is last in element
                             addHyphenationSign = false, // add hyphenation sign
                             isStyleChange = changeStyle,
                             style = getTextStyle(),
                             element = element,
-                            startX = x, startY = x + width - 1, endX = y - height + 1, endY = y + descent
+                            startX = x,
+                            startY = x + width - 1,
+                            endX = y - height + 1,
+                            endY = y + descent
                         )
                     )
                     changeStyle = false
@@ -801,7 +830,10 @@ class TextProcessor : BaseTextProcessor() {
                 }
 
                 val areaX = area.startX
-                val areaY = area.endY - getElementDescent(element) - getTextStyle().getVerticalAlign(getMetrics())
+                val areaY =
+                    area.endY - getElementDescent(element) - getTextStyle().getVerticalAlign(
+                        getMetrics()
+                    )
                 if (element is TextWordElement) {
                     drawWord(canvas, areaX, areaY, element, charIndex, -1, false,)
                 } else if (element === TextElement.HSpace || element === TextElement.NBSpace) {
@@ -826,11 +858,17 @@ class TextProcessor : BaseTextProcessor() {
             else 0
             val len = lineInfo.endCharIndex - start
             val word = paragraph.getElement(lineInfo.endElementIndex) as TextWordElement
-            val pos = TextFixedPosition(lineInfo.paragraphCursor.curParagraphIndex, lineInfo.endElementIndex, 0)
+            val pos = TextFixedPosition(
+                lineInfo.paragraphCursor.curParagraphIndex,
+                lineInfo.endElementIndex,
+                0
+            )
             drawWord(
                 canvas,
                 area.startX,
-                area.endY - getPaintContext().getDescent() - getTextStyle().getVerticalAlign(getMetrics()),
+                area.endY - getPaintContext().getDescent() - getTextStyle().getVerticalAlign(
+                    getMetrics()
+                ),
                 word,
                 start,
                 len,

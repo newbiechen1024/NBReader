@@ -13,3 +13,4 @@
 .externalNativeBuild
 proguard-rules.pro
 /reference/
+/app/.cxx

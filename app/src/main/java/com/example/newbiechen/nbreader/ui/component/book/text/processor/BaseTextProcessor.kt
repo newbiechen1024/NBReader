@@ -42,6 +42,7 @@ abstract class BaseTextProcessor {
 
     // 绘制传入的页面
     fun draw(canvas: Canvas, pageType: PageType) {
+
         drawInternal(TextCanvas(canvas), pageType)
     }
 

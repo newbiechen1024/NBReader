@@ -9,14 +9,12 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
-import com.example.newbiechen.nbreader.ui.component.book.BookManager
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
-import javax.inject.Inject
 
 /**
  *  author : newbiechen
@@ -37,14 +35,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         }
     }
 
-    @Inject
-    lateinit var mBookManager: BookManager
-
     private lateinit var mViewModel: ReadViewModel
 
-    override fun initContentView(): Int = R.layout.activity_read
-
     private lateinit var mBook: BookEntity
+
+    override fun initContentView(): Int = R.layout.activity_read
 
     override fun initData(savedInstanceState: Bundle?) {
         super.initData(savedInstanceState)
@@ -88,12 +83,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             menuFrame.setOnClickListener(this@ReadActivity)
 
             // 添加页面事件回调
-            pvBook.addPageActionListener {
+            pvBook.setPageActionListener {
                 onPageAction(it)
             }
-
-            // 初始化 BookManager
-            mBookManager.initPageController(pvBook.getPageController())
         }
     }
 

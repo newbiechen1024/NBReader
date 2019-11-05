@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 
 import android.graphics.Canvas
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageCanvasManager
 
 /**
  *  author : newbiechen
@@ -10,7 +10,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
  *  description :
  */
 
-class NonePageAnimation(view: View, pageManager: PageManager) : PageAnimation(view, pageManager) {
+class NonePageAnimation(view: View, pageManager: PageCanvasManager) : PageAnimation(view, pageManager) {
 
     override fun drawStatic(canvas: Canvas) {
         // 绘制当前页

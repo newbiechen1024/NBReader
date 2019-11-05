@@ -5,7 +5,9 @@ import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.plugin.BookPluginManager
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.BaseTextProcessor
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageActionProcessor
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
@@ -24,22 +26,19 @@ import io.reactivex.schedulers.Schedulers
  *  TODO:应该添加书籍加载错误的监听回调
  */
 
-class BookManager constructor(private val bookDao: BookDao) {
-
-
+/**
+ * @param bookDao：书籍数据库
+ * @param textProcessor:文本处理器
+ */
+class BookManager constructor(
+    private val bookDao: BookDao,
+    private val textProcessor: TextProcessor
+) {
     companion object {
         private const val TAG = "BookManager"
     }
 
-    private lateinit var mPageController: PageController
     private var mBookModel: BookModel? = null
-
-    /**
-     * 需要加载页面控制器
-     */
-    fun initPageController(controller: PageController) {
-        mPageController = controller
-    }
 
     /**
      * FBReader 的实现步骤：
@@ -53,7 +52,6 @@ class BookManager constructor(private val bookDao: BookDao) {
      * 7. 将 Book 存储到 LibraryService 中
      * 8. 调用 openBookInternal 执行实际打开书本操作
      */
-
     // 打开书籍
     fun openBook(context: Context, book: BookEntity) {
         // TODO:暂时这么用吧，找不到好的创建线程池的方法。==> 不过应该有一个更好的处理这个问题
@@ -84,10 +82,12 @@ class BookManager constructor(private val bookDao: BookDao) {
     private fun openBookInternal(context: Context, book: BookEntity) {
         val pluginManager = BookPluginManager.getInstance(context)
         // 根据 Book 获取到 Plugin
-        val plugin = pluginManager.getPlugin(book.type) ?: throw IllegalAccessException("UnSupport Book Type")
+        val plugin = pluginManager.getPlugin(book.type)
+            ?: throw IllegalAccessException("UnSupport Book Type")
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
-        // 将生成的 textModel 赋值给 controller
-        mPageController.setBookModel(mBookModel!!)
+        // 还要请求刷新
+        textProcessor.setTextModel(mBookModel!!.textModel!!)
+        // 请求刷新
     }
 }

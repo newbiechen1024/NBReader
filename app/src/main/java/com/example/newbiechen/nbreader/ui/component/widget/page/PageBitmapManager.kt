@@ -6,10 +6,10 @@ import java.lang.RuntimeException
 /**
  *  author : newbiechen
  *  date : 2019-08-30 20:51
- *  description :页面图片管理器
+ *  description :页面画布管理器
  */
 
-class PageManager(private var pageListener: OnPageListener) {
+class PageBitmapManager(private var pageListener: OnPageListener) {
 
     companion object {
         // 页面的数量
@@ -38,10 +38,6 @@ class PageManager(private var pageListener: OnPageListener) {
             pageListener.onPageSizeChange(w, h)
         }
     }
-
-    fun getPageWidth() = mPageWidth
-
-    fun getPageHeight() = mPageHeight
 
     // 是否页面存在
     fun hasPage(type: PageType): Boolean {
@@ -102,7 +98,7 @@ class PageManager(private var pageListener: OnPageListener) {
             }
             mBitmapTypes[i] = if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
             // 通知回调
-            pageListener.onPageTurn(if (isNext) PageType.NEXT else PageType.PREVIOUS)
+            pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
         }
     }
 
@@ -117,16 +113,15 @@ class PageManager(private var pageListener: OnPageListener) {
     }
 
     interface OnPageListener {
-        // 页面改变监听
-        fun onPageSizeChange(w: Int, h: Int)
-
         // 通知翻页
-        fun onPageTurn(pageType: PageType)
+        fun onTurnPage(pageType: PageType)
 
         // 是否页面存在
         fun hasPage(type: PageType): Boolean
 
         // 绘制页面
         fun drawPage(bitmap: Bitmap, type: PageType)
+
+        fun onPageSizeChange(width: Int, height: Int)
     }
 }

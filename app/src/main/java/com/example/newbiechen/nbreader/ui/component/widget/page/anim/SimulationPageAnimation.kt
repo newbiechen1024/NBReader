@@ -3,8 +3,7 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
-import com.example.newbiechen.nbreader.uilts.LogHelper
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageCanvasManager
 import java.lang.Math.toDegrees
 import kotlin.math.*
 import kotlin.properties.Delegates
@@ -15,7 +14,7 @@ import kotlin.properties.Delegates
  *  description :
  */
 
-class SimulationPageAnimation(view: View, pageManager: PageManager) : PageAnimation(view, pageManager) {
+class SimulationPageAnimation(view: View, pageManager: PageCanvasManager) : PageAnimation(view, pageManager) {
 
     companion object {
         private const val TAG = "SimulationPageAnimation"

@@ -3,12 +3,10 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageManager
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.abs
 
 /**
@@ -18,7 +16,7 @@ import kotlin.math.abs
  *  TODO：暂时命名为 HorizonAnim ==> 因为只写了左右翻页的逻辑
  */
 
-abstract class PageAnimation(view: View, pageManager: PageManager) {
+abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
     companion object {
         private const val TAG = "PageAnimation"
         private const val MIN_SCROLL_SLOP = 5
