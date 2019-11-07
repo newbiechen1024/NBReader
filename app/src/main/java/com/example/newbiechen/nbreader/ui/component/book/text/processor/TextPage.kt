@@ -9,7 +9,6 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInf
  */
 
 class TextPage {
-
     /**
      *  公共参数
      */
@@ -37,7 +36,7 @@ class TextPage {
     /**
      * 设置 Page 的宽高
      */
-    fun setSize(pageWidth: Int, pageHeight: Int) {
+    fun setViewPort(pageWidth: Int, pageHeight: Int) {
         this.pageWidth = pageWidth
         this.pageHeight = pageHeight
     }
@@ -52,40 +51,22 @@ class TextPage {
         }
         when (pageState) {
             State.NONE -> { // 回到未准备状态
-                clear()
+                reset()
                 return true
             }
-            State.KNOW_START_CURSOR -> {
+            State.KNOW_START_CURSOR, State.KNOW_END_CURSOR -> {
                 // 由于光标改变，则之前的行也不能用了
                 lineInfoList.clear()
-
-                // 如果起始光标存在，则删除终止光标
+                // 只有同种类型的 cursor 才能设置状态
                 if (startWordCursor != null) {
-                    endWordCursor = null
                     mPageState = State.KNOW_START_CURSOR
                     return true
                 } else if (endWordCursor != null) {
                     // 如果终止光标存在
-                    startWordCursor = null
                     mPageState = State.KNOW_END_CURSOR
                     return true
                 }
             }
-            State.KNOW_END_CURSOR -> {
-                // 由于光标改变，则之前的行也不能用了
-                lineInfoList.clear()
-
-                // 如果末尾光标存在，则删除起始光标
-                if (endWordCursor != null) {
-                    // 如果终止光标存在
-                    startWordCursor = null
-                    mPageState = State.KNOW_END_CURSOR
-                } else if (startWordCursor != null) {
-                    endWordCursor = null
-                    mPageState = State.KNOW_START_CURSOR
-                }
-            }
-
             State.PREPARED -> {
                 if (startWordCursor != null
                     && endWordCursor != null
@@ -99,14 +80,15 @@ class TextPage {
     }
 
     /**
-     * 设置 Page 的初始光标，初始情况下起始光标等于结尾光标
+     * 初始化页面的光标
      * @param wordCursor:设置光标位置
      * @param isStart:传入的是页面的起始光标，还是结尾光标
      */
-    fun setPageCursor(wordCursor: TextWordCursor, isStart: Boolean) {
+    fun initCursor(wordCursor: TextWordCursor, isStart: Boolean) {
         // 重置当前状态
         setPageState(State.NONE)
 
+        // 起始光标和末尾光标同时指向起始光标
         if (startWordCursor == null) {
             startWordCursor = TextWordCursor(wordCursor)
         } else {
@@ -118,13 +100,17 @@ class TextPage {
         } else {
             endWordCursor!!.updateCursor(wordCursor)
         }
+
         setPageState(if (isStart) State.KNOW_START_CURSOR else State.KNOW_END_CURSOR)
     }
 
+
+
+
     /**
-     * 清空 Page 数据信息
+     * 重置 Page 数据信息
      */
-    fun clear() {
+    fun reset() {
         lineInfoList.clear()
         startWordCursor = null
         endWordCursor = null

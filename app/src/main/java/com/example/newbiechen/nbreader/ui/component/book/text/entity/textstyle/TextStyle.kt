@@ -11,6 +11,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
 abstract class TextStyle(parentStyle: TextStyle?) {
     // abstract fun getFontEntries(): List<FontEntry>
     val parent: TextStyle = parentStyle ?: this
+
     abstract fun getFontSize(metrics: TextMetrics): Int
 
     abstract fun isBold(): Boolean

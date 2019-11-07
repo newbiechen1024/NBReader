@@ -2,7 +2,6 @@ package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
@@ -18,7 +17,8 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
  *  description :文本处理器，处理与绘制页面
  */
 
-class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
+class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView.context) {
+
     // 上一页文本
     private var mPrePage = TextPage()
     // 当前页文本
@@ -32,6 +32,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
 
     companion object {
         private val SPACE = charArrayOf(' ')
+        private const val TAG = "TextProcessor"
     }
 
     /**
@@ -42,10 +43,17 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
         // 创建新的光标管理器
         mCursorManager = TextCursorManager(textModel)
 
-        // 初始化成员变量
-        mPrePage.clear()
-        mCurPage.clear()
-        mNextPage.clear()
+        // 重置成员变量
+        mPrePage.reset()
+        mCurPage.reset()
+        mNextPage.reset()
+
+        // 初始化 curPage 信息
+
+        // 如果 model 中存在段落
+        if (mTextModel!!.getParagraphCount() > 0) {
+            // todo:初始化当前的起始光标
+        }
     }
 
     /**
@@ -60,24 +68,24 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                 mNextPage = mCurPage
                 // 上一页作为当前页
                 mCurPage = mPrePage
-                // 下一页被作为上一页的缓冲液
+                // 下一页被作为上一页的缓冲
                 mPrePage = swap
+                // 重置上一页
                 mPrePage.reset()
 
-                // TODO:上一页的信息可能为 KNOW_XXX 的状态，所以下面的代码有问题
-
-                // 根据当前页的状态
+                // 判断当前页的状态
                 when (mCurPage.pageState) {
                     TextPage.State.NONE -> {
-                        // 准备下一页
+                        // 先准备下一页
                         preparePage(mNextPage)
+
                         // 下一页的起始指针，作为当前页的结尾指针
-                        mCurPage.setPageCursor(mNextPage.startWordCursor!!, false)
+                        mCurPage.initCursor(mNextPage.startWordCursor!!, false)
                     }
                     TextPage.State.PREPARED -> {
                         mNextPage.reset()
                         // 当前页的结尾指针，作为下一页的起始指针
-                        mNextPage.setPageCursor(mCurPage.endWordCursor!!, true)
+                        mNextPage.initCursor(mCurPage.endWordCursor!!, true)
                     }
                 }
             }
@@ -91,10 +99,10 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                 when (mCurPage.pageState) {
                     TextPage.State.NONE -> {
                         preparePage(mPrePage)
-                        mCurPage.setPageCursor(mPrePage.endWordCursor!!, true)
+                        mCurPage.initCursor(mPrePage.endWordCursor!!, true)
                     }
                     TextPage.State.PREPARED -> {
-                        mNextPage.setPageCursor(mCurPage.endWordCursor!!, true)
+                        mNextPage.initCursor(mCurPage.endWordCursor!!, true)
                     }
                 }
             }
@@ -125,7 +133,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
     /**
      * 请求刷新
      */
-    fun posInvalidate(){
+    fun posInvalidate() {
         pageView.postInvalidate()
     }
 
@@ -157,7 +165,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
      * @param pageType:绘制的页面类型
      */
     override fun drawInternal(canvas: TextCanvas, pageType: PageType) {
-        // 如果禁止绘制直接 return
+        // TODO:如果禁止绘制直接 return
 
         // 获取并初始化待处理 Page
         val page: TextPage = when (pageType) {
@@ -168,7 +176,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                     preparePage(mCurPage)
                     // 初始化页面的光标位置
                     // 将 curPage 的起始光标，设置为 PrePage 的末尾光标
-                    mPrePage.setPageCursor(mCurPage.startWordCursor!!, false)
+                    mPrePage.initCursor(mCurPage.startWordCursor!!, false)
                 }
                 mPrePage
             }
@@ -183,7 +191,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                     // 先准备当前页面
                     preparePage(mCurPage)
                     // 将 curPage 末尾光标，设置为 NextPage 起始光标
-                    mNextPage.setPageCursor(mCurPage.endWordCursor!!, true)
+                    mNextPage.initCursor(mCurPage.endWordCursor!!, true)
                 }
                 mNextPage
             }
@@ -191,13 +199,18 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
 
         // 清空元素绘制区域数据
         page.textElementAreaVector.clear()
+
         // 准备待处理的页
         preparePage(page)
+
+        // 如果返回的结果失败
         if (page.startWordCursor == null || page.endWordCursor == null) {
             return
         }
+
         // 判断准备的 page 是否数据有问题
         val labels = prepareTextArea(page)
+
         // 绘制页面
         drawTextPage(canvas, page, labels)
 
@@ -212,7 +225,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
      * 准备处理页面数据
      */
     private fun preparePage(page: TextPage) {
-        page.setSize(0, 0)
+        // 设置页面的视口
+        page.setViewPort(viewWidth, viewHeight)
 
         // 如果未准备任何信息，或者已经准备完成，都直接 return
         if (page.pageState == TextPage.State.NONE || page.pageState == TextPage.State.PREPARED) {
@@ -230,6 +244,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
             // 已知结束光标状态
             TextPage.State.KNOW_END_CURSOR -> {
                 if (page.endWordCursor != null) {
+                    // TODO:根据结束光标，查找起始光标
+
                     // preparePageInternal(page,)
                 }
             }
@@ -404,7 +420,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                 if (wordOccurred) {
                     wordOccurred = false
                     internalSpaceCount++
-                    lastSpaceWidth = getPaintContext().getSpaceWidth()
+                    lastSpaceWidth = mPaintContext.getSpaceWidth()
                     newWidth += lastSpaceWidth
                 }
             } else if (element === TextElement.NBSpace) {
@@ -482,7 +498,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                 var remainSpaceWidth = maxWidth - newWidth
                 // 如果当前元素大于 3 字节，并且剩余控件大于 2 倍的空格
                 // 或者单个元素独占一行
-                if ((element.length > 3 && remainSpaceWidth > 2 * getPaintContext().getSpaceWidth())
+                if ((element.length > 3 && remainSpaceWidth > 2 * mPaintContext.getSpaceWidth())
                     || curLineInfo.endElementIndex == startElementIndex
                 ) {
                     // 获取断句信息
@@ -596,7 +612,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
 
         // 加入到缓存中
         if (curLineInfo.endElementIndex != endElementIndex || endElementIndex == curLineInfo.elementCount - 1) {
-
             mLineInfoCache.put(curLineInfo, curLineInfo)
         }
 
@@ -605,7 +620,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
             curLineInfo.endElementIndex = paragraphCursor.getElementCount() - 1
             curLineInfo.endCharIndex = 0
         }
-
         return curLineInfo
     }
 
@@ -655,12 +669,15 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
         return labels
     }
 
+    /**
+     * 根据文本行准备文本绘制区域信息
+     */
     private fun prepareTextAreaInternal(page: TextPage, lineInfo: TextLineInfo, x: Int, y: Int) {
         var x = x
         var y = y
-        y = (y + lineInfo.height).coerceAtMost(textConfig.getTopMargin() + page.pageWidth - 1)
+        y = (y + lineInfo.height).coerceAtMost(mTextConfig.getTopMargin() + page.pageWidth - 1)
 
-        val context = getPaintContext()
+        val context = mPaintContext
         val paragraphCursor = lineInfo.paragraphCursor
 
         setTextStyle(lineInfo.startStyle!!)
@@ -821,7 +838,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
         var wordIndex = lineInfo.realStartElementIndex
         while (wordIndex != endElementIndex && areaIndex < toArea) {
             val element = paragraph.getElement(wordIndex)
-            val area = pageAreas.get(areaIndex)
+            val area = pageAreas[areaIndex]
             if (element === area.element) {
                 ++areaIndex
                 // 如果当前样式存在改变
@@ -835,12 +852,21 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
                         getMetrics()
                     )
                 if (element is TextWordElement) {
-                    drawWord(canvas, areaX, areaY, element, charIndex, -1, false,)
+                    drawWord(
+                        canvas,
+                        areaX,
+                        areaY,
+                        element,
+                        charIndex,
+                        -1,
+                        false,
+                        mTextConfig.getTextColor()
+                    )
                 } else if (element === TextElement.HSpace || element === TextElement.NBSpace) {
-                    val cw = getPaintContext().getSpaceWidth()
+                    val cw = mPaintContext.getSpaceWidth()
                     var len = 0
                     while (len < area.endX - area.startX) {
-                        canvas.drawString(areaX + len, areaY, SPACE, 0, 1, getPaintContext())
+                        canvas.drawString(areaX + len, areaY, SPACE, 0, 1, mPaintContext)
                         len += cw
                     }
                 }
@@ -853,27 +879,23 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor() {
             if (area.isStyleChange) {
                 setTextStyle(area.style)
             }
-            val start = if (lineInfo.startElementIndex === lineInfo.endElementIndex)
+            val start = if (lineInfo.startElementIndex == lineInfo.endElementIndex) {
                 lineInfo.startCharIndex
-            else 0
+            } else 0
+
             val len = lineInfo.endCharIndex - start
             val word = paragraph.getElement(lineInfo.endElementIndex) as TextWordElement
-            val pos = TextFixedPosition(
-                lineInfo.paragraphCursor.curParagraphIndex,
-                lineInfo.endElementIndex,
-                0
-            )
+
             drawWord(
                 canvas,
                 area.startX,
-                area.endY - getPaintContext().getDescent() - getTextStyle().getVerticalAlign(
+                area.endY - mPaintContext.getDescent() - getTextStyle().getVerticalAlign(
                     getMetrics()
                 ),
                 word,
                 start,
                 len,
-                area.addHyphenationSign,
-                // 获取文本颜色，这个暂时没想好怎么处理，FBReader 的 Color 和超链接的颜色有关系，我觉得应该从 config 里面拿
+                area.addHyphenationSign, mTextConfig.getTextColor()
             )
         }
     }

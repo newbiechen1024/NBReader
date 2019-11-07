@@ -71,14 +71,6 @@ class PageView @JvmOverloads constructor(
     }
 
     /**
-     * 设置页面配置项
-     */
-    internal fun setPageConfig() {
-        // 通知界面刷新
-        invalidate()
-    }
-
-    /**
      * 返回文本处理器
      */
     internal fun getTextProcessor(): TextProcessor {

@@ -9,6 +9,11 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  */
 
 class DefaultTextStyle : TextStyle(null) {
+
+    fun getFontSize(): Int {
+        return 0
+    }
+
     override fun getFontSize(metrics: TextMetrics): Int {
         return 0
     }

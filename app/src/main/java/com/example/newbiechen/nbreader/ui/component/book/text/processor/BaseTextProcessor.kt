@@ -1,15 +1,15 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
+import android.content.Context
 import android.graphics.Canvas
 import android.util.Size
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextControlElement
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextStyleElement
-import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.*
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.CustomTextDecoratedStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.ExplicitTextDecoratedStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
+import com.example.newbiechen.nbreader.ui.component.book.text.util.TextConfig
+import com.example.newbiechen.nbreader.ui.component.book.text.util.TextDimenUtil
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 
 /**
@@ -17,7 +17,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
  *  date : 2019-10-24 18:16
  *  description :文本处理器基础方法封装
  */
-abstract class BaseTextProcessor {
+abstract class BaseTextProcessor(private val context: Context) {
     /**
      * 视口宽高
      */
@@ -27,11 +27,10 @@ abstract class BaseTextProcessor {
         private set
 
     // 文本配置项
-    protected var textConfig: TextConfig = DefaultTextConfig()
-        private set
+    protected var mTextConfig: TextConfig = TextConfig()
 
     // 文本画笔
-    private var mPaintContext: TextPaintContext = TextPaintContext()
+    protected var mPaintContext: TextPaintContext = TextPaintContext()
 
     // 使用的文本样式
     private var mTextStyle: TextStyle? = null
@@ -40,13 +39,16 @@ abstract class BaseTextProcessor {
 
     protected abstract fun drawInternal(canvas: TextCanvas, pageType: PageType)
 
-    // 绘制传入的页面
+    /**
+     *  绘制传入的页面
+     */
     fun draw(canvas: Canvas, pageType: PageType) {
-
         drawInternal(TextCanvas(canvas), pageType)
     }
 
-    // TODO:视口因为 onSizeChanged 改变怎么办？
+    /**
+     * 设置视口
+     */
     fun setViewPort(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
@@ -67,14 +69,14 @@ abstract class BaseTextProcessor {
      * 获取文本区域宽
      */
     fun getTextAreaWidth(): Int {
-        return viewWidth - textConfig.getLeftMargin() - textConfig.getRightMargin()
+        return viewWidth - mTextConfig.getLeftMargin() - mTextConfig.getRightMargin()
     }
 
     /**
      * 获取文本区域高
      */
     fun getTextAreaHeight(): Int {
-        return viewHeight - textConfig.getTopMargin() - textConfig.getBottomMargin()
+        return viewHeight - mTextConfig.getTopMargin() - mTextConfig.getBottomMargin()
     }
 
     /**
@@ -96,14 +98,20 @@ abstract class BaseTextProcessor {
             mWordHeight = -1
         }
 
-        mPaintContext.setFont(style.getFontSize())
+        mPaintContext.setFont(
+            style.getFontSize(getMetrics()),
+            bold = false,
+            italic = false,
+            underline = false,
+            strikeThrough = false
+        )
     }
 
     /**
      * 重置文本样式
      */
     protected fun resetTextStyle() {
-        setTextStyle(textConfig.getTextStyle())
+        setTextStyle(mTextConfig.getDefaultTextStyle())
     }
 
     /**
@@ -142,20 +150,13 @@ abstract class BaseTextProcessor {
                 (control as TextHyperlinkControlElement).Hyperlink
             else null*/
 
-            val description = textConfig.getTextDecoratedStyleDesc(control.styleType)
+            val description = mTextConfig.getTextDecoratedStyleDesc(control.styleType)
             if (description != null) {
                 setTextStyle(CustomTextDecoratedStyle(mTextStyle!!, description))
             }
         } else {
             setTextStyle(mTextStyle!!.parent)
         }
-    }
-
-    /**
-     * 获取画笔
-     */
-    protected fun getPaintContext(): TextPaintContext {
-        return mPaintContext
     }
 
     private var mMetrics: TextMetrics? = null
@@ -167,12 +168,13 @@ abstract class BaseTextProcessor {
         var m: TextMetrics? = mMetrics
         if (m == null) {
             m = TextMetrics(
-                ibrary.Instance().getDisplayDPI(), // dpi
+                TextDimenUtil.getDisplayDPI(context), // dpi
                 // TODO: screen area width
                 100, // 屏幕宽
                 // TODO: screen area height
                 100, // 屏幕高
-                textConfig.getTextStyle().getFontSize() // 获取文字的大小
+                // TODO:获取默认的文字大小
+                mTextConfig.getDefaultTextStyle().getFontSize() // 获取文字的大小
             )
             mMetrics = m
         }
@@ -186,7 +188,7 @@ abstract class BaseTextProcessor {
     protected fun getElementWidth(element: TextElement, charIndex: Int): Int {
         return when {
             element is TextWordElement -> getWordWidth(element, charIndex)
-            element === TextElement.NBSpace -> getPaintContext().getSpaceWidth()
+            element === TextElement.NBSpace -> mPaintContext.getSpaceWidth()
             element === TextElement.Indent -> mTextStyle!!.getFirstLineIndent(getMetrics())
             else -> 0
         }
@@ -207,7 +209,7 @@ abstract class BaseTextProcessor {
     }
 
     protected fun getElementDescent(element: TextElement): Int {
-        return if (element is TextWordElement) getPaintContext().getDescent() else 0
+        return if (element is TextWordElement) mPaintContext.getDescent() else 0
     }
 
     /**
@@ -215,25 +217,30 @@ abstract class BaseTextProcessor {
      */
     protected fun getWordWidth(word: TextWordElement, start: Int): Int {
         return if (start == 0) {
-            word.getWidth(getPaintContext())
+            word.getWidth(mPaintContext)
         } else {
-            getPaintContext().getStringWidth(word.data, word.offset + start, word.length - start)
+            mPaintContext.getStringWidth(word.data, word.offset + start, word.length - start)
         }
     }
 
     private var mWordPartArray = CharArray(20)
 
-    fun getWordWidth(word: TextWordElement, start: Int, length: Int, addHyphenationSign: Boolean): Int {
+    fun getWordWidth(
+        word: TextWordElement,
+        start: Int,
+        length: Int,
+        addHyphenationSign: Boolean
+    ): Int {
         var length = length
         if (length == -1) {
             if (start == 0) {
-                return word.getWidth(getPaintContext())
+                return word.getWidth(mPaintContext)
             }
             length = word.length - start
         }
 
         if (!addHyphenationSign) {
-            return getPaintContext().getStringWidth(word.data, word.offset + start, length)
+            return mPaintContext.getStringWidth(word.data, word.offset + start, length)
         }
 
         var part = mWordPartArray
@@ -244,7 +251,7 @@ abstract class BaseTextProcessor {
 
         System.arraycopy(word.data, word.offset + start, part, 0, length)
         part[length] = '-'
-        return getPaintContext().getStringWidth(part, 0, length + 1)
+        return mPaintContext.getStringWidth(part, 0, length + 1)
     }
 
 
@@ -254,7 +261,8 @@ abstract class BaseTextProcessor {
     protected fun getWordHeight(): Int {
         if (mWordHeight == null) {
             val textStyle = mTextStyle!!
-            mWordHeight = getPaintContext().getStringHeight() * textStyle.getLineSpacePercent() / 100
+            mWordHeight =
+                mPaintContext.getStringHeight() * textStyle.getLineSpacePercent() / 100
             +textStyle.getVerticalAlign(
                 getMetrics()
             )
@@ -306,9 +314,9 @@ abstract class BaseTextProcessor {
         shift: Int
     ) {
         // 设置文字显示的颜色
-        getPaintContext().setTextColor(color)
+        mPaintContext.setTextColor(color)
         // 进行绘制
-        canvas.drawString(x, y, str, offset, length, getPaintContext())
+        canvas.drawString(x, y, str, offset, length, mPaintContext)
         // TODO:没有处理存在 Mark 的情况
     }
 }

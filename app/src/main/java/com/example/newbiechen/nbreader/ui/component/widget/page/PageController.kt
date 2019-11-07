@@ -3,6 +3,7 @@ package com.example.newbiechen.nbreader.ui.component.widget.page
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.BookManager
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 
 /**
  *  author : newbiechen
@@ -11,7 +12,13 @@ import com.example.newbiechen.nbreader.ui.component.book.BookManager
  */
 
 class PageController(private val pageView: PageView) {
+    // 是否初始化
+    var isInitialize: Boolean = false
+        private set
+
     private var mBookManager: BookManager? = null
+    private var mTextProcessor: TextProcessor = pageView.getTextProcessor()
+
     /**
      * 初始化操作
      * @param bookDao：书籍数据库
@@ -19,7 +26,7 @@ class PageController(private val pageView: PageView) {
     fun init(bookDao: BookDao) {
         // 创建书籍管理器，并传入文本处理器给 BookDao
         if (mBookManager == null) {
-            mBookManager = BookManager(bookDao, pageView.getTextProcessor())
+            mBookManager = BookManager(bookDao, mTextProcessor)
         }
     }
 
@@ -27,7 +34,7 @@ class PageController(private val pageView: PageView) {
      * 设置页面配置信息
      */
     fun setPageConfig() {
-        pageView.setPageConfig()
+
     }
 
     /**
@@ -38,6 +45,7 @@ class PageController(private val pageView: PageView) {
             // todo:抛出异常
             return
         }
+
         // 打开书籍 ==> 添加一个返回 Book
         mBookManager!!.openBook(pageView.context, bookEntity)
     }
