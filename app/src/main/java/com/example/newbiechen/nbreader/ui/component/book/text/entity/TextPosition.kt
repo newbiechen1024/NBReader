@@ -17,6 +17,13 @@ abstract class TextPosition : Comparable<TextPosition> {
     // 获取字节的位置
     abstract fun getCharIndex(): Int
 
+    /**
+     * 是否在相同的位置
+     */
+    fun isSamePosition(position: TextPosition): Boolean {
+        return compareTo(position) == 0
+    }
+
     override fun compareTo(position: TextPosition): Int {
         val p0 = getParagraphIndex()
         val p1 = position.getParagraphIndex()

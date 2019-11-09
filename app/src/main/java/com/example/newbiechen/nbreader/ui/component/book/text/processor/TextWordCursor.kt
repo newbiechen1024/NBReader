@@ -1,12 +1,14 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
+
 /**
  *  author : newbiechen
  *  date : 2019-10-22 14:04
  *  description :文本单词光标，对 TextParagraphCursor 的进一步封装。主要，用于定位在文本中的位置
  */
 
-class TextWordCursor {
+class TextWordCursor : TextPosition {
 
     private lateinit var mParagraphCursor: TextParagraphCursor
 
@@ -38,15 +40,19 @@ class TextWordCursor {
         mCharIndex = wordCursor.getCharIndex()
     }
 
+    override fun getParagraphIndex(): Int {
+        return mParagraphCursor.curParagraphIndex
+    }
+
     /**
      * 返回当前光标指向的 elment
      */
-    fun getElementIndex() = mElementIndex
+    override fun getElementIndex() = mElementIndex
 
     /**
      * 返回当前光标指向的字节
      */
-    fun getCharIndex() = mCharIndex
+    override fun getCharIndex() = mCharIndex
 
     /**
      * 返回 Word 光标对应的 Paragraph 光标

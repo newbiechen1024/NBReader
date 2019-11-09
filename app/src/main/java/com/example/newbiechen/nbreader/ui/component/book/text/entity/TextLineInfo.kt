@@ -18,14 +18,18 @@ data class TextLineInfo(
 ) {
 
     val elementCount: Int = paragraphCursor.getElementCount()
-
+    // 当前行的宽高
     var width: Int = 0
     var height: Int = 0
-
+    // 当前行的左缩进
     var leftIndent: Int = 0
+    // 文字的基准线
     var descent: Int = 0
+    // 当前行的 topMargin
     var vSpaceBefore: Int = 0
+    // 当前行的 bottomMargin
     var vSpaceAfter: Int = 0
+    // 空格数
     var spaceCount: Int = 0
 
     // 结束行的索引
@@ -46,13 +50,23 @@ data class TextLineInfo(
     }
 
     /**
-     *
+     * 跟上一行进行裁决，更新当前 textLine 信息
      */
     fun adjust(previous: TextLineInfo?) {
         if (!previousInfoUsed && previous != null) {
-            height -= Math.min(previous!!.vSpaceAfter, vSpaceBefore)
+            height -= previous!!.vSpaceAfter.coerceAtMost(vSpaceBefore)
             previousInfoUsed = true
         }
     }
 
+    override fun equals(o: Any?): Boolean {
+        val info = o as TextLineInfo?
+        return paragraphCursor === info!!.paragraphCursor &&
+                startElementIndex == info!!.startElementIndex &&
+                startCharIndex == info!!.startCharIndex
+    }
+
+    override fun hashCode(): Int {
+        return paragraphCursor.hashCode() + startElementIndex + 239 * startCharIndex
+    }
 }

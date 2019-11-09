@@ -12,9 +12,9 @@ class TextPage {
     /**
      *  公共参数
      */
-    var pageWidth: Int = 0
+    var viewWidth: Int = 0
         private set
-    var pageHeight: Int = 0
+    var viewHeight: Int = 0
         private set
     var pageState: State = State.NONE
         private set
@@ -37,8 +37,8 @@ class TextPage {
      * 设置 Page 的宽高
      */
     fun setViewPort(pageWidth: Int, pageHeight: Int) {
-        this.pageWidth = pageWidth
-        this.pageHeight = pageHeight
+        this.viewWidth = pageWidth
+        this.viewHeight = pageHeight
     }
 
     /**
@@ -82,12 +82,9 @@ class TextPage {
     /**
      * 初始化页面的光标
      * @param wordCursor:设置光标位置
-     * @param isStart:传入的是页面的起始光标，还是结尾光标
+     * @param isStartCursor:传入的是页面的起始光标，还是结尾光标
      */
-    fun initCursor(wordCursor: TextWordCursor, isStart: Boolean) {
-        // 重置当前状态
-        setPageState(State.NONE)
-
+    fun initCursor(wordCursor: TextWordCursor, isStartCursor: Boolean) {
         // 起始光标和末尾光标同时指向起始光标
         if (startWordCursor == null) {
             startWordCursor = TextWordCursor(wordCursor)
@@ -101,11 +98,50 @@ class TextPage {
             endWordCursor!!.updateCursor(wordCursor)
         }
 
-        setPageState(if (isStart) State.KNOW_START_CURSOR else State.KNOW_END_CURSOR)
+        // 设置当前状态
+        setPageState(if (isStartCursor) State.KNOW_START_CURSOR else State.KNOW_END_CURSOR)
     }
 
+    /**
+     * 初始化页面光标
+     */
+    fun initCursor(paragraphCursor: TextParagraphCursor) {
+        // 起始光标和末尾光标同时指向起始光标
+        if (startWordCursor == null) {
+            startWordCursor = TextWordCursor(paragraphCursor)
+        } else {
+            startWordCursor!!.updateCursor(paragraphCursor)
+        }
 
+        if (endWordCursor == null) {
+            endWordCursor = TextWordCursor(paragraphCursor)
+        } else {
+            endWordCursor!!.updateCursor(paragraphCursor)
+        }
 
+        // 设置当前状态
+        setPageState(State.KNOW_START_CURSOR)
+    }
+
+    /**
+     * 是否起始光标已经准备好了
+     */
+    fun isStartCursorPrepared(): Boolean {
+        return when (mPageState) {
+            State.KNOW_START_CURSOR, State.PREPARED -> true
+            else -> false
+        }
+    }
+
+    /**
+     * 是否结束光标已经准备好了
+     */
+    fun isEndCursorPrepared(): Boolean {
+        return when (mPageState) {
+            State.KNOW_END_CURSOR, State.PREPARED -> true
+            else -> false
+        }
+    }
 
     /**
      * 重置 Page 数据信息

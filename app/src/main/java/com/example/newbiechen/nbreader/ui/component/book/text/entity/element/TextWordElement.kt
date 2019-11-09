@@ -8,6 +8,12 @@ import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextPain
  *  description :单词元素
  */
 
+/**
+ * @param data：数据块
+ * @param offset:文本在数据块中的偏移
+ * @param length:文本的长度
+ * @param paragraphOffset:文本在段落中的偏移位置
+ */
 class TextWordElement(data: CharArray, offset: Int, length: Int, paragraphOffset: Int) : TextElement() {
     // 字符数组
     val data: CharArray = data

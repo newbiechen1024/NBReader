@@ -142,10 +142,9 @@ class TextPlainModel : TextModel {
                     textLength = min(textLength, blockData.size - blockOffset)
 
                     textEntry = TextEntry(
-                        blockData.copyOfRange(
-                            blockOffset,
-                            textLength
-                        )
+                        blockData,
+                        blockOffset,
+                        textLength
                     )
 
                     // 读取文本数据，并对 block 进行偏移

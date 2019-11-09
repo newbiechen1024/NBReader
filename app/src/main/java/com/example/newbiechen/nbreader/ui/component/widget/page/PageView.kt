@@ -70,6 +70,14 @@ class PageView @JvmOverloads constructor(
         }
     }
 
+
+    /**
+     * 清空页面缓存
+     */
+    fun resetCache() {
+        mPageBitmapManager.resetPages()
+    }
+
     /**
      * 返回文本处理器
      */
