@@ -1,7 +1,13 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.hyphenation
 
+import android.content.Context
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
+import com.example.newbiechen.nbreader.ui.component.book.text.language.ExtLanguage
+import java.io.IOException
+import java.io.InputStream
+import java.lang.Exception
 import java.util.*
+import javax.xml.parsers.SAXParserFactory
 
 /**
  *  author : newbiechen
@@ -34,47 +40,40 @@ class TextTeXHyphenator private constructor() {
         }
     }
 
-    private var mLanguageCodes: List<String>? = null
-
-    fun languageCodes(): List<String> {
-        if (mLanguageCodes == null) {
-            val codes = TreeSet<String>()
-            val patternsFile = ResourceFile.createResourceFile("hyphenationPatterns")
-            for (file in patternsFile.children()) {
-                val name = file.getShortName()
-                if (name.endsWith(".pattern")) {
-                    codes.add(name.substring(0, name.length - ".pattern".length))
-                }
-            }
-
-            codes.add("zh")
-            mLanguageCodes = ArrayList(codes)
-        }
-
-        return Collections.unmodifiableList(mLanguageCodes!!)
-    }
-
-    fun load(language: String?) {
+    fun load(context: Context, language: String?) {
         var language = language
-        if (language == null || Language.OTHER_CODE.equals(language)) {
-            language = LanguageUtil.defaultLanguageCode()
+        if (language == null || ExtLanguage.OTHER_CODE == language) {
+            language = Locale.getDefault().language
         }
         if (language == null || language == mLanguage) {
             return
         }
         mLanguage = language
-        unload()
+
+        clear()
 
         if (language != null) {
-            TextHyphenationReader(this).readQuietly(
-                ResourceFile.createResourceFile(
-                    "hyphenationPatterns/$language.pattern"
-                )
-            )
+            // 创建 sax 解析器
+            val saxParserFactory = SAXParserFactory.newInstance()
+            val saxParser = saxParserFactory.newSAXParser()
+            // 创建 Hyphenator 解析器
+            val hyphenHandler = TextTeXHyphenHandler(this)
+            var resourceInputStream: InputStream? = null
+            try {
+                resourceInputStream = context.assets.open("hyphenationPatterns/$language.pattern")
+                saxParser.parse(resourceInputStream, hyphenHandler)
+            } catch (exception: IOException) {
+                // 可能存在资源文件不存在的情况
+            } finally {
+                try {
+                    resourceInputStream?.close()
+                } catch (e: Exception) {
+                }
+            }
         }
     }
 
-    fun unload() {
+    fun clear() {
         mPatternTable.clear()
         mMaxPatternLength = 0
     }
