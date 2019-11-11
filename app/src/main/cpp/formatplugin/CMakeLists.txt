@@ -33,7 +33,7 @@ add_library(
 set_target_properties(
         linkBreak
         PROPERTIES
-        IMPORTED_LOCATION ${ABI_PATH}/libLinkBreak.so
+        IMPORTED_LOCATION ${ABI_PATH}/libLineBreak.so
 )
 
 

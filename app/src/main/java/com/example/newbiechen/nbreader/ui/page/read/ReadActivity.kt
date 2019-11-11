@@ -12,6 +12,7 @@ import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
@@ -38,6 +39,8 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     private lateinit var mViewModel: ReadViewModel
 
     private lateinit var mBook: BookEntity
+
+    private lateinit var mPageController: PageController
 
     override fun initContentView(): Int = R.layout.activity_read
 
@@ -82,8 +85,10 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             tvBright.setOnClickListener(this@ReadActivity)
             menuFrame.setOnClickListener(this@ReadActivity)
 
+            mPageController = pvBook.getPageController()
+
             // 添加页面事件回调
-            pvBook.setPageActionListener {
+            mPageController.setActionListener {
                 onPageAction(it)
             }
         }
@@ -115,7 +120,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
     private fun openBook() {
         // TODO:需要有加载完成动画
-        mBookManager.openBook(this, mBook)
+        // mBookManager.openBook(this, mBook)
     }
 
     override fun onBackPressed() {

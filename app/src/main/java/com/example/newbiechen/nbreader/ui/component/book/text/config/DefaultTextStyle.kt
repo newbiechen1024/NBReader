@@ -1,6 +1,8 @@
-package com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle
+package com.example.newbiechen.nbreader.ui.component.book.text.config
 
+import android.content.Context
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
 
 /**
  *  author : newbiechen
@@ -8,14 +10,31 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  *  description :文本样式默认实现类
  */
 
-class DefaultTextStyle : TextStyle(null) {
+class DefaultTextStyle private constructor(context: Context) : TextStyle(null) {
+
+    companion object {
+        private var sInstance: DefaultTextStyle? = null
+
+        fun getInstance(context: Context): DefaultTextStyle {
+            if (sInstance == null) {
+                sInstance = DefaultTextStyle(context.applicationContext)
+            }
+            return sInstance!!
+        }
+    }
+
+    private var mSharedPrefs = TextStyleSharedPrefs.getInstance(context)
+
+    fun setFontSize(fontSize: Int) {
+        mSharedPrefs.textSize = fontSize
+    }
 
     fun getFontSize(): Int {
-        return 0
+        return mSharedPrefs.textSize
     }
 
     override fun getFontSize(metrics: TextMetrics): Int {
-        return 0
+        return mSharedPrefs.textSize
     }
 
     override fun isBold(): Boolean {

@@ -3,7 +3,6 @@ package com.example.newbiechen.nbreader.dl.module.base
 import com.example.newbiechen.nbreader.dl.annotation.scope.ActivityScoped
 import com.example.newbiechen.nbreader.dl.module.FileSystemModule
 import com.example.newbiechen.nbreader.dl.module.MainModule
-import com.example.newbiechen.nbreader.dl.module.ReadModule
 import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity
 import com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemActivity
@@ -30,6 +29,6 @@ internal abstract class ActivityBindingModule {
     @ContributesAndroidInjector(modules = [FileSystemModule::class])
     internal abstract fun bookFileSystemActivity(): FileSystemActivity
 
-    @ContributesAndroidInjector(modules = [ReadModule::class])
+    @ContributesAndroidInjector
     internal abstract fun bindReadActivity(): ReadActivity
 }

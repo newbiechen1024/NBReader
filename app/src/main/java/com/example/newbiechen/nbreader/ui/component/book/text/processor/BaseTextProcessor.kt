@@ -8,7 +8,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.*
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.CustomTextDecoratedStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.ExplicitTextDecoratedStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
-import com.example.newbiechen.nbreader.ui.component.book.text.util.TextConfig
+import com.example.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.example.newbiechen.nbreader.ui.component.book.text.util.TextDimenUtil
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 
@@ -27,7 +27,7 @@ abstract class BaseTextProcessor(private val context: Context) {
         private set
 
     // 文本配置项
-    protected var mTextConfig: TextConfig = TextConfig()
+    protected var mTextConfig: TextConfig = TextConfig.getInstance(context)
 
     // 文本画笔
     protected var mPaintContext: TextPaintContext = TextPaintContext()
@@ -69,14 +69,14 @@ abstract class BaseTextProcessor(private val context: Context) {
      * 获取文本区域宽
      */
     fun getTextAreaWidth(): Int {
-        return viewWidth - mTextConfig.getLeftMargin() - mTextConfig.getRightMargin()
+        return viewWidth - mTextConfig.leftMargin - mTextConfig.rightMargin
     }
 
     /**
      * 获取文本区域高
      */
     fun getTextAreaHeight(): Int {
-        return viewHeight - mTextConfig.getTopMargin() - mTextConfig.getBottomMargin()
+        return viewHeight - mTextConfig.topMargin - mTextConfig.bottomMargin
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class BaseTextProcessor(private val context: Context) {
      * 重置文本样式
      */
     protected fun resetTextStyle() {
-        setTextStyle(mTextConfig.getDefaultTextStyle())
+        setTextStyle(mTextConfig.defaultTextStyle)
     }
 
     /**
@@ -183,7 +183,7 @@ abstract class BaseTextProcessor(private val context: Context) {
                 // TODO: screen area height
                 100, // 屏幕高
                 // TODO:获取默认的文字大小
-                mTextConfig.getDefaultTextStyle().getFontSize() // 获取文字的大小
+                mTextConfig.defaultTextStyle.getFontSize() // 获取文字的大小
             )
             mMetrics = m
         }

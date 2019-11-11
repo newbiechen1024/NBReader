@@ -60,13 +60,10 @@
     
     <string name="book_detail_category_brief">连载至%1$d章 • %2$s</string>
     
-    <string name="text_fold_tip">...
-        <Data><![CDATA[<font color='#0089EF'>展开</font>]]></Data>
-    </string>
+    <string name="text_fold_tip">...  <![CDATA[<font color=#0089EF>展开</font>]]></string>
     
-    <string name="file_system_selected">已选  <Data><![CDATA[<font color='#FE960E'>%1$d</font>]]></Data>  项
+    <string name="file_system_selected">已选  <![CDATA[<font color=#FE960E>%1$d</font>]]>  项
     </string>
     
     <string name="read_setting_menu_tradition_chinese">繁</string>
-
 </resources>

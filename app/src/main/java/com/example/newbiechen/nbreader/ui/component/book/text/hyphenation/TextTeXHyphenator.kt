@@ -40,6 +40,7 @@ class TextTeXHyphenator private constructor() {
         }
     }
 
+    // TODO:如果存在没有对应 language 对应的 pattern 资源文件的情况该怎么办？
     fun load(context: Context, language: String?) {
         var language = language
         if (language == null || ExtLanguage.OTHER_CODE == language) {

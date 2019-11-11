@@ -51,6 +51,8 @@
     <color name="read_background_1">#FFCEC29C</color>
     <color name="read_background_2">#FFCCEBCC</color>
     
+    <color name="read_text_color_1">#FF000000</color>
+    
     <color name="switch_thumb_on">@color/colorPrimary</color>
     <color name="switch_thumb_off">@color/colorWhite</color>
     <color name="switch_track_on">#59FE960E</color>

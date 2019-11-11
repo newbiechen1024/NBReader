@@ -70,13 +70,14 @@ class PageView @JvmOverloads constructor(
         }
     }
 
-
     /**
      * 清空页面缓存
      */
     fun resetCache() {
         mPageBitmapManager.resetPages()
     }
+
+    fun getPageController(): PageController = mPageController
 
     /**
      * 返回文本处理器
@@ -85,6 +86,9 @@ class PageView @JvmOverloads constructor(
         return mTextProcessor
     }
 
+    /**
+     * 设置页面行为监听
+     */
     internal fun setPageActionListener(pageActionListener: PageActionListener) {
         if (mPageActionListener == null || mPageActionListener != pageActionListener) {
             mPageActionListener = pageActionListener

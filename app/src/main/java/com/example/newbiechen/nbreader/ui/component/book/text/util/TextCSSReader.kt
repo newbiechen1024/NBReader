@@ -13,7 +13,6 @@ import java.util.LinkedHashMap
  *  author : newbiechen
  *  date : 2019-10-26 17:46
  *  description :CSS 文件读取器
- *
  */
 
 class TextCSSReader {
@@ -27,10 +26,12 @@ class TextCSSReader {
 
     private var mState: State? = null
     private var mSavedState: State? = null
-    private var mDescriptionMap: MutableMap<Int, TextDecoratedStyleDescription>? = null
     private var mCurrentMap: MutableMap<String, String>? = null
     private var mSelector: String? = null
     private var mName: String? = null
+    // int 表示 description 对应的 fbreader-id
+    // TextDecoratedStyleDescription 表示具体样式
+    private var mDescriptionMap: MutableMap<Int, TextDecoratedStyleDescription>? = null
 
     fun read(inputStream: InputStream): Map<Int, TextDecoratedStyleDescription> {
         mDescriptionMap = LinkedHashMap()

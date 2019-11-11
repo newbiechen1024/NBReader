@@ -874,7 +874,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         var x = x
         var y = y
         // 根据视口的最大高度取最小值
-        y = (y + lineInfo.height).coerceAtMost(mTextConfig.getTopMargin() + page.viewHeight - 1)
+        y = (y + lineInfo.height).coerceAtMost(mTextConfig.topMargin + page.viewHeight - 1)
 
         val context = mPaintContext
         val paragraphCursor = lineInfo.paragraphCursor
@@ -1074,7 +1074,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                         charIndex,
                         -1,
                         false,
-                        mTextConfig.getTextColor()
+                        mTextConfig.textColor
                     )
                 } else if (element === TextElement.HSpace || element === TextElement.NBSpace) {
                     val cw = mPaintContext.getSpaceWidth()
@@ -1110,7 +1110,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 word,
                 start,
                 len,
-                area.addHyphenationSign, mTextConfig.getTextColor()
+                area.addHyphenationSign, mTextConfig.textColor
             )
         }
     }
