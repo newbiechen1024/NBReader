@@ -1,7 +1,9 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
-import android.graphics.Canvas
-import android.graphics.Path
+import android.content.Context
+import android.graphics.*
+import com.example.newbiechen.nbreader.uilts.LogHelper
+import java.lang.Exception
 
 /**
  *  author : newbiechen
@@ -10,6 +12,37 @@ import android.graphics.Path
  */
 
 class TextCanvas(private val canvas: Canvas) {
+
+    companion object {
+        private const val TAG = "TextCanvas"
+        private var sWallpaperPath: String? = null
+        private var sWallpaperBitmap: Bitmap? = null
+    }
+
+    /**
+     * 绘制背景
+     * TODO:暂时默认认为 wallpaper 都是从 asset 中获取的
+     */
+    fun drawWallpaper(wallpaperPath: String, context: Context) {
+        if (wallpaperPath != sWallpaperPath) {
+            try {
+                val fileInputStream = context.assets.open(wallpaperPath)
+                // 获取图片资源
+                sWallpaperBitmap = BitmapFactory.decodeStream(fileInputStream)
+            } catch (e: Exception) {
+                LogHelper.e(TAG, e.toString())
+            }
+        }
+
+        if (sWallpaperBitmap != null) {
+            // 直接绘制图片
+            canvas.drawBitmap(sWallpaperBitmap!!, 0f, 0f, Paint())
+        }
+    }
+
+    fun drawColor(color: Int) {
+        canvas.drawColor(color)
+    }
 
     /**
      * 绘制线条
@@ -26,7 +59,14 @@ class TextCanvas(private val canvas: Canvas) {
     /**
      * 绘制文本
      */
-    fun drawString(x: Int, y: Int, string: CharArray, offset: Int, length: Int, paintContext: TextPaintContext) {
+    fun drawString(
+        x: Int,
+        y: Int,
+        string: CharArray,
+        offset: Int,
+        length: Int,
+        paintContext: TextPaintContext
+    ) {
         var containsSoftHyphen = false
         for (i in offset until offset + length) {
             if (string[i] == 0xAD.toChar()) {
@@ -36,7 +76,14 @@ class TextCanvas(private val canvas: Canvas) {
         }
 
         if (!containsSoftHyphen) {
-            canvas.drawText(string, offset, length, x.toFloat(), y.toFloat(), paintContext.textPaint)
+            canvas.drawText(
+                string,
+                offset,
+                length,
+                x.toFloat(),
+                y.toFloat(),
+                paintContext.textPaint
+            )
         } else {
             val corrected = CharArray(length)
             var len = 0
@@ -116,7 +163,13 @@ class TextCanvas(private val canvas: Canvas) {
             y0 = swap
         }
 
-        canvas.drawRect(x0.toFloat(), y0.toFloat(), (x1 + 1).toFloat(), (y1 + 1).toFloat(), paintContext.fillPaint)
+        canvas.drawRect(
+            x0.toFloat(),
+            y0.toFloat(),
+            (x1 + 1).toFloat(),
+            (y1 + 1).toFloat(),
+            paintContext.fillPaint
+        )
     }
 
     fun fillCircle(x: Int, y: Int, radius: Int, paintContext: TextPaintContext) {

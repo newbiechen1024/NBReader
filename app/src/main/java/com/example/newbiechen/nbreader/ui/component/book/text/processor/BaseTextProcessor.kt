@@ -54,10 +54,6 @@ abstract class BaseTextProcessor(private val context: Context) {
         viewHeight = height
     }
 
-    fun setConfig(config: TextConfig) {
-        // 重新进行样式初始化操作
-    }
-
     /**
      * 获取文本绘制区域
      */
@@ -326,6 +322,7 @@ abstract class BaseTextProcessor(private val context: Context) {
         mPaintContext.setTextColor(color)
         // 进行绘制
         canvas.drawString(x, y, str, offset, length, mPaintContext)
+
         // TODO:没有处理存在 Mark 的情况
     }
 }

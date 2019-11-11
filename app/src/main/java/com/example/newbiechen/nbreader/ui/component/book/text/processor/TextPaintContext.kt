@@ -18,7 +18,11 @@ class TextPaintContext {
     val fillPaint: Paint = Paint()
     val outlinePaint: Paint = Paint()
 
-    fun initPaint() {
+    init {
+        initPaint()
+    }
+
+    private fun initPaint() {
         textPaint.apply {
             isLinearText = true
             isAntiAlias = true
@@ -50,7 +54,13 @@ class TextPaintContext {
         underline: Boolean,
         strikeThrough: Boolean
     ) {
-        // TODO:字体暂时先不处理
+        // 设置 TextPaint
+
+        // TODO：传入字符集的名字，调用 FontManager 获取对应的 typeface 字符库。
+
+        textPaint.textSize = size.toFloat()
+        textPaint.isUnderlineText = underline
+        textPaint.isStrikeThruText = strikeThrough
     }
 
     /**
@@ -133,28 +143,6 @@ class TextPaintContext {
             mStringHeight = (textPaint.textSize + 0.5f).toInt()
         }
         return mStringHeight!!
-    }
-
-
-    private val mCharHeights = TreeMap<Char, Int>()
-
-    // TODO:这个东西的缓存是否会造成问题？？？，FBReader 每次都会重新创建一次 Paint，这个等逻辑完成后再看
-
-    // 获取单词的高度
-    fun getCharHeight(ch: Char): Int {
-        val h = mCharHeights[ch]
-        if (h != null) {
-            return h!!
-        }
-
-        val r = Rect()
-        val txt = charArrayOf(ch)
-        // 通过 text paint 计算 char 的高度
-        textPaint.getTextBounds(txt, 0, 1, r)
-        val he = r.bottom - r.top
-        mCharHeights[ch] = he
-
-        return he
     }
 
     private var mDescent = -1

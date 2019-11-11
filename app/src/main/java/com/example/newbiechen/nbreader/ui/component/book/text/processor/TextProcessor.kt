@@ -1,5 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
+import android.text.TextUtils
 import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
@@ -180,7 +181,18 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
      * @param pageType:绘制的页面类型
      */
     override fun drawInternal(canvas: TextCanvas, pageType: PageType) {
-        // TODO:如果禁止绘制直接 return
+
+        // 设置背景
+        if (!TextUtils.isEmpty(mTextConfig.wallpaperPath)) {
+            canvas.drawWallpaper(mTextConfig.wallpaperPath, pageView.context)
+        } else {
+            canvas.drawColor(mTextConfig.bgColor)
+        }
+
+        // 如果 textModel 不存在直接 return
+        if (mTextModel == null || mTextModel!!.getParagraphCount() == 0) {
+            return
+        }
 
         // 获取并初始化待处理 Page
         val page: TextPage = when (pageType) {
@@ -500,8 +512,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         endElementIndex: Int,
         preLineInfo: TextLineInfo?
     ): TextLineInfo {
-        // TODO: 是否需要对 LineInfo 进行缓存
-
         // 创建一个 TextLine
         val curLineInfo = TextLineInfo(paragraphCursor, startElementIndex, startCharIndex)
         // 查看是否存在缓存好的 lineInfo 数据
@@ -621,23 +631,23 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 applyStyleElement(element)
             }
 
-            // 如果新的宽度，大于最大宽度
-            // TODO:这部分暂时没看懂
+            // 如果是元素偏移或者是文字元素造成当前测量宽度大于最大宽度的情况
             if (newWidth > maxWidth &&
                 (curLineInfo.endElementIndex != startElementIndex || element is TextWordElement)
             ) {
                 break
             }
 
-            // TODO: 这里重置不会发生问题吗
+
+            // 获取下一个元素。(用于解决换行的问题)
 
             ++curElementIndex
             curCharIndex = 0
 
             val previousElement = element
 
-            // 判断是否到达了段落的末尾
-            var allowBreak = curElementIndex == endElementIndex
+            // 判断是否到达了元素的结尾后一位 (处理完最后一个元素，判断换行)
+            var allowBreak = curElementIndex > endElementIndex
 
             // 不允许换行的情况
             if (!allowBreak) {
@@ -678,9 +688,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         ) {
             // 获取当前元素
             val element = paragraphCursor.getElement(curElementIndex)
-
             if (element is TextWordElement) {
-                // 宽需要减去当前 element 的 宽
+                // 宽需要减去当前 element 的宽
                 newWidth -= getWordWidth(element, curCharIndex)
                 // 获取最大宽度和当前宽的差值，等于空格的宽度
                 var remainSpaceWidth = maxWidth - newWidth
@@ -777,6 +786,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             }
         }
 
+        // 是否移除最后一个空格
         if (removeLastSpace) {
             curLineInfo.width -= lastSpaceWidth
             curLineInfo.spaceCount--

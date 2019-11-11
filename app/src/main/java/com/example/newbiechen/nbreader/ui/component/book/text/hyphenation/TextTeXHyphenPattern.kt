@@ -32,8 +32,7 @@ class TextTeXHyphenPattern(pattern: CharArray, offset: Int, length: Int, useValu
 
             // 非数字标记
             val symbols = CharArray(patternLength)
-            // 数字标记
-            // TODO:这部分代码很奇怪，获取的是非数字长度的大小
+            // 数字标记 (这里获取的长度是非数字的长度)
             val values = ByteArray(patternLength + 1)
 
             var i = 0
@@ -42,12 +41,11 @@ class TextTeXHyphenPattern(pattern: CharArray, offset: Int, length: Int, useValu
             // 将数字存储到 value 数组中，将非数字存储到 symbol 数组中
             while (i < length) {
                 val sym = pattern[offset + i]
-                // TODO：但是这里，如果判断是数字，则加入到 value 中。不过只要保证文字 > 数字，则不会崩溃。
-                // TODO：暂时不太懂他们为什么这么实现，先直接抄过来吧
                 if (sym in '0'..'9') {
                     values[k] = (sym - '0').toByte()
                 } else {
                     symbols[k] = sym
+                    // 原来 symbols 才有位移所以的能力
                     ++k
                 }
                 ++i

@@ -49,7 +49,11 @@ class TextConfig private constructor(context: Context) {
     val rightMargin = 0
     val bottomMargin = 0
 
-    val getWallpaperPath = mSharedPrefs.wallpaperPath
+    var wallpaperPath: String
+        set(value) {
+            mSharedPrefs.wallpaperPath = value
+        }
+        get() = mSharedPrefs.wallpaperPath
 
     var bgColor: Int
         set(value) {
@@ -57,7 +61,7 @@ class TextConfig private constructor(context: Context) {
         }
         get() = mSharedPrefs.bgColor
 
-    var textColor:Int
+    var textColor: Int
         set(value) {
             mSharedPrefs.textColor = value
         }
