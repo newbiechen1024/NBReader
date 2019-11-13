@@ -34,6 +34,8 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getEncoding;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
 std::shared_ptr<StringMethod> AndroidUtil::Method_String_toLowerCase;
 std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
+std::shared_ptr<StringMethod> AndroidUtil::Method_BookModel_createTextModel;
+std::shared_ptr<StringMethod> AndroidUtil::Method_BookModel_setTextModel;
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -63,6 +65,13 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_Book_getUrl = std::make_shared<StringMethod>(Class_Book, "getUrl", "()");
     Method_Book_getEncoding = std::make_shared<StringMethod>(Class_Book, "getEncoding", "()");
     Method_Book_getLang = std::make_shared<StringMethod>(Class_Book, "getLang", "()");
+
+    // TODO:思考是否传入 ParagraphInfo
+    Method_BookModel_createTextModel = std::make_shared<ObjectMethod>(Class_BookModel,
+            "createTextModel", "(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)");
+
+    Method_BookModel_setTextModel = std::make_shared<VoidMethod>(Class_BookModel,
+            "setTextModel","(Lcom.example.newbiechen.nbreader.ui.component.book.text.TextModel;)");
     return true;
 }
 

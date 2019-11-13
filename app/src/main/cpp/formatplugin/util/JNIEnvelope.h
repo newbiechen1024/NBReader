@@ -210,6 +210,7 @@ public:
  */
 
 class VoidMethod : public JavaMethod {
+public:
     VoidMethod(const JavaClass &cls, const std::string &name, const std::string &param);
 
     void call(jobject base, ...);

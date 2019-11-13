@@ -12,7 +12,9 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import java.lang.Exception
 
 /**
  *  author : newbiechen
@@ -40,6 +42,12 @@ class BookManager constructor(
 
     private var mBookModel: BookModel? = null
 
+    private var mBookListener: OnBookListener? = null
+
+    fun setOnBookListener(bookListener: OnBookListener) {
+        mBookListener = bookListener
+    }
+
     /**
      * FBReader 的实现步骤：
      *
@@ -54,16 +62,29 @@ class BookManager constructor(
      */
     // 打开书籍
     fun openBook(context: Context, book: BookEntity) {
+        mBookListener?.onLoading()
+
         // TODO:暂时这么用吧，找不到好的创建线程池的方法。==> 不过应该有一个更好的处理这个问题
         Observable.create(ObservableOnSubscribe<Int> {
-            openBookInternal(context, book)
+            try {
+                openBookInternal(context, book)
+            } catch (e: Exception) {
+                it.onError(e)
+            }
+
             it.onNext(0)
+
             it.onComplete()
         }).subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                LogHelper.i(TAG, "openBookInternal success")
-            }
+            .subscribe(
+                Consumer {
+                    mBookListener?.onLoadSuccess()
+                },
+                Consumer {
+                    mBookListener?.onLoadFailure(it)
+                }
+            )
     }
 
     /**
@@ -86,8 +107,20 @@ class BookManager constructor(
             ?: throw IllegalAccessException("UnSupport Book Type")
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
-        // 还要请求刷新
         textProcessor.setTextModel(mBookModel!!.textModel!!)
-        // 请求刷新
+        // 通知刷新
+        textProcessor.posInvalidate()
     }
+}
+
+interface OnBookListener {
+    // 加载书籍
+    fun onLoading()
+
+    // 加载书籍成功
+    fun onLoadSuccess()
+
+    // 加载书籍失败
+    fun onLoadFailure(e: Throwable)
+
 }

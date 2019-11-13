@@ -20,7 +20,7 @@ class TextPlainModel : TextModel {
     private val mBlockCount: Int
     private val mCacheDir: String
     private val mFileExtension: String
-    private val mPghInfoList: ArrayList<TextParagraphInfo>
+    private val mPghInfoList: Array<TextParagraphInfo>
     private val mCacheReader: TextCacheReader
 
     constructor(
@@ -32,7 +32,7 @@ class TextPlainModel : TextModel {
         cacheDir: String,
         fileExtension: String,
         // 每个段落的数据信息
-        paragraphInfos: ArrayList<TextParagraphInfo>
+        paragraphInfos: Array<TextParagraphInfo>
     ) {
         mId = id
         mLang = lang

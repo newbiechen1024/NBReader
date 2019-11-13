@@ -138,11 +138,11 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         when (type) {
             PageType.PREVIOUS -> {
                 val startWordCursor = getCurPageStartCursor()
-                return startWordCursor.isStartOfText()
+                return startWordCursor?.isStartOfText() ?: false
             }
             PageType.NEXT -> {
                 val endWordCursor = getCurPageEndCursor()
-                return endWordCursor.isEndOfText()
+                return endWordCursor?.isEndOfText() ?: false
             }
         }
         return true
@@ -158,19 +158,19 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     /**
      * 获取当前页面的起始光标
      */
-    fun getCurPageStartCursor(): TextWordCursor {
+    fun getCurPageStartCursor(): TextWordCursor? {
         if (!mCurPage.isStartCursorPrepared()) {
             preparePage(mCurPage)
         }
-        return mCurPage.startWordCursor!!
+        return mCurPage.startWordCursor
     }
 
     // 获取当前页面的终止光标
-    fun getCurPageEndCursor(): TextWordCursor {
+    fun getCurPageEndCursor(): TextWordCursor? {
         if (!mCurPage.isEndCursorPrepared()) {
             preparePage(mCurPage)
         }
-        return mCurPage.endWordCursor!!
+        return mCurPage.endWordCursor
     }
 
 

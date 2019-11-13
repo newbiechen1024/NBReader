@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
+import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
@@ -16,6 +17,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
+import javax.inject.Inject
 
 /**
  *  author : newbiechen
@@ -35,6 +37,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             context.startActivity(intent)
         }
     }
+
+    @Inject
+    lateinit var mBookDao: BookDao
 
     private lateinit var mViewModel: ReadViewModel
 
@@ -86,7 +91,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             menuFrame.setOnClickListener(this@ReadActivity)
 
             mPageController = pvBook.getPageController()
-
+            mPageController.init(mBookDao)
             // 添加页面事件回调
             mPageController.setActionListener {
                 onPageAction(it)
@@ -115,12 +120,12 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         mDataBinding.viewModel = mViewModel
 
         // 打开书籍
-        openBook()
+        // openBook()
     }
 
     private fun openBook() {
         // TODO:需要有加载完成动画
-        // mBookManager.openBook(this, mBook)
+        mPageController.openBook(mBook)
     }
 
     override fun onBackPressed() {

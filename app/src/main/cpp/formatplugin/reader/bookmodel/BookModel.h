@@ -27,6 +27,8 @@ public:
     // 获取目录数
     std::shared_ptr<TOCTree> getTOCTree() const;
 
+    bool flush();
+
 public:
     const std::string cacheDir;
 

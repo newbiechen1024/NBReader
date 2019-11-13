@@ -6,7 +6,8 @@
 #include <util/AndroidUtil.h>
 #include "BookModel.h"
 
-BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const std::string &bookCacheDir)
+BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel,
+                     const std::string &bookCacheDir)
         : mBook(book), cacheDir(bookCacheDir) {
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
@@ -29,4 +30,14 @@ std::shared_ptr<TextModel> BookModel::getTextModel() const {
 
 std::shared_ptr<TOCTree> BookModel::getTOCTree() const {
     return mTOCTree;
+}
+
+bool BookModel::flush() {
+    // 强制缓冲
+    mTextModel->flush();
+    // 判断是否强制缓冲失败
+    if (mTextModel->allocator().isFailed()) {
+        return false;
+    }
+    return true;
 }

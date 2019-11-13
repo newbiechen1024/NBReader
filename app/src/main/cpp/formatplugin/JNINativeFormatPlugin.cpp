@@ -15,17 +15,40 @@
 
 static std::shared_ptr<FormatPlugin> findCppPlugin(jobject base) {
     // 获取调用该方法的 NativePlugin 对应的 type
-    std::string formatTypeStr = AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr->callForCppString(base);
+    std::string formatTypeStr = AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr->callForCppString(
+            base);
     // 根据 type 查找并返回数据
     return PluginManager::getInstance().getPluginByType(strToFormatType(formatTypeStr));
 }
 
-/*static jobject createJavaTextModel(JNIEnv *env, jobject jBookModel, TextModel &textModel) {
-    // 创建一块本地作用域
-    // env->PushLocalFrame(16);
-    // 将 bookModel 中的实例转成 jObject
-}*/
+static jobject createJavaTextModel(JNIEnv *env, jobject jBookModel, TextModel &textModel) {
+    // 创建一块本地作用域，
+    env->PushLocalFrame(16);
+    // 获取 textModel 的基础信息
+    jstring id = AndroidUtil::toJString(env, textModel.id());
+    jstring lang = AndroidUtil::toJString(env, textModel.language());
+    const TextCachedAllocator &allocator = textModel.allocator();
 
+    jstring cacheDir = AndroidUtil::toJString(env, allocator.directoryName());
+    jstring fileExtension = AndroidUtil::toJString(env, allocator.fileExtension());
+    jint blockCount = (jint) allocator.getBufferBlockCount();
+
+    // TODO：获取段落数据信息，暂时没想好怎么办
+
+
+
+
+    // 调用 creatTextModel
+    jobject jTextModel = AndroidUtil::Method_BookModel_createTextModel->call(jBookModel, id, lang,
+                                                                             blockCount, cacheDir,
+                                                                             fileExtension);
+    if (env->ExceptionCheck()) {
+        jTextModel = 0;
+    }
+
+    // 清除本地作用域
+    return env->PopLocalFrame(jTextModel);
+}
 
 
 /**
@@ -38,10 +61,11 @@ static std::shared_ptr<FormatPlugin> findCppPlugin(jobject base) {
  */
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readModelNative(JNIEnv *env,
-                                                                                                 jobject instance,
-                                                                                                 jobject jBookModel,
-                                                                                                 jstring cacheDir_) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readModelNative(
+        JNIEnv *env,
+        jobject instance,
+        jobject jBookModel,
+        jstring cacheDir_) {
     using namespace std;
 
     // 根据当前 Plugin 查找对应的 cpp Plugin
@@ -67,6 +91,26 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     if (!formatPlugin->readModel(*bookModel)) {
         return 2;
     }
+    // 强制刷新数据存储
+    if (!bookModel->flush()) {
+        return 3;
+    }
+    // 获取 java 的 textModel
+    shared_ptr<TextModel> textModel = bookModel->getTextModel();
+    jobject jTextModel = createJavaTextModel(env, jBookModel, *textModel);
+    if (jTextModel == 0) {
+        return 5;
+    }
+
+    // 将 java 的 textModel 传递给 bookModel
+    AndroidUtil::Method_BookModel_setTextModel->call(jBookModel, jTextModel);
+    // 检测
+    if (env->ExceptionCheck()) {
+        return 6;
+    }
+    // 删除本地指针
+    env->DeleteLocalRef(jTextModel);
+
 
     // 初始化超链接
 
@@ -76,5 +120,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // shared_ptr<TextModel> textModel = bookModel->getTextModel();
     // footnotes ==> 注脚是啥东西
     // 字体设置
+
+
     return 0;
 }

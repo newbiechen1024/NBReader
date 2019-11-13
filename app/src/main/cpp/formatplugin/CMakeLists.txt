@@ -23,20 +23,6 @@ set_target_properties(
         IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
 )
 
-# 添加字段分割换行库
-add_library(
-        linkBreak
-        SHARED
-        IMPORTED
-)
-
-set_target_properties(
-        linkBreak
-        PROPERTIES
-        IMPORTED_LOCATION ${ABI_PATH}/libLineBreak.so
-)
-
-
 find_library(
         zip-lib
         z)
@@ -65,6 +51,7 @@ aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 aux_source_directory(./tools/language TOOLS_LANGUAGE_SOURCE)
 aux_source_directory(./tools/xml TOOLS_XML_SOURCE)
 aux_source_directory(./filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
+aux_source_directory(./linebreak LINE_BREAK_SOURCE)
 
 add_library( # Sets the title of the library.
         FormatPlugin
@@ -87,7 +74,8 @@ add_library( # Sets the title of the library.
         ${TOOLS_FONT_SOURCE}
         ${TOOLS_XML_SOURCE}
         ${TOOLS_ENCODING_SOURCE}
-        ${TOOLS_LANGUAGE_SOURCE})
+        ${TOOLS_LANGUAGE_SOURCE}
+        ${LINE_BREAK_SOURCE})
 
 target_link_libraries(
         FormatPlugin
@@ -95,5 +83,4 @@ target_link_libraries(
         ${zip-lib}
         android
         expat
-        linkBreak
 )

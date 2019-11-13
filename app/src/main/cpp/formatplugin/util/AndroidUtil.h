@@ -37,6 +37,8 @@ public:
     static std::shared_ptr<StringMethod> Method_Book_getUrl;
     static std::shared_ptr<StringMethod> Method_Book_getEncoding;
     static std::shared_ptr<StringMethod> Method_Book_getLang;
+    static std::shared_ptr<ObjectMethod> Method_BookModel_createTextModel;
+    static std::shared_ptr<VoidMethod> Method_BookModel_setTextModel;
 
 public:
     static bool init(JavaVM *jvm);
