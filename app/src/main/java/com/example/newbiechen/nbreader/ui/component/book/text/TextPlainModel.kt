@@ -4,7 +4,10 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextE
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntryType
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphInfo
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextControlEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.util.TextCacheReader
+import com.example.newbiechen.nbreader.uilts.LogHelper
+import kotlin.experimental.and
 import kotlin.math.min
 
 /**
@@ -15,7 +18,11 @@ import kotlin.math.min
 
 class TextPlainModel : TextModel {
 
-    private val mId: String
+    companion object {
+        private const val TAG = "TextPlainModel"
+    }
+
+    private val mId: String?
     private val mLang: String
     private val mBlockCount: Int
     private val mCacheDir: String
@@ -25,7 +32,7 @@ class TextPlainModel : TextModel {
 
     constructor(
         // 文本信息
-        id: String,
+        id: String?,
         lang: String,
         // 缓冲文件信息
         bufferBlockCount: Int,
@@ -49,7 +56,7 @@ class TextPlainModel : TextModel {
         )
     }
 
-    override fun getId(): String {
+    override fun getId(): String? {
         return mId
     }
 
@@ -93,12 +100,14 @@ class TextPlainModel : TextModel {
         }
 
         override fun next(): TextParagraphEntry? {
-            if (hasNext()) {
+            if (!hasNext()) {
                 // 抛出异常
                 return null
             }
 
             var blockOffset = mBlockOffset
+
+            LogHelper.i(TAG, "next: get cur block data")
 
             // 获取段落所在的缓冲块
             var blockData = mCacheReader.getBufferBlock(mBlockIndex)
@@ -149,14 +158,27 @@ class TextPlainModel : TextModel {
 
                     // 读取文本数据，并对 block 进行偏移
                     blockOffset += textLength
+
+                }
+                TextParagraphEntryType.CONTROL -> {
+                    val type = blockData[blockOffset++].toShort()
+                    val controlType = type.toByte()
+                    var isControlStart = (controlType and 0x0100.toByte()) == 0x0100.toByte()
+                    textEntry = TextControlEntry(controlType, isControlStart)
                 }
             }
+
+            // 更新偏移信息
+            ++mEntryIndex
+            mBlockOffset = blockOffset
 
             return textEntry
         }
 
         override fun reset() {
-            mBlockOffset = 0
+            mEntryIndex = 0
+            mBlockOffset = mParagraphInfo.bufferBlockOffset
+            mBlockIndex = mParagraphInfo.bufferBlockIndex
         }
     }
 

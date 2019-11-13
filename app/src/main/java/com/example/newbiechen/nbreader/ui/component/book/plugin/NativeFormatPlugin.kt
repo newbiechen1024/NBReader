@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
+import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -11,7 +12,12 @@ import com.example.newbiechen.nbreader.ui.component.book.type.BookType
  *  description :原生解析插件
  */
 
-open class NativeFormatPlugin(context: Context, bookType: BookType) : FormatPlugin(context, bookType) {
+open class NativeFormatPlugin(context: Context, bookType: BookType) :
+    FormatPlugin(context, bookType) {
+
+    companion object {
+        private const val TAG = "NativeFormatPlugin"
+    }
 
     override fun readMetaInfo(book: BookEntity) {
 /*        val resultCode = readMetaInfoNative(book)
@@ -22,6 +28,7 @@ open class NativeFormatPlugin(context: Context, bookType: BookType) : FormatPlug
 
     fun readModel(model: BookModel) {
         val resultCode = readModelNative(model, getCacheDir())
+        LogHelper.i(TAG, "resultCode:$resultCode")
         // TODO：之后单独创建一个 Exception
         if (resultCode != 0) {
             throw IllegalAccessError("read book model error")

@@ -105,11 +105,14 @@ class BookManager constructor(
         // 根据 Book 获取到 Plugin
         val plugin = pluginManager.getPlugin(book.type)
             ?: throw IllegalAccessException("UnSupport Book Type")
+
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
+
         textProcessor.setTextModel(mBookModel!!.textModel!!)
-        // 通知刷新
-        textProcessor.posInvalidate()
+
+/*        // 通知刷新
+        textProcessor.posInvalidate()*/
     }
 }
 

@@ -11,6 +11,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHy
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextTeXHyphenator
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import java.util.HashMap
 
 /**

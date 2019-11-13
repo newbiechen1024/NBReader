@@ -8,7 +8,7 @@ package com.example.newbiechen.nbreader.ui.component.book.text
 
 interface TextModel {
     // 获取 id
-    fun getId(): String
+    fun getId(): String?
 
     // 获取语言
     fun getLanguage(): String

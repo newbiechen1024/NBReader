@@ -8,7 +8,7 @@
 #include "TextModel.h"
 #include "TextEntry.h"
 
-TextModel::TextModel(const std::string &id, const std::string &language, const std::size_t rowSize,
+TextModel::TextModel(const std::string &id, const std::string &language, const size_t rowSize,
                      const std::string &directoryName, const std::string &fileExtension, FontManager &fontManager)
         : mId(id), mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
           mAllocator(std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileExtension)),
@@ -99,7 +99,6 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
     for (const std::string &str : text) {
         // 获取该文本对应 UTF-8 编码的长度
         textTotalLength = UnicodeUtil::utf8Length(str);
-        Logger::i("TextModel", "addTexts:" + str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;
@@ -107,9 +106,9 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
     // 如果当前元素类型是文本类型
     if (mCurEntryPointer != 0 && *mCurEntryPointer == TextParagraphEntry::TEXT_ENTRY) {
         // 如果当前 Entry 是 TEXT_ENTRY 类型，则通过指针获取当前 entry 持有的文本中长度
-        const std::size_t oldTextLength = TextCachedAllocator::readUInt32(mCurEntryPointer + 2);
+        const size_t oldTextLength = TextCachedAllocator::readUInt32(mCurEntryPointer + 2);
         // 新的段落长度
-        const std::size_t newTextLength = oldTextLength + textTotalLength;
+        const size_t newTextLength = oldTextLength + textTotalLength;
 
         // 请求重新分配缓冲区
         // 2 * newTextLength ==> 最终输出是 UTF-16 所以应该是 UTF-8 * 2
@@ -117,13 +116,13 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
         // 将重新计算的长度写入 entry 中
         TextCachedAllocator::writeUInt32(mCurEntryPointer + 2, newTextLength);
         // 移动到之前填充文本的位置
-        std::size_t offset = 6 + oldTextLength;
+        size_t offset = 6 + oldTextLength;
 
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
             UnicodeUtil::utf8ToUcs2(unicode2Str, *it);
             // 获取转换后的总长度的字节数
-            const std::size_t len = 2 * unicode2Str.size();
+            const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
             std::memcpy(mCurEntryPointer + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
@@ -144,12 +143,12 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
         // 将总长度写入到 entry 中
         TextCachedAllocator::writeUInt32(mCurEntryPointer + 2, textTotalLength);
         // 起始文本偏移位置
-        std::size_t offset = 6;
+        size_t offset = 6;
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
             UnicodeUtil::utf8ToUcs2(unicode2Str, *it);
             // 获取转换后的总长度的字节数
-            const std::size_t len = 2 * unicode2Str.size();
+            const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
             std::memcpy(mCurEntryPointer + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
@@ -184,8 +183,8 @@ void TextModel::addExtensionEntry(const std::string &action, const std::map<std:
 }
 
 void TextModel::addParagraphInternal(TextParagraph *paragraph) {
-    const std::size_t blockCount = mAllocator->getBufferBlockCount();
-    const std::size_t blockOffset = mAllocator->getCurBufferBlockOffset();
+    const size_t blockCount = mAllocator->getBufferBlockCount();
+    const size_t blockOffset = mAllocator->getCurBufferBlockOffset();
     // 初始化 TextParagraph
     paragraph->bufferBlockIndex = (blockCount == 0) ? 0 : (blockCount - 1);
     paragraph->bufferBlockOffset = blockOffset / 2;
@@ -201,7 +200,7 @@ void TextModel::flush() {
     mAllocator->flush();
 }
 
-TextPlainModel::TextPlainModel(const std::string &id, const std::string &language, const std::size_t defaultBufferSize,
+TextPlainModel::TextPlainModel(const std::string &id, const std::string &language, const size_t defaultBufferSize,
                                const std::string &directoryName, const std::string &fileExtension,
                                FontManager &fontManager) : TextModel(id, language, defaultBufferSize, directoryName,
                                                                      fileExtension, fontManager) {

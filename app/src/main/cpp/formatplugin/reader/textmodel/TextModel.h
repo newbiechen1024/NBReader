@@ -23,13 +23,12 @@ class TextModel {
 public:
     virtual ~TextModel();
 
-    TextParagraph *operator[](std::size_t index) {
+    TextParagraph *operator[](size_t index) {
         return mParagraphs[std::min(mParagraphs.size() - 1, index)];
     }
 
-    const TextParagraph *operator[](std::size_t index) const {
+    const TextParagraph *operator[](size_t index) const {
         return mParagraphs[std::min(mParagraphs.size() - 1, index)];
-
     }
 
     const std::string &id() const {
@@ -40,7 +39,7 @@ public:
         return mLanguage;
     }
 
-    std::size_t getParagraphCount() const {
+    size_t getParagraphCount() const {
         return mParagraphs.size();
     }
 

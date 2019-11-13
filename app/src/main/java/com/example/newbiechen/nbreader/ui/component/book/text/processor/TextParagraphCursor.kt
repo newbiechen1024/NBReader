@@ -5,8 +5,11 @@ import com.example.newbiechen.nbreader.ui.component.book.text.TextParagraph
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextParagraphEntry
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphType
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextControlElement
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.entry.TextControlEntry
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.min
 
 /**
@@ -89,6 +92,8 @@ class TextParagraphCursor {
 private class TextEntryDecoder(private val paragraph: TextParagraph, private val language: String) {
 
     companion object {
+        private const val TAG = "TextEntryDecoder"
+
         private const val NO_SPACE = 0 // 没有空格
         private const val SPACE = 1 // 空格
         private const val NON_BREAKABLE_SPACE = 2 // 不间断空格
@@ -119,6 +124,9 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
             TextParagraphType.ENCRYPTED_SECTION_PARAGRAPH -> {
                 // 不处理
             }
+            else -> {
+                LogHelper.i(TAG, "else type:" + paragraph.getInfo().type)
+            }
         }
 
         return mElementList!!
@@ -129,12 +137,29 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
         var entry: TextParagraphEntry? = null
         while (entryIterator.hasNext()) {
             entry = entryIterator.next()
+
+            // 如果拿到的数据为空，也 break
+            if (entry == null) {
+                LogHelper.i(TAG, "processTextParagraph empty")
+                break
+            }
+
             when (entry) {
                 is TextEntry -> {
                     processTextEntry(entry)
                 }
+                is TextControlEntry -> {
+                    // 创建一个 ControlElement
+                    mElementList!!.add(
+                        TextControlElement(
+                            entry.style,
+                            entry.isControlStart
+                        )
+                    )
+                }
             }
         }
+        LogHelper.i(TAG, "element count:" + mElementList!!.size)
     }
 
     private fun processTextEntry(textEntry: TextEntry) {
@@ -167,8 +192,7 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
                     if (index > 0 && spaceState == NO_SPACE) {
                         // 添加单词
                         addWord(
-                            textEntry.data,
-                            textEntry.offset + wordStart,
+                            data, offset + wordStart,
                             index - wordStart,
                             mParagraphOffset + wordStart
                         )
@@ -179,8 +203,7 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
                     // 如果之前不存在 SPACE 字符，则添加
                     if (index > 0 && spaceState == NO_SPACE) {
                         addWord(
-                            textEntry.data,
-                            textEntry.offset + wordStart,
+                            data, offset + wordStart,
                             index - wordStart,
                             mParagraphOffset + wordStart
                         )
@@ -209,8 +232,7 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
                             previousChar != '-' && index != wordStart
                         ) {
                             addWord(
-                                textEntry.data,
-                                textEntry.offset + wordStart,
+                                data, offset + wordStart,
                                 index - wordStart,
                                 mParagraphOffset + wordStart
                             )
@@ -226,15 +248,15 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
                 SPACE -> mElementList!!.add(TextElement.HSpace)
                 NON_BREAKABLE_SPACE -> mElementList!!.add(TextElement.NBSpace)
                 NO_SPACE -> addWord(
-                    textEntry.data,
-                    textEntry.offset + wordStart,
-                    textEntry.length - wordStart, // TODO:需要判断返回的长度是否正确
+                    data,
+                    offset + wordStart,
+                    length - wordStart,
                     mParagraphOffset + wordStart
                 )
             }
 
             // 总偏移位置
-            mParagraphOffset += textEntry.length
+            mParagraphOffset += length
         }
     }
 

@@ -11,14 +11,14 @@
 
 class TextCachedAllocator {
 public:
-    TextCachedAllocator(const std::size_t rowSize, const std::string &directoryName,
+    TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
                         const std::string &fileExtension);
 
     ~TextCachedAllocator();
 
-    char *allocate(std::size_t size);
+    char *allocate(size_t size);
 
-    char *reallocateLast(char *ptr, std::size_t newSize);
+    char *reallocateLast(char *ptr, size_t newSize);
 
     void flush();
 
@@ -42,7 +42,7 @@ public:
     }
 
     static char *writeString(char *ptr, const UnicodeUtil::Ucs2String &str) {
-        const std::size_t size = str.size();
+        const size_t size = str.size();
         writeUInt16(ptr, size);
         memcpy(ptr + 2, &str.front(), size * 2);
         return ptr + size * 2 + 2;
@@ -71,11 +71,11 @@ public:
     }
 
     // 数据块数量
-    std::size_t getBufferBlockCount() const {
+    size_t getBufferBlockCount() const {
         return mBufferBlockList.size();
     }
 
-    std::size_t getCurBufferBlockOffset() const {
+    size_t getCurBufferBlockOffset() const {
         return mCurBlockOffset;
     }
 
@@ -84,19 +84,19 @@ public:
     }
 
 private:
-    std::string createFileName(std::size_t index);
+    std::string createFileName(size_t index);
 
-    void writeCache(std::size_t blockLength);
+    void writeCache(size_t blockLength);
 
 private:
     // 默认创建缓冲块的大小
-    const std::size_t mBasicBufferBlockSize;
+    const size_t mBasicBufferBlockSize;
     // 实际创建缓冲块的大小
-    std::size_t mActualBufferBlockSize;
+    size_t mActualBufferBlockSize;
     // 存储创建的所有缓冲区指针
     std::vector<char *> mBufferBlockList;
     // 基于当前缓冲块的偏移
-    std::size_t mCurBlockOffset;
+    size_t mCurBlockOffset;
 
     bool hasChanges;
     bool hasFailed;

@@ -29,7 +29,7 @@ class TextCacheReader(
 
 
     private fun getCacheFilePath(index: Int): String {
-        return cacheDir + File.separator + "." + fileExtension
+        return cacheDir + File.separator + "${index}." + fileExtension
     }
 
     fun getBufferBlock(index: Int): CharArray {

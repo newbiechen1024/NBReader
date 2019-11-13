@@ -1,6 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
+import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -9,6 +10,10 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInf
  */
 
 class TextPage {
+
+    companion object {
+        private const val TAG = "TextPage"
+    }
     /**
      *  公共参数
      */

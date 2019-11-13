@@ -5,6 +5,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.book.text.TextPlainModel
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraphInfo
+import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -15,6 +16,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagra
 class BookModel private constructor(val book: BookEntity) {
 
     companion object {
+        private const val TAG = "BookModel"
         fun createBookModel(book: BookEntity, plugin: NativeFormatPlugin): BookModel {
             val bookModel = BookModel(book)
             plugin.readModel(bookModel)
@@ -26,7 +28,7 @@ class BookModel private constructor(val book: BookEntity) {
      * Native 层通过该方法创建 TextModel 并赋值给 BookModel
      */
     fun createTextModel(
-        id: String,
+        id: String?,
         lang: String,
         bufferBlockCount: Int,
         cacheDir: String,

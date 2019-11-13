@@ -32,7 +32,7 @@ class TextConfig private constructor(context: Context) {
 
     init {
         // 获取 asset 资源
-        val resourceInputStream = context.assets.open("default/style.css")
+        val resourceInputStream = context.assets.open("default/styles.css")
         val descriptionMap = TextCSSReader()
             .read(resourceInputStream)
 

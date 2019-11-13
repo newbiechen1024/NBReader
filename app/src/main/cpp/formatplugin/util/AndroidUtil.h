@@ -22,7 +22,12 @@ public:
     static JavaClass Class_NativeFormatPlugin;
     static JavaClass Class_BoolPluginManager;
     static JavaClass Class_BookModel;
-    static JavaClass Class_Book;
+    static JavaClass Class_BookEntity;
+    static JavaClass Class_TextModel;
+    static JavaClass Class_TextParagraphInfo;
+
+
+    static std::shared_ptr<JavaConstructor> Constructor_TextParagraphInfo;
 
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
 

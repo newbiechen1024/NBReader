@@ -1,5 +1,7 @@
 package com.example.newbiechen.nbreader.ui.page.read
 
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +12,7 @@ import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.databinding.ActivityReadBinding
+import com.example.newbiechen.nbreader.ui.component.book.OnBookListener
 import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
@@ -17,6 +20,7 @@ import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import javax.inject.Inject
 
 /**
@@ -96,6 +100,8 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             mPageController.setActionListener {
                 onPageAction(it)
             }
+
+            openBook()
         }
     }
 
@@ -124,6 +130,30 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     }
 
     private fun openBook() {
+
+        var loadDialog: ProgressDialog? = null
+
+        mPageController.setBookListener(object : OnBookListener {
+
+            override fun onLoading() {
+                // 弹出一个 Loading Dialog
+                loadDialog = ProgressDialog.show(
+                    this@ReadActivity, "等待书籍加载完成",
+                    "Loading. Please wait...", true
+                )
+            }
+
+            override fun onLoadSuccess() {
+                // 关闭 loading Dialog
+                loadDialog!!.cancel()
+            }
+
+            override fun onLoadFailure(e: Throwable) {
+                // 关闭 loading Dialog
+                loadDialog!!.cancel()
+                LogHelper.i(TAG, "load book:${e.message}")
+            }
+        })
         // TODO:需要有加载完成动画
         mPageController.openBook(mBook)
     }

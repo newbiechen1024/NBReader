@@ -21,10 +21,20 @@ JavaClass AndroidUtil::Class_BoolPluginManager(
 
 JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/BookModel");
 
-JavaClass AndroidUtil::Class_Book(PKG_NAME + "data/entity/BookEntity");
+JavaClass AndroidUtil::Class_BookEntity(PKG_NAME + "data/entity/BookEntity");
+
+JavaClass AndroidUtil::Class_TextModel(
+        PKG_NAME + "ui/component/book/text/TextModel");
+
+JavaClass AndroidUtil::Class_TextParagraphInfo(
+        PKG_NAME + "ui/component/book/text/entity/TextParagraphInfo");
 
 // 初始化静态成员。。
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
+
+// 初始化构造函数
+std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextParagraphInfo;
+
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
 std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
@@ -34,8 +44,9 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getEncoding;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
 std::shared_ptr<StringMethod> AndroidUtil::Method_String_toLowerCase;
 std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
-std::shared_ptr<StringMethod> AndroidUtil::Method_BookModel_createTextModel;
-std::shared_ptr<StringMethod> AndroidUtil::Method_BookModel_setTextModel;
+
+std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_createTextModel;
+std::shared_ptr<VoidMethod> AndroidUtil::Method_BookModel_setTextModel;
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -46,7 +57,8 @@ JNIEnv *AndroidUtil::getEnv() {
 bool AndroidUtil::init(JavaVM *jvm) {
     sJavaVM = jvm;
 
-    StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale, "getDefault",
+    StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale,
+                                                                          "getDefault",
                                                                           Class_Locale, "()");
 
     Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_Locale, "getLanguage", "()");
@@ -55,23 +67,31 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_String_toLowerCase = std::make_shared<StringMethod>(Class_String, "toLowerCase", "()");
     Method_String_toUpperCase = std::make_shared<StringMethod>(Class_String, "toUpperCase", "()");
 
-    Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(Class_NativeFormatPlugin,
-                                                                                   "getSupportTypeByStr",
-                                                                                   "()");
-    Method_BookModel_getBook = std::make_shared<ObjectMethod>(Class_BookModel, "getBook", Class_Book, "()");
+    Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(
+            Class_NativeFormatPlugin,
+            "getSupportTypeByStr",
+            "()");
+    Method_BookModel_getBook = std::make_shared<ObjectMethod>(Class_BookModel, "getBook",
+                                                              Class_BookEntity, "()");
 
     /*Book*/
-    Method_Book_getTitle = std::make_shared<StringMethod>(Class_Book, "getTitle", "()");
-    Method_Book_getUrl = std::make_shared<StringMethod>(Class_Book, "getUrl", "()");
-    Method_Book_getEncoding = std::make_shared<StringMethod>(Class_Book, "getEncoding", "()");
-    Method_Book_getLang = std::make_shared<StringMethod>(Class_Book, "getLang", "()");
+    Method_Book_getTitle = std::make_shared<StringMethod>(Class_BookEntity, "getTitle", "()");
+    Method_Book_getUrl = std::make_shared<StringMethod>(Class_BookEntity, "getUrl", "()");
+    Method_Book_getEncoding = std::make_shared<StringMethod>(Class_BookEntity, "getEncoding", "()");
+    Method_Book_getLang = std::make_shared<StringMethod>(Class_BookEntity, "getLang", "()");
+
+    Constructor_TextParagraphInfo = std::make_shared<JavaConstructor>(Class_TextParagraphInfo,
+                                                                      "(BIIIII)V");
 
     // TODO:思考是否传入 ParagraphInfo
     Method_BookModel_createTextModel = std::make_shared<ObjectMethod>(Class_BookModel,
-            "createTextModel", "(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)");
+                                                                      "createTextModel",
+                                                                      Class_TextModel,
+                                                                      "(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;[Lcom/example/newbiechen/nbreader/ui/component/book/text/entity/TextParagraphInfo;)");
 
     Method_BookModel_setTextModel = std::make_shared<VoidMethod>(Class_BookModel,
-            "setTextModel","(Lcom.example.newbiechen.nbreader.ui.component.book.text.TextModel;)");
+                                                                 "setTextModel",
+                                                                 "(Lcom/example/newbiechen/nbreader/ui/component/book/text/TextModel;)");
     return true;
 }
 
