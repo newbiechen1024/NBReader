@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.book.text.config
 
 import android.content.Context
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
 
 /**
@@ -74,7 +75,7 @@ class DefaultTextStyle private constructor(context: Context) : TextStyle(null) {
     }
 
     override fun getLineSpacePercent(): Int {
-        return 0
+        return 12 * 10
     }
 
     override fun getVerticalAlign(metrics: TextMetrics): Int {
@@ -94,7 +95,7 @@ class DefaultTextStyle private constructor(context: Context) : TextStyle(null) {
     }
 
     override fun getAlignment(): Byte {
-        return 0.toByte()
+        return TextAlignmentType.ALIGN_JUSTIFY
     }
 
     override fun allowHyphenations(): Boolean {

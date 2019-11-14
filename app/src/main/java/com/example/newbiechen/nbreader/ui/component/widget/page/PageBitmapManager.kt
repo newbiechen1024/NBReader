@@ -97,9 +97,10 @@ class PageBitmapManager(private var pageListener: OnPageListener) {
                 continue
             }
             mBitmapTypes[i] = if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
-            // 通知回调
-            pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
         }
+
+        // 通知回调
+        pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
     }
 
     /**

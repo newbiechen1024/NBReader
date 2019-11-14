@@ -1,9 +1,11 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
+import android.content.Context
 import android.graphics.CornerPathEffect
 import android.graphics.EmbossMaskFilter
 import android.graphics.Paint
 import android.graphics.Rect
+import com.example.newbiechen.nbreader.uilts.DensityUtil
 import java.util.*
 
 /**
@@ -48,6 +50,7 @@ class TextPaintContext {
 
     // 设置字体
     fun setFont(
+        context: Context,
         size: Int,
         bold: Boolean,
         italic: Boolean,
@@ -58,7 +61,7 @@ class TextPaintContext {
 
         // TODO：传入字符集的名字，调用 FontManager 获取对应的 typeface 字符库。
 
-        textPaint.textSize = size.toFloat()
+        textPaint.textSize = DensityUtil.sp2px(context, size.toFloat()).toFloat()
         textPaint.isUnderlineText = underline
         textPaint.isStrikeThruText = strikeThrough
     }

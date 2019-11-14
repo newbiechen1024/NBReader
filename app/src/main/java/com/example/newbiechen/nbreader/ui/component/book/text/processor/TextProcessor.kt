@@ -139,11 +139,11 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         when (type) {
             PageType.PREVIOUS -> {
                 val startWordCursor = getCurPageStartCursor()
-                return startWordCursor?.isStartOfText() ?: false
+                return !(startWordCursor?.isStartOfText() ?: true)
             }
             PageType.NEXT -> {
                 val endWordCursor = getCurPageEndCursor()
-                return endWordCursor?.isEndOfText() ?: false
+                return !(endWordCursor?.isEndOfText() ?: true)
             }
         }
         return false
@@ -521,8 +521,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
 
             // 是否存在下一段落
             hasNextParagraph = findWordCursor.isEndOfParagraph() && findWordCursor.nextParagraph()
-        } while (hasNextParagraph)
-
+        } while (hasNextParagraph && remainAreaHeight >= 0)
 
         // 重置文本样式
         resetTextStyle()

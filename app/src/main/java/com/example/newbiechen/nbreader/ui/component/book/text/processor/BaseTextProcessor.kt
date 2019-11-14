@@ -91,10 +91,11 @@ abstract class BaseTextProcessor(private val context: Context) {
     protected fun setTextStyle(style: TextStyle) {
         if (mTextStyle != style) {
             mTextStyle = style
-            mWordHeight = -1
+            mWordHeight = null
         }
 
         mPaintContext.setFont(
+            context,
             style.getFontSize(getMetrics()),
             bold = false,
             italic = false,
