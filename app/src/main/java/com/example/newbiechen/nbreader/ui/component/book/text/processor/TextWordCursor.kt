@@ -1,6 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
 
 /**
  *  author : newbiechen
@@ -107,7 +108,35 @@ class TextWordCursor : TextPosition {
     }
 
     fun moveTo(elementIndex: Int, charIndex: Int) {
+        if (elementIndex == 0 && charIndex == 0) {
+            mElementIndex = 0
+            mCharIndex = 0
+        } else {
+            var elementIndex = 0.coerceAtLeast(elementIndex)
+            val endElementIndex = mParagraphCursor.getElementCount() - 1
+            if (elementIndex >= endElementIndex) {
+                mElementIndex = endElementIndex
+                mCharIndex = 0
+            } else {
+                mElementIndex = elementIndex
+                setCharIndex(charIndex)
+            }
+        }
+    }
 
+    fun setCharIndex(charIndex: Int) {
+        var charIndex = charIndex
+        charIndex = 0.coerceAtLeast(charIndex)
+        mCharIndex = 0
+
+        if (charIndex > 0) {
+            val element = mParagraphCursor.getElement(mElementIndex)
+            if (element is TextWordElement) {
+                if (charIndex <= (element.length - 1)) {
+                    mCharIndex = charIndex
+                }
+            }
+        }
     }
 
     /**
@@ -150,7 +179,7 @@ class TextWordCursor : TextPosition {
      * 跳转到段落的末尾位置
      * 光标指向最后一个 Word 的起始位置
      */
-    fun movecToParagraphEnd() {
+    fun moveToParagraphEnd() {
         mElementIndex = mParagraphCursor.getElementCount() - 1
         mCharIndex = 0
     }

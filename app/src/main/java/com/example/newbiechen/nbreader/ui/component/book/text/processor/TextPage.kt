@@ -1,7 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
-import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -14,6 +13,7 @@ class TextPage {
     companion object {
         private const val TAG = "TextPage"
     }
+
     /**
      *  公共参数
      */
@@ -35,8 +35,6 @@ class TextPage {
 
     // 存储元素展示区域信息
     val textElementAreaVector = TextElementAreaVector()
-    // 页面状态
-    private var mPageState = State.NONE
 
     /**
      * 设置 Page 的宽高
@@ -50,25 +48,39 @@ class TextPage {
      * 设置页面状态
      * @return 表示是否设置成功
      */
-    fun setPageState(pageState: State): Boolean {
-        if (mPageState == pageState) {
+    fun setPageState(state: State): Boolean {
+        if (pageState == state) {
             return true
         }
-        when (pageState) {
+        when (state) {
             State.NONE -> { // 回到未准备状态
                 reset()
                 return true
             }
-            State.KNOW_START_CURSOR, State.KNOW_END_CURSOR -> {
+            State.KNOW_START_CURSOR -> {
                 // 由于光标改变，则之前的行也不能用了
                 lineInfoList.clear()
+
                 // 只有同种类型的 cursor 才能设置状态
                 if (startWordCursor != null) {
-                    mPageState = State.KNOW_START_CURSOR
+                    pageState = State.KNOW_START_CURSOR
                     return true
                 } else if (endWordCursor != null) {
                     // 如果终止光标存在
-                    mPageState = State.KNOW_END_CURSOR
+                    pageState = State.KNOW_END_CURSOR
+                    return true
+                }
+            }
+            State.KNOW_END_CURSOR -> {
+                // 由于光标改变，则之前的行也不能用了
+                lineInfoList.clear()
+
+                if (endWordCursor != null) {
+                    // 如果终止光标存在
+                    pageState = State.KNOW_END_CURSOR
+                    return true
+                } else if (startWordCursor != null) {
+                    pageState = State.KNOW_START_CURSOR
                     return true
                 }
             }
@@ -76,7 +88,7 @@ class TextPage {
                 if (startWordCursor != null
                     && endWordCursor != null
                 ) {
-                    mPageState = State.PREPARED
+                    pageState = State.PREPARED
                     return true
                 }
             }
@@ -132,7 +144,7 @@ class TextPage {
      * 是否起始光标已经准备好了
      */
     fun isStartCursorPrepared(): Boolean {
-        return when (mPageState) {
+        return when (pageState) {
             State.KNOW_START_CURSOR, State.PREPARED -> true
             else -> false
         }
@@ -142,7 +154,7 @@ class TextPage {
      * 是否结束光标已经准备好了
      */
     fun isEndCursorPrepared(): Boolean {
-        return when (mPageState) {
+        return when (pageState) {
             State.KNOW_END_CURSOR, State.PREPARED -> true
             else -> false
         }
@@ -155,7 +167,7 @@ class TextPage {
         lineInfoList.clear()
         startWordCursor = null
         endWordCursor = null
-        mPageState = State.NONE
+        pageState = State.NONE
     }
 
     // 当前页面的状态

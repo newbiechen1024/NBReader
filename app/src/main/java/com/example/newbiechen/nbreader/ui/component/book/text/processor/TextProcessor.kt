@@ -146,7 +146,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 return endWordCursor?.isEndOfText() ?: false
             }
         }
-        return true
+        return false
     }
 
     /**
@@ -195,6 +195,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             return
         }
 
+        LogHelper.i(TAG, "drawInternal: ")
+
         // 获取并初始化待处理 Page
         val page: TextPage = when (pageType) {
             PageType.PREVIOUS -> {
@@ -236,16 +238,24 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 准备待处理的页
         preparePage(page)
 
+/*        LogHelper.i(TAG, "preparePage: ")
+
         // 如果结果不为 prepare 直接 return
         if (page.pageState != TextPage.State.PREPARED) {
             return
         }
+        LogHelper.i(TAG, "preparePage success")
+
 
         // 准本文本绘制区域，并返回每个段落对应 textArea 的起始位置
         val labels = prepareTextArea(page)
 
+        LogHelper.i(TAG, "prepareTextArea")
+
         // 绘制页面
         drawPage(canvas, page, labels)
+
+        LogHelper.i(TAG, "drawPage")*/
 
         // 绘制高亮区域
 
@@ -261,10 +271,13 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 设置页面的视口
         page.setViewPort(viewWidth, viewHeight)
 
+
         // 如果未准备任何信息，或者已经准备完成，都直接 return
         if (page.pageState == TextPage.State.NONE || page.pageState == TextPage.State.PREPARED) {
             return
         }
+
+        LogHelper.i(TAG, "preparePage: ready")
 
         // 获取 Page 的旧状态
         val oldPageState = page.pageState
@@ -293,6 +306,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 }
             }
         }
+
+        LogHelper.i(TAG, "preparePage: success")
 
         // 更新当前 Page 状态
         page.setPageState(TextPage.State.PREPARED)
@@ -477,25 +492,38 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             // 创建新的行信息
             curLineInfo = TextLineInfo(paragraphCursor, curElementIndex, curCharIndex)
 
+            // TODO:没有判断 element 为 0 的情况。
+
             // 循环遍历 element
             while (curLineInfo!!.endElementIndex <= endElementIndex) {
                 // 填充 textLine
                 curLineInfo = prepareTextLine(
                     page,
                     paragraphCursor,
-                    curLineInfo!!.startElementIndex,
-                    curLineInfo!!.startCharIndex,
-                    endElementIndex - 1, preLineInfo
+                    curLineInfo!!.endElementIndex,
+                    curLineInfo!!.endCharIndex,
+                    endElementIndex, preLineInfo
                 )
+
                 // 剩余高度 = 当前行高度 - 行高
                 remainAreaHeight -= (curLineInfo.height + curLineInfo.descent + curLineInfo.vSpaceAfter)
-                // 指针新行的末尾
+                // 光标指向新行的末尾
                 findWordCursor.moveTo(curLineInfo.endElementIndex, curLineInfo.endCharIndex)
                 // 将 line 添加到 page 中
                 page.lineInfoList.add(curLineInfo)
+
+                // 如果剩余高度不足，则 break
+                if (remainAreaHeight < 0) {
+                    break
+                }
             }
-            // 获取段落光标当前指向的 element
+
+            // 是否存在下一段落
+            hasNextParagraph = findWordCursor.isEndOfParagraph() && findWordCursor.nextParagraph()
+            LogHelper.i(TAG, "preparePageInternal: foreach $hasNextParagraph")
         } while (hasNextParagraph)
+
+        LogHelper.i(TAG, "preparePageInternal: line info count ${page.lineInfoList.size}")
 
         // 重置文本样式
         resetTextStyle()

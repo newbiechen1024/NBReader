@@ -135,6 +135,7 @@ private class TextEntryDecoder(private val paragraph: TextParagraph, private val
     private fun processTextParagraph() {
         val entryIterator = paragraph.getIterator()
         var entry: TextParagraphEntry? = null
+
         while (entryIterator.hasNext()) {
             entry = entryIterator.next()
 

@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.example.newbiechen.nbreader.ui.component.widget.page.anim.*
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**
@@ -130,6 +131,7 @@ class PageView @JvmOverloads constructor(
 
     override fun onTurnPage(pageType: PageType) {
         // TODO:如果 TextProcessor 没有被使用的情况下 (setTextModel)，做出这种处理该怎么办？
+        LogHelper.i(TAG, "onTurnPage: $pageType")
 
         // 切换页面
         mTextProcessor.turnPage(pageType)
@@ -138,10 +140,14 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun hasPage(type: PageType): Boolean {
-        return mTextProcessor.hasPage(type)
+        val hasPage = mTextProcessor.hasPage(type)
+
+        LogHelper.i(TAG, "hasPage: $hasPage")
+        return hasPage
     }
 
     override fun drawPage(bitmap: Bitmap, type: PageType) {
+        LogHelper.i(TAG, "drawPage: $type")
         // 进行页面绘制
         mTextProcessor.draw(Canvas(bitmap), type)
     }

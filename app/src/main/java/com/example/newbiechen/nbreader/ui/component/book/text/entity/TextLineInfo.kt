@@ -31,7 +31,6 @@ data class TextLineInfo(
     var vSpaceAfter: Int = 0
     // 空格数
     var spaceCount: Int = 0
-
     // 结束行的索引
     var endElementIndex: Int = startElementIndex
     var endCharIndex: Int = startCharIndex

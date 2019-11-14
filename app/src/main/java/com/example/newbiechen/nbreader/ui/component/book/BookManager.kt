@@ -109,10 +109,11 @@ class BookManager constructor(
         // 根据 Book 实例化
         mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
 
+        // 对文本处理器，设置文本模块
         textProcessor.setTextModel(mBookModel!!.textModel!!)
 
-/*        // 通知刷新
-        textProcessor.posInvalidate()*/
+        // 通知刷新
+        textProcessor.posInvalidate()
     }
 }
 
