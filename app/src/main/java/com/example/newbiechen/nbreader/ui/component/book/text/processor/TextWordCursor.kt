@@ -13,9 +13,10 @@ class TextWordCursor : TextPosition {
 
     private lateinit var mParagraphCursor: TextParagraphCursor
 
-    // Word 当前指向段落中 element 的位置
+    // Word 当前指向段落中 element 的位置，支持指向 element 的末尾，即其大小 >= elementCount (需要注意的点)
     private var mElementIndex: Int = 0
-    // 指向 word 中字节的位置
+
+    // 指向 word 中字节的位置，支持指向 char 的末尾，即其大小 >= charCount (需要注意的点)
     private var mCharIndex: Int = 0
 
     constructor(wordCursor: TextWordCursor) {
@@ -46,7 +47,7 @@ class TextWordCursor : TextPosition {
     }
 
     /**
-     * 返回当前光标指向的 elment
+     * 返回当前光标指向的 element
      */
     override fun getElementIndex() = mElementIndex
 
@@ -74,6 +75,8 @@ class TextWordCursor : TextPosition {
      * 移动光标到上一个单词
      */
     fun preWord() {
+        // TODO:没有判断 element 的索引超出的问题。
+
         mElementIndex--
         mCharIndex = 0
     }
@@ -95,7 +98,6 @@ class TextWordCursor : TextPosition {
     /**
      * 光标移动到上一个段落
      */
-
     fun preParagraph(): Boolean {
         return if (mParagraphCursor.isFirstParagraph()) {
             false
@@ -113,9 +115,10 @@ class TextWordCursor : TextPosition {
             mCharIndex = 0
         } else {
             var elementIndex = 0.coerceAtLeast(elementIndex)
-            val endElementIndex = mParagraphCursor.getElementCount() - 1
-            if (elementIndex >= endElementIndex) {
-                mElementIndex = endElementIndex
+            val elementCount = mParagraphCursor.getElementCount()
+
+            if (elementIndex >= elementCount) {
+                mElementIndex = elementCount
                 mCharIndex = 0
             } else {
                 mElementIndex = elementIndex
@@ -132,7 +135,7 @@ class TextWordCursor : TextPosition {
         if (charIndex > 0) {
             val element = mParagraphCursor.getElement(mElementIndex)
             if (element is TextWordElement) {
-                if (charIndex <= (element.length - 1)) {
+                if (charIndex <= element.length) {
                     mCharIndex = charIndex
                 }
             }
@@ -154,14 +157,14 @@ class TextWordCursor : TextPosition {
     }
 
     /**
-     * 是否在段落的末尾
+     * 光标是否指向段落的末尾
      */
     fun isEndOfParagraph(): Boolean {
-        return mElementIndex == mParagraphCursor.getElementCount() - 1
+        return mElementIndex == mParagraphCursor.getElementCount()
     }
 
     /**
-     * 是否在文本的末尾
+     * 光标是否指向文本的末尾
      */
     fun isEndOfText(): Boolean {
         return isEndOfParagraph() && mParagraphCursor.isLastParagraph()
@@ -177,10 +180,9 @@ class TextWordCursor : TextPosition {
 
     /**
      * 跳转到段落的末尾位置
-     * 光标指向最后一个 Word 的起始位置
      */
     fun moveToParagraphEnd() {
-        mElementIndex = mParagraphCursor.getElementCount() - 1
+        mElementIndex = mParagraphCursor.getElementCount()
         mCharIndex = 0
     }
 }

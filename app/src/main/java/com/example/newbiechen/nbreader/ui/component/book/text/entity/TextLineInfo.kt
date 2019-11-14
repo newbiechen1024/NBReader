@@ -11,10 +11,10 @@ import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextPara
 
 data class TextLineInfo(
     val paragraphCursor: TextParagraphCursor,
-    // 起始行的索引
+    // 指向当前行元素的起始位置
     val startElementIndex: Int,
     val startCharIndex: Int,
-    var startStyle: TextStyle? = null
+    var startStyle: TextStyle
 ) {
 
     val elementCount: Int = paragraphCursor.getElementCount()
@@ -31,7 +31,8 @@ data class TextLineInfo(
     var vSpaceAfter: Int = 0
     // 空格数
     var spaceCount: Int = 0
-    // 结束行的索引
+
+    // 结束行的索引，允许指向值的末尾。(即，其大小允许 >= elementCount)
     var endElementIndex: Int = startElementIndex
     var endCharIndex: Int = startCharIndex
     // 去除修改 Style 的 Element 后的 index
@@ -42,10 +43,10 @@ data class TextLineInfo(
     var isVisible = false
 
     /**
-     * 是否是段落的最后一行
+     * 是否是指向段落元素的末尾
      */
     fun isEndOfParagraph(): Boolean {
-        return endElementIndex == (elementCount - 1)
+        return endElementIndex == elementCount
     }
 
     /**

@@ -134,7 +134,7 @@ abstract class BaseTextProcessor(private val context: Context) {
     fun applyStyleChange(cursor: TextParagraphCursor, index: Int, end: Int) {
         var index = index
         // 从 cursor 中处理所有的 Element
-        while (index != end) {
+        while (index < end) {
             applyStyleElement(cursor.getElement(index)!!)
             ++index
         }

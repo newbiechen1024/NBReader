@@ -54,6 +54,11 @@ class TextPlainModel : TextModel {
             fileExtension,
             bufferBlockCount
         )
+
+        LogHelper.i(
+            TAG,
+            "lang = $mLang , mBlockCount = $mBlockCount mCacheDir = $mCacheDir , paragraphCount = ${mPghInfoList.size}"
+        )
     }
 
     override fun getId(): String? {
@@ -106,8 +111,6 @@ class TextPlainModel : TextModel {
             }
 
             var blockOffset = mBlockOffset
-
-            LogHelper.i(TAG, "next: get cur block data")
 
             // 获取段落所在的缓冲块
             var blockData = mCacheReader.getBufferBlock(mBlockIndex)

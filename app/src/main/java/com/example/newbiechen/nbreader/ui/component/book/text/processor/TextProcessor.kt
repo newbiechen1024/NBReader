@@ -238,7 +238,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 准备待处理的页
         preparePage(page)
 
-/*        LogHelper.i(TAG, "preparePage: ")
+        LogHelper.i(TAG, "preparePage: ")
 
         // 如果结果不为 prepare 直接 return
         if (page.pageState != TextPage.State.PREPARED) {
@@ -255,7 +255,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 绘制页面
         drawPage(canvas, page, labels)
 
-        LogHelper.i(TAG, "drawPage")*/
+        LogHelper.i(TAG, "drawPage")
 
         // 绘制高亮区域
 
@@ -407,7 +407,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         val size = ParagraphSize()
         val paragraphCursor = cursor.getParagraphCursor()
         val endElementIndex =
-            if (beforeCurrentPosition) cursor.getElementIndex() else paragraphCursor.getElementCount() - 1
+            if (beforeCurrentPosition) cursor.getElementIndex() else paragraphCursor.getElementCount()
 
         resetTextStyle()
 
@@ -436,7 +436,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     private fun skip(page: TextPage, cursor: TextWordCursor, unit: Int, size: Int) {
         var size = size
         val paragraphCursor = cursor.getParagraphCursor()
-        val endElementIndex = paragraphCursor.getElementCount() - 1
+        val endElementIndex = paragraphCursor.getElementCount()
 
         resetTextStyle()
         applyStyleChange(paragraphCursor, 0, cursor.getElementIndex())
@@ -488,14 +488,15 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             val curElementIndex = findWordCursor.getElementIndex()
             val curCharIndex = findWordCursor.getCharIndex()
             // 获取最后一个元素的索引
-            val endElementIndex = paragraphCursor.getElementCount() - 1
-            // 创建新的行信息
-            curLineInfo = TextLineInfo(paragraphCursor, curElementIndex, curCharIndex)
+            val endElementIndex = paragraphCursor.getElementCount()
 
-            // TODO:没有判断 element 为 0 的情况。
+            // 创建新的行信息
+            curLineInfo =
+                TextLineInfo(paragraphCursor, curElementIndex, curCharIndex, getTextStyle())
 
             // 循环遍历 element
-            while (curLineInfo!!.endElementIndex <= endElementIndex) {
+            while (curLineInfo!!.endElementIndex < endElementIndex) {
+
                 // 填充 textLine
                 curLineInfo = prepareTextLine(
                     page,
@@ -520,10 +521,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
 
             // 是否存在下一段落
             hasNextParagraph = findWordCursor.isEndOfParagraph() && findWordCursor.nextParagraph()
-            LogHelper.i(TAG, "preparePageInternal: foreach $hasNextParagraph")
         } while (hasNextParagraph)
 
-        LogHelper.i(TAG, "preparePageInternal: line info count ${page.lineInfoList.size}")
 
         // 重置文本样式
         resetTextStyle()
@@ -542,7 +541,9 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         preLineInfo: TextLineInfo?
     ): TextLineInfo {
         // 创建一个 TextLine
-        val curLineInfo = TextLineInfo(paragraphCursor, startElementIndex, startCharIndex)
+        val curLineInfo =
+            TextLineInfo(paragraphCursor, startElementIndex, startCharIndex, getTextStyle())
+
         // 查看是否存在缓存好的 lineInfo 数据
         val cachedInfo = mLineInfoCache[curLineInfo]
 
@@ -566,22 +567,25 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             // 获取当前元素
             var element = paragraphCursor.getElement(curElementIndex)!!
 
-            // 判断是否是文本样式元素
-            while (isStyleElement(element)) {
-                // 使用该元素
-                applyStyleElement(element)
-                // 行起始位置向后移动一位
-                ++curElementIndex
-                curCharIndex = 0
+            if (element != null) {
+                // 判断是否是文本样式元素
+                while (isStyleElement(element!!)) {
+                    // 使用该元素
+                    applyStyleElement(element!!)
+                    // 行起始位置向后移动一位
+                    ++curElementIndex
+                    curCharIndex = 0
 
-                // 如果起始位置到末尾，直接退出
-                if (curElementIndex == endElementIndex) {
-                    break
+                    // 如果起始位置指向到末尾位置
+                    if (curElementIndex >= endElementIndex) {
+                        break
+                    }
+
+                    // 获取下一个元素
+                    element = paragraphCursor.getElement(curElementIndex)!!
                 }
-
-                // 获取下一个元素
-                element = paragraphCursor.getElement(curElementIndex)!!
             }
+
             // 设置当前行的 Style
             curLineInfo.startStyle = getTextStyle()
             // 设置不具有改变 Style Element 的起始索引位置
@@ -593,7 +597,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         var curTextStyle = getTextStyle()
         // 获取可绘制宽度 = 页面的宽度 - 右缩进
         val maxWidth = page.viewWidth - curTextStyle.getRightIndent(getMetrics())
-        // 获取默认的缩进距离
+        // 获取默认的缩进距离s
         curLineInfo.leftIndent = curTextStyle.getLeftIndent(getMetrics())
 
         // 如果是第一行，且不为居中显示，则计算第一行的左缩进
@@ -610,7 +614,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         curLineInfo.width = curLineInfo.leftIndent
 
         // 如果实际起始位置为终止位置
-        if (curLineInfo.realStartCharIndex === endElementIndex) {
+        if (curLineInfo.realStartCharIndex == endElementIndex) {
             // 重置 end 信息
             curLineInfo.endElementIndex = curLineInfo.realStartElementIndex
             curLineInfo.endCharIndex = curLineInfo.realStartCharIndex
@@ -632,7 +636,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
 
 
         // 遍历 element 填充 TextLine
-        while (curElementIndex <= endElementIndex) {
+        while (curElementIndex < endElementIndex) {
             // 获取当前元素
             var element = paragraphCursor.getElement(curElementIndex)!!
             // 获取 Element 的宽度
@@ -676,7 +680,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             val previousElement = element
 
             // 判断是否到达了元素的结尾后一位 (处理完最后一个元素，判断换行)
-            var allowBreak = curElementIndex > endElementIndex
+            var allowBreak = curElementIndex >= endElementIndex
 
             // 不允许换行的情况
             if (!allowBreak) {
@@ -712,7 +716,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         }
 
         // 如果当前元素位置没有到达段落的末尾，并且允许断字
-        if (curElementIndex <= endElementIndex &&
+        if (curElementIndex < endElementIndex &&
             (isHyphenationPossible() || curLineInfo.endElementIndex == startElementIndex)
         ) {
             // 获取当前元素
@@ -841,13 +845,13 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         }
 
         // 加入到缓存中
-        if (curLineInfo.endElementIndex != endElementIndex || endElementIndex == curLineInfo.elementCount - 1) {
+        if (curLineInfo.endElementIndex != endElementIndex || endElementIndex == curLineInfo.elementCount) {
             mLineInfoCache[curLineInfo] = curLineInfo
         }
 
         // 如果遍历有问题，那直接到末尾
         if (curLineInfo.endElementIndex == startCharIndex && curLineInfo.endElementIndex == startCharIndex) {
-            curLineInfo.endElementIndex = paragraphCursor.getElementCount() - 1
+            curLineInfo.endElementIndex = paragraphCursor.getElementCount()
             curLineInfo.endCharIndex = 0
         }
         return curLineInfo
@@ -956,7 +960,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         var spaceElement: TextElementArea? = null
         run {
             var wordIndex = lineInfo.realStartElementIndex
-            while (wordIndex != endElementIndex) {
+            while (wordIndex < endElementIndex) {
                 // 获取 Element
                 val element = paragraph.getElement(wordIndex)
                 val width = getElementWidth(element!!, charIndex)
@@ -1063,7 +1067,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 page,
                 textLineInfo,
                 lineOfAreaIndexArr[index],
-                lineOfAreaIndexArr[index + 1] - 1
+                lineOfAreaIndexArr[index + 1]
             )
         }
     }
@@ -1084,12 +1088,12 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         var charIndex = lineInfo.realStartCharIndex
         val pageAreas = page.textElementAreaVector.areas()
 
-        if (toAreaIndex >= pageAreas.size) {
+        if (toAreaIndex > pageAreas.size) {
             return
         }
         // 循环元素
         var wordIndex = lineInfo.realStartElementIndex
-        while (wordIndex != endElementIndex && areaIndex <= toAreaIndex) {
+        while (wordIndex < endElementIndex && areaIndex < toAreaIndex) {
             val element = paragraph.getElement(wordIndex)
             val area = pageAreas[areaIndex]
             if (element === area.element) {
@@ -1128,7 +1132,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             charIndex = 0
         }
 
-        if (areaIndex <= toAreaIndex) {
+        if (areaIndex < toAreaIndex) {
             val area = pageAreas[areaIndex++]
             if (area.isStyleChange) {
                 setTextStyle(area.style)

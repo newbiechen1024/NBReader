@@ -20,6 +20,8 @@ import kotlin.math.min
 
 class TextParagraphCursor {
 
+    // 当前索引，无法指向 Paragraph 的末尾，即其大小 < paragraphCount
+    // 因为，当前不需要让 ParagraphCursor 指向末尾的能力
     val curParagraphIndex: Int
 
     private lateinit var mElementList: ArrayList<TextElement>
@@ -48,7 +50,7 @@ class TextParagraphCursor {
         return curParagraphIndex == 0
     }
 
-    // 是否光标在终止位置
+    // 是否光标指向最后一行
     fun isLastParagraph(): Boolean {
         return curParagraphIndex == (mTextModel.getParagraphCount() - 1)
     }
