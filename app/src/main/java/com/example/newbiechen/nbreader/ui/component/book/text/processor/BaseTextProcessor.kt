@@ -115,7 +115,7 @@ abstract class BaseTextProcessor(private val context: Context) {
      * 是否样式类型元素如
      * @see
      */
-    fun isStyleElement(element: TextElement): Boolean {
+    protected fun isStyleElement(element: TextElement): Boolean {
         return element === TextElement.StyleClose ||
                 element is TextStyleElement ||
                 element is TextControlElement
@@ -124,7 +124,7 @@ abstract class BaseTextProcessor(private val context: Context) {
     /**
      * 应用样式类型元素
      */
-    fun applyStyleElement(element: TextElement) {
+    protected fun applyStyleElement(element: TextElement) {
         when {
             element === TextElement.StyleClose -> applyStyleClose()
             element is TextStyleElement -> applyStyle(element)
@@ -132,7 +132,7 @@ abstract class BaseTextProcessor(private val context: Context) {
         }
     }
 
-    fun applyStyleChange(cursor: TextParagraphCursor, index: Int, end: Int) {
+    protected fun applyStyleChange(cursor: TextParagraphCursor, index: Int, end: Int) {
         var index = index
         // 从 cursor 中处理所有的 Element
         while (index < end) {
@@ -231,7 +231,7 @@ abstract class BaseTextProcessor(private val context: Context) {
 
     private var mWordPartArray = CharArray(20)
 
-    fun getWordWidth(
+    protected fun getWordWidth(
         word: TextWordElement,
         start: Int,
         length: Int,

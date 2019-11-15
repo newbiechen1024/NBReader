@@ -185,4 +185,8 @@ class TextWordCursor : TextPosition {
         mElementIndex = mParagraphCursor.getElementCount()
         mCharIndex = 0
     }
+
+    override fun toString(): String {
+        return "TextWordCursor(mParagraphIndex=${mParagraphCursor.curParagraphIndex}, mElementIndex=$mElementIndex, mCharIndex=$mCharIndex)"
+    }
 }

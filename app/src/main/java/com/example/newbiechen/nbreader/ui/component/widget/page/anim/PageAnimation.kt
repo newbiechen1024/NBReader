@@ -7,6 +7,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.abs
 
 /**
@@ -46,9 +47,9 @@ abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
     protected var mViewWidth = 0
     protected var mViewHeight = 0
 
-    // 是否正在执行翻页
+    // 是否正在执行翻页(保证，有方向并且有状态才算翻页)
     val isRunning: Boolean
-        get() = mStatus != Status.NONE
+        get() = mStatus != Status.NONE && mDirection != Direction.NONE
 
     private val mPageManager = pageManager
 
@@ -141,8 +142,12 @@ abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
 
         // 设置状态
         mStatus = Status.ManualMove
-        // 请求刷新
-        mView.postInvalidate()
+
+        // 如果没有方向则不进行绘制
+        if (mDirection != Direction.NONE) {
+            // 请求刷新
+            mView.postInvalidate()
+        }
     }
 
     private fun setTouchPoint(x: Int, y: Int) {
@@ -181,6 +186,7 @@ abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
                 mStatus = if (isCancel) Status.AutoBackward else Status.AutoForward
                 // 启动动画
                 startAnimInternal()
+                mView.postInvalidate()
             }
         }
 
@@ -189,6 +195,7 @@ abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
     }
 
     fun draw(canvas: Canvas) {
+        // 如果正在运行，
         if (isRunning) {
             drawMove(canvas)
         } else {
@@ -246,7 +253,6 @@ abstract class PageAnimation(view: View, pageManager: PageBitmapManager) {
                 // 通知动画完成
                 finishAnim()
             }
-
             mView.postInvalidate()
         }
     }

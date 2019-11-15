@@ -10,6 +10,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProc
 import com.example.newbiechen.nbreader.ui.component.widget.page.anim.*
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
+import java.util.concurrent.Executors
 
 /**
  *  author : newbiechen
@@ -48,10 +49,13 @@ class PageView @JvmOverloads constructor(
     private var mPageController: PageController = PageController(this)
 
     // 当前动画类型
-    private var mPageAnimType = PageAnimType.NONE
+    private var mPageAnimType = PageAnimType.SIMULATION
 
     // 当前翻页动画
-    private var mPageAnim: PageAnimation = NonePageAnimation(this, mPageBitmapManager)
+    private var mPageAnim: PageAnimation = SimulationPageAnimation(this, mPageBitmapManager)
+
+    // 单线程池，用于处理下一页的预加载逻辑
+    private var mSingleExecutor = Executors.newSingleThreadExecutor()
 
     /**
      * 设置页面动画类型
@@ -117,10 +121,15 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun computeScroll() {
-        super.computeScroll()
+
+        LogHelper.i(TAG,"computeScroll: ")
         // 处理翻页动画，滑动事件
         mPageAnim.computeScroll()
+
+        super.computeScroll()
     }
+
+
 
     override fun onPageSizeChange(width: Int, height: Int) {
         // 通知文本处理的视口
@@ -129,19 +138,28 @@ class PageView @JvmOverloads constructor(
         mTextActionProcessor.setViewPort(width, height)
     }
 
-    override fun onTurnPage(pageType: PageType) {
+    override fun onTurnPage(type: PageType) {
         // TODO:如果 TextProcessor 没有被使用的情况下 (setTextModel)，做出这种处理该怎么办？
-        LogHelper.i(TAG, "onTurnPage: $pageType")
+        LogHelper.i(TAG, "onTurnPage: $type")
 
         // 切换页面
-        mTextProcessor.turnPage(pageType)
+        mTextProcessor.turnPage(type)
         // 发送页面改变的通知
-        mTextActionProcessor.dispatchAction(TurnPageAction(pageType))
+        mTextActionProcessor.dispatchAction(TurnPageAction(type))
+
+        // 如果切换页面，则根据切换类型预加载页面
+        // 因为，PageBitmap 实现了三张图的缓存，因此翻到上一页，则 preBitmap 空缺。
+        // TODO:逻辑放在这里有点不知所云，不懂原理很难理解。(看看有没有好的情况处理这个问题)
+        if (hasPage(type)) {
+            mSingleExecutor.execute {
+                LogHelper.i(TAG, "onTurnPage: $type")
+                mTextProcessor.preparePage(type)
+            }
+        }
     }
 
     override fun hasPage(type: PageType): Boolean {
         val hasPage = mTextProcessor.hasPage(type)
-
         LogHelper.i(TAG, "hasPage: $hasPage")
         return hasPage
     }
@@ -150,6 +168,14 @@ class PageView @JvmOverloads constructor(
         LogHelper.i(TAG, "drawPage: $type")
         // 进行页面绘制
         mTextProcessor.draw(Canvas(bitmap), type)
+
+        // TODO:放在这里总感觉不太符合逻辑。。
+        // 如果绘制的是当前页，预加载下一页
+        if (type == PageType.CURRENT && hasPage(PageType.NEXT)) {
+            mSingleExecutor.execute {
+                mTextProcessor.preparePage(PageType.NEXT)
+            }
+        }
     }
 
     /**

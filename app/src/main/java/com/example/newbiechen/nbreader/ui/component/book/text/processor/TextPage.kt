@@ -170,6 +170,11 @@ class TextPage {
         pageState = State.NONE
     }
 
+    override fun toString(): String {
+        return "TextPage(pageState=$pageState, startWordCursor=$startWordCursor, endWordCursor=$endWordCursor)"
+    }
+
+
     // 当前页面的状态
     enum class State {
         NONE,

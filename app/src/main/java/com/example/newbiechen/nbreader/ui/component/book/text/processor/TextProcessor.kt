@@ -52,6 +52,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     /**
      * 设置新的文本模块
      */
+    @Synchronized
     fun setTextModel(textModel: TextModel) {
         mTextModel = textModel
         // 创建新的光标管理器
@@ -75,6 +76,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     /**
      * 通知页面切换
      */
+    @Synchronized
     fun turnPage(pageType: PageType) {
         when (pageType) {
             // 翻阅到上一页
@@ -135,6 +137,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     /**
      * 是否页面存在
      */
+    @Synchronized
     fun hasPage(type: PageType): Boolean {
         when (type) {
             PageType.PREVIOUS -> {
@@ -159,6 +162,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     /**
      * 获取当前页面的起始光标
      */
+    @Synchronized
     fun getCurPageStartCursor(): TextWordCursor? {
         if (!mCurPage.isStartCursorPrepared()) {
             preparePage(mCurPage)
@@ -167,6 +171,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     }
 
     // 获取当前页面的终止光标
+    @Synchronized
     fun getCurPageEndCursor(): TextWordCursor? {
         if (!mCurPage.isEndCursorPrepared()) {
             preparePage(mCurPage)
@@ -181,6 +186,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
      * @param canvas:被绘制的画布
      * @param pageType:绘制的页面类型
      */
+    @Synchronized
     override fun drawInternal(canvas: TextCanvas, pageType: PageType) {
 
         // 设置背景
@@ -264,6 +270,17 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 绘制之前已选中区域
     }
 
+    @Synchronized
+    fun preparePage(pageType: PageType) {
+        val page = when (pageType) {
+            PageType.PREVIOUS -> mPrePage
+            PageType.CURRENT -> mCurPage
+            PageType.NEXT -> mNextPage
+        }
+
+        preparePage(page)
+    }
+
     /**
      * 准备处理页面数据
      */
@@ -277,7 +294,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             return
         }
 
-        LogHelper.i(TAG, "preparePage: ready")
 
         // 获取 Page 的旧状态
         val oldPageState = page.pageState
@@ -285,6 +301,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         for (lineInfo in page.lineInfoList) {
             mLineInfoCache[lineInfo] = lineInfo
         }
+
 
         // 根据当前 page 状态做相应绘制操作
         when (page.pageState) {
@@ -301,13 +318,13 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                     val startWordCursor = findPageStartCursor(page)
                     // 如果查找到了起始光标
                     if (startWordCursor != null) {
+                        page.startWordCursor!!.updateCursor(startWordCursor)
                         preparePageInternal(page, startWordCursor, page.endWordCursor!!)
                     }
                 }
             }
         }
 
-        LogHelper.i(TAG, "preparePage: success")
 
         // 更新当前 Page 状态
         page.setPageState(TextPage.State.PREPARED)
@@ -354,48 +371,69 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         unit: Int,
         height: Int
     ): TextWordCursor {
-        var height = height
-        val start = TextWordCursor(end)
-        var size = paragraphSize(page, start, true, unit)
-        height -= size.height
-        var positionChanged = !start.isStartOfParagraph()
-        start.moveToParagraphStart()
-        while (height > 0) {
+
+        var remainHeight = height
+        val startCursor = TextWordCursor(end)
+        // 获取最后一段的高度
+        var size = paragraphSize(page, startCursor, true, unit)
+        // 当前高度减去最后一段
+        remainHeight -= size.height
+        // 判断当前光标是否指向段落的起始位置
+        var positionChanged = !startCursor.isStartOfParagraph()
+        // 指向段落的起始位置(因为最后一段的数据，已经处理了)
+        startCursor.moveToParagraphStart()
+
+        // 光标从下向上移动
+        while (remainHeight > 0) {
+            // 上一段的高度
             val previousSize = size
-            if (positionChanged && start.getParagraphCursor().isEndOfSection()) {
+            if (positionChanged && startCursor.getParagraphCursor().isEndOfSection()) {
                 break
             }
             // 跳转到上一个段落
-            if (!start.preParagraph()) {
+            if (!startCursor.preParagraph()) {
                 break
             }
 
-            if (!start.getParagraphCursor().isEndOfSection()) {
+            if (!startCursor.getParagraphCursor().isEndOfSection()) {
                 positionChanged = true
             }
-
-            size = paragraphSize(page, start, false, unit)
-            height -= size.height
+            // 获取当前段落的高度
+            size = paragraphSize(page, startCursor, false, unit)
+            //
+            remainHeight -= size.height
+            // 如果上一段落不为空，则需要加上底的高度
             if (previousSize != null) {
-                height += size.bottomMargin.coerceAtMost(previousSize.topMargin)
+                remainHeight += size.bottomMargin.coerceAtMost(previousSize.topMargin)
             }
         }
-        skip(page, start, unit, -height)
+
+        // 如果段落的高度，超出区域时需要根据超出的 height，进行缩小处理
+        skip(page, startCursor, unit, -remainHeight)
 
         if (unit == SizeUnit.PIXEL_UNIT) {
             // 如果起始光标指向的位置等于末尾光标指向的位置
-            var sameStart = start.isSamePosition(end)
-            if (!sameStart && start.isEndOfParagraph() && end.isStartOfParagraph()) {
-                val startCopy = TextWordCursor(start)
+            var sameStart = startCursor.isSamePosition(end)
+            // 检测由于光标位置不同，导致 samePosition 判断失败的问题。
+            if (!sameStart && startCursor.isEndOfParagraph() && end.isStartOfParagraph()) {
+                val startCopy = TextWordCursor(startCursor)
                 startCopy.nextParagraph()
                 sameStart = startCopy.isSamePosition(end)
             }
+            // 如果指向的是同一个位置，则再进行匹配
             if (sameStart) {
-                start.updateCursor(findPageStartCursorInternal(page, end, SizeUnit.LINE_UNIT, 1))
+                startCursor.updateCursor(
+                    findPageStartCursorInternal(
+                        page,
+                        end,
+                        SizeUnit.LINE_UNIT,
+                        1
+                    )
+                )
             }
         }
 
-        return start
+        return startCursor
     }
 
     private fun paragraphSize(
@@ -411,14 +449,21 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
 
         resetTextStyle()
 
-        var wordIndex = 0
+        var elementIndex = 0
         var charIndex = 0
         var info: TextLineInfo? = null
-        while (wordIndex != endElementIndex) {
+        while (elementIndex < endElementIndex) {
             val prev = info
             info =
-                prepareTextLine(page, paragraphCursor, wordIndex, charIndex, endElementIndex, prev)
-            wordIndex = info!!.endElementIndex
+                prepareTextLine(
+                    page,
+                    paragraphCursor,
+                    elementIndex,
+                    charIndex,
+                    endElementIndex,
+                    prev
+                )
+            elementIndex = info!!.endElementIndex
             charIndex = info!!.endCharIndex
             size.height += getTextLineHeight(info, unit)
             if (prev == null) {
@@ -438,11 +483,13 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         val paragraphCursor = cursor.getParagraphCursor()
         val endElementIndex = paragraphCursor.getElementCount()
 
+        // 向上查找之前使用的元素样式，并应用
         resetTextStyle()
         applyStyleChange(paragraphCursor, 0, cursor.getElementIndex())
 
         var info: TextLineInfo? = null
         while (!cursor.isEndOfParagraph() && size > 0) {
+            // 计算行大小
             info = prepareTextLine(
                 page,
                 paragraphCursor,
@@ -451,6 +498,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 endElementIndex,
                 info
             )
+            // 跳转到行位置
             cursor.moveTo(info!!.endElementIndex, info!!.endCharIndex)
             size -= getTextLineHeight(info, unit)
         }
@@ -507,21 +555,24 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 )
 
                 // 剩余高度 = 当前行高度 - 行高
-                remainAreaHeight -= (curLineInfo.height + curLineInfo.descent + curLineInfo.vSpaceAfter)
+                remainAreaHeight -= (curLineInfo.height + curLineInfo.descent)
+
+                // 如果剩余高度不足，则 break
+                if (remainAreaHeight <= 0) {
+                    break
+                }
+
+                remainAreaHeight -= curLineInfo.vSpaceAfter
+
                 // 光标指向新行的末尾
                 findWordCursor.moveTo(curLineInfo.endElementIndex, curLineInfo.endCharIndex)
                 // 将 line 添加到 page 中
                 page.lineInfoList.add(curLineInfo)
-
-                // 如果剩余高度不足，则 break
-                if (remainAreaHeight < 0) {
-                    break
-                }
             }
 
             // 是否存在下一段落
             hasNextParagraph = findWordCursor.isEndOfParagraph() && findWordCursor.nextParagraph()
-        } while (hasNextParagraph && remainAreaHeight >= 0)
+        } while (hasNextParagraph && remainAreaHeight > 0)
 
         // 重置文本样式
         resetTextStyle()
