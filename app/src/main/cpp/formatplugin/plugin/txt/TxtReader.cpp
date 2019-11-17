@@ -4,16 +4,20 @@
 // TODO：未完成标题的处理
 
 #include <util/Logger.h>
+#include <reader/textmodel/tag/NBTagStyle.h>
 #include "TxtReader.h"
 
-TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset) : EncodingTextReader(charset),
-                                                                                         mBookReader(model),
-                                                                                         mFormat(format) {
+TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset)
+        : EncodingTextReader(charset),
+          mBookReader(model),
+          mFormat(format) {
     // 创建核心解析器
     if (charset == Charset::UTF16) {
-        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(std::make_shared<TxtReaderCoreUTF16LE>(*this));
+        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(
+                std::make_shared<TxtReaderCoreUTF16LE>(*this));
     } else if (charset == Charset::UTF16BE) {
-        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(std::make_shared<TxtReaderCoreUTF16BE>(*this));
+        mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(
+                std::make_shared<TxtReaderCoreUTF16BE>(*this));
     } else {
         mReaderCore = std::make_shared<TxtReaderCore>(*this);
     }
@@ -36,7 +40,7 @@ void TxtReader::readDocument(InputStream &inputStream) {
 
 void TxtReader::beginAnalyze() {
     // 标记初始文本为 REGULAR 标准类型
-    mBookReader.pushTextStyle(NBTextStyle::REGULAR);
+    mBookReader.pushTextStyle(NBTagStyle::REGULAR);
     // 处理新段落
     // TODO: BookReader 的风格有点像 xml 解析器的风格。beginParagraph 就相当于创建一个 paragraph 标签，之后的操作都是填充标签的内容。
     mBookReader.beginParagraph();
@@ -76,9 +80,11 @@ bool TxtReader::createNewLine() {
     // 如果文本类型包含标题
     if (mFormat.existTitle()) {
         // 如果当前不为 content 段落，并当前连续空行数等于 format 包含了最大连续空行数
-        if (!isTitleParagraph && (mConsecutiveEmptyLineCount == mFormat.getEmptyLinesBeforeNewSection())) {
+        if (!isTitleParagraph &&
+            (mConsecutiveEmptyLineCount == mFormat.getEmptyLinesBeforeNewSection())) {
             // 文本段落结束
             endParagraph();
+
             // 插入片段结束段落标记
             mBookReader.insertEndOfSectionParagraph();
 
@@ -87,8 +93,8 @@ bool TxtReader::createNewLine() {
             mBookReader.beginTitleParagraph();
 
             // 标记下一段落的文本类型为 title 类型
-            // TODO:注 pushTextStyle 一定要在 beginParagraph()，pushTextStyle 作用是指定下一次 beginParagraph 的类型
-            mBookReader.pushTextStyle(NBTextStyle::SECTION_TITLE);
+            // TODO:注 pushTagStyle 一定要在 beginParagraph()，pushTextStyle 作用是指定下一次 beginParagraph 的类型
+            mBookReader.pushTextStyle(NBTagStyle::SECTION_TITLE);
             // 启动新的段落
             mBookReader.beginParagraph();
 

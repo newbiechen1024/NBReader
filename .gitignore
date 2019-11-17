@@ -14,3 +14,4 @@
 proguard-rules.pro
 /reference/
 /app/.cxx
+/doc

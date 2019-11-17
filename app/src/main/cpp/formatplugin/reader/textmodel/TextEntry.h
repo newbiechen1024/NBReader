@@ -30,6 +30,7 @@
 #include <string>
 #include <reader/bookmodel/NBHyperlinkType.h>
 
+
 // 段落元素 ==> 基类
 class TextParagraphEntry {
 

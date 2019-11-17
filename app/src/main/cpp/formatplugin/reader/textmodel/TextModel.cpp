@@ -5,21 +5,25 @@
 
 #include <FormatPluginApp.h>
 #include <util/Logger.h>
+#include <reader/textmodel/tag/TextTag.h>
 #include "TextModel.h"
-#include "TextEntry.h"
 
 TextModel::TextModel(const std::string &id, const std::string &language, const size_t rowSize,
-                     const std::string &directoryName, const std::string &fileExtension, FontManager &fontManager)
-        : mId(id), mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
+                     const std::string &directoryName, const std::string &fileExtension,
+                     FontManager &fontManager)
+        : mId(id),
+          mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
           mAllocator(std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileExtension)),
           mCurEntryPointer(0),
           mFontManager(fontManager) {
 }
 
-TextModel::TextModel(const std::string &id, const std::string &language, std::shared_ptr<TextCachedAllocator> allocator,
+TextModel::TextModel(const std::string &id, const std::string &language,
+                     std::shared_ptr<TextCachedAllocator> allocator,
                      FontManager &fontManager) : mId(id),
-                                                 mLanguage(language.empty() ? FormatPluginApp::getInstance().language()
-                                                                            : language),
+                                                 mLanguage(language.empty()
+                                                           ? FormatPluginApp::getInstance().language()
+                                                           : language),
                                                  mAllocator(allocator),
                                                  mCurEntryPointer(0),
                                                  mFontManager(fontManager) {
@@ -45,36 +49,37 @@ TextModel::~TextModel() {
  * 3. 样式标签：占用 1 字节 ==> 详见 TextParagraph::Type
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
-void TextModel::addControlEntry(TextStyle styleTag, bool isTagStart) {
+void TextModel::addControlTag(NBTagStyle style, bool isTagStart) {
     mCurEntryPointer = mAllocator->allocate(4);
-
-    *mCurEntryPointer = TextParagraphEntry::Type::CONTROL_ENTRY;
+    *mCurEntryPointer = (char) TextTagType::CONTROL;
     *(mCurEntryPointer + 1) = 0;
-    *(mCurEntryPointer + 2) = styleTag;
+    *(mCurEntryPointer + 2) = (char) style;
     *(mCurEntryPointer + 3) = isTagStart ? 1 : 0;
 
     // 当前段落 entry 数增加
     (mParagraphs.back()->entryCount)++;
 }
 
-void TextModel::addStyleEntry(const TextStyleEntry &entry, unsigned char depth) {
+void TextModel::addStyleTag(const TextStyleTag &entry, unsigned char depth) {
 
 }
 
-void TextModel::addStyleEntry(const TextStyleEntry &entry, const std::vector<std::string> &fontFamilies,
-                              unsigned char depth) {
+void
+TextModel::addStyleTag(const TextStyleTag &entry, const std::vector<std::string> &fontFamilies,
+                       unsigned char depth) {
 
 }
 
-void TextModel::addStyleCloseEntry() {
+void TextModel::addStyleCloseTag() {
 
 }
 
-void TextModel::addHyperlinkControl(TextStyle textStyle, HyperlinkType hyperlinkType, const std::string &label) {
+void TextModel::addHyperlinkControlTag(NBTagStyle textStyle, NBTagHyperlinkType hyperlinkType,
+                                       const std::string &label) {
 
 }
 
-void TextModel::addText(const std::string &text) {
+void TextModel::addTextTag(const std::string &text) {
 
 }
 
@@ -89,7 +94,7 @@ void TextModel::addText(const std::string &text) {
  * 3. 文本字节长度：占用 4 字节
  * 4. 文本内容：占用文本长度字节。
  */
-void TextModel::addTexts(const std::vector<std::string> &text) {
+void TextModel::addTextTags(const std::vector<std::string> &text) {
     if (text.empty()) {
         return;
     }
@@ -104,7 +109,7 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
     UnicodeUtil::Ucs2String unicode2Str;
 
     // 如果当前元素类型是文本类型
-    if (mCurEntryPointer != 0 && *mCurEntryPointer == TextParagraphEntry::TEXT_ENTRY) {
+    if (mCurEntryPointer != 0 && *mCurEntryPointer == (char) TextTagType::TEXT) {
         // 如果当前 Entry 是 TEXT_ENTRY 类型，则通过指针获取当前 entry 持有的文本中长度
         const size_t oldTextLength = TextCachedAllocator::readUInt32(mCurEntryPointer + 2);
         // 新的段落长度
@@ -137,7 +142,7 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
         // 创建 text 长度的空间
         mCurEntryPointer = mAllocator->allocate(2 * textTotalLength + 6);
         // 起始位置为 entry 标记
-        *mCurEntryPointer = TextParagraphEntry::TEXT_ENTRY;
+        *mCurEntryPointer = (char) TextTagType::TEXT;
         // 用 0 为分割标记
         *(mCurEntryPointer + 1) = 0;
         // 将总长度写入到 entry 中
@@ -166,19 +171,20 @@ void TextModel::addTexts(const std::vector<std::string> &text) {
     mParagraphs.back()->curTotalTextLength += textTotalLength;
 }
 
-void TextModel::addImage(const std::string &id, short vOffset, bool isCover) {
+void TextModel::addImageTag(const std::string &id, short vOffset, bool isCover) {
 
 }
 
-void TextModel::addFixedHSpace(unsigned char length) {
+void TextModel::addFixedHSpaceTag(unsigned char length) {
 
 }
 
-void TextModel::addVideoEntry(const VideoEntry &entry) {
+void TextModel::addVideoTag(const TextVideoTag &entry) {
 
 }
 
-void TextModel::addExtensionEntry(const std::string &action, const std::map<std::string, std::string> &data) {
+void TextModel::addExtensionTag(const std::string &action,
+                                const std::map<std::string, std::string> &data) {
 
 }
 
@@ -190,7 +196,8 @@ void TextModel::addParagraphInternal(TextParagraph *paragraph) {
     paragraph->bufferBlockOffset = blockOffset / 2;
     paragraph->entryCount = 0;
     paragraph->textLength = 0;
-    paragraph->curTotalTextLength = mParagraphs.empty() ? 0 : (mParagraphs.back()->curTotalTextLength);
+    paragraph->curTotalTextLength = mParagraphs.empty() ? 0
+                                                        : (mParagraphs.back()->curTotalTextLength);
 
     // 存储每个段落
     mParagraphs.push_back(paragraph);
@@ -200,15 +207,19 @@ void TextModel::flush() {
     mAllocator->flush();
 }
 
-TextPlainModel::TextPlainModel(const std::string &id, const std::string &language, const size_t defaultBufferSize,
+TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
+                               const size_t defaultBufferSize,
                                const std::string &directoryName, const std::string &fileExtension,
-                               FontManager &fontManager) : TextModel(id, language, defaultBufferSize, directoryName,
+                               FontManager &fontManager) : TextModel(id, language,
+                                                                     defaultBufferSize,
+                                                                     directoryName,
                                                                      fileExtension, fontManager) {
 
 }
 
 TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
-                               std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager)
+                               std::shared_ptr<TextCachedAllocator> allocator,
+                               FontManager &fontManager)
         : TextModel(id, language, allocator, fontManager) {
 
 }

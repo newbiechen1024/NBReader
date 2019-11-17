@@ -3,10 +3,12 @@
 // description : 
 //
 
+#include <reader/textmodel/tag/NBTagStyle.h>
 #include "BookReader.h"
 
 BookReader::BookReader(BookModel &model) : mBookModel(model) {
     mTextModel = mBookModel.getTextModel();
+    isSectionContainsRegularContents = false;
 }
 
 void BookReader::beginParagraph(TextParagraph::Type type) {
@@ -17,8 +19,8 @@ void BookReader::beginParagraph(TextParagraph::Type type) {
     // 初始化 textmodel 中的 paragraph
 
     // 将所有的 style 作为标记添加到新创建的段落中
-    for (NBTextStyle &textStyle : mTextStyleList) {
-        mTextModel->addControlEntry(static_cast<TextStyle>(textStyle), true);
+    for (NBTagStyle &textStyle : mTagStyleStack) {
+        mTextModel->addControlTag(static_cast<NBTagStyle>(textStyle), true);
     }
 
     // 标记当前段落正在处理
@@ -46,7 +48,7 @@ void BookReader::endParagraph() {
 
 void BookReader::flushParagraphBuffer() {
     // 将当前获取到的文本添加到 TextModel 中
-    mTextModel->addTexts(mParagraphBufferList);
+    mTextModel->addTextTags(mParagraphBufferList);
     mParagraphBufferList.clear();
 }
 
@@ -97,14 +99,42 @@ void BookReader::endTitleParagraph() {
     isTitleParagraphOpen = false;
 }
 
-void BookReader::pushTextStyle(NBTextStyle style) {
-    mTextStyleList.push_back(style);
+/**
+ * 添加文本样式
+ * @param style ：文本样式类型
+ */
+void BookReader::pushTextStyle(NBTagStyle style) {
+    mTagStyleStack.push_back(style);
 }
 
+/**
+ * 删除文本样式
+ * @return
+ */
 bool BookReader::popTextStyle() {
-    mTextStyleList.pop_back();
+    if (!mTagStyleStack.empty()) {
+        mTagStyleStack.pop_back();
+        return true;
+    }
+    return false;
 }
 
 void BookReader::insertEndOfSectionParagraph() {
+    insertEndParagraph(TextParagraph::END_OF_SECTION_PARAGRAPH);
+}
 
+// 插入结束段落，保证 section 与文本不结合在一起
+void BookReader::insertEndParagraph(TextParagraph::Type type) {
+    // 如果片段是标准的内容
+    if (mTextModel != 0 && isSectionContainsRegularContents) {
+        std::size_t size = mTextModel->getParagraphCount();
+
+        // FBReader 这么写的，暂时先不改。
+        if (size > 0 && ((*mTextModel)[size - 1])->type != type) {
+            endParagraph();
+            // 通知  TextModel 创建新段落
+            ((TextPlainModel &) *mTextModel).createParagraph(type);
+            isSectionContainsRegularContents = false;
+        }
+    }
 }

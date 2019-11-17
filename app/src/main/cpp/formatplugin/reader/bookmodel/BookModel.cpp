@@ -4,6 +4,7 @@
 //
 
 #include <util/AndroidUtil.h>
+#include <util/Constants.h>
 #include "BookModel.h"
 
 BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel,
@@ -11,8 +12,9 @@ BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel,
         : mBook(book), cacheDir(bookCacheDir) {
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
-    mTextModel = std::make_shared<TextPlainModel>("", book->getLanguage(), 131072, cacheDir,
-                                                  "nb", mFontManager);
+    mTextModel = std::make_shared<TextPlainModel>("", book->getLanguage(),
+                                                  Constants::BOOK_DEFAULT_BUFFER, cacheDir,
+                                                  Constants::SUFFIX_CACHE, mFontManager);
     mTOCTree = std::make_shared<TOCTree>();
 }
 

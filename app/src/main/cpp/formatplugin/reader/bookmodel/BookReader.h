@@ -8,9 +8,9 @@
 
 
 #include "BookModel.h"
-#include "NBTextStyle.h"
 #include "TOCTree.h"
 #include <stack>
+#include <reader/textmodel/tag/NBTagStyle.h>
 
 // 这是一次性使用的类，所以 BookModel 是持有传入的 BookModel 的引用。
 class BookReader {
@@ -20,10 +20,10 @@ public:
     ~BookReader() {
     }
 
-    // 文本样式标记入栈
-    void pushTextStyle(NBTextStyle style);
+    // 标签样式标记入栈
+    void pushTextStyle(NBTagStyle style);
 
-    // 文本样式标记出栈
+    // 标签样式标记出栈
     bool popTextStyle();
 
     // 开始处理段落，传入参数指定段落段落
@@ -66,11 +66,13 @@ private:
 private:
     BookModel &mBookModel;
     std::shared_ptr<TextModel> mTextModel;
-    std::vector<NBTextStyle> mTextStyleList;
+    std::vector<NBTagStyle> mTagStyleStack;
     std::vector<std::string> mParagraphBufferList;
     std::stack<std::shared_ptr<TOCTree> > mTOCTreeStack;
     bool isParagraphOpen;
     bool isTitleParagraphOpen;
+    // 是否区域包含纯文本内容
+    bool isSectionContainsRegularContents;
 };
 
 

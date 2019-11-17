@@ -10,14 +10,14 @@
 #include <map>
 #include <jni.h>
 #include <tools/font/FontManager.h>
+#include <reader/textmodel/tag/TextStyleTag.h>
+#include <reader/textmodel/tag/NBTagStyle.h>
+#include <reader/textmodel/tag/NBTagHyperlinkType.h>
 #include "TextCachedAllocator.h"
 #include "TextParagraph.h"
 #include "TextStyleEntry.h"
 
-typedef unsigned char HyperlinkType;
-typedef unsigned char TextStyle;
-
-class VideoEntry;
+class TextVideoTag;
 
 class TextModel {
 public:
@@ -47,35 +47,55 @@ public:
         return *mAllocator;
     }
 
-    void addControlEntry(TextStyle style, bool isTagStart);
+    /**
+     * 添加控制位标签
+     * @param style:   NBReader 具有的文本样式类型
+     * @param isTagStart
+     */
+    void addControlTag(NBTagStyle style, bool isTagStart);
 
-    void addStyleEntry(const TextStyleEntry &entry, unsigned char depth);
+    /**
+     * 样式标签
+     * @param entry: 文本样式标签，(从文本的 css 中提取的类型)
+     * @param depth
+     */
+    void addStyleTag(const TextStyleTag &entry, unsigned char depth);
 
-    void addStyleEntry(const TextStyleEntry &entry, const std::vector<std::string> &fontFamilies,
-                       unsigned char depth);
+    void addStyleTag(const TextStyleTag &entry, const std::vector<std::string> &fontFamilies,
+                     unsigned char depth);
 
-    void addStyleCloseEntry();
+    /**
+     * 样式关闭标签
+     */
+    void addStyleCloseTag();
 
-    void addHyperlinkControl(TextStyle textStyle, HyperlinkType hyperlinkType,
-                             const std::string &label);
+    /**
+     * 超链接控制标签
+     * @param textStyle
+     * @param hyperlinkType
+     * @param label
+     */
+    void addHyperlinkControlTag(NBTagStyle textStyle, NBTagHyperlinkType hyperlinkType,
+                                const std::string &label);
 
-    void addText(const std::string &text);
+    void addTextTag(const std::string &text);
 
-    void addTexts(const std::vector<std::string> &text);
+    void addTextTags(const std::vector<std::string> &text);
 
-    void addImage(const std::string &id, short vOffset, bool isCover);
+    void addImageTag(const std::string &id, short vOffset, bool isCover);
 
-    void addFixedHSpace(unsigned char length);
+    void addFixedHSpaceTag(unsigned char length);
 
-    void addVideoEntry(const VideoEntry &entry);
+    void addVideoTag(const TextVideoTag &entry);
 
-    void addExtensionEntry(const std::string &action, const std::map<std::string, std::string> &data);
+    void addExtensionTag(const std::string &action, const std::map<std::string, std::string> &data);
 
     void flush();
 
 protected:
     TextModel(const std::string &id, const std::string &language, const std::size_t rowSize,
-              const std::string &directoryName, const std::string &fileExtension, FontManager &fontManager);
+              const std::string &directoryName, const std::string &fileExtension,
+              FontManager &fontManager);
 
     TextModel(const std::string &id, const std::string &language,
               std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager);
@@ -95,7 +115,8 @@ private:
 // 纯文本 model
 class TextPlainModel : public TextModel {
 public:
-    TextPlainModel(const std::string &id, const std::string &language, const std::size_t defaultBufferSize,
+    TextPlainModel(const std::string &id, const std::string &language,
+                   const std::size_t defaultBufferSize,
                    const std::string &directoryName, const std::string &fileExtension,
                    FontManager &fontManager);
 

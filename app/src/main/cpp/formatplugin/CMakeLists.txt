@@ -44,6 +44,7 @@ aux_source_directory(./plugin/txt TXT_PLUGIN_SOURCE)
 aux_source_directory(./reader/book BOOK_READER_SOURCE)
 aux_source_directory(./reader/bookmodel BOOK_MODEL_READER_SOURCE)
 aux_source_directory(./reader/textmodel TEXT_MODEL_READER_SOURCE)
+aux_source_directory(./reader/textmodel/tag READER_TEXT_MODEL_PGH_SOURCE)
 aux_source_directory(./android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
 aux_source_directory(./android/application ANDROID_APPLICATION_SOURCE)
 aux_source_directory(./tools/font TOOLS_FONT_SOURCE)
@@ -71,6 +72,7 @@ add_library( # Sets the title of the library.
         ${BOOK_READER_SOURCE}
         ${BOOK_MODEL_READER_SOURCE}
         ${TEXT_MODEL_READER_SOURCE}
+        ${READER_TEXT_MODEL_PGH_SOURCE}
         ${TOOLS_FONT_SOURCE}
         ${TOOLS_XML_SOURCE}
         ${TOOLS_ENCODING_SOURCE}
