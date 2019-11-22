@@ -12,6 +12,7 @@
 class TextCachedAllocator {
 public:
     TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
+                        const std::string &fileName,
                         const std::string &fileExtension);
 
     ~TextCachedAllocator();
@@ -100,8 +101,11 @@ private:
 
     bool hasChanges;
     bool hasFailed;
-
+    // 目录名称
     const std::string mDirectoryName;
+    // 文件名称
+    const std::string mFileName;
+    // 文件扩展名
     const std::string mFileExtension;
 
 private: // disable copying

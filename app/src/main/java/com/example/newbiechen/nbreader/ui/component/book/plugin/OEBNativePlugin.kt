@@ -10,8 +10,6 @@ import com.example.newbiechen.nbreader.ui.component.book.type.BookType
  *  description : epub 格式解析器
  */
 
-class OEBNativePlugin(context: Context, bookType: BookType) : NativeFormatPlugin(context, bookType) {
-    override fun readMetaInfo(book: BookEntity) {
-
-    }
+class OEBNativePlugin(context: Context, bookType: BookType) :
+    NativeFormatPlugin(context, bookType) {
 }

@@ -8,13 +8,14 @@
 #include "BookModel.h"
 
 BookModel::BookModel(const std::shared_ptr<Book> book, jobject jBookModel,
-                     const std::string &bookCacheDir)
-        : mBook(book), cacheDir(bookCacheDir) {
+                     const std::string &bookCacheDir, const std::string &bookCacheName)
+        : mBook(book), cacheDir(bookCacheDir), cacheName(bookCacheName) {
     // 创建一个全局引用
     mJavaModel = AndroidUtil::getEnv()->NewGlobalRef(jBookModel);
     mTextModel = std::make_shared<TextPlainModel>("", book->getLanguage(),
-                                                  Constants::BOOK_DEFAULT_BUFFER, cacheDir,
-                                                  Constants::SUFFIX_CACHE, mFontManager);
+                                                  Constants::BOOK_DEFAULT_BUFFER,
+                                                  cacheDir, cacheName, mFontManager);
+
     mTOCTree = std::make_shared<TOCTree>();
 }
 

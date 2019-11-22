@@ -15,8 +15,8 @@
 
 class BookModel {
 public:
-
-    BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const std::string &cacheDir);
+    BookModel(const std::shared_ptr<Book> book, jobject jBookModel, const std::string &cacheDir,
+              const std::string &cacheName);
 
     ~BookModel();
 
@@ -30,7 +30,10 @@ public:
     bool flush();
 
 public:
+    // 缓存目录
     const std::string cacheDir;
+    // 缓存文件名
+    const std::string cacheName;
 
 private:
     const std::shared_ptr<Book> mBook;

@@ -8,8 +8,10 @@
 
 #include <string>
 namespace Constants{
-    // 书籍缓存文件的尾缀
-    static std::string SUFFIX_CACHE = "pgh";
+    // 段落基础信息文件尾缀
+    static std::string SUFFIX_PGH_BASE = "pgb";
+    // 段落详细信息文件尾缀
+    static std::string SUFFIX_PGH_DETAIL = "pgd";
     // 书籍默认缓冲区的大小
     static size_t BOOK_DEFAULT_BUFFER = 131072;
 }

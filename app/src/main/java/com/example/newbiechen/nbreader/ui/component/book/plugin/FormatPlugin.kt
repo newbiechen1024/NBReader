@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.component.book.util.BookFileUtil
+import java.io.File
 
 /**
  *  author : newbiechen
@@ -16,24 +17,7 @@ import com.example.newbiechen.nbreader.ui.component.book.util.BookFileUtil
  *  2. ExternalFormatPlugin:外置插件 ==> ExternalFormatPlugin 暂时用不到
  */
 
-abstract class FormatPlugin(context: Context, private val bookType: BookType) {
+abstract class FormatPlugin(private val context: Context, private val bookType: BookType) {
 
-    private var tempDir: String = BookFileUtil.getPluginTempDir(context)
 
-    fun getCacheDir() = tempDir
-
-    fun getSupportType() = bookType
-
-    /**
-     * 主要用于方便给 native 调用
-     */
-    fun getSupportTypeByStr() = bookType.toString().toLowerCase()
-
-    // 获取书籍元数据信息
-    abstract fun readMetaInfo(book: BookEntity)
-
-/*    // 获取书籍封面信息
-    abstract fun readCover()
-    // 支持的编码格式
-    abstract fun supportEncoding()*/
 }

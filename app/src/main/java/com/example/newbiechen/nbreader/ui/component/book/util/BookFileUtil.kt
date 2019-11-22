@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.book.util
 
 import android.content.Context
 import android.os.Environment
+import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.uilts.FileUtil
 import java.io.File
 
@@ -12,10 +13,12 @@ import java.io.File
  */
 
 object BookFileUtil {
+
     /**
-     * 获取临时缓存目录
+     * 获取插件缓存目录
      */
-    fun getPluginTempDir(context: Context): String {
-        return FileUtil.getCachePath(context) + File.separator + "plugin"
+    fun getPluginCacheDir(context: Context): String {
+        return FileUtil.getCachePath(context)
     }
+
 }

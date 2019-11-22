@@ -90,7 +90,8 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
         JNIEnv *env,
         jobject instance,
         jobject jBookModel,
-        jstring cacheDir_) {
+        jstring cacheDir_,
+        jstring cacheName_) {
     using namespace std;
 
     // 根据当前 Plugin 查找对应的 cpp Plugin
@@ -103,6 +104,8 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
     // 获取缓存路径
     string cacheDir = AndroidUtil::toCString(env, cacheDir_);
+    string cacheName = AndroidUtil::toCString(env, cacheName_);
+
     // 获取 BookModel 中的 book 实例
     jobject jBook = AndroidUtil::Method_BookModel_getBook->call(jBookModel);
 
@@ -111,7 +114,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     env->DeleteLocalRef(jBook);
 
     // 创建 C++ 层的 BookModel
-    shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir);
+    shared_ptr<BookModel> bookModel = make_shared<BookModel>(book, jBookModel, cacheDir, cacheName);
 
     // 使用 plugin 解析 BookModel
     if (!formatPlugin->readModel(*bookModel)) {

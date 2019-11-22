@@ -6,25 +6,34 @@
 #include <FormatPluginApp.h>
 #include <util/Logger.h>
 #include <reader/textmodel/tag/TextTag.h>
+#include <util/Constants.h>
 #include "TextModel.h"
 
 TextModel::TextModel(const std::string &id, const std::string &language, const size_t rowSize,
-                     const std::string &directoryName, const std::string &fileExtension,
+                     const std::string &directoryName,
+                     const std::string &fileName,
                      FontManager &fontManager)
         : mId(id),
           mLanguage(language.empty() ? FormatPluginApp::getInstance().language() : language),
-          mAllocator(std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileExtension)),
+
+          mPghBaseAllocator(std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileName,
+                                                                  Constants::SUFFIX_PGH_BASE)),
+          mPghDetailAllocator(
+                  std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileName,
+                                                        Constants::SUFFIX_PGH_BASE)),
           mCurEntryPointer(0),
           mFontManager(fontManager) {
 }
 
 TextModel::TextModel(const std::string &id, const std::string &language,
-                     std::shared_ptr<TextCachedAllocator> allocator,
+                     std::shared_ptr<TextCachedAllocator> pghBaseAllocator,
+                     std::shared_ptr<TextCachedAllocator> pghDetailAllocator,
                      FontManager &fontManager) : mId(id),
                                                  mLanguage(language.empty()
                                                            ? FormatPluginApp::getInstance().language()
                                                            : language),
-                                                 mAllocator(allocator),
+                                                 mPghBaseAllocator(pghBaseAllocator),
+                                                 mPghDetailAllocator(pghDetailAllocator),
                                                  mCurEntryPointer(0),
                                                  mFontManager(fontManager) {
 
@@ -50,7 +59,7 @@ TextModel::~TextModel() {
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
 void TextModel::addControlTag(NBTagStyle style, bool isTagStart) {
-    mCurEntryPointer = mAllocator->allocate(4);
+    mCurEntryPointer = mPghDetailAllocator->allocate(4);
     *mCurEntryPointer = (char) TextTagType::CONTROL;
     *(mCurEntryPointer + 1) = 0;
     *(mCurEntryPointer + 2) = (char) style;
@@ -117,7 +126,8 @@ void TextModel::addTextTags(const std::vector<std::string> &text) {
 
         // 请求重新分配缓冲区
         // 2 * newTextLength ==> 最终输出是 UTF-16 所以应该是 UTF-8 * 2
-        mCurEntryPointer = mAllocator->reallocateLast(mCurEntryPointer, 2 * newTextLength + 6);
+        mCurEntryPointer = mPghDetailAllocator->reallocateLast(mCurEntryPointer,
+                                                               2 * newTextLength + 6);
         // 将重新计算的长度写入 entry 中
         TextCachedAllocator::writeUInt32(mCurEntryPointer + 2, newTextLength);
         // 移动到之前填充文本的位置
@@ -140,7 +150,7 @@ void TextModel::addTextTags(const std::vector<std::string> &text) {
 
     } else {
         // 创建 text 长度的空间
-        mCurEntryPointer = mAllocator->allocate(2 * textTotalLength + 6);
+        mCurEntryPointer = mPghDetailAllocator->allocate(2 * textTotalLength + 6);
         // 起始位置为 entry 标记
         *mCurEntryPointer = (char) TextTagType::TEXT;
         // 用 0 为分割标记
@@ -189,8 +199,8 @@ void TextModel::addExtensionTag(const std::string &action,
 }
 
 void TextModel::addParagraphInternal(TextParagraph *paragraph) {
-    const size_t blockCount = mAllocator->getBufferBlockCount();
-    const size_t blockOffset = mAllocator->getCurBufferBlockOffset();
+    const size_t blockCount = mPghDetailAllocator->getBufferBlockCount();
+    const size_t blockOffset = mPghDetailAllocator->getCurBufferBlockOffset();
     // 初始化 TextParagraph
     paragraph->bufferBlockIndex = (blockCount == 0) ? 0 : (blockCount - 1);
     paragraph->bufferBlockOffset = blockOffset / 2;
@@ -204,24 +214,25 @@ void TextModel::addParagraphInternal(TextParagraph *paragraph) {
 }
 
 void TextModel::flush() {
-    mAllocator->flush();
+    mPghDetailAllocator->flush();
 }
 
 TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
                                const size_t defaultBufferSize,
-                               const std::string &directoryName, const std::string &fileExtension,
+                               const std::string &directoryName,
+                               const std::string &fileName,
                                FontManager &fontManager) : TextModel(id, language,
                                                                      defaultBufferSize,
-                                                                     directoryName,
-                                                                     fileExtension, fontManager) {
+                                                                     directoryName, fileName,
+                                                                     fontManager) {
 
 }
 
 TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
-                               std::shared_ptr<TextCachedAllocator> allocator,
+                               std::shared_ptr<TextCachedAllocator> pghBaseAllocator,
+                               std::shared_ptr<TextCachedAllocator> pghDetailAllocator,
                                FontManager &fontManager)
-        : TextModel(id, language, allocator, fontManager) {
-
+        : TextModel(id, language, pghBaseAllocator, pghDetailAllocator, fontManager) {
 }
 
 TextPlainModel::~TextPlainModel() {

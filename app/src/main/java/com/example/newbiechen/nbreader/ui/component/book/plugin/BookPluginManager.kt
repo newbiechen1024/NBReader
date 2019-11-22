@@ -42,13 +42,13 @@ class BookPluginManager {
         registerAssetManager(context.assets)
     }
 
-    fun getPlugin(type: BookType): FormatPlugin? {
+    fun getPlugin(type: BookType): NativeFormatPlugin? {
         return mNativePluginList.firstOrNull {
             it.getSupportType() == type
         }
     }
 
-    private external fun registerAssetManager(assetManager: AssetManager);
+    private external fun registerAssetManager(assetManager: AssetManager)
 
     /**
      * 获取并初始化 native 层的 plugin

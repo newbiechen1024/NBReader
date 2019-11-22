@@ -44,7 +44,7 @@ public:
     }
 
     const TextCachedAllocator &allocator() const {
-        return *mAllocator;
+        return *mPghDetailAllocator;
     }
 
     /**
@@ -94,11 +94,14 @@ public:
 
 protected:
     TextModel(const std::string &id, const std::string &language, const std::size_t rowSize,
-              const std::string &directoryName, const std::string &fileExtension,
+              const std::string &directoryName,
+              const std::string &fileName,
               FontManager &fontManager);
 
     TextModel(const std::string &id, const std::string &language,
-              std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager);
+              std::shared_ptr<TextCachedAllocator> pghBaseAllocator,
+              std::shared_ptr<TextCachedAllocator> pghDetailAllocator,
+            FontManager &fontManager);
 
     void addParagraphInternal(TextParagraph *paragraph);
 
@@ -106,7 +109,11 @@ private:
     const std::string mId;
     const std::string mLanguage;
     std::vector<TextParagraph *> mParagraphs;
-    mutable std::shared_ptr<TextCachedAllocator> mAllocator;
+    // 段落基础数据分配器
+    mutable std::shared_ptr<TextCachedAllocator> mPghBaseAllocator;
+    // 段落详情数据分配器
+    mutable std::shared_ptr<TextCachedAllocator> mPghDetailAllocator;
+
     // 当前在缓冲区上创建的 entry 指针位置
     char *mCurEntryPointer;
     FontManager &mFontManager;
@@ -117,11 +124,14 @@ class TextPlainModel : public TextModel {
 public:
     TextPlainModel(const std::string &id, const std::string &language,
                    const std::size_t defaultBufferSize,
-                   const std::string &directoryName, const std::string &fileExtension,
+                   const std::string &directoryName,
+                   const std::string &fileName,
                    FontManager &fontManager);
 
     TextPlainModel(const std::string &id, const std::string &language,
-                   std::shared_ptr<TextCachedAllocator> allocator, FontManager &fontManager);
+                   std::shared_ptr<TextCachedAllocator> pghBaseAllocator,
+                   std::shared_ptr<TextCachedAllocator> pghDetailAllocator,
+                   FontManager &fontManager);
 
     ~TextPlainModel();
 

@@ -13,11 +13,14 @@
 #include "TextCachedAllocator.h"
 
 TextCachedAllocator::TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
+                                         const std::string &fileName,
                                          const std::string &fileExtension) : mBasicBufferBlockSize(rowSize),
                                                                              mActualBufferBlockSize(0),
-                                                                             mCurBlockOffset(0), hasChanges(false),
+                                                                             mCurBlockOffset(0),
+                                                                             hasChanges(false),
                                                                              hasFailed(false),
                                                                              mDirectoryName(directoryName),
+                                                                             mFileName(fileName),
                                                                              mFileExtension(fileExtension) {
     // 在硬盘中创建目录
     File(directoryName).mkdirs();
@@ -26,7 +29,8 @@ TextCachedAllocator::TextCachedAllocator(const size_t rowSize, const std::string
 TextCachedAllocator::~TextCachedAllocator() {
     flush();
     // 删除缓冲区的文本
-    for (std::vector<char *>::const_iterator it = mBufferBlockList.begin(); it != mBufferBlockList.end(); ++it) {
+    for (std::vector<char *>::const_iterator it = mBufferBlockList.begin();
+         it != mBufferBlockList.end(); ++it) {
         delete[] *it;
     }
 }
@@ -43,7 +47,8 @@ char *TextCachedAllocator::allocate(size_t size) {
         // TODO:char 数组的数据结构 | size | 2 | char *|
         // TODO:size 表示数据    2 表示 size 和 char * 之间的间隔标记位   char * 表示指向的下一段缓冲区
         mBufferBlockList.push_back(new char[mActualBufferBlockSize]);
-    } else if (mCurBlockOffset + size + 2 + sizeof(char *) > mActualBufferBlockSize) { // 如果
+    } else if (mCurBlockOffset + size + 2 + sizeof(char *) >
+               mActualBufferBlockSize) { // 如果当前数据偏移大于当前已分配缓冲区的大小
         // 确定实际创建缓冲块的大小
         mActualBufferBlockSize = std::max(mBasicBufferBlockSize, size + 2 + sizeof(char *));
 
@@ -136,6 +141,8 @@ void TextCachedAllocator::writeCache(size_t blockLength) {
     std::shared_ptr<OutputStream> stream = file.getOutputStream();
     if (stream == nullptr || !stream->open()) {
         hasFailed = true;
+
+        // 删除该临时文件
         return;
     }
 
