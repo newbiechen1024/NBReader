@@ -21,7 +21,7 @@ public:
         }
     }
 
-    std::shared_ptr<EncodingConverter> getEncodingConverter(Charset charset) const;
+    std::shared_ptr<EncodingConverter> getEncodingConverter(const std::string &charset) const;
 
     std::shared_ptr<EncodingConverter> getDefaultConverter() const;
 

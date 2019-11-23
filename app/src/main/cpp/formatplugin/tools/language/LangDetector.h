@@ -17,10 +17,10 @@ class LangDetector {
 public:
     // 语言信息结构体
     struct LangInfo {
-        LangInfo(const std::string &lang, Charset encoding);
+        LangInfo(const std::string &lang, const std::string &encoding);
 
         const std::string lang;
-        Charset encoding;
+        const std::string encoding;
     };
 
 public:
@@ -31,7 +31,7 @@ public:
     std::shared_ptr<LangInfo> findLanguage(const char *buffer, std::size_t length);
 
     std::shared_ptr<LangInfo>
-    findLanguageWithEncoding(Charset encoding, const char *buffer, std::size_t length);
+    findLanguageWithEncoding(const std::string &encoding, const char *buffer, std::size_t length);
 
 private:
     typedef std::vector<std::shared_ptr<StatisticMatcher>> MatcherVector;

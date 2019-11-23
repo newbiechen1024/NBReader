@@ -6,7 +6,7 @@
 #include <reader/textmodel/tag/NBTagStyle.h>
 #include "TxtReader.h"
 
-TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset)
+TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, const std::string & charset)
         : EncodingTextReader(charset),
           mBookReader(model),
           mFormat(format) {

@@ -5,11 +5,11 @@
 
 #include "UTF16EncodingConverter.h"
 
-bool UTF16EncodingConvertProvider::isSupportConverter(Charset charset) {
+bool UTF16EncodingConvertProvider::isSupportConverter(const std::string & charset) {
     return charset == Charset::UTF16 || charset == Charset::UTF16BE;
 }
 
-std::shared_ptr<EncodingConverter> UTF16EncodingConvertProvider::createConverter(Charset charset) {
+std::shared_ptr<EncodingConverter> UTF16EncodingConvertProvider::createConverter(const std::string & charset) {
 
     if (Charset::UTF16 == charset) {
         std::shared_ptr<UTF16LEEncodingConverter> converter(new UTF16LEEncodingConverter());

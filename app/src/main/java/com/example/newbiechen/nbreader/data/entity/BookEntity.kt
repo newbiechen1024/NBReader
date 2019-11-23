@@ -84,6 +84,7 @@ data class BookEntity(
     }
 
     override fun describeContents(): Int {
+        var charSet = Charsets.UTF_8
         return 0
     }
 

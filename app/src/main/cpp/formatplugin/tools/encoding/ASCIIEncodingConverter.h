@@ -17,9 +17,9 @@ public:
 
 class ASCIIEncodingConvertProvider : public EncodingConvertProvider {
 public:
-    bool isSupportConverter(Charset charset) override;
+    bool isSupportConverter(const std::string & charset) override;
 
-    std::shared_ptr<EncodingConverter> createConverter(Charset charset) override;
+    std::shared_ptr<EncodingConverter> createConverter(const std::string & charset) override;
 };
 
 #endif //NBREADER_DUMMYENCODINGCONVERTER_H

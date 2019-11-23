@@ -37,6 +37,7 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
     Logger::i("TxtPlugin", "readLanguageAndEncoding:探测文本语言和编码");
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
+
     Logger::i("TxtPlugin", "readDocument:开始解析文本");
     // 创建文本阅读器
     TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
@@ -51,7 +52,7 @@ bool TxtPlugin::readLanguageAndEncoding(Book &book) const {
     }
 
     detectEncodingAndLanguage(book, *stream);
-    return book.getEncoding() == Charset::NONE;
+    return !book.getEncoding().empty();
 }
 
 const FormatType TxtPlugin::supportType() const {

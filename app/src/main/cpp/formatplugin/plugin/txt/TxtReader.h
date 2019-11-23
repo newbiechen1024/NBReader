@@ -19,8 +19,7 @@ class TxtReaderCore;
 class TxtReader : public EncodingTextReader {
 
 public:
-
-    TxtReader(BookModel &model, const PlainTextFormat &format, Charset charset);
+    TxtReader(BookModel &model, const PlainTextFormat &format, const std::string &charset);
 
     ~TxtReader() {
     }

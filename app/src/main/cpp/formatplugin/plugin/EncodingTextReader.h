@@ -19,7 +19,7 @@ public:
 
 protected:
     // 传入编码类型
-    EncodingTextReader(Charset charset);
+    EncodingTextReader(const std::string & charset);
 
     virtual ~EncodingTextReader() {
     }

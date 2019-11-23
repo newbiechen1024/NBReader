@@ -9,15 +9,15 @@
 
 bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStream, bool force) {
     std::string language = book.getLanguage();
-    Charset encoding = book.getEncoding();
+    std::string encoding = book.getEncoding();
 
-    if (!force && (encoding != Charset::NONE)) {
+    if (!force && !encoding.empty()) {
         return true;
     }
 
     bool detected = false;
     // 如果不知道文本格式，则默认为 UTF-8
-    if (encoding == Charset::NONE) {
+    if (encoding.empty()) {
         encoding = Charset::UTF8;
     }
     // 检测文本的 encoding 和语言
@@ -29,15 +29,16 @@ bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStrea
         delete[] buffer;
 
         // 创建探测器，探测语言
-        std::shared_ptr<LangDetector::LangInfo> langInfo = LangDetector().findLanguage(buffer, size);
+        std::shared_ptr<LangDetector::LangInfo> langInfo = LangDetector().findLanguage(buffer,
+                                                                                       size);
         if (langInfo != nullptr) {
             detected = true;
             if (!langInfo->lang.empty()) {
                 language = langInfo->lang;
             }
             encoding = langInfo->encoding;
-            if (encoding == Charset::ASCII || encoding == Charset::ISO8859) {
-                encoding = Charset::WINDOWS1252;
+            if (encoding == Charset::ASCII || encoding == "iso-8859-1") {
+                encoding = "windows-1252";
             }
         }
     }

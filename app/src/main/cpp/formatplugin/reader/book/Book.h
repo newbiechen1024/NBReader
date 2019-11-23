@@ -22,7 +22,7 @@ class Book {
 public:
     static std::shared_ptr<Book> createBook(
             const File &file,
-            const Charset encoding,
+            const std::string & encoding,
             const std::string &language,
             const std::string &title);
 
@@ -36,7 +36,7 @@ public:
 
     const std::string &getLanguage() const;
 
-    Charset getEncoding() const;
+    const std::string & getEncoding() const;
 
     const std::string &getAuthor() const;
 
@@ -46,7 +46,7 @@ public:
 
     void setLanguage(const std::string &language);
 
-    void setEncoding(Charset encoding);
+    void setEncoding(const std::string& encoding);
 
     void setAuthor(const std::string &author);
 
@@ -55,7 +55,7 @@ private:
     std::string mTitle;
     std::string mLanguage;
     std::string mAuthor;
-    Charset mEncoding;
+    std::string mEncoding;
 
     Book(const Book &);
 

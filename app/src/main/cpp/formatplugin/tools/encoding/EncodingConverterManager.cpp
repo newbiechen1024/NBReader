@@ -21,18 +21,22 @@ EncodingConverterManager &EncodingConverterManager::getInstance() {
 
 EncodingConverterManager::EncodingConverterManager() {
     // ascii 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(std::make_shared<ASCIIEncodingConvertProvider>()));
+    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
+            std::make_shared<ASCIIEncodingConvertProvider>()));
     // utf-8 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(std::make_shared<UTF8EncodingConvertProvider>()));
+    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
+            std::make_shared<UTF8EncodingConvertProvider>()));
     // utf-16 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(std::make_shared<UTF16EncodingConvertProvider>()));
+    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
+            std::make_shared<UTF16EncodingConvertProvider>()));
 }
 
 void EncodingConverterManager::registerProvider(std::shared_ptr<EncodingConvertProvider> provider) {
     mProviders.push_back(provider);
 }
 
-std::shared_ptr<EncodingConverter> EncodingConverterManager::getEncodingConverter(Charset charset) const {
+std::shared_ptr<EncodingConverter>
+EncodingConverterManager::getEncodingConverter(const std::string &charset) const {
     for (auto provider : mProviders) {
         if (provider->isSupportConverter(charset)) {
             return provider->createConverter(charset);

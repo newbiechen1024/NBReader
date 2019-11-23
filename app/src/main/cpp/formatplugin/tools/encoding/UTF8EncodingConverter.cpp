@@ -39,11 +39,11 @@ void UTF8EncodingConverter::reset() {
     mBuffer.clear();
 }
 
-bool UTF8EncodingConvertProvider::isSupportConverter(Charset charset) {
+bool UTF8EncodingConvertProvider::isSupportConverter(const std::string & charset) {
     return charset == Charset::UTF8;
 }
 
-std::shared_ptr<EncodingConverter> UTF8EncodingConvertProvider::createConverter(Charset charset) {
+std::shared_ptr<EncodingConverter> UTF8EncodingConvertProvider::createConverter(const std::string & charset) {
     std::shared_ptr<UTF8EncodingConverter> converter(new UTF8EncodingConverter());
     return std::dynamic_pointer_cast<EncodingConverter>(converter);
 }

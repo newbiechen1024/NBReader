@@ -5,8 +5,9 @@
 
 #include <tools/encoding/EncodingConverterManager.h>
 #include "EncodingTextReader.h"
+#include <locale>
 
-EncodingTextReader::EncodingTextReader(Charset charset) : mConverter(nullptr) {
+EncodingTextReader::EncodingTextReader(const std::string & charset) : mConverter(nullptr) {
 
     EncodingConverterManager &manager = EncodingConverterManager::getInstance();
     // 根据 encoding 获取到 converter

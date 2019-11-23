@@ -12,8 +12,9 @@
 #include "StatisticsNativeReader.h"
 
 // 初始化 LangInfo 结构体
-LangDetector::LangInfo::LangInfo(const std::string &lang, Charset encoding) : lang(lang),
-                                                                              encoding(encoding) {
+LangDetector::LangInfo::LangInfo(const std::string &lang, const std::string &encoding) : lang(lang),
+                                                                                         encoding(
+                                                                                                 encoding) {
 }
 
 LangDetector::LangDetector() {
@@ -29,7 +30,7 @@ LangDetector::LangDetector() {
                 const std::string encoding = fileName.substr(index + 1);
 
                 std::shared_ptr<StatisticMatcher> matcher = std::make_shared<StatisticMatcher>(
-                        filePath, std::make_shared<LangInfo>(language, strToCharset(encoding)));
+                        filePath, std::make_shared<LangInfo>(language, encoding));
                 mMatchers.push_back(matcher);
             }
         }
@@ -39,7 +40,7 @@ LangDetector::LangDetector() {
 LangDetector::~LangDetector() {
 }
 
-static Charset findEncodingInternal(const unsigned char *buffer, std::size_t length) {
+static std::string findEncodingInternal(const unsigned char *buffer, std::size_t length) {
     if (buffer[0] == 0xFE && buffer[1] == 0xFF) {
         return Charset::UTF16BE;
     }
@@ -53,7 +54,7 @@ static Charset findEncodingInternal(const unsigned char *buffer, std::size_t len
     for (const unsigned char *ptr = buffer; ptr < end; ++ptr) {
         if (utf8count > 0) {
             if ((*ptr & 0xc0) != 0x80) {
-                return Charset::NONE;
+                return std::string();
             }
             --utf8count;
         } else if ((*ptr & 0x80) == 0) {
@@ -67,15 +68,16 @@ static Charset findEncodingInternal(const unsigned char *buffer, std::size_t len
             ascii = false;
             utf8count = 3;
         } else {
-            return Charset::NONE;
+            return std::string();
         }
     }
     return ascii ? Charset::ASCII : Charset::UTF8;
 }
 
 
-std::shared_ptr<LangDetector::LangInfo> LangDetector::findLanguage(const char *buffer, std::size_t length) {
-    Charset naiveLang;
+std::shared_ptr<LangDetector::LangInfo>
+LangDetector::findLanguage(const char *buffer, std::size_t length) {
+    std::string naiveLang;
     if ((unsigned char) buffer[0] == 0xFE &&
         (unsigned char) buffer[1] == 0xFF) {
         naiveLang = Charset::UTF16BE;
@@ -89,7 +91,7 @@ std::shared_ptr<LangDetector::LangInfo> LangDetector::findLanguage(const char *b
 }
 
 std::shared_ptr<LangDetector::LangInfo>
-LangDetector::findLanguageWithEncoding(Charset encoding, const char *buffer,
+LangDetector::findLanguageWithEncoding(const std::string &encoding, const char *buffer,
                                        size_t length) {
     int matchingCriterion = 0;
     std::shared_ptr<LangInfo> langInfo = nullptr;
@@ -99,7 +101,7 @@ LangDetector::findLanguageWithEncoding(Charset encoding, const char *buffer,
     // 遍历所有 Matcher 匹配器
     for (auto matcher : mMatchers) {
         // 如果 encoding 类型为空，或者 matcher 的 encoding 类型与当前 encoding 类型不同
-        if (encoding != Charset::NONE && matcher->getLangInfo()->encoding != encoding) {
+        if (!encoding.empty() && matcher->getLangInfo()->encoding != encoding) {
             continue;
         }
 

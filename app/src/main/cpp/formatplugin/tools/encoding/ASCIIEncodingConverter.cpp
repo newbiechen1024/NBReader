@@ -13,11 +13,12 @@ void ASCIIEncodingConverter::reset() {
 
 }
 
-bool ASCIIEncodingConvertProvider::isSupportConverter(Charset charset) {
+bool ASCIIEncodingConvertProvider::isSupportConverter(const std::string &charset) {
     return charset == Charset::ASCII;
 }
 
-std::shared_ptr<EncodingConverter> ASCIIEncodingConvertProvider::createConverter(Charset charset) {
+std::shared_ptr<EncodingConverter>
+ASCIIEncodingConvertProvider::createConverter(const std::string &charset) {
     std::shared_ptr<ASCIIEncodingConverter> converter(new ASCIIEncodingConverter());
     return std::dynamic_pointer_cast<EncodingConverter>(converter);
 }

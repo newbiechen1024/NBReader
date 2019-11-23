@@ -14,7 +14,7 @@ Book::~Book() {
 }
 
 std::shared_ptr<Book> Book::createBook(const File &file,
-                                       Charset encoding, const std::string &language,
+                                       const std::string &encoding, const std::string &language,
                                        const std::string &title) {
     std::shared_ptr<Book> book = std::make_shared<Book>(file);
     book->setTitle(title);
@@ -32,7 +32,7 @@ std::shared_ptr<Book> Book::createByJavaBook(jobject jBook) {
     string encoding = AndroidUtil::Method_Book_getEncoding->callForCppString(jBook);
     string language = AndroidUtil::Method_Book_getLang->callForCppString(jBook);
     // 创建 Book
-    return createBook(File(path), strToCharset(encoding), language, title);
+    return createBook(File(path), encoding, language, title);
 }
 
 void Book::setTitle(const std::string &title) {
@@ -44,7 +44,7 @@ void Book::setLanguage(const std::string &language) {
     mLanguage = language;
 }
 
-void Book::setEncoding(Charset encoding) {
+void Book::setEncoding(const std::string &encoding) {
     mEncoding = encoding;
 }
 
@@ -56,7 +56,7 @@ const std::string &Book::getTitle() const {
     return mTitle;
 }
 
-Charset Book::getEncoding() const {
+const std::string &Book::getEncoding() const {
     return mEncoding;
 }
 

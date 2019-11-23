@@ -40,10 +40,10 @@ public:
     virtual ~EncodingConvertProvider() {}
 
     // 该编码是否支持转换
-    virtual bool isSupportConverter(Charset charset) = 0;
+    virtual bool isSupportConverter(const std::string & charset) = 0;
 
     // 创建转换器
-    virtual std::shared_ptr<EncodingConverter> createConverter(Charset charset) = 0;
+    virtual std::shared_ptr<EncodingConverter> createConverter(const std::string & charset) = 0;
 
 /*    // 禁止复制
 private:

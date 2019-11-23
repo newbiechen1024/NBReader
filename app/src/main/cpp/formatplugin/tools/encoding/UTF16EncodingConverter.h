@@ -13,9 +13,9 @@
 
 class UTF16EncodingConvertProvider : public EncodingConvertProvider {
 public:
-    bool isSupportConverter(Charset charset) override;
+    bool isSupportConverter(const std::string & charset) override;
 
-    std::shared_ptr<EncodingConverter> createConverter(Charset charset) override;
+    std::shared_ptr<EncodingConverter> createConverter(const std::string & charset) override;
 };
 
 class UTF16EncodingConverter : public EncodingConverter {
