@@ -8,10 +8,11 @@
 
 #include <string>
 #include <util/UnicodeUtil.h>
+#include <filesystem/FileSystem.h>
 
 class TextCachedAllocator {
 public:
-    TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
+    TextCachedAllocator(const size_t defaultBufferSize, const std::string &directoryName,
                         const std::string &fileName,
                         const std::string &fileExtension);
 
@@ -19,6 +20,12 @@ public:
 
     char *allocate(size_t size);
 
+    /**
+     * 重新对刚才 @see allocate() 获取的 ptr 进行分配
+     * @param ptr:最近一次使用 allocate() 返回的 ptr
+     * @param newSize
+     * @return
+     */
     char *reallocateLast(char *ptr, size_t newSize);
 
     void flush();
@@ -63,21 +70,13 @@ public:
     }
 
 public:
-    const std::string &directoryName() const {
-        return mDirectoryName;
+    const std::string & getCachePath(){
+        return mCacheFile.getPath();
     }
 
-    const std::string &fileExtension() const {
-        return mFileExtension;
-    }
-
-    // 数据块数量
-    size_t getBufferBlockCount() const {
-        return mBufferBlockList.size();
-    }
-
-    size_t getCurBufferBlockOffset() const {
-        return mCurBlockOffset;
+    // 返回当前的偏移位置
+    size_t getCurOffset() const {
+        return mLastTotalOffset + mCurBlockOffset;
     }
 
     bool isFailed() const {
@@ -85,7 +84,6 @@ public:
     }
 
 private:
-    std::string createFileName(size_t index);
 
     void writeCache(size_t blockLength);
 
@@ -95,18 +93,17 @@ private:
     // 实际创建缓冲块的大小
     size_t mActualBufferBlockSize;
     // 存储创建的所有缓冲区指针
-    std::vector<char *> mBufferBlockList;
-    // 基于当前缓冲块的偏移
+    char *mBufferBlock;
+    // 当前缓冲区的偏移
     size_t mCurBlockOffset;
+    // 写入到本地数据的偏移
+    size_t mLastTotalOffset;
 
     bool hasChanges;
+
     bool hasFailed;
-    // 目录名称
-    const std::string mDirectoryName;
-    // 文件名称
-    const std::string mFileName;
-    // 文件扩展名
-    const std::string mFileExtension;
+
+    const File mCacheFile;
 
 private: // disable copying
     TextCachedAllocator(const TextCachedAllocator &);

@@ -27,7 +27,6 @@ class TextCacheReader(
         mCacheBlockList.addAll(Collections.nCopies(blockCount, WeakReference<CharArray>(null)))
     }
 
-
     private fun getCacheFilePath(index: Int): String {
         return cacheDir + File.separator + "${index}." + fileExtension
     }

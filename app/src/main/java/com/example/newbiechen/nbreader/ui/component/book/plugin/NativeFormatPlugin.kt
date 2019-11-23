@@ -20,14 +20,6 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         private const val TAG = "NativeFormatPlugin"
 
         /**
-         * 与 Native 约定生成缓存数据的尾缀
-         * @see PARAGRAPH_BASE_SUFFIX:表示基础段落信息
-         * @see PARAGRAPH_DETAIL_SUFFIX:表示段落数据详情
-         */
-        private const val PARAGRAPH_BASE_SUFFIX = ".pgb"
-        private const val PARAGRAPH_DETAIL_SUFFIX = ".pgd"
-
-        /**
          * 获取缓存目录
          */
         fun getCacheDir(context: Context): String {
@@ -39,26 +31,6 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
          */
         fun getBookCacheDir(context: Context, bookEntity: BookEntity): String {
             return getCacheDir(context) + File.separator + bookEntity.title
-        }
-
-        /**
-         * 获取段落基础文件
-         */
-        fun getParagraphBaseFile(context: Context, bookEntity: BookEntity): String {
-            return getBookCacheDir(
-                context,
-                bookEntity
-            ) + File.separator + bookEntity.id + PARAGRAPH_BASE_SUFFIX
-        }
-
-        /**
-         * 获取段落详情的基本文件
-         */
-        fun getParagraphDetailFile(context: Context, bookEntity: BookEntity): String {
-            return getBookCacheDir(
-                context,
-                bookEntity
-            ) + File.separator + bookEntity.id + PARAGRAPH_DETAIL_SUFFIX
         }
     }
 

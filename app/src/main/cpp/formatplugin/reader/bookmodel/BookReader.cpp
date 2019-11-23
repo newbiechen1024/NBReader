@@ -48,7 +48,7 @@ void BookReader::endParagraph() {
 
 void BookReader::flushParagraphBuffer() {
     // 将当前获取到的文本添加到 TextModel 中
-    mTextModel->addTextTags(mParagraphBufferList);
+    mTextModel->addTextTag(mParagraphBufferList);
     mParagraphBufferList.clear();
 }
 

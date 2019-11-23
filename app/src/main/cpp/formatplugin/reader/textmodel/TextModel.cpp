@@ -20,9 +20,9 @@ TextModel::TextModel(const std::string &id, const std::string &language, const s
                                                                   Constants::SUFFIX_PGH_BASE)),
           mPghDetailAllocator(
                   std::make_shared<TextCachedAllocator>(rowSize, directoryName, fileName,
-                                                        Constants::SUFFIX_PGH_BASE)),
-          mCurEntryPointer(0),
-          mFontManager(fontManager) {
+                                                        Constants::SUFFIX_PGH_DETAIL)),
+          mFontManager(fontManager),
+          mCurDetailTagPtr(nullptr) {
 }
 
 TextModel::TextModel(const std::string &id, const std::string &language,
@@ -34,8 +34,8 @@ TextModel::TextModel(const std::string &id, const std::string &language,
                                                            : language),
                                                  mPghBaseAllocator(pghBaseAllocator),
                                                  mPghDetailAllocator(pghDetailAllocator),
-                                                 mCurEntryPointer(0),
-                                                 mFontManager(fontManager) {
+                                                 mFontManager(fontManager),
+                                                 mCurDetailTagPtr(nullptr) {
 
 }
 
@@ -49,24 +49,24 @@ TextModel::~TextModel() {
 /**
  *
  * @param style：style 标签类型
- * @param isTagStart：是开放标签，还是闭合标签。 ==> 有些 style 标签不需要闭合。
+ * @param isStartTag：是开放标签，还是闭合标签。 ==> 有些 style 标签不需要闭合。
  *
- * control entry 结构：占用 4 字节，格式为 | entry 类型 | 0 | 样式标签 | 是开放标签还是闭合标签 |
+ * control tag 结构：占用 4 字节，格式为 | entry 类型 | 0 | 样式标签 | 是开放标签还是闭合标签 |
  *
  * 1. entry 类型：占用 1 字节
  * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过
  * 3. 样式标签：占用 1 字节 ==> 详见 TextParagraph::Type
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
-void TextModel::addControlTag(NBTagStyle style, bool isTagStart) {
-    mCurEntryPointer = mPghDetailAllocator->allocate(4);
-    *mCurEntryPointer = (char) TextTagType::CONTROL;
-    *(mCurEntryPointer + 1) = 0;
-    *(mCurEntryPointer + 2) = (char) style;
-    *(mCurEntryPointer + 3) = isTagStart ? 1 : 0;
+void TextModel::addControlTag(NBTagStyle style, bool isStartTag) {
+    mCurDetailTagPtr = mPghDetailAllocator->allocate(4);
+    *mCurDetailTagPtr = (char) TextTagType::CONTROL;
+    *(mCurDetailTagPtr + 1) = 0;
+    *(mCurDetailTagPtr + 2) = (char) style;
+    *(mCurDetailTagPtr + 3) = isStartTag ? 1 : 0;
 
     // 当前段落 entry 数增加
-    (mParagraphs.back()->entryCount)++;
+    (mParagraphs.back()->tagCount)++;
 }
 
 void TextModel::addStyleTag(const TextStyleTag &entry, unsigned char depth) {
@@ -103,33 +103,34 @@ void TextModel::addTextTag(const std::string &text) {
  * 3. 文本字节长度：占用 4 字节
  * 4. 文本内容：占用文本长度字节。
  */
-void TextModel::addTextTags(const std::vector<std::string> &text) {
+void TextModel::addTextTag(const std::vector<std::string> &text) {
     if (text.empty()) {
         return;
     }
 
     // 获取传入文本的长度
-    size_t textTotalLength = 0;
+    size_t textLength = 0;
     for (const std::string &str : text) {
         // 获取该文本对应 UTF-8 编码的长度
-        textTotalLength = UnicodeUtil::utf8Length(str);
+        textLength = UnicodeUtil::utf8Length(str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;
 
-    // 如果当前元素类型是文本类型
-    if (mCurEntryPointer != 0 && *mCurEntryPointer == (char) TextTagType::TEXT) {
+    // 是否是追加数据
+    if (mCurDetailTagPtr != nullptr && *mCurDetailTagPtr == (char) TextTagType::TEXT) {
         // 如果当前 Entry 是 TEXT_ENTRY 类型，则通过指针获取当前 entry 持有的文本中长度
-        const size_t oldTextLength = TextCachedAllocator::readUInt32(mCurEntryPointer + 2);
+        const size_t oldTextLength = TextCachedAllocator::readUInt32(mCurDetailTagPtr + 2);
+
         // 新的段落长度
-        const size_t newTextLength = oldTextLength + textTotalLength;
+        const size_t newTextLength = oldTextLength + textLength;
 
         // 请求重新分配缓冲区
         // 2 * newTextLength ==> 最终输出是 UTF-16 所以应该是 UTF-8 * 2
-        mCurEntryPointer = mPghDetailAllocator->reallocateLast(mCurEntryPointer,
+        mCurDetailTagPtr = mPghDetailAllocator->reallocateLast(mCurDetailTagPtr,
                                                                2 * newTextLength + 6);
         // 将重新计算的长度写入 entry 中
-        TextCachedAllocator::writeUInt32(mCurEntryPointer + 2, newTextLength);
+        TextCachedAllocator::writeUInt32(mCurDetailTagPtr + 2, newTextLength);
         // 移动到之前填充文本的位置
         size_t offset = 6 + oldTextLength;
 
@@ -139,24 +140,20 @@ void TextModel::addTextTags(const std::vector<std::string> &text) {
             // 获取转换后的总长度的字节数
             const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
-            std::memcpy(mCurEntryPointer + offset, &unicode2Str.front(), len);
+            std::memcpy(mCurDetailTagPtr + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
             // 下一文本的起始偏移位置
             offset += len;
         }
-
-        // 设置段落的长度
-        mParagraphs.back()->textLength = newTextLength;
-
     } else {
         // 创建 text 长度的空间
-        mCurEntryPointer = mPghDetailAllocator->allocate(2 * textTotalLength + 6);
+        mCurDetailTagPtr = mPghDetailAllocator->allocate(2 * textLength + 6);
         // 起始位置为 entry 标记
-        *mCurEntryPointer = (char) TextTagType::TEXT;
+        *mCurDetailTagPtr = (char) TextTagType::TEXT;
         // 用 0 为分割标记
-        *(mCurEntryPointer + 1) = 0;
+        *(mCurDetailTagPtr + 1) = 0;
         // 将总长度写入到 entry 中
-        TextCachedAllocator::writeUInt32(mCurEntryPointer + 2, textTotalLength);
+        TextCachedAllocator::writeUInt32(mCurDetailTagPtr + 2, textLength);
         // 起始文本偏移位置
         size_t offset = 6;
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
@@ -165,20 +162,15 @@ void TextModel::addTextTags(const std::vector<std::string> &text) {
             // 获取转换后的总长度的字节数
             const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
-            std::memcpy(mCurEntryPointer + offset, &unicode2Str.front(), len);
+            std::memcpy(mCurDetailTagPtr + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
 
             // 下一文本的起始偏移位置
             offset += len;
         }
 
-        (mParagraphs.back()->entryCount)++;
-
-        // 设置段落的长度
-        mParagraphs.back()->textLength = textTotalLength;
+        (mParagraphs.back()->tagCount)++;
     }
-
-    mParagraphs.back()->curTotalTextLength += textTotalLength;
 }
 
 void TextModel::addImageTag(const std::string &id, short vOffset, bool isCover) {
@@ -199,22 +191,37 @@ void TextModel::addExtensionTag(const std::string &action,
 }
 
 void TextModel::addParagraphInternal(TextParagraph *paragraph) {
-    const size_t blockCount = mPghDetailAllocator->getBufferBlockCount();
-    const size_t blockOffset = mPghDetailAllocator->getCurBufferBlockOffset();
+
+    if (!mParagraphs.empty()) {
+        // 获取最后一个段落
+        TextParagraph *lastParagraph = mParagraphs.back();
+
+        // 写入 paragraph 标签缓冲数据
+        char *paragraphTag = mPghBaseAllocator->allocate(12);
+        *paragraphTag = (char) TextBaseTagType::PARAGRAPH;
+        *(paragraphTag + 1) = 0;
+        *(paragraphTag + 2) = lastParagraph->type;
+        *(paragraphTag + 3) = 0;
+        TextCachedAllocator::writeUInt32(paragraphTag + 4, lastParagraph->offset);
+        TextCachedAllocator::writeUInt32(paragraphTag + 8, lastParagraph->tagCount);
+    }
+
+    const size_t bufferOffset = mPghDetailAllocator->getCurOffset();
     // 初始化 TextParagraph
-    paragraph->bufferBlockIndex = (blockCount == 0) ? 0 : (blockCount - 1);
-    paragraph->bufferBlockOffset = blockOffset / 2;
-    paragraph->entryCount = 0;
-    paragraph->textLength = 0;
-    paragraph->curTotalTextLength = mParagraphs.empty() ? 0
-                                                        : (mParagraphs.back()->curTotalTextLength);
+    paragraph->offset = bufferOffset / 2;
+    paragraph->tagCount = 0;
 
     // 存储每个段落
     mParagraphs.push_back(paragraph);
 }
 
-void TextModel::flush() {
+bool TextModel::flush() {
+    // 强制将缓冲数据写入到文件
+
+    mPghBaseAllocator->flush();
     mPghDetailAllocator->flush();
+
+    return !mPghBaseAllocator->isFailed() || !mPghDetailAllocator->isFailed();
 }
 
 TextPlainModel::TextPlainModel(const std::string &id, const std::string &language,
@@ -236,6 +243,7 @@ TextPlainModel::TextPlainModel(const std::string &id, const std::string &languag
 }
 
 TextPlainModel::~TextPlainModel() {
+
 }
 
 /**

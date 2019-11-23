@@ -23,30 +23,18 @@ struct TextParagraph {
     };
 
     TextParagraph(Type paragraphType = TEXT_PARAGRAPH) : type(paragraphType),
-                                                         bufferBlockIndex(0),
-                                                         bufferBlockOffset(0),
-                                                         entryCount(0),
-                                                         textLength(0),
-                                                         curTotalTextLength(0) {
+                                                         offset(0),
+                                                         tagCount(0) {
     }
 
     // 段落类型
     Type type;
 
-    // 段落在缓冲块的位置
-    int bufferBlockIndex;
+    // 段落在 .pgd 文件中的起始位置偏移
+    int offset;
 
-    // 段落在缓冲块中的对应位置
-    int bufferBlockOffset;
-
-    // 具有的 TextParagraphEntry 数量
-    int entryCount;
-
-    // 当前段落文本长度
-    int textLength;
-
-    // 到当前段落总文本的长度
-    int curTotalTextLength;
+    // 段落中包含的标签数量
+    int tagCount;
 };
 
 #endif //NBREADER_TEXTPARAGRAPH_H

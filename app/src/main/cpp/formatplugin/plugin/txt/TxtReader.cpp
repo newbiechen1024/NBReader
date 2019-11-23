@@ -1,7 +1,6 @@
 // author : newbiechen
 // date : 2019-10-06 18:59
-// description : 
-// TODO：未完成标题的处理
+// description :
 
 #include <util/Logger.h>
 #include <reader/textmodel/tag/NBTagStyle.h>
@@ -11,6 +10,7 @@ TxtReader::TxtReader(BookModel &model, const PlainTextFormat &format, Charset ch
         : EncodingTextReader(charset),
           mBookReader(model),
           mFormat(format) {
+
     // 创建核心解析器
     if (charset == Charset::UTF16) {
         mReaderCore = std::dynamic_pointer_cast<TxtReaderCore>(

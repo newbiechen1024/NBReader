@@ -168,18 +168,19 @@ std::shared_ptr<InputStream> File::getInputStream() const {
                 if (isDirectory()) {
                     return 0;
                 }
-                stream = std::dynamic_pointer_cast<InputStream>(std::make_shared<FileInputStream>(mPath));
+                stream = std::dynamic_pointer_cast<InputStream>(
+                        std::make_shared<FileInputStream>(mPath));
             }
         }
     }
     return stream;
 }
 
-std::shared_ptr<OutputStream> File::getOutputStream() const {
+std::shared_ptr<FileOutputStream> File::getOutputStream() const {
     // 如果是压缩文件、或者是目录，直接返回
     if (isArchive() || isCompressed() || isDirectory()) {
         return nullptr;
     }
-    return std::dynamic_pointer_cast<OutputStream>(std::make_shared<FileOutputStream>(mPath));
+    return std::make_shared<FileOutputStream>(mPath);
 }
 

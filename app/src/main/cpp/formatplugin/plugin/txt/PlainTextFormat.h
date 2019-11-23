@@ -36,7 +36,7 @@ public:
     // 新片段之前的空行数
     int getEmptyLinesBeforeNewSection() const { return mEmptyLinesBeforeNewSection; }
 
-    // 是否存在标题
+    // TODO:是否存在标题 (标题检测应该可以删除了，对于部分文件是无效的)
     bool existTitle() const { return isExistTitle; }
 
 private:

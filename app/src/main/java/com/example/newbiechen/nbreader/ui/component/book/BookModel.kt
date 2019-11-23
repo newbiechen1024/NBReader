@@ -30,15 +30,10 @@ class BookModel private constructor(val book: BookEntity) {
     fun createTextModel(
         id: String?,
         lang: String,
-        bufferBlockCount: Int,
-        cacheDir: String,
-        fileExtension: String,
-        // 每个段落的数据信息
-        paragraphInfos: Array<TextParagraphInfo>
+        paragraphBasePath: String,
+        paragraphDetailPath: String
     ): TextModel {
-        return TextPlainModel(
-            id, lang, bufferBlockCount, cacheDir, fileExtension, paragraphInfos
-        )
+        return TextPlainModel(id, lang, paragraphBasePath, paragraphDetailPath)
     }
 
     // TextModel 是在 native 层创建的，native 层调用 java 层赋值。

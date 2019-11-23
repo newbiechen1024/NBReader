@@ -11,7 +11,18 @@
 #include <map>
 
 /**
+ * 文本基础标签类型
+ *
+ * 用于 .pgb 文件中
+ */
+enum class TextBaseTagType : char {
+    HEAD = 1,
+    PARAGRAPH = 2,
+};
+
+/**
  * 文本标签类型
+ * 用于 .pgd 文件中
  */
 enum class TextTagType : char {
     TEXT = 1, // 文本元素

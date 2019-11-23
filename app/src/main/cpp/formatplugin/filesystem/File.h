@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <filesystem/io/InputStream.h>
 #include <filesystem/io/OutputStream.h>
+#include <filesystem/io/FileOutputStream.h>
 #include "FileStat.h"
 #include "FileDir.h"
 
@@ -99,7 +100,7 @@ public:
 
     std::shared_ptr<InputStream> getInputStream() const;
 
-    std::shared_ptr<OutputStream> getOutputStream() const;
+    std::shared_ptr<FileOutputStream> getOutputStream() const;
 
     bool operator==(const File &other) const {
         return mPath == other.mPath;

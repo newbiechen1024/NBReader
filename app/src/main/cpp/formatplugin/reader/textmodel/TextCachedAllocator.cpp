@@ -8,96 +8,103 @@
 
 #include <filesystem/File.h>
 #include <util/StringUtil.h>
-#include <filesystem/FileSystem.h>
 #include <util/Logger.h>
 #include "TextCachedAllocator.h"
 
-TextCachedAllocator::TextCachedAllocator(const size_t rowSize, const std::string &directoryName,
+static std::string getFilePath(const std::string &dir, const std::string &fileName,
+                               const std::string &fileExtension) {
+    std::string name(dir);
+    name.append(FileSystem::separator);
+    name.append(fileName);
+    // 添加尾缀
+    return name.append(".").append(fileExtension);
+}
+
+TextCachedAllocator::TextCachedAllocator(const size_t defaultBufferSize,
+                                         const std::string &directoryName,
                                          const std::string &fileName,
-                                         const std::string &fileExtension) : mBasicBufferBlockSize(rowSize),
-                                                                             mActualBufferBlockSize(0),
-                                                                             mCurBlockOffset(0),
-                                                                             hasChanges(false),
-                                                                             hasFailed(false),
-                                                                             mDirectoryName(directoryName),
-                                                                             mFileName(fileName),
-                                                                             mFileExtension(fileExtension) {
+                                         const std::string &fileExtension) : mBasicBufferBlockSize(defaultBufferSize),
+                                                                             mBufferBlock(nullptr),
+                                                                             mCacheFile(getFilePath(
+                                                                                     directoryName,
+                                                                                     fileName,
+                                                                                     fileExtension)) {
+    mActualBufferBlockSize = 0;
+    mCurBlockOffset = 0;
+    mLastTotalOffset = 0;
+    hasChanges = false;
+    hasFailed = false;
+
     // 在硬盘中创建目录
     File(directoryName).mkdirs();
 }
 
 TextCachedAllocator::~TextCachedAllocator() {
     flush();
-    // 删除缓冲区的文本
-    for (std::vector<char *>::const_iterator it = mBufferBlockList.begin();
-         it != mBufferBlockList.end(); ++it) {
-        delete[] *it;
+
+    // 删除缓冲块的缓冲数据
+    if (mBufferBlock != nullptr) {
+        delete[] mBufferBlock;
     }
 }
 
-// TODO：1. 这部分代码可优化，将 char * 改用创建一个 BufferBlock 表示，要不然一般人看不懂。
-// TODO：2. 没看懂作者为什么要持有下一个 bufferBlock 的指针，又无法写入到文本中。
-// TODO：3. 根据上层代码(CachedCharStorage)显示，size + 2 这个 2 只是用来给 offset 判断是否达到数据尾部的提示，可加可不加。
 char *TextCachedAllocator::allocate(size_t size) {
     hasChanges = true;
+
     // 如果文本池没有数据
-    if (mBufferBlockList.empty()) {
-        // 根据传入的大小，决定实际当前缓冲区的大小
-        mActualBufferBlockSize = std::max(mBasicBufferBlockSize, size + 2 + sizeof(char *));
-        // TODO:char 数组的数据结构 | size | 2 | char *|
-        // TODO:size 表示数据    2 表示 size 和 char * 之间的间隔标记位   char * 表示指向的下一段缓冲区
-        mBufferBlockList.push_back(new char[mActualBufferBlockSize]);
-    } else if (mCurBlockOffset + size + 2 + sizeof(char *) >
-               mActualBufferBlockSize) { // 如果当前数据偏移大于当前已分配缓冲区的大小
-        // 确定实际创建缓冲块的大小
-        mActualBufferBlockSize = std::max(mBasicBufferBlockSize, size + 2 + sizeof(char *));
+    if (mBufferBlock == nullptr) {
+        // 根据传入的数据大小，决定实际当前缓冲区的大小
+        mActualBufferBlockSize = std::max(mBasicBufferBlockSize, size);
+        // 创建缓冲区
+        mBufferBlock = new char[mActualBufferBlockSize];
+    } else if (mCurBlockOffset + size > mActualBufferBlockSize) { // 如果当前数据偏移大于当前已分配缓冲区的大小
 
-        char *bufferBlock = new char[mActualBufferBlockSize];
+        // 如果新增的尺寸，超出了缓冲区大小，则将数据写入到本地
+        writeCache(mCurBlockOffset);
 
-        char *ptr = mBufferBlockList.back() + mCurBlockOffset;
-        // 初始化间隔标记位
-        *(ptr++) = 0;
-        *(ptr++) = 0;
+        size_t newBufferBlockSize = std::max(mBasicBufferBlockSize, size);
+        // 如果新缓冲块大小，大于上一缓冲块大小
+        if (newBufferBlockSize > mActualBufferBlockSize) {
+            mActualBufferBlockSize = newBufferBlockSize;
+            delete[] mBufferBlock;
+            mBufferBlock = new char[mActualBufferBlockSize];
+        }
 
-        // 将当前 bufferBlock 第一个字节的地址复制到，上一个 bufferBlock 的最后一个字节位置上
-        std::memcpy(ptr, &bufferBlock, sizeof(char *));
+        // 重置缓冲区数据
+        std::memset(mBufferBlock, 0, sizeof(char) * mActualBufferBlockSize);
 
-        // 将缓冲区的数据 + 间隔标记位接入到文本中
-        // TODO:并没有将下一个 bufferBlock 的地址写入到文件中，说明间隔标位，同时承担缓冲块的标记作用。
-        writeCache(mCurBlockOffset + 2);
-
-        // 添加到列表中
-        mBufferBlockList.push_back(bufferBlock);
         // 重置当前缓冲块的偏移
         mCurBlockOffset = 0;
     }
-    char *ptr = mBufferBlockList.back() + mCurBlockOffset;
+    char *ptr = mBufferBlock + mCurBlockOffset;
     mCurBlockOffset += size;
     return ptr;
 }
 
-
 char *TextCachedAllocator::reallocateLast(char *ptr, size_t newSize) {
-    // TODO: 传入的 ptr 必须是之前 push_back() 进去的 bufferBlock 的一部分才行 ==> 代码写的不严谨
     // 作用：如果之前请求分配的区域不够的话，需要重新申请分配内存的意思。 ==> 传入的 ptr 必须是最新 allocate 返回的值。
     hasChanges = true;
-    const size_t oldOffset = ptr - mBufferBlockList.back();
-    if (oldOffset + newSize + 2 + sizeof(char *) <= mActualBufferBlockSize) {
+    const size_t oldOffset = ptr - mBufferBlock;
+    if (oldOffset + newSize <= mActualBufferBlockSize) {
         mCurBlockOffset = oldOffset + newSize;
         return ptr;
     } else {
-        mActualBufferBlockSize = std::max(mBasicBufferBlockSize, newSize + 2 + sizeof(char *));
-        char *row = new char[mActualBufferBlockSize];
-        std::memcpy(row, ptr, mCurBlockOffset - oldOffset);
+        // 如果新增的尺寸，超出了缓冲区大小，则将数据写入到本地
+        writeCache(mCurBlockOffset);
 
-        *ptr++ = 0;
-        *ptr++ = 0;
-        std::memcpy(ptr, &row, sizeof(char *));
-        writeCache(oldOffset + 2);
+        size_t newBufferBlockSize = std::max(mBasicBufferBlockSize, newSize);
+        // 如果新缓冲块大小，大于上一缓冲块大小
+        if (newBufferBlockSize > mActualBufferBlockSize) {
+            mActualBufferBlockSize = newBufferBlockSize;
+            delete[] mBufferBlock;
+            mBufferBlock = new char[mActualBufferBlockSize];
+        }
 
-        mBufferBlockList.push_back(row);
+        // 重置缓冲区数据
+        std::memset(mBufferBlock, 0, sizeof(char) * mActualBufferBlockSize);
+
         mCurBlockOffset = newSize;
-        return row;
+        return mBufferBlock;
     }
 }
 
@@ -105,48 +112,39 @@ void TextCachedAllocator::flush() {
     if (!hasChanges) {
         return;
     }
-    // 删除 offset 后多余的 char 文本，并写入到 file 
-    char *ptr = mBufferBlockList.back() + mCurBlockOffset;
-    *ptr++ = 0;
-    *ptr = 0;
-    writeCache(mCurBlockOffset + 2);
+
+    writeCache(mCurBlockOffset);
     hasChanges = false;
 }
 
-std::string TextCachedAllocator::createFileName(size_t index) {
-    std::string name(mDirectoryName);
-    name.append(FileSystem::separator);
-    // 将 index 作为 file 的名字
-    StringUtil::appendNumber(name, index);
-    // 添加尾缀
-    return name.append(".").append(mFileExtension);
-}
-
 /**
- *
  * @param blockLength:从缓冲块中输出数据的长度
- * 将缓冲块数据输出到文本中，每一个缓冲块就创建一个文本文件。
+ * 将缓冲块输出到文本中。
  */
 void TextCachedAllocator::writeCache(size_t blockLength) {
     // 如果出错，或者池子中没有数据，则返回
-    if (hasFailed || mBufferBlockList.size() == 0) {
+    if (hasFailed || mBufferBlock == nullptr) {
         return;
     }
 
-    const size_t index = mBufferBlockList.size() - 1;
-    const std::string fileName = createFileName(index);
+    // 如果是第一次写入数据，并且旧文件存在，则直接删除
+    if (mLastTotalOffset == 0 && mCacheFile.exists()) {
+        mCacheFile.deleteFile();
+    }
 
-    File file(fileName);
     // 获取文本的输出流
-    std::shared_ptr<OutputStream> stream = file.getOutputStream();
-    if (stream == nullptr || !stream->open()) {
-        hasFailed = true;
+    std::shared_ptr<FileOutputStream> stream = mCacheFile.getOutputStream();
 
-        // 删除该临时文件
+    if (stream == nullptr || !stream->open(true)) {
+        hasFailed = true;
         return;
     }
 
     // 将缓冲区的数据写入到文本中
-    stream->write(mBufferBlockList[index], blockLength);
+    stream->write(mBufferBlock, blockLength);
+    // 关闭流
     stream->close();
+
+    // 写入到本地的数据长度
+    mLastTotalOffset += blockLength;
 }

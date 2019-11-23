@@ -36,10 +36,8 @@ std::shared_ptr<TOCTree> BookModel::getTOCTree() const {
 }
 
 bool BookModel::flush() {
-    // 强制缓冲
-    mTextModel->flush();
-    // 判断是否强制缓冲失败
-    if (mTextModel->allocator().isFailed()) {
+    // 进行强制缓冲
+    if (!mTextModel->flush()) {
         return false;
     }
     return true;

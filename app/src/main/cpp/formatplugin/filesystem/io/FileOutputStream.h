@@ -9,7 +9,8 @@
 
 #include "OutputStream.h"
 #include <string>
-#include <filesystem/File.h>
+
+class File;
 
 class FileOutputStream : public OutputStream {
 public:
@@ -21,6 +22,13 @@ public:
 
     bool open() override;
 
+    /**
+     * 是否允许
+     * @param append
+     * @return
+     */
+    bool open(bool append);
+
     void write(const char *data, size_t len) override;
 
     void write(const std::string &str) override;
@@ -28,11 +36,10 @@ public:
     void close() override;
 
 private:
-    std::string mTempPath;
+    bool openFileInternal(bool append);
+
     std::string mPath;
     FILE *mFile;
-
-    bool hasError;
 };
 
 

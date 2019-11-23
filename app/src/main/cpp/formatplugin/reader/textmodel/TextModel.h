@@ -43,16 +43,28 @@ public:
         return mParagraphs.size();
     }
 
-    const TextCachedAllocator &allocator() const {
-        return *mPghDetailAllocator;
+    /**
+     * 获取段落基础数据路径
+     * @return
+     */
+    const std::string &getParagraphBasePath() {
+        return (*mPghBaseAllocator).getCachePath();
+    }
+
+    /**
+     * 获取段落详细数据路径
+     * @return
+     */
+    const std::string &getParagraphDetailPath() const {
+        return (*mPghDetailAllocator).getCachePath();
     }
 
     /**
      * 添加控制位标签
      * @param style:   NBReader 具有的文本样式类型
-     * @param isTagStart
+     * @param isStartTag
      */
-    void addControlTag(NBTagStyle style, bool isTagStart);
+    void addControlTag(NBTagStyle style, bool isStartTag);
 
     /**
      * 样式标签
@@ -80,7 +92,7 @@ public:
 
     void addTextTag(const std::string &text);
 
-    void addTextTags(const std::vector<std::string> &text);
+    void addTextTag(const std::vector<std::string> &text);
 
     void addImageTag(const std::string &id, short vOffset, bool isCover);
 
@@ -90,7 +102,7 @@ public:
 
     void addExtensionTag(const std::string &action, const std::map<std::string, std::string> &data);
 
-    void flush();
+    bool flush();
 
 protected:
     TextModel(const std::string &id, const std::string &language, const std::size_t rowSize,
@@ -101,7 +113,7 @@ protected:
     TextModel(const std::string &id, const std::string &language,
               std::shared_ptr<TextCachedAllocator> pghBaseAllocator,
               std::shared_ptr<TextCachedAllocator> pghDetailAllocator,
-            FontManager &fontManager);
+              FontManager &fontManager);
 
     void addParagraphInternal(TextParagraph *paragraph);
 
@@ -113,9 +125,9 @@ private:
     mutable std::shared_ptr<TextCachedAllocator> mPghBaseAllocator;
     // 段落详情数据分配器
     mutable std::shared_ptr<TextCachedAllocator> mPghDetailAllocator;
+    // .pgd 文件的标签指针
+    char *mCurDetailTagPtr;
 
-    // 当前在缓冲区上创建的 entry 指针位置
-    char *mCurEntryPointer;
     FontManager &mFontManager;
 };
 

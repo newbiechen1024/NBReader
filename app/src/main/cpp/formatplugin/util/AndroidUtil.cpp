@@ -83,11 +83,10 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Constructor_TextParagraphInfo = std::make_shared<JavaConstructor>(Class_TextParagraphInfo,
                                                                       "(BIIIII)V");
 
-    // TODO:思考是否传入 ParagraphInfo
     Method_BookModel_createTextModel = std::make_shared<ObjectMethod>(Class_BookModel,
                                                                       "createTextModel",
                                                                       Class_TextModel,
-                                                                      "(Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;[Lcom/example/newbiechen/nbreader/ui/component/book/text/entity/TextParagraphInfo;)");
+                                                                      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)");
 
     Method_BookModel_setTextModel = std::make_shared<VoidMethod>(Class_BookModel,
                                                                  "setTextModel",

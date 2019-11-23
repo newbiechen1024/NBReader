@@ -107,13 +107,13 @@ class BookManager constructor(
             ?: throw IllegalAccessException("UnSupport Book Type")
 
         // 根据 Book 实例化
-        mBookModel = BookModel.createBookModel(book, plugin as NativeFormatPlugin)
+        mBookModel = BookModel.createBookModel(book, plugin)
 
-        // 对文本处理器，设置文本模块
+/*        // 对文本处理器，设置文本模块
         textProcessor.setTextModel(mBookModel!!.textModel!!)
 
         // 通知刷新
-        textProcessor.posInvalidate()
+        textProcessor.posInvalidate()*/
     }
 }
 

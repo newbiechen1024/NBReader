@@ -24,53 +24,24 @@ static std::shared_ptr<FormatPlugin> findCppPlugin(jobject base) {
 
 static jobject createJavaTextModel(JNIEnv *env, jobject jBookModel, TextModel &textModel) {
     // 创建一块本地作用域，
-    env->PushLocalFrame(16);
+    env->PushLocalFrame(8);
 
-    // 获取 textModel 的基础信息
+    // 获取生成 textModel 的基础信息
     jstring id = AndroidUtil::toJString(env, textModel.id());
     jstring lang = AndroidUtil::toJString(env, textModel.language());
-    const TextCachedAllocator &allocator = textModel.allocator();
-
-    jstring cacheDir = AndroidUtil::toJString(env, allocator.directoryName());
-    jstring fileExtension = AndroidUtil::toJString(env, allocator.fileExtension());
-    jint blockCount = (jint) allocator.getBufferBlockCount();
-
-
-    // TODO：展示创建 Paragraph 构造并返回。(没有想到更好的办法，不过我感觉肯定要改的)
-
-    JavaClass &javaTextParagraphInfo = AndroidUtil::Class_TextParagraphInfo;
-
-    size_t paragraphCount = textModel.getParagraphCount();
-
-    jobjectArray jParagraphArr = env->NewObjectArray(paragraphCount,
-                                                     javaTextParagraphInfo.getJClass(), 0);
-
-    for (int i = 0; i < paragraphCount; ++i) {
-        TextParagraph paragraph = (*textModel[i]);
-
-
-        jobject jTextParagraphInfo = AndroidUtil::Constructor_TextParagraphInfo->call(
-                paragraph.type, paragraph.bufferBlockIndex, paragraph.bufferBlockOffset,
-                paragraph.entryCount, paragraph.textLength, paragraph.curTotalTextLength
-        );
-
-        env->SetObjectArrayElement(jParagraphArr, i, jTextParagraphInfo);
-
-        env->DeleteLocalRef(jTextParagraphInfo);
-    }
+    jstring pghBasePath = AndroidUtil::toJString(env, textModel.getParagraphBasePath());
+    jstring pghDetailPath = AndroidUtil::toJString(env, textModel.getParagraphDetailPath());
 
     // 调用 creatTextModel
     jobject jTextModel = AndroidUtil::Method_BookModel_createTextModel->call(jBookModel, id, lang,
-                                                                             blockCount, cacheDir,
-                                                                             fileExtension,
-                                                                             jParagraphArr);
+                                                                             pghBasePath,
+                                                                             pghDetailPath);
+
     if (env->ExceptionCheck()) {
         // 输出异常描述
         env->ExceptionDescribe();
-
         jTextModel = 0;
     }
-
     // 清除本地作用域
     return env->PopLocalFrame(jTextModel);
 }

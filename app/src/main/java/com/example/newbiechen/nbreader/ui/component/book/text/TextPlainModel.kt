@@ -24,41 +24,18 @@ class TextPlainModel : TextModel {
 
     private val mId: String?
     private val mLang: String
-    private val mBlockCount: Int
-    private val mCacheDir: String
-    private val mFileExtension: String
-    private val mPghInfoList: Array<TextParagraphInfo>
-    private val mCacheReader: TextCacheReader
 
     constructor(
         // 文本信息
         id: String?,
         lang: String,
-        // 缓冲文件信息
-        bufferBlockCount: Int,
-        cacheDir: String,
-        fileExtension: String,
-        // 每个段落的数据信息
-        paragraphInfos: Array<TextParagraphInfo>
+        paragraphBasePath: String,
+        paragraphDetailPath: String
     ) {
         mId = id
         mLang = lang
-        mBlockCount = bufferBlockCount
-        mCacheDir = cacheDir
-        mFileExtension = fileExtension
-        mPghInfoList = paragraphInfos
 
-        // 创建缓冲块读取器
-        mCacheReader = TextCacheReader(
-            cacheDir,
-            fileExtension,
-            bufferBlockCount
-        )
-
-        LogHelper.i(
-            TAG,
-            "lang = $mLang , mBlockCount = $mBlockCount mCacheDir = $mCacheDir , paragraphCount = ${mPghInfoList.size}"
-        )
+        // 生成两个 Reader
     }
 
     override fun getId(): String? {
@@ -70,14 +47,14 @@ class TextPlainModel : TextModel {
     }
 
     override fun getParagraphCount(): Int {
-        return mPghInfoList.size
+        return 0
     }
 
     override fun getTextLength(index: Int): Int {
         return if (index >= getParagraphCount()) {
             0
         } else {
-            mPghInfoList[index].textLength
+            0
         }
     }
 
@@ -86,9 +63,10 @@ class TextPlainModel : TextModel {
             return null
         }
 
-        return TextParagraphImpl(index)
+        return null
+        // return TextParagraphImpl(index)
     }
-
+/*
     // TextParagraph Entry 遍历器
     inner class EntryIteratorImpl(index: Int) : TextParagraph.EntryIterator {
 
@@ -187,7 +165,6 @@ class TextPlainModel : TextModel {
 
     // 段落结构信息
     inner class TextParagraphImpl(private val index: Int) : TextParagraph {
-
         override fun getInfo(): TextParagraphInfo {
             return mPghInfoList[index]
         }
@@ -195,5 +172,5 @@ class TextPlainModel : TextModel {
         override fun getIterator(): TextParagraph.EntryIterator {
             return EntryIteratorImpl(index)
         }
-    }
+    }*/
 }
