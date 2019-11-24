@@ -9,6 +9,7 @@
 #include "ASCIIEncodingConverter.h"
 #include "UTF8EncodingConverter.h"
 #include "UTF16EncodingConverter.h"
+#include "JavaEncodingConverter.h"
 
 EncodingConverterManager *EncodingConverterManager::sInstance = nullptr;
 
@@ -21,14 +22,13 @@ EncodingConverterManager &EncodingConverterManager::getInstance() {
 
 EncodingConverterManager::EncodingConverterManager() {
     // ascii 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
-            std::make_shared<ASCIIEncodingConvertProvider>()));
+    registerProvider(std::make_shared<ASCIIEncodingConvertProvider>());
     // utf-8 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
-            std::make_shared<UTF8EncodingConvertProvider>()));
+    registerProvider(std::make_shared<UTF8EncodingConvertProvider>());
     // utf-16 转换器
-    registerProvider(std::dynamic_pointer_cast<EncodingConvertProvider>(
-            std::make_shared<UTF16EncodingConvertProvider>()));
+    registerProvider(std::make_shared<UTF16EncodingConvertProvider>());
+    // 通过 Java 层实现字符集转换
+    registerProvider(std::make_shared<JavaEncodingConvertProvider>());
 }
 
 void EncodingConverterManager::registerProvider(std::shared_ptr<EncodingConvertProvider> provider) {

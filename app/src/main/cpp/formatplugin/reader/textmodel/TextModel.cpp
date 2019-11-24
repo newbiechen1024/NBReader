@@ -110,8 +110,8 @@ void TextModel::addTextTag(const std::vector<std::string> &text) {
 
     // 获取传入文本的长度
     size_t textLength = 0;
+    // str 持有 UTF-8 编码的数据，通过 UTF-8 解析文本中有多少个字
     for (const std::string &str : text) {
-        // 获取该文本对应 UTF-8 编码的长度
         textLength = UnicodeUtil::utf8Length(str);
     }
 
@@ -126,7 +126,7 @@ void TextModel::addTextTag(const std::vector<std::string> &text) {
         const size_t newTextLength = oldTextLength + textLength;
 
         // 请求重新分配缓冲区
-        // 2 * newTextLength ==> 最终输出是 UTF-16 所以应该是 UTF-8 * 2
+        // 2 * newTextLength ==> utf-16 中一个字占用 2 个字节。所以空间为 2 * 字数
         mCurDetailTagPtr = mPghDetailAllocator->reallocateLast(mCurDetailTagPtr,
                                                                2 * newTextLength + 6);
         // 将重新计算的长度写入 entry 中
@@ -137,7 +137,7 @@ void TextModel::addTextTag(const std::vector<std::string> &text) {
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
             UnicodeUtil::utf8ToUcs2(unicode2Str, *it);
-            // 获取转换后的总长度的字节数
+            // 获取转换后的总长度的字数 * 2 (因为使用 UTF-16 编码)
             const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
             std::memcpy(mCurDetailTagPtr + offset, &unicode2Str.front(), len);
@@ -191,7 +191,6 @@ void TextModel::addExtensionTag(const std::string &action,
 }
 
 void TextModel::addParagraphInternal(TextParagraph *paragraph) {
-
     if (!mParagraphs.empty()) {
         // 获取最后一个段落
         TextParagraph *lastParagraph = mParagraphs.back();
@@ -208,6 +207,7 @@ void TextModel::addParagraphInternal(TextParagraph *paragraph) {
 
     const size_t bufferOffset = mPghDetailAllocator->getCurOffset();
     // 初始化 TextParagraph
+    // 因为 java 中的 char 占 2 字节，所以需要除以 2。
     paragraph->offset = bufferOffset / 2;
     paragraph->tagCount = 0;
 

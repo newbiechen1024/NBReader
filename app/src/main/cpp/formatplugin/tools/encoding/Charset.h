@@ -1,6 +1,6 @@
 // author : newbiechen
 // date : 2019-10-07 18:55
-// description : 字符集枚举
+// description : 字符集常量
 
 #ifndef NBREADER_CHARSET_H
 #define NBREADER_CHARSET_H

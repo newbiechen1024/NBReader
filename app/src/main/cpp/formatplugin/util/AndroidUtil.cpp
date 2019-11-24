@@ -26,14 +26,14 @@ JavaClass AndroidUtil::Class_BookEntity(PKG_NAME + "data/entity/BookEntity");
 JavaClass AndroidUtil::Class_TextModel(
         PKG_NAME + "ui/component/book/text/TextModel");
 
-JavaClass AndroidUtil::Class_TextParagraphInfo(
-        PKG_NAME + "ui/component/book/text/entity/TextParagraphInfo");
+JavaClass AndroidUtil::Class_EncodingConverter(
+        PKG_NAME + "ui/component/book/text/util/EncodingConverter"
+);
 
 // 初始化静态成员。。
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
-
-// 初始化构造函数
-std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextParagraphInfo;
+std::shared_ptr<StaticBooleanMethod> AndroidUtil::StaticMethod_EncodingConverter_isEncodingSupport;
+std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_EncodingConverter_createEncodingConverter;
 
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
 std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
@@ -48,6 +48,11 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_createTextModel;
 std::shared_ptr<VoidMethod> AndroidUtil::Method_BookModel_setTextModel;
 
+std::shared_ptr<StringMethod> AndroidUtil::Method_EncodingConverter_getName;
+std::shared_ptr<IntMethod> AndroidUtil::Method_EncodingConverter_convert;
+std::shared_ptr<VoidMethod> AndroidUtil::Method_EncodingConverter_reset;
+
+
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
     sJavaVM->GetEnv((void **) &env, JNI_VERSION_1_6);
@@ -60,6 +65,14 @@ bool AndroidUtil::init(JavaVM *jvm) {
     StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale,
                                                                           "getDefault",
                                                                           Class_Locale, "()");
+
+    StaticMethod_EncodingConverter_isEncodingSupport = std::make_shared<StaticBooleanMethod>(
+            Class_EncodingConverter,
+            "isEncodingSupport", "(Ljava/lang/String;)");
+
+    StaticMethod_EncodingConverter_createEncodingConverter = std::make_shared<StaticObjectMethod>(
+            Class_EncodingConverter,
+            "createEncodingConverter", Class_EncodingConverter, "(Ljava/lang/String;)");
 
     Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_Locale, "getLanguage", "()");
 
@@ -80,9 +93,6 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_Book_getEncoding = std::make_shared<StringMethod>(Class_BookEntity, "getEncoding", "()");
     Method_Book_getLang = std::make_shared<StringMethod>(Class_BookEntity, "getLang", "()");
 
-    Constructor_TextParagraphInfo = std::make_shared<JavaConstructor>(Class_TextParagraphInfo,
-                                                                      "(BIIIII)V");
-
     Method_BookModel_createTextModel = std::make_shared<ObjectMethod>(Class_BookModel,
                                                                       "createTextModel",
                                                                       Class_TextModel,
@@ -91,6 +101,16 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_BookModel_setTextModel = std::make_shared<VoidMethod>(Class_BookModel,
                                                                  "setTextModel",
                                                                  "(Lcom/example/newbiechen/nbreader/ui/component/book/text/TextModel;)");
+
+    Method_EncodingConverter_convert = std::make_shared<IntMethod>(Class_EncodingConverter,
+                                                                   "convert",
+                                                                   "([BII[C)");
+
+    Method_EncodingConverter_getName = std::make_shared<StringMethod>(Class_EncodingConverter,
+                                                                      "getName", "()");
+
+    Method_EncodingConverter_reset = std::make_shared<VoidMethod>(Class_EncodingConverter, "reset",
+                                                                  "()");
     return true;
 }
 

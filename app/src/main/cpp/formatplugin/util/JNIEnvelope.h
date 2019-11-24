@@ -268,6 +268,13 @@ public:
     jobjectArray call(jobject base, ...);
 };
 
+class StaticBooleanMethod : public JavaStaticMethod {
+public:
+    StaticBooleanMethod(const JavaClass &cls, const std::string &name, const std::string &param);
+
+    jboolean call(...);
+};
+
 class StaticObjectMethod : public JavaStaticMethod {
 
 public:

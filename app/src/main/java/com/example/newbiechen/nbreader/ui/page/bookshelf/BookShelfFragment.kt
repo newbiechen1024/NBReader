@@ -33,10 +33,9 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
 
         mDataBinding.tvRead.setOnClickListener {
 
-            // 指定一个文件路径
+            // 指定一个文件路径 /data/data/
             ReadActivity.startActivity(context!!,
-                // /storage/emulated/0/测试书籍/修罗帝尊[www.txt909.com].txt
-                BookEntity("asda", "修罗帝尊", BookType.TXT, "/storage/emulated/0/测试书籍/修罗帝尊[www.txt909.com].txt", true)
+                BookEntity("asda", "剑来", BookType.TXT, "/storage/emulated/0/测试书籍/剑来.txt", true)
             )
         }
     }

@@ -5,18 +5,19 @@
 
 #include "UTF16EncodingConverter.h"
 
-bool UTF16EncodingConvertProvider::isSupportConverter(const std::string & charset) {
+bool UTF16EncodingConvertProvider::isSupportConverter(const std::string &charset) {
     return charset == Charset::UTF16 || charset == Charset::UTF16BE;
 }
 
-std::shared_ptr<EncodingConverter> UTF16EncodingConvertProvider::createConverter(const std::string & charset) {
+std::shared_ptr<EncodingConverter>
+UTF16EncodingConvertProvider::createConverter(const std::string &charset) {
 
     if (Charset::UTF16 == charset) {
         std::shared_ptr<UTF16LEEncodingConverter> converter(new UTF16LEEncodingConverter());
-        return std::dynamic_pointer_cast<EncodingConverter>(converter);
+        return converter;
     } else {
         std::shared_ptr<UTF16BEEncodingConverter> converter(new UTF16BEEncodingConverter());
-        return std::dynamic_pointer_cast<EncodingConverter>(converter);
+        return converter;
     }
 }
 
@@ -37,7 +38,8 @@ void UTF16EncodingConverter::convert(std::string &dst, const char *srcStart, con
         hasStoredChar = true;
     }
     for (; srcStart != srcEnd; srcStart += 2) {
-        dst.append(buffer, UnicodeUtil::ucs2ToUtf8(buffer, unicode2Char(*srcStart, *(srcStart + 1))));
+        dst.append(buffer,
+                   UnicodeUtil::ucs2ToUtf8(buffer, unicode2Char(*srcStart, *(srcStart + 1))));
     }
 }
 

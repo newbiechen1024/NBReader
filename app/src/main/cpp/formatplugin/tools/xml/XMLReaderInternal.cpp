@@ -77,6 +77,8 @@ void XMLReaderInternal::fEndElementHandler(void *userData, const char *name) {
 
 static int fUnknownEncodingHandler(void *, const XML_Char *name, XML_Encoding *encoding) {
 
+    // TODO:encoding 未知情况下的处理
+
     std::shared_ptr<EncodingConverter> converter = EncodingConverterManager::getInstance()
             .getEncodingConverter(name);
 

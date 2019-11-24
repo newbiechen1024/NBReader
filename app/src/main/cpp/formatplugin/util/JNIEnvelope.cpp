@@ -256,6 +256,20 @@ jobjectArray ObjectArrayMethod::call(jobject base, ...) {
     return result;
 }
 
+StaticBooleanMethod::StaticBooleanMethod(const JavaClass &cls, const std::string &name,
+                                         const std::string &param)
+        : JavaStaticMethod(cls, name, JavaBasicType::Boolean, param) {
+
+}
+
+jboolean StaticBooleanMethod::call(...) {
+    va_list lst;
+    va_start(lst, this);
+    jboolean result = AndroidUtil::getEnv()->CallStaticBooleanMethodV(getJClass(), mId, lst);
+    va_end(lst);
+    return result;
+}
+
 StaticObjectMethod::StaticObjectMethod(const JavaClass &cls, const std::string &name,
                                        const JavaClass &returnType, const std::string &parameters)
         : JavaStaticMethod(cls, name, returnType, parameters) {

@@ -24,12 +24,12 @@ public:
     static JavaClass Class_BookModel;
     static JavaClass Class_BookEntity;
     static JavaClass Class_TextModel;
-    static JavaClass Class_TextParagraphInfo;
-
-
-    static std::shared_ptr<JavaConstructor> Constructor_TextParagraphInfo;
+    // 编码转换器
+    static JavaClass Class_EncodingConverter;
 
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
+    static std::shared_ptr<StaticBooleanMethod> StaticMethod_EncodingConverter_isEncodingSupport;
+    static std::shared_ptr<StaticObjectMethod> StaticMethod_EncodingConverter_createEncodingConverter;
 
     static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
 
@@ -44,6 +44,11 @@ public:
     static std::shared_ptr<StringMethod> Method_Book_getLang;
     static std::shared_ptr<ObjectMethod> Method_BookModel_createTextModel;
     static std::shared_ptr<VoidMethod> Method_BookModel_setTextModel;
+
+    // JavaEncodingConverter
+    static std::shared_ptr<StringMethod> Method_EncodingConverter_getName;
+    static std::shared_ptr<IntMethod> Method_EncodingConverter_convert;
+    static std::shared_ptr<VoidMethod> Method_EncodingConverter_reset;
 
 public:
     static bool init(JavaVM *jvm);
