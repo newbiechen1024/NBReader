@@ -77,7 +77,8 @@ bool TxtReader::createNewLine() {
             (mFormat.getBreakType() & PlainTextFormat::BREAK_PARAGRAPH_AT_NEW_LINE) ||
             ((mFormat.getBreakType() & PlainTextFormat::BREAK_PARAGRAPH_AT_EMPTY_LINE) &&
              (mConsecutiveEmptyLineCount > 0));
-    // 如果文本类型包含标题
+
+/*    // 如果文本类型包含标题
     if (mFormat.existTitle()) {
         // 如果当前不为 content 段落，并当前连续空行数等于 format 包含了最大连续空行数
         if (!isTitleParagraph &&
@@ -114,7 +115,7 @@ bool TxtReader::createNewLine() {
             isTitleParagraph = false;
             paragraphBreak = true;
         }
-    }
+    }*/
 
     // 是否允许更换段落
     if (paragraphBreak) {

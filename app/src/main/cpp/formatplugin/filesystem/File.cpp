@@ -163,13 +163,12 @@ std::shared_ptr<InputStream> File::getInputStream() const {
             if (baseFile.mArchiveType & ZIP) {
                 std::shared_ptr<ZipInputStream> zipInputStream(
                         new ZipInputStream(base, baseName, mPath.substr(index + 1)));
-                stream = std::dynamic_pointer_cast<InputStream>(zipInputStream);
+                stream = zipInputStream;
             } else {
                 if (isDirectory()) {
                     return 0;
                 }
-                stream = std::dynamic_pointer_cast<InputStream>(
-                        std::make_shared<FileInputStream>(mPath));
+                stream = std::make_shared<FileInputStream>(mPath);
             }
         }
     }

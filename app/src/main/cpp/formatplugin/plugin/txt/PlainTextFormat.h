@@ -33,18 +33,10 @@ public:
     // 获取无视缩进的距离
     int getIgnoredIndent() const { return mIgnoredIndent; }
 
-    // 新片段之前的空行数
-    int getEmptyLinesBeforeNewSection() const { return mEmptyLinesBeforeNewSection; }
-
-    // TODO:是否存在标题 (标题检测应该可以删除了，对于部分文件是无效的)
-    bool existTitle() const { return isExistTitle; }
-
 private:
     bool isInitialized;
     int mBreakType;
     int mIgnoredIndent;
-    int mEmptyLinesBeforeNewSection;
-    bool isExistTitle;
 
     // 友元:文本探测器
     friend class PlainTextDetector;
