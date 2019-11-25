@@ -9,6 +9,7 @@
 #include "PlainTextFormat.h"
 #include "TxtReader.h"
 
+
 TxtPlugin::TxtPlugin() {
 }
 
@@ -38,13 +39,12 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
     }
 
     Logger::i("TxtPlugin", "开始探测文本语言和编码");
-
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
+
     Logger::i("TxtPlugin",
               "结束探测文本语言和编码：encoding " + book.getEncoding() + "  language:" + book.getLanguage());
 
-    Logger::i("TxtPlugin", "readDocument:开始解析文本");
     // 创建文本阅读器
     TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
     Logger::i("TxtPlugin", "readDocument:解析文本结束");

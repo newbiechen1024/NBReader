@@ -20,17 +20,21 @@ bool FormatPlugin::detectEncodingAndLanguage(Book &book, InputStream &inputStrea
     if (encoding.empty()) {
         encoding = Charset::UTF8;
     }
+
     // 检测文本的 encoding 和语言
     if (inputStream.open()) {
-        static const int BUFF_SIZE = 65536;
+        // TODO：FBReader 是 65535 我嫌效率慢，最大获取 30 K 的数据。
+        static const int BUFF_SIZE = 30 * 1024;
         char *buffer = new char[BUFF_SIZE];
         const std::size_t size = inputStream.read(buffer, BUFF_SIZE);
         inputStream.close();
-        delete[] buffer;
 
         // 创建探测器，探测语言
         std::shared_ptr<LangDetector::LangInfo> langInfo = LangDetector().findLanguage(buffer,
                                                                                        size);
+
+        delete[] buffer;
+
         if (langInfo != nullptr) {
             detected = true;
             if (!langInfo->lang.empty()) {

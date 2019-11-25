@@ -23,6 +23,19 @@ set_target_properties(
         IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
 )
 
+# 添加字符编码检测器
+add_library(
+        uchardet
+        STATIC
+        IMPORTED
+)
+
+set_target_properties(
+        uchardet
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libuchardet.a
+)
+
 find_library(
         zip-lib
         z)
@@ -85,4 +98,5 @@ target_link_libraries(
         ${zip-lib}
         android
         expat
+        uchardet
 )

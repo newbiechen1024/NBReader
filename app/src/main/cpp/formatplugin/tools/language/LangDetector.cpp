@@ -6,10 +6,20 @@
 #include <filesystem/asset/AssetManager.h>
 #include <filesystem/FileSystem.h>
 #include <util/Logger.h>
+#include <include/uchardet/uchardet.h>
 #include "LangDetector.h"
 #include "LangUtil.h"
 #include "LangMatcher.h"
 #include "StatisticsNativeReader.h"
+
+// 根据 https://github.com/freedesktop/uchardet 做的映射表
+// 根据某些语言专属的 charset 推测出该 charset 对应的语言。如果没有则需要进行语言匹配
+// TODO：现在我只写了中文
+std::map<std::string, std::string> LangDetector::CHARSET_LANG_MAP = {
+        // 中文
+        {"big5",    "zh"},
+        {"gb18030", "zh"}
+};
 
 // 初始化 LangInfo 结构体
 LangDetector::LangInfo::LangInfo(const std::string &lang, const std::string &encoding) : lang(lang),
@@ -17,10 +27,57 @@ LangDetector::LangInfo::LangInfo(const std::string &lang, const std::string &enc
                                                                                                  encoding) {
 }
 
-LangDetector::LangDetector() {
+LangDetector::LangDetector() : isInitialize(false) {
+}
+
+LangDetector::~LangDetector() {
+}
+
+static std::string findEncodingInternal(const char *buffer, std::size_t length) {
+    uchardet_t handle = uchardet_new();
+
+    int retval = uchardet_handle_data(handle, buffer, length);
+
+    // TODO:需要进行错误处理。
+    if (retval != 0) {
+        fprintf(stderr,
+                "uchardet: handle data error.\n");
+        exit(1);
+    }
+
+    uchardet_data_end(handle);
+
+    // 生成的是大写 encoding
+    std::string encoding(uchardet_get_charset(handle));
+
+    uchardet_delete(handle);
+
+    return encoding.empty() ? Charset::ASCII : encoding;
+}
+
+
+std::shared_ptr<LangDetector::LangInfo>
+LangDetector::findLanguage(const char *buffer, std::size_t length) {
+    const std::string encoding = findEncodingInternal(buffer, length);
+    auto it = CHARSET_LANG_MAP.find(encoding);
+
+    // 首先从 charset 和 lang 映射表中查找，如果存在则直接返回
+    if (it != CHARSET_LANG_MAP.end()) {
+        return std::make_shared<LangInfo>(it->second, it->first);
+    }
+
+    return findLanguageWithEncoding(encoding, buffer, length);
+}
+
+void LangDetector::initLangMatchers() {
+    if (isInitialize) {
+        return;
+    }
+
     // 获取文件目录路径
     std::string patternDirPath = LangUtil::getPatternDirectoryFromAsset();
     auto patternFileNames = AssetManager::getInstance().list(patternDirPath, false);
+
     if (!patternFileNames->empty()) {
         for (std::string &fileName: (*patternFileNames)) {
             const int index = fileName.find('_');
@@ -35,64 +92,18 @@ LangDetector::LangDetector() {
             }
         }
     }
-}
 
-LangDetector::~LangDetector() {
-}
-
-static std::string findEncodingInternal(const unsigned char *buffer, std::size_t length) {
-    if (buffer[0] == 0xFE && buffer[1] == 0xFF) {
-        return Charset::UTF16BE;
-    }
-    if (buffer[0] == 0xFF && buffer[1] == 0xFE) {
-        return Charset::UTF16;
-    }
-
-    bool ascii = true;
-    const unsigned char *end = buffer + length;
-    int utf8count = 0;
-    for (const unsigned char *ptr = buffer; ptr < end; ++ptr) {
-        if (utf8count > 0) {
-            if ((*ptr & 0xc0) != 0x80) {
-                return std::string();
-            }
-            --utf8count;
-        } else if ((*ptr & 0x80) == 0) {
-        } else if ((*ptr & 0xe0) == 0xc0) {
-            ascii = false;
-            utf8count = 1;
-        } else if ((*ptr & 0xf0) == 0xe0) {
-            ascii = false;
-            utf8count = 2;
-        } else if ((*ptr & 0xf8) == 0xf0) {
-            ascii = false;
-            utf8count = 3;
-        } else {
-            return std::string();
-        }
-    }
-    return ascii ? Charset::ASCII : Charset::UTF8;
-}
-
-
-std::shared_ptr<LangDetector::LangInfo>
-LangDetector::findLanguage(const char *buffer, std::size_t length) {
-    std::string naiveLang;
-    if ((unsigned char) buffer[0] == 0xFE &&
-        (unsigned char) buffer[1] == 0xFF) {
-        naiveLang = Charset::UTF16BE;
-    } else if ((unsigned char) buffer[0] == 0xFF &&
-               (unsigned char) buffer[1] == 0xFE) {
-        naiveLang = Charset::UTF16;
-    } else {
-        naiveLang = findEncodingInternal((const unsigned char *) buffer, length);
-    }
-    return findLanguageWithEncoding(naiveLang, buffer, length);
+    isInitialize = true;
 }
 
 std::shared_ptr<LangDetector::LangInfo>
 LangDetector::findLanguageWithEncoding(const std::string &encoding, const char *buffer,
                                        size_t length) {
+
+    // 初始化语言匹配器
+    // 由于 init 会占用效率，所以移到这里来了
+    initLangMatchers();
+
     int matchingCriterion = 0;
     std::shared_ptr<LangInfo> langInfo = nullptr;
     std::map<int, std::shared_ptr<NativeStatisticsTag>> statisticsMap;

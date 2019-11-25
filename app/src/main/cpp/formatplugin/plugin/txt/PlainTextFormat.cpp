@@ -7,10 +7,10 @@
 #include <stddef.h>
 
 // 缓冲区的大小
-const size_t BUFFER_SIZE = 4096;
+static const size_t BUFFER_SIZE = 4096;
 
 // 最大检测长度  1 MB
-const size_t MAX_DETECT_SIZE = 1024 * 1024;
+static const size_t MAX_DETECT_SIZE = 1024 * 1024;
 
 PlainTextFormat::PlainTextFormat(const File &file)
         : isInitialized(false),

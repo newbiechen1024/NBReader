@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 #include <tools/encoding/Charset.h>
+#include <map>
 
 class StatisticMatcher;
 
@@ -34,9 +35,20 @@ public:
     findLanguageWithEncoding(const std::string &encoding, const char *buffer, std::size_t length);
 
 private:
+    /**
+     * 初始化语言匹配器
+     */
+    void initLangMatchers();
+
+private:
+    // 编码与语言的映射表
+    static std::map<std::string, std::string> CHARSET_LANG_MAP;
+
     typedef std::vector<std::shared_ptr<StatisticMatcher>> MatcherVector;
     // 所有的语言匹配器
     MatcherVector mMatchers;
+
+    bool isInitialize;
 };
 
 #endif //NBREADER_LANGDETECTOR_H
