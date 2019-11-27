@@ -20,6 +20,7 @@ class EncodingConverter private constructor(encoding: String) {
 
         // kotlin 编译成 java 代码时，static 方法会在 EncodingConverter 生成 Companion 这个内部静态类。
         // 导致 Native 层索引 static 方法有问题，所以必须使用 JvmStatic 标记。
+        // 给 native 层调用
         @JvmStatic
         fun createEncodingConverter(encoding: String): EncodingConverter? {
             return if (isEncodingSupport(encoding)) EncodingConverter(encoding) else null

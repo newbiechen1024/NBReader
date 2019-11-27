@@ -30,11 +30,17 @@ JavaClass AndroidUtil::Class_EncodingConverter(
         PKG_NAME + "ui/component/book/text/util/EncodingConverter"
 );
 
+JavaClass AndroidUtil::Class_ChapterDetector(
+        PKG_NAME + "ui/component/book/text/util/ChapterDetector"
+);
+
 // 初始化静态成员。。
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
 std::shared_ptr<StaticBooleanMethod> AndroidUtil::StaticMethod_EncodingConverter_isEncodingSupport;
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_EncodingConverter_createEncodingConverter;
+std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_ChapterDetector_createChapterDetector;
 
+// 初始化普通成员
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
 std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
@@ -51,6 +57,7 @@ std::shared_ptr<VoidMethod> AndroidUtil::Method_BookModel_setTextModel;
 std::shared_ptr<StringMethod> AndroidUtil::Method_EncodingConverter_getName;
 std::shared_ptr<IntMethod> AndroidUtil::Method_EncodingConverter_convert;
 std::shared_ptr<VoidMethod> AndroidUtil::Method_EncodingConverter_reset;
+std::shared_ptr<StringMethod> AndroidUtil::Method_ChapterDetector_getRegexStr;
 
 
 JNIEnv *AndroidUtil::getEnv() {
@@ -73,6 +80,10 @@ bool AndroidUtil::init(JavaVM *jvm) {
     StaticMethod_EncodingConverter_createEncodingConverter = std::make_shared<StaticObjectMethod>(
             Class_EncodingConverter,
             "createEncodingConverter", Class_EncodingConverter, "(Ljava/lang/String;)");
+
+    StaticMethod_ChapterDetector_createChapterDetector = std::make_shared<StaticObjectMethod>(
+            Class_ChapterDetector,
+            "createChapterDetector", Class_ChapterDetector, "(Ljava/lang/String;)");
 
     Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_Locale, "getLanguage", "()");
 
@@ -111,6 +122,10 @@ bool AndroidUtil::init(JavaVM *jvm) {
 
     Method_EncodingConverter_reset = std::make_shared<VoidMethod>(Class_EncodingConverter, "reset",
                                                                   "()");
+
+    Method_ChapterDetector_getRegexStr = std::make_shared<StringMethod>(Class_ChapterDetector,
+                                                                        "getRegexStr",
+                                                                        "(Ljava/lang/String;)");
     return true;
 }
 

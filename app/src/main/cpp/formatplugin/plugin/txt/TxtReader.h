@@ -26,6 +26,7 @@ public:
 
     // 进行文稿分析
     void readDocument(InputStream &stream);
+
 private:
     // 文本信息
     const PlainTextFormat &mFormat;

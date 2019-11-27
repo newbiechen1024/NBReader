@@ -26,10 +26,15 @@ public:
     static JavaClass Class_TextModel;
     // 编码转换器
     static JavaClass Class_EncodingConverter;
+    // 章节探测器
+    static JavaClass Class_ChapterDetector;
 
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
     static std::shared_ptr<StaticBooleanMethod> StaticMethod_EncodingConverter_isEncodingSupport;
     static std::shared_ptr<StaticObjectMethod> StaticMethod_EncodingConverter_createEncodingConverter;
+
+    static std::shared_ptr<StaticObjectMethod> StaticMethod_ChapterDetector_createChapterDetector;
+
 
     static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
 
@@ -49,6 +54,9 @@ public:
     static std::shared_ptr<StringMethod> Method_EncodingConverter_getName;
     static std::shared_ptr<IntMethod> Method_EncodingConverter_convert;
     static std::shared_ptr<VoidMethod> Method_EncodingConverter_reset;
+
+    static std::shared_ptr<StringMethod> Method_ChapterDetector_getRegexStr;
+
 
 public:
     static bool init(JavaVM *jvm);
