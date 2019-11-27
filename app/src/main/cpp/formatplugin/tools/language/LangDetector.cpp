@@ -7,6 +7,7 @@
 #include <filesystem/FileSystem.h>
 #include <util/Logger.h>
 #include <include/uchardet/uchardet.h>
+#include <util/StringUtil.h>
 #include "LangDetector.h"
 #include "LangUtil.h"
 #include "LangMatcher.h"
@@ -58,7 +59,10 @@ static std::string findEncodingInternal(const char *buffer, std::size_t length) 
 
 std::shared_ptr<LangDetector::LangInfo>
 LangDetector::findLanguage(const char *buffer, std::size_t length) {
-    const std::string encoding = findEncodingInternal(buffer, length);
+    std::string encoding = findEncodingInternal(buffer, length);
+    // 需要将得到的编码转化为小写匹配
+    StringUtil::asciiToLowerInline(encoding);
+
     auto it = CHARSET_LANG_MAP.find(encoding);
 
     // 首先从 charset 和 lang 映射表中查找，如果存在则直接返回

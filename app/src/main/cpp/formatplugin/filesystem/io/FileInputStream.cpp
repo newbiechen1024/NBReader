@@ -30,6 +30,10 @@ bool FileInputStream::open() {
 }
 
 size_t FileInputStream::read(char *buffer, size_t maxSize) {
+    if (mFilePtr == nullptr) {
+        return 0;
+    }
+
     // 缓冲区指针不为 nullptr
     if (buffer != nullptr) {
         // 按照 byte 正常读取
@@ -50,6 +54,11 @@ void FileInputStream::close() {
 }
 
 void FileInputStream::seek(int offset, bool absoluteOffset) {
+    if (mFilePtr == nullptr) {
+        return;
+
+    }
+
     fseek(mFilePtr, offset, absoluteOffset ? SEEK_SET : SEEK_CUR);
 }
 

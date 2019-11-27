@@ -33,7 +33,8 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
 
         mDataBinding.tvRead.setOnClickListener {
 
-            // 指定一个文件路径 /data/data/
+            // 指定一个文件路径 /sdcard/测试书籍/剑来.txt
+            // 重生后嫁给克妻皇帝
             ReadActivity.startActivity(context!!,
                 BookEntity("asda", "剑来", BookType.TXT, "/storage/emulated/0/测试书籍/剑来.txt", true)
             )
