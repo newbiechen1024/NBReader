@@ -55,6 +55,7 @@ class TextCacheReader(
                     FileInputStream(file),
                     Charsets.UTF_16LE.name()
                 )
+
                 val rd = reader.read(block!!)
                 if (rd != block!!.size) {
                     // 异常

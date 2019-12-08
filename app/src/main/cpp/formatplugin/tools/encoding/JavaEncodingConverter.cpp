@@ -74,8 +74,9 @@ void JavaEncodingConverter::convert(std::string &dst, const char *srcStart, cons
     const jint decodedCount = AndroidUtil::Method_EncodingConverter_convert->call(
             mJavaConverter, mInBuffer, 0, srcLen, mOutBuffer
     );
-
+    // 设置 dst 的最大长度
     dst.reserve(dst.length() + decodedCount * 3);
+    // 将 java 的 char 转换成 c 的 char
     env->GetCharArrayRegion(mOutBuffer, 0, decodedCount, mCppOutBuffer);
     const jchar *end = mCppOutBuffer + decodedCount;
     char buffer[3];

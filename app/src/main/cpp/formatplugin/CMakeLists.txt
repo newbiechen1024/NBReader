@@ -23,6 +23,31 @@ set_target_properties(
         IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
 )
 
+# 正则表达式
+add_library(
+        onig
+        SHARED
+        IMPORTED
+)
+
+set_target_properties(
+        onig
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libonig.so
+)
+
+add_library(
+        iconv
+        SHARED
+        IMPORTED
+)
+
+set_target_properties(
+        iconv
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libiconv.so
+)
+
 # 添加字符编码检测器
 add_library(
         uchardet
@@ -49,9 +74,12 @@ find_library( # Sets the title of the path variable.
 # 获取目录下的 c++ 文件写入到变量中
 aux_source_directory(. DIR_SOURCE)
 aux_source_directory(./util UTIL_SOURCE)
+aux_source_directory(./util/regex UTIL_REGEX_SOURCE)
 aux_source_directory(./filesystem FILE_SYSTEM_SOURCE)
 aux_source_directory(./filesystem/io FILE_SYSTEM_IO_SOURCE)
 aux_source_directory(./filesystem/zip FILE_SYSTEM_ZIP_SOURCE)
+aux_source_directory(./filesystem/buffer FILE_SYSTEM_BUFFER_SOURCE)
+aux_source_directory(./filesystem/charset FILE_SYSTEM_CHARSET_SOURCE)
 aux_source_directory(./plugin PLUGIN_SOURCE)
 aux_source_directory(./plugin/txt TXT_PLUGIN_SOURCE)
 aux_source_directory(./reader/book BOOK_READER_SOURCE)
@@ -67,6 +95,7 @@ aux_source_directory(./tools/xml TOOLS_XML_SOURCE)
 aux_source_directory(./filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
 aux_source_directory(./linebreak LINE_BREAK_SOURCE)
 
+
 add_library( # Sets the title of the library.
         FormatPlugin
         # Sets the library as a shared library.
@@ -80,6 +109,7 @@ add_library( # Sets the title of the library.
         ${ANDROID_FILE_SYSTEM_SOURCE}
         ${ANDROID_APPLICATION_SOURCE}
         ${UTIL_SOURCE}
+        ${UTIL_REGEX_SOURCE}
         ${PLUGIN_SOURCE}
         ${TXT_PLUGIN_SOURCE}
         ${BOOK_READER_SOURCE}
@@ -90,7 +120,10 @@ add_library( # Sets the title of the library.
         ${TOOLS_XML_SOURCE}
         ${TOOLS_ENCODING_SOURCE}
         ${TOOLS_LANGUAGE_SOURCE}
-        ${LINE_BREAK_SOURCE})
+        ${LINE_BREAK_SOURCE}
+        ${FILE_SYSTEM_CHARSET_SOURCE}
+        ${FILE_SYSTEM_BUFFER_SOURCE}
+        )
 
 target_link_libraries(
         FormatPlugin
@@ -99,4 +132,6 @@ target_link_libraries(
         android
         expat
         uchardet
+        onig
+        iconv
 )

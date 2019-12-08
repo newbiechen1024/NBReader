@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.book.text.util
 
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import okhttp3.internal.and
+import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 

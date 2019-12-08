@@ -8,8 +8,7 @@
 #include "TxtPlugin.h"
 #include "PlainTextFormat.h"
 #include "TxtReader.h"
-#include "TxtChapterReader.h"
-#include <re2.h>
+#include "ChapterDetector.h"
 
 
 TxtPlugin::TxtPlugin() {
@@ -40,6 +39,7 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
         PlainTextDetector detector;
         detector.detect(*fileInputStream, format);
     }*/
+
     Logger::i("TxtPlugin", "readLanguageAndEncoding:开始");
     // 读取文本的语言和编码信息
     readLanguageAndEncoding(book);
@@ -53,8 +53,11 @@ bool TxtPlugin::readModel(BookModel &bookModel) const {
 /*    // 创建文本阅读器
     TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);*/
 
-/*    TxtChapterReader(book.getLanguage(), book.getEncoding()).readDocument(*fileInputStream);
-    Logger::i("TxtPlugin", "readDocument:解析文本结束");*/
+    std::string pattern = "(?-m)^(.{0,8})(\xb5\xda)([0-9\xc1\xe3\xd2\xbb\xb6\xfe\xc1\xbd\xc8\xfd\xcb\xc4\xce\xe5\xc1\xf9\xc6\xdf\xb0\xcb\xbe\xc5\xca\xae\xb0\xd9\xc7\xa7\xcd\xf2\xd2\xbc\xb7\xa1\xc8\xfe\xcb\xc1\xce\xe9\xc2\xbd\xc6\xe2\xb0\xc6\xbe\xc1\xca\xb0\xb0\xdb\xc7\xaa]{1,10})([\xd5\xc2\xbd\xda\xbb\xd8\xbc\xaf\xbe\xed])(.{0,30})$";
+
+    ChapterDetector(pattern).detector(fileInputStream, book.getEncoding());
+
+    Logger::i("TxtPlugin", "readDocument:解析文本结束");
     return true;
 }
 

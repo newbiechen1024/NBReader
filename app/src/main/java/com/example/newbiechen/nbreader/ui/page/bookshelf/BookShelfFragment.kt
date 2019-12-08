@@ -8,6 +8,9 @@ import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 import java.io.File
 import java.io.FileInputStream
+import java.io.InputStream
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
 
@@ -30,11 +33,11 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
     override fun initView() {
         super.initView()
         mDataBinding.tvRead.text = stringFromJNI()
-
         mDataBinding.tvRead.setOnClickListener {
 
             // 指定一个文件路径 /sdcard/测试书籍/剑来.txt
             // 重生后嫁给克妻皇帝
+            // zh-gb18030
             ReadActivity.startActivity(context!!,
                 BookEntity("asda", "剑来", BookType.TXT, "/storage/emulated/0/测试书籍/剑来.txt", true)
             )

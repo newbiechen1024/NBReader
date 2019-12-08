@@ -35,7 +35,7 @@ android {
 
         sourceSets {
             main {
-                jniLibs.srcDirs = ['libs']
+                jniLibs.srcDirs = ['src/main/cpp/formatplugin/libs']
             }
         }
     }
