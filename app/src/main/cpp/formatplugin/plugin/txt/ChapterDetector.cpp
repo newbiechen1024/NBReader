@@ -5,10 +5,12 @@
 
 #include <filesystem/io/InputStreamReader.h>
 #include <util/Logger.h>
+#include <filesystem/File.h>
+#include <filesystem/FileSystem.h>
 #include "ChapterDetector.h"
 
 // 先设置为 256 吧，如果内存占用过大，可以改小一点
-static const size_t BUFFER_SIZE = 1024;
+static const size_t BUFFER_SIZE = 1024 * 256;
 
 static const std::string TAG = "ChapterDetector";
 
@@ -17,7 +19,6 @@ ChapterDetector::ChapterDetector(const std::string &pattern) : mPattern(pattern)
 
 void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
                                const std::string &charset) {
-
 /*
      // TODO:应该选择 \n 后的 buffer 数据，防止 \n 被截取一半的情况。
 

@@ -51,13 +51,13 @@ CharsetConverter::convert(CharBuffer &inBuffer, CharBuffer &outBuffer) {
         return UNKNOW;
     }
 
-    // 剩余输入缓冲的长度
-    size_t remainInLen = inBuffer.size() - inBuffer.position();
+    // 获取输入缓冲区的数据长度
+    size_t inBufferLen = inBuffer.position();
     // 剩余输出缓冲的长度
-    size_t remainOutLen = outBuffer.size() - outBuffer.position();
+    size_t remainOutBufferLen = outBuffer.limit() - outBuffer.position();
 
     // 如果输入、输出都为 0，则不处理
-    if (remainInLen == 0 || remainOutLen == 0) {
+    if (inBufferLen == 0 || remainOutBufferLen == 0) {
         return SUCCESS;
     }
 
@@ -67,14 +67,21 @@ CharsetConverter::convert(CharBuffer &inBuffer, CharBuffer &outBuffer) {
     // 输出缓冲指针
     char *outBufferPtr = outBuffer.buffer() + outBuffer.position();
 
-    // 进行解析操作
-    int resultCode = iconv(mIconvCd, &inBufferPtr, &remainInLen, &outBufferPtr,
-                           &remainOutLen);
+    size_t resultInBufferLen = inBufferLen;
+    size_t resultOutBufferLen = remainOutBufferLen;
 
-    // 修改 inputBuffer 的 position
-    inBuffer.position(inBuffer.size() - remainInLen);
-    // 修改 outBuffer 的值
-    outBuffer.position(outBuffer.size() - remainOutLen);
+    // 进行解析操作
+    int resultCode = iconv(mIconvCd, &inBufferPtr, &resultInBufferLen, &outBufferPtr,
+                           &resultOutBufferLen);
+
+    // 处理 inBuffer
+
+    inBuffer.flip();
+    // 指向已处理的区域
+    inBuffer.position(inBufferLen - resultInBufferLen);
+
+    // 修改 outBuffer 的 position
+    outBuffer.position(outBuffer.position() + (remainOutBufferLen - resultOutBufferLen));
 
     ResultCode code = SUCCESS;
 

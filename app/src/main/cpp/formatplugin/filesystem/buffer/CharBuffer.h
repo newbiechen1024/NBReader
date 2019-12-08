@@ -40,14 +40,21 @@ public:
      * @param newPosition
      * @return
      */
-    size_t position(size_t newPosition) {
-        if (newPosition >= 0 && newPosition <= mBufferLen) {
-            mPosition = newPosition;
-        } else {
-            // TODO:抛出异常
+    void position(size_t newPosition) {
+        if (newPosition > mLimit){
+            // TODO:抛出异常，暂时不处理
         }
 
-        return mPosition;
+        mPosition = newPosition;
+    }
+
+    size_t limit() const {
+        return mLimit;
+    }
+
+    void limit(size_t newLimit) {
+        mLimit = newLimit;
+        if (mPosition > newLimit) mPosition = newLimit;
     }
 
     /**
@@ -58,12 +65,24 @@ public:
         return mBufferLen;
     }
 
+    size_t remaining() const {
+        return mLimit - mPosition;
+    }
+
     char *buffer() {
         return mBuffer;
     }
 
     const char *iterator() const {
         return mBuffer;
+    }
+
+    /**
+     * position 与 limit 进行翻转
+     */
+    void flip() {
+        mLimit = mPosition;
+        mPosition = 0;
     }
 
     /**
@@ -79,6 +98,7 @@ public:
      */
     void clear() {
         mPosition = 0;
+        mLimit = mBufferLen;
         memset(mBuffer, 0, mBufferLen);
     }
 
@@ -93,6 +113,10 @@ public:
 private:
     // 指向缓冲区的下一字节位置
     size_t mPosition;
+
+    // buffer 限制读取区域
+    size_t mLimit;
+
     // 缓冲区的大小
     size_t mBufferLen;
     // 缓冲区

@@ -8,6 +8,7 @@
 CharBuffer::CharBuffer(size_t bufferLen) {
     mBuffer = new char[bufferLen];
     mBufferLen = bufferLen;
+    mLimit = mBufferLen;
     mPosition = 0;
 
     isInnerBuffer = true;
@@ -16,6 +17,7 @@ CharBuffer::CharBuffer(size_t bufferLen) {
 CharBuffer::CharBuffer(char *buffer, size_t bufferLen) {
     mBuffer = buffer;
     mBufferLen = bufferLen;
+    mLimit = mBufferLen;
     mPosition = 0;
 
     isInnerBuffer = false;
@@ -30,7 +32,7 @@ CharBuffer::~CharBuffer() {
 
 void CharBuffer::put(char ch) {
     // 如果当前位置已经超出最大长度
-    if (mPosition >= mBufferLen) {
+    if (mPosition >= mLimit) {
         // TODO:要不要做异常处理？
         return;
     }
@@ -42,7 +44,7 @@ void CharBuffer::put(char ch) {
 
 void CharBuffer::compact() {
     // 获取剩余缓冲区的数据
-    size_t remainSize = mBufferLen - mPosition;
+    size_t remainSize = remaining();
     // 说明数据已经全部读取完，直接走 clear
     if (remainSize == 0) {
         clear();
@@ -56,5 +58,7 @@ void CharBuffer::compact() {
         clear();
         // 将数据写入到缓冲区头部
         memcpy(mBuffer, remainBuffer, remainSize);
+        // 设置 position
+        mPosition = remainSize;
     }
 }

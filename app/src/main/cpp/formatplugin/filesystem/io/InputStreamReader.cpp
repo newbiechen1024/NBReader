@@ -12,6 +12,7 @@ InputStreamReader::InputStreamReader(std::shared_ptr<InputStream> inputStream,
 }
 
 InputStreamReader::~InputStreamReader() {
+    close();
 }
 
 bool InputStreamReader::open() {

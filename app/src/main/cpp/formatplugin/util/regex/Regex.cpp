@@ -25,16 +25,15 @@ Pattern::Pattern(const std::string &pattern) : mRegex(nullptr) {
     if (regexCode != ONIG_NORMAL) {
         char s[ONIG_MAX_ERROR_MESSAGE_LEN];
         onig_error_code_to_str((UChar *) s, regexCode, &einfo);
-        Logger::i("TxtChapterDetector", "ERROR:" + std::string(s));
-    }
+        Logger::i(TAG, "ERROR:" + std::string(s));
 
-    onig_free(mRegex);
-    onig_end();
+        // TODO:抛出异常
+    }
 }
 
 Pattern::~Pattern() {
-/*    onig_free(mRegex);
-    onig_end();*/
+    onig_free(mRegex);
+    onig_end();
 }
 
 Matcher Pattern::match(const char *buffer) {
@@ -102,7 +101,7 @@ bool Matcher::find() {
         } else {
             char s[ONIG_MAX_ERROR_MESSAGE_LEN];
             onig_error_code_to_str((UChar *) s, resultCode);
-            Logger::i("TxtChapterDetector", "ERROR:" + std::string(s));
+            Logger::i(TAG, "ERROR:" + std::string(s));
 
             // TODO:需要抛出异常
 
