@@ -21,6 +21,14 @@ public:
 
     ~StreamDecoder();
 
+    /**
+     * 已解析数据流的长度
+     * @return
+     */
+    size_t alreadyDecodeLength() const {
+        return mDecodeLength;
+    }
+
     bool open() override;
 
     /**
@@ -58,6 +66,8 @@ private:
     CharBuffer mInBuffer;
     // 判断是否解析完成
     bool isDecodeFinish;
+    // 已解析数据的长度
+    size_t mDecodeLength;
 };
 
 

@@ -28,13 +28,7 @@ public:
      * @param buffer
      * @param offset
      * @param length
-     * @return
-     *
-     * 返回值 > 0 表示解析的长度
-     * 返回值 == 0 表示解析到末尾
-     * 返回值 < 0 表示读取错误
-     *
-     * 错误码详见 errno 值。
+     * @return 返回读取到数据的长度
      *
      */
     int read(char *buffer, size_t length) override;
@@ -46,6 +40,10 @@ public:
     bool open() override;
 
     bool isFinish() const override;
+
+    size_t alreadyDecodeLength() const {
+        return mStreamDecoder.alreadyDecodeLength();
+    }
 
 private:
     StreamDecoder mStreamDecoder;

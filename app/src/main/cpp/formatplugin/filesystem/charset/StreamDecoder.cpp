@@ -13,6 +13,7 @@ StreamDecoder::StreamDecoder(std::shared_ptr<InputStream> inputStream,
                              const std::string &fromEncoding)
         : mInputStream(inputStream), mDecoder(fromEncoding, "utf-8"), mInBuffer(BUFFER_SIZE) {
     isDecodeFinish = false;
+    mDecodeLength = 0;
 }
 
 StreamDecoder::~StreamDecoder() {
@@ -50,6 +51,8 @@ int StreamDecoder::read(char *buffer, size_t length) {
     for (;;) {
         // 进行转码操作
         resultCode = mDecoder.convert(mInBuffer, outBuffer);
+        // 记录解析数据的总长度
+        mDecodeLength += mInBuffer.position();
         // 根据错误提示进行具体的处理
         switch (resultCode) {
             case CharsetConverter::OVERFLOW:
@@ -122,6 +125,7 @@ bool StreamDecoder::readStream() {
 void StreamDecoder::close() {
     mInputStream->close();
     isDecodeFinish = false;
+    mDecodeLength = 0;
 }
 
 bool StreamDecoder::isFinish() const {

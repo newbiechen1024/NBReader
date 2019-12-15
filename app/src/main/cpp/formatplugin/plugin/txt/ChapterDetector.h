@@ -9,6 +9,8 @@
 #include <string>
 #include <filesystem/io/InputStream.h>
 #include <util/regex/Regex.h>
+#include <reader/textmodel/TextChapter.h>
+#include <filesystem/charset/CharsetConverter.h>
 
 class ChapterDetector {
 public:
@@ -22,7 +24,11 @@ public:
     void detector(std::shared_ptr<InputStream> inputStream, const std::string &charset);
 
 private:
-    Pattern mPattern;
+    int encodingSize(CharsetConverter & converter,char *inBuffer,size_t bufferSize);
+
+private:
+    std::shared_ptr<Pattern> mPattern;
+    std::vector<TextChapter> mChapterList;
 };
 
 

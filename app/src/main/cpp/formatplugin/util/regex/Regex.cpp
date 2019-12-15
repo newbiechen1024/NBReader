@@ -36,14 +36,9 @@ Pattern::~Pattern() {
     onig_end();
 }
 
-Matcher Pattern::match(const char *buffer) {
-
-    // TODO:到底传什么类型回去是个问题啊
-    // TODO:倾向于传一个指针回去，当 Pattern 被析构的时候，Matcher 也被销毁了
-    return Matcher(this, buffer);
-}
-
-Matcher::Matcher(Pattern *pattern, const char *buffer) : mPattern(pattern), mBuffer(buffer) {
+Matcher::Matcher(std::shared_ptr<Pattern> pattern, const char *buffer, size_t bufferLen) : mPattern(
+        pattern),
+                                                                                           mBuffer(buffer) {
 
     // 初始化
     mRegion = onig_region_new();
@@ -51,6 +46,8 @@ Matcher::Matcher(Pattern *pattern, const char *buffer) : mPattern(pattern), mBuf
     mStartRange = (const OnigUChar *) mBuffer;
 
     mFindStartIndex = mFindEndIndex = 0;
+
+    mBufferLen = bufferLen;
 
     isFindFinish = false;
 }
@@ -67,22 +64,18 @@ bool Matcher::find() {
 
     // 获取起始点和终止点
     const OnigUChar *startIndex = (const OnigUChar *) mBuffer;
-    const OnigUChar *endIndex = startIndex + sizeof(mBuffer);
+    const OnigUChar *endIndex = startIndex + mBufferLen;
 
     const OnigUChar *endRange = endIndex;
 
     int resultCode = onig_search(mPattern->mRegex, startIndex, endIndex,
                                  mStartRange, endRange, mRegion, ONIG_OPTION_NONE);
 
-    // 判断结果值
-
     if (resultCode >= 0) {
         // 匹配成功且存在数据
         if (mRegion->num_regs != 0) {
+            
             mFindStartIndex = mRegion->beg[0];
-
-            // TODO:end 返回的是下一个 index，还是当前匹配值的末尾？？？
-
             mFindEndIndex = mRegion->end[0];
 
             // 将匹配到的结果位置，作为下次匹配起始位置
@@ -97,6 +90,8 @@ bool Matcher::find() {
         if (resultCode == ONIG_MISMATCH) {
             isFindFinish = true;
             // 说明没有匹配到一个
+
+            Logger::i(TAG, "result mismatch");
             return false;
         } else {
             char s[ONIG_MAX_ERROR_MESSAGE_LEN];

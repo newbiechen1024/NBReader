@@ -22,7 +22,7 @@ class Book {
 public:
     static std::shared_ptr<Book> createBook(
             const File &file,
-            const std::string & encoding,
+            const std::string &encoding,
             const std::string &language,
             const std::string &title);
 
