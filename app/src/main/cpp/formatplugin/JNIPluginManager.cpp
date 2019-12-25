@@ -14,9 +14,10 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(JNIEnv *env,
-                                                                                                     jobject instance,
-                                                                                                     jobject manager) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(
+        JNIEnv *env,
+        jobject instance,
+        jobject manager) {
     AssetManager *assetManagerPtr = &AndroidAssetManager::getInstance();
     AndroidAssetManager *androidAssetManager = static_cast<AndroidAssetManager *>(assetManagerPtr);
     // 注册 asset
@@ -28,35 +29,30 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_
  */
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getPluginTypes(JNIEnv *env,
-                                                                                               jobject instance) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getSupportPluginTypes(
+        JNIEnv *env,
+        jobject instance) {
     using namespace std;
-    // 获取插件列表
-    vector<shared_ptr<FormatPlugin>> plugins = PluginManager::getInstance().getPlugins();
-    size_t pluginSize = plugins.size();
+    // 获取支持的插件类型
+    vector<const string> pluginTypes;
+    // 支持的编码类型就是插件类型
+    PluginManager::readSupportFormat(pluginTypes);
+
+    size_t pluginTypeSize = pluginTypes.size();
 
     // 创建 Java 层的数组
-    jobjectArray jPluginTypes = env->NewObjectArray(pluginSize, AndroidUtil::Class_String.getJClass(), 0);
+    jobjectArray jPluginTypes = env->NewObjectArray(pluginTypeSize,
+                                                    AndroidUtil::Class_String.getJClass(), 0);
 
-    // 循环创建 NativeFormatPlugin
-    for (size_t i = 0; i < pluginSize; ++i) {
-        // 获取 native 支持的 bookType
-        FormatType type = plugins[i]->supportType();
-        jstring formatType = AndroidUtil::toJString(env, formatTypeToStr(type));
+    // 将 cString 转换成 jString
+    for (size_t i = 0; i < pluginTypeSize; ++i) {
+        const string &pluginType = pluginTypes[i];
+
+        jstring jPluginType = AndroidUtil::toJString(env, pluginType);
         // 添加到数组中
-        env->SetObjectArrayElement(jPluginTypes, i, formatType);
+        env->SetObjectArrayElement(jPluginTypes, i, jPluginType);
         // 释放
-        env->DeleteLocalRef(formatType);
+        env->DeleteLocalRef(jPluginType);
     }
     return jPluginTypes;
-}
-
-/**
- * 释放 PluginManager
- */
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_freePlugins(JNIEnv *env,
-                                                                                            jobject instance) {
-    PluginManager::deleteInstance();
 }

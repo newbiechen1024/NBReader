@@ -24,6 +24,14 @@ public:
         const std::string encoding;
     };
 
+    /**
+     * 查找文本的编码
+     * @param buffer：检测的缓冲区
+     * @param length：缓冲区的大小
+     * @return
+     */
+    static std::string findEncoding(const char *buffer, std::size_t length);
+
 public:
     LangDetector();
 

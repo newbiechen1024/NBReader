@@ -6,8 +6,9 @@
 #include "TextChapter.h"
 
 
-TextChapter::TextChapter() : startIndex(0), endIndex(0) {
-
+TextChapter::TextChapter() : chapterTitle(nullptr) {
+    startIndex = 0;
+    endIndex = 0;
 }
 
 TextChapter::TextChapter(const std::string &chapterTitle, size_t startIndex, size_t endIndex)

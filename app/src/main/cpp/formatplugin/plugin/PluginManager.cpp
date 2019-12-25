@@ -3,41 +3,38 @@
 //
 
 #include <plugin/txt/TxtPlugin.h>
+#include <util/StringUtil.h>
 #include "PluginManager.h"
 
-PluginManager *PluginManager::sInstance = 0;
+// 初始化
+std::vector<const std::string> PluginManager::sFormatTypeList = {
+        FormatType::TXT,
+        FormatType::EPUB
+};
 
-PluginManager &PluginManager::getInstance() {
-    // 如果 sInstance 未初始化
-    if (sInstance == nullptr) {
-        sInstance = new PluginManager();
+std::shared_ptr<FormatPlugin> PluginManager::createFormatPlugin(const std::string &type) const {
+    std::string lowFormat = type;
+    StringUtil::asciiToLowerInline(lowFormat);
+
+    // 如果没有获取到类型，默认使用 TxtPlugin
+    return std::make_shared<TxtPlugin>();
+}
+
+void PluginManager::readSupportFormat(std::vector<const std::string> &formats) const {
+    // 返回支持的类型
+    for (auto formatType: sFormatTypeList) {
+        formats.push_back(formatType);
     }
-    return *sInstance;
 }
 
-void PluginManager::deleteInstance() {
-    // 释放实例
-    if (sInstance != nullptr) {
-        delete (sInstance);
-        sInstance = nullptr;
-    }
-}
+bool PluginManager::isSupportFormat(const std::string &format) const {
+    std::string lowFormat = format;
+    StringUtil::asciiToLowerInline(lowFormat);
 
-PluginManager::PluginManager() {
-    // 初始化插件
-    mPluginList.push_back(std::make_shared<TxtPlugin>());
-}
-
-PluginManager::~PluginManager() {
-    // 不处理
-}
-
-std::shared_ptr<FormatPlugin> PluginManager::getPluginByType(FormatType type) const {
-    for (auto it = mPluginList.begin(); it != mPluginList.end(); ++it) {
-        if (type == (*it)->supportType()) {
-            return *it;
+    for (auto formatType: sFormatTypeList) {
+        if (formatType == lowFormat) {
+            return true;
         }
     }
-
-    return nullptr;
+    return false;
 }

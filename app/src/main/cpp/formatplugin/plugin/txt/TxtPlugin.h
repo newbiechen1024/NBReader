@@ -16,13 +16,16 @@ public:
 
     ~TxtPlugin();
 
-    bool readMetaInfo(Book &book) const override;
+    bool readEncodingInternal(std::string &outEncoding) override;
 
-    bool readModel(BookModel &bookModel) const override;
+    bool readLanguageInternal(std::string &outLanguage) override;
 
-    bool readLanguageAndEncoding(Book &book) const override;
+    bool readChaptersInternal(std::string &chapterPattern,
+                              std::vector<TextChapter> &chapterList) override;
 
-    const FormatType supportType() const override;
+    bool
+    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t outSize) override;
+
 };
 
 #endif //NBREADER_TXTPLUGIN_H

@@ -27,7 +27,7 @@ class BookPluginManager {
 
     private constructor(context: Context) {
         // 进行注册
-        getPluginTypes().forEach {
+        getSupportPluginTypes().forEach {
             LogHelper.i(TAG, "pluginTypes: $it")
             // 根据 type 创建插件
             val plugin: NativeFormatPlugin = when (it.toUpperCase()) {
@@ -55,14 +55,5 @@ class BookPluginManager {
      *
      * @return
      */
-    private external fun getPluginTypes(): Array<String>
-
-    /**
-     * 释放 native 层插件
-     */
-    private external fun freePlugins()
-
-    protected fun finalize() {
-        freePlugins()
-    }
+    private external fun getSupportPluginTypes(): Array<String>
 }

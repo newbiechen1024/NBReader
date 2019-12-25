@@ -34,7 +34,7 @@ LangDetector::LangDetector() : isInitialize(false) {
 LangDetector::~LangDetector() {
 }
 
-static std::string findEncodingInternal(const char *buffer, std::size_t length) {
+std::string LangDetector::findEncoding(const char *buffer, std::size_t length) {
     uchardet_t handle = uchardet_new();
 
     int retval = uchardet_handle_data(handle, buffer, length);
@@ -53,15 +53,15 @@ static std::string findEncodingInternal(const char *buffer, std::size_t length) 
 
     uchardet_delete(handle);
 
+    // 将 encoding 转换成小写
+    StringUtil::asciiToLowerInline(encoding);
+
     return encoding.empty() ? Charset::ASCII : encoding;
 }
 
-
 std::shared_ptr<LangDetector::LangInfo>
 LangDetector::findLanguage(const char *buffer, std::size_t length) {
-    std::string encoding = findEncodingInternal(buffer, length);
-    // 需要将得到的编码转化为小写匹配
-    StringUtil::asciiToLowerInline(encoding);
+    std::string encoding = findEncoding(buffer, length);
 
     auto it = CHARSET_LANG_MAP.find(encoding);
 

@@ -24,7 +24,7 @@ class ChapterDetector private constructor(private val lang: String) {
 
     companion object {
 
-        private const val TAG = "ChapterDetector"
+        private const val TAG = "TxtChapterDetector"
 
         private const val TEST_PATTERN = "^(.{0,8})(%1\$s)([0-9%2\$s]{1,10})([%3\$s])(.{0,30})\$"
 

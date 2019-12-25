@@ -6,6 +6,7 @@
 #ifndef NBREADER_STREAMDECODER_H
 #define NBREADER_STREAMDECODER_H
 
+// TODO：书籍中部分数据存在乱码的情况，该怎么处理。(转码操作必定出错，这必须是一个错误处理)
 
 #include <filesystem/io/InputStream.h>
 #include <string>

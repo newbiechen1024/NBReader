@@ -7,19 +7,21 @@
 #include <util/Logger.h>
 #include <filesystem/File.h>
 #include <filesystem/FileSystem.h>
-#include "ChapterDetector.h"
+#include "TxtChapterDetector.h"
 
-// 先设置为 256 吧，如果内存占用过大，可以改小一点
+
+// 默认读取 8 字节数据
 static const size_t BUFFER_SIZE = 1024 * 8;
 
-static const std::string TAG = "ChapterDetector";
+static const std::string TAG = "TxtChapterDetector";
 
-ChapterDetector::ChapterDetector(const std::string &pattern) {
+TxtChapterDetector::TxtChapterDetector(const std::string &pattern) {
     mPattern = std::make_shared<Pattern>(pattern);
 }
 
-void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
-                               const std::string &charset) {
+void TxtChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
+                                  const std::string &charset,
+                                  std::vector<TextChapter> &chapterList) {
 
     // TODO：需要处理编码就是 UTF-8 的情况。
     // TODO：代码写的太垃圾了了需要优化
@@ -74,9 +76,9 @@ void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
             // 获取到匹配的文本
             std::string chapterTitle(buffer + findStart, buffer + findEnd);
 
-            // 编码获取原始位置的长度
-            encodingLen = encodingSize(encodingConverter, buffer + seekOffset,
-                                       findStart - seekOffset);
+            // 计算编码大小
+            encodingLen = calculateEncodingSize(encodingConverter, buffer + seekOffset,
+                                                findStart - seekOffset);
 
             if (encodingLen == 0) {
                 return;
@@ -89,21 +91,21 @@ void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
             seekOffset = findStart;
 
             // 说明有序章数据，创建序章
-            if (mChapterList.empty()) {
+            if (chapterList.empty()) {
                 if (findStart != 0) {
                     // TODO：可能存在是空格的可能，所以判断如果序章字符太少，直接略过、暂时这么处理
                     TextChapter foreChapter("序章", 0, 0);
                     // 加入到列表中
-                    mChapterList.push_back(foreChapter);
+                    chapterList.push_back(foreChapter);
                 } else {
                     TextChapter chapter(chapterTitle, 0, 0);
                     // 加入到列表中
-                    mChapterList.push_back(chapter);
+                    chapterList.push_back(chapter);
                 }
             }
 
             // 获取上一章节
-            TextChapter &lastChapter = mChapterList.back();
+            TextChapter &lastChapter = chapterList.back();
             // 新章节的起始位置为上一章节的结尾位置
             lastChapter.endIndex = chapterEndIndex;
 
@@ -112,7 +114,7 @@ void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
             // 创建新章节
             TextChapter newChapter(chapterTitle, lastChapter.endIndex, 0);
             // 加入到列表中
-            mChapterList.push_back(newChapter);
+            chapterList.push_back(newChapter);
         }
 
         // 获取当前 decode 的长度
@@ -122,19 +124,18 @@ void ChapterDetector::detector(std::shared_ptr<InputStream> inputStream,
     }
 
     // 如果存在章节
-    if (!mChapterList.empty()) {
+    if (!chapterList.empty()) {
         // 获取最后一个章节，设置其终止索引
-        TextChapter &endChapter = mChapterList.back();
+        TextChapter &endChapter = chapterList.back();
         endChapter.endIndex = decodeLength;
 
         Logger::i(TAG, endChapter.toString());
     }
-
-    // 将数据存储到本地然后解析？？？
 }
 
 // 对传入的数据长度进行编码操作，返回编码操作
-int ChapterDetector::encodingSize(CharsetConverter &converter, char *inBuffer, size_t bufferSize) {
+int TxtChapterDetector::calculateEncodingSize(CharsetConverter &converter, char *inBuffer,
+                                              size_t bufferSize) {
     CharBuffer destBuffer(BUFFER_SIZE);
     CharBuffer sourceBuffer(inBuffer, bufferSize);
     CharsetConverter::ResultCode code;

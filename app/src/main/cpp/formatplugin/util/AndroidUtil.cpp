@@ -31,7 +31,7 @@ JavaClass AndroidUtil::Class_EncodingConverter(
 );
 
 JavaClass AndroidUtil::Class_ChapterDetector(
-        PKG_NAME + "ui/component/book/text/util/ChapterDetector"
+        PKG_NAME + "ui/component/book/text/util/TxtChapterDetector"
 );
 
 // 初始化静态成员。。
