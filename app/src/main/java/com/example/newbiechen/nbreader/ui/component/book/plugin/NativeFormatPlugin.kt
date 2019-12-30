@@ -3,6 +3,7 @@ package com.example.newbiechen.nbreader.ui.component.book.plugin
 import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.ui.component.book.BookModel
+import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.component.book.util.BookFileUtil
 import com.example.newbiechen.nbreader.uilts.LogHelper
@@ -34,41 +35,75 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         }
     }
 
+    private val mNativePluginDesc: Int
+
+    init {
+        // 在 native 层创建插件，获取插件描述符
+        mNativePluginDesc = createFormatPluginNative(bookType.name)
+    }
+
+    fun setBookResouce(bookPath: String) {
+        // 检测书籍路径是否正确
+        setBookSourceNative(mNativePluginDesc, bookPath)
+    }
+
+    fun getEncoding(): String {
+        return getEncodingNative(mNativePluginDesc)
+    }
+
+    fun getLanguage(): String {
+        return getLanguageNative(mNativePluginDesc)
+    }
+
+    fun getChapters(): Array<TextChapter> {
+        return getChapters(mNativePluginDesc)
+    }
+
     protected fun getContext() = context
 
-    fun getSupportType() = bookType
+    // 返回插件类型
+    fun getPluginType() = bookType
 
-    /**
-     * 主要用于方便给 native 调用
-     */
-    fun getSupportTypeByStr() = bookType.toString().toLowerCase()
+    // private external fun readMetaInfoNative(book: BookEntity): Int
 
-    fun readModel(model: BookModel) {
-
-        val resultCode = readModelNative(
-            model, getBookCacheDir(
-                getContext(), model.book
-            ), model.book.id
-        )
-
-        LogHelper.i(TAG, "resultCode:$resultCode")
-
-        // TODO：之后单独创建一个 Exception
-        if (resultCode != 0) {
-            throw IllegalAccessError("read book model error")
-        }
+    protected fun finalize() {
+        releaseFormatPlugin(mNativePluginDesc)
     }
 
     /**
-     * @return  1 ==> 表示不支持该书本的解析格式
-     *          2 ==> 表示插件解析错误
-     *          3 ==>
+     * 插件文本编码插件
      */
-    private external fun readModelNative(
-        bookModel: BookModel,
-        cacheDir: String,
-        cacheName: String
-    ): Int
+    private external fun createFormatPluginNative(formatType: String): Int
 
-    // private external fun readMetaInfoNative(book: BookEntity): Int
+    /**
+     * 配置插件参数
+     */
+    private external fun setPluginConfigureNative(pluginDesc: Int)
+
+    /**
+     * 设置待处理的书籍
+     */
+    private external fun setBookSourceNative(pluginDesc: Int, bookPath: String)
+
+    // TODO:如何将错误信息通知给上层？
+
+    // TODO:是否返回空数据
+
+    /**
+     * 获取书籍的文字编码
+     */
+    private external fun getEncodingNative(pluginDesc: Int): String
+
+    // 读取语言
+    private external fun getLanguageNative(pluginDesc: Int): String
+
+    // 读取章节
+    private external fun getChapters(pluginDesc: Int): Array<TextChapter>
+
+    private external fun readChapterContent(pluginDesc: Int)
+
+    /**
+     * 释放插件
+     */
+    private external fun releaseFormatPlugin(pluginDesc: Int)
 }

@@ -46,7 +46,7 @@ TxtPlugin::readChaptersInternal(std::string &chapterPattern,
 bool
 TxtPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t outSize) {
 
-    // TODO:对于文本独有的数据信息，如何进行缓存？
+    // TODO:对于文本独有的数据信息，如何进行缓存？(暂时不考虑)
 
 
     // 创建文本参数信息

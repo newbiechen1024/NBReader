@@ -44,7 +44,7 @@ class BookPluginManager {
 
     fun getPlugin(type: BookType): NativeFormatPlugin? {
         return mNativePluginList.firstOrNull {
-            it.getSupportType() == type
+            it.getPluginType() == type
         }
     }
 
