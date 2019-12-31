@@ -25,6 +25,8 @@ public:
      */
     CharBuffer(char *buffer, size_t bufferLen);
 
+    CharBuffer(char *buffer, size_t position, size_t length);
+
     ~CharBuffer();
 
     /**
@@ -41,7 +43,7 @@ public:
      * @return
      */
     void position(size_t newPosition) {
-        if (newPosition > mLimit){
+        if (newPosition > mLimit) {
             // TODO:抛出异常，暂时不处理
         }
 

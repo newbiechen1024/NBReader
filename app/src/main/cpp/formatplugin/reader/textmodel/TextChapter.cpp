@@ -6,12 +6,12 @@
 #include "TextChapter.h"
 
 
-TextChapter::TextChapter() : chapterTitle(nullptr) {
+TextChapter::TextChapter() : title(nullptr) {
     startIndex = 0;
     endIndex = 0;
 }
 
 TextChapter::TextChapter(const std::string &chapterTitle, size_t startIndex, size_t endIndex)
-        : chapterTitle(chapterTitle), startIndex(startIndex), endIndex(endIndex) {
+        : title(chapterTitle), startIndex(startIndex), endIndex(endIndex) {
 
 }

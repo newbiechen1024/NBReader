@@ -7,10 +7,9 @@
 #include "PluginManager.h"
 #include <util/Logger.h>
 
-FormatPlugin::FormatPlugin() : mPath(nullptr), mTitle(nullptr), mEncoding(nullptr),
-                               mLanguage(nullptr), mCachePath(nullptr), mFilePtr(nullptr),
-                               mChapterPattern(nullptr) {
-
+FormatPlugin::FormatPlugin() : mPath(""), mTitle(""), mEncoding(""),
+                               mLanguage(""), mCachePath(""), mFilePtr(nullptr),
+                               mChapterPattern("") {
 }
 
 FormatPlugin::~FormatPlugin() {

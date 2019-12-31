@@ -13,32 +13,31 @@
 #include <memory>
 #include <reader/bookmodel/BookModel.h>
 #include <reader/bookmodel/BookReader.h>
+#include <reader/book/BookEncoder.h>
+#include <reader/textmodel/TextChapter.h>
 
 class TxtReaderCore;
 
 class TxtReader : public EncodingTextReader {
 
 public:
-    TxtReader(BookModel &model, const PlainTextFormat &format, const std::string &charset);
+    TxtReader(const PlainTextFormat &format, const std::string &charset);
 
     ~TxtReader() {
     }
 
-    // 进行文稿分析
-    void readDocument(InputStream &stream);
+    // 读取章节信息
+    size_t readContent(TextChapter &chapter, char **outBuffer);
 
 private:
     // 文本信息
     const PlainTextFormat &mFormat;
     // 核心文本解析器
     std::shared_ptr<TxtReaderCore> mReaderCore;
-    // 书籍内容处理器
-    BookReader mBookReader;
-
+    // 书籍编码器
+    BookEncoder mBookEncoder;
     // 当前是否是新行
     bool isNewLine;
-    // 当前段落是否是标题段落
-    bool isTitleParagraph;
     // 当前行是否为空值
     bool isCurLineEmpty;
     // 统计一行的空格数
@@ -77,7 +76,7 @@ public:
     virtual ~TxtReaderCore() {
     }
 
-    virtual void readDocument(InputStream &stream);
+    virtual size_t readContent(char *inBuffer, size_t bufferSize);
 
 protected:
     TxtReader &mReader;
@@ -90,7 +89,7 @@ public:
     virtual ~TxtReaderCoreUTF16() {
     };
 
-    void readDocument(InputStream &stream) override;
+    size_t readContent(char *inBuffer, size_t bufferSize) override;
 
 protected:
     virtual char getAscii(const char *ptr) = 0;

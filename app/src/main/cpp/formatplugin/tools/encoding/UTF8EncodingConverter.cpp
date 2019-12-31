@@ -7,7 +7,7 @@
 #include "UTF8EncodingConverter.h"
 
 void UTF8EncodingConverter::convert(std::string &dst, const char *srcStart, const char *srcEnd) {
-
+    
     if (mBuffer.size() > 0) {
         const std::size_t len = UnicodeUtil::length(mBuffer, 1);
         if (len < mBuffer.size()) {

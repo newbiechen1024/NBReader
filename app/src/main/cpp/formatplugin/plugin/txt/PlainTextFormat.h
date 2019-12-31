@@ -20,7 +20,7 @@ public:
         BREAK_PARAGRAPH_AT_LINE_WITH_INDENT = 4,
     };
 
-    PlainTextFormat(const File &file);
+    PlainTextFormat();
 
     ~PlainTextFormat() {}
 
@@ -48,6 +48,8 @@ public:
     PlainTextDetector() {}
 
     ~PlainTextDetector() {}
+
+    void detect(File &file, PlainTextFormat &format);
 
     void detect(InputStream &inputStream, PlainTextFormat &format);
 };

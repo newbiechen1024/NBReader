@@ -14,8 +14,11 @@ public:
 
     TextChapter();
 
-    TextChapter(const std::string &chapterTitle, size_t startIndex, size_t endIndex);
+    TextChapter(const std::string &url, const std::string &title,
+                size_t startIndex, size_t endIndex);
 
+    // 路径信息
+    std::string url;
     // 标题
     std::string title;
     // 对应源文件的起始位置
@@ -24,8 +27,9 @@ public:
     size_t endIndex;
 
     std::string toString() {
-        std::string str = "chapter:" + title + "  startIndex:" + std::to_string(startIndex) +
-                          "  endIndex:" + std::to_string(endIndex);
+        std::string str = "url:" + url + "  chapter:" + title
+                          + "  startIndex:" + std::to_string(startIndex)
+                          + "  endIndex:" + std::to_string(endIndex);
         return str;
     }
 };

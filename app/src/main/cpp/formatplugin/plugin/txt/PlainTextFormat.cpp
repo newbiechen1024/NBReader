@@ -12,10 +12,18 @@ static const size_t BUFFER_SIZE = 4096;
 // 最大检测长度  1 MB
 static const size_t MAX_DETECT_SIZE = 1024 * 1024;
 
-PlainTextFormat::PlainTextFormat(const File &file)
-        : isInitialized(false),
-          mBreakType(ParagraphBreakType::BREAK_PARAGRAPH_AT_NEW_LINE),
-          mIgnoredIndent(1) {
+PlainTextFormat::PlainTextFormat() : isInitialized(false),
+                                     mBreakType(ParagraphBreakType::BREAK_PARAGRAPH_AT_NEW_LINE),
+                                     mIgnoredIndent(1) {
+}
+
+void PlainTextDetector::detect(File &file, PlainTextFormat &format) {
+    if (!file.exists()) {
+        return;
+    }
+    std::shared_ptr<InputStream> inputStream = file.getInputStream();
+
+    detect(*inputStream, format);
 }
 
 void PlainTextDetector::detect(InputStream &inputStream, PlainTextFormat &format) {

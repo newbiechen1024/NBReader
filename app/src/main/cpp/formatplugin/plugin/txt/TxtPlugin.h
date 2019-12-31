@@ -9,6 +9,8 @@
 #include <reader/book/Book.h>
 #include <reader/bookmodel/BookModel.h>
 #include "../FormatPlugin.h"
+#include "PlainTextFormat.h"
+#include "TxtReader.h"
 
 class TxtPlugin : public FormatPlugin {
 public:
@@ -24,8 +26,13 @@ public:
                               std::vector<TextChapter> &chapterList) override;
 
     bool
-    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t outSize) override;
+    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) override;
 
+private:
+    // 文本格式
+    PlainTextFormat mFormat;
+    // 文本阅读器
+    TxtReader *mTxtReaderPtr;
 };
 
 #endif //NBREADER_TXTPLUGIN_H

@@ -82,6 +82,9 @@ aux_source_directory(./filesystem/buffer FILE_SYSTEM_BUFFER_SOURCE)
 aux_source_directory(./filesystem/charset FILE_SYSTEM_CHARSET_SOURCE)
 aux_source_directory(./plugin PLUGIN_SOURCE)
 aux_source_directory(./plugin/txt TXT_PLUGIN_SOURCE)
+aux_source_directory(./reader/text READER_TEXT_SOURCE)
+aux_source_directory(./reader/text/tag READER_TEXT_TAG_SOURCE)
+aux_source_directory(./reader/text/entity READER_TEXT_ENTITY_SOURCE)
 aux_source_directory(./reader/book BOOK_READER_SOURCE)
 aux_source_directory(./reader/bookmodel BOOK_MODEL_READER_SOURCE)
 aux_source_directory(./reader/textmodel TEXT_MODEL_READER_SOURCE)
@@ -113,9 +116,9 @@ add_library( # Sets the title of the library.
         ${PLUGIN_SOURCE}
         ${TXT_PLUGIN_SOURCE}
         ${BOOK_READER_SOURCE}
-        ${BOOK_MODEL_READER_SOURCE}
+#[[        ${BOOK_MODEL_READER_SOURCE}
         ${TEXT_MODEL_READER_SOURCE}
-        ${READER_TEXT_MODEL_PGH_SOURCE}
+        ${READER_TEXT_MODEL_PGH_SOURCE}]]
         ${TOOLS_FONT_SOURCE}
         ${TOOLS_XML_SOURCE}
         ${TOOLS_ENCODING_SOURCE}
@@ -123,7 +126,9 @@ add_library( # Sets the title of the library.
         ${LINE_BREAK_SOURCE}
         ${FILE_SYSTEM_CHARSET_SOURCE}
         ${FILE_SYSTEM_BUFFER_SOURCE}
-        )
+        ${READER_TEXT_SOURCE}
+        ${READER_TEXT_TAG_SOURCE}
+        ${READER_TEXT_ENTITY_SOURCE})
 
 target_link_libraries(
         FormatPlugin

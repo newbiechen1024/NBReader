@@ -9,24 +9,24 @@
 #include <string>
 #include <tools/encoding/EncodingConverter.h>
 #include <tools/encoding/Charset.h>
+#include <filesystem/charset/CharsetConverter.h>
 
 class EncodingTextReader {
 
 public:
-    std::shared_ptr<EncodingConverter> getEncodingConverter() {
-        return mConverter;
-    }
+    // 进行转码操作
+    void convert(std::string &dst, const char *srcStart, const char *srcEnd);
 
 protected:
     // 传入编码类型
-    EncodingTextReader(const std::string & charset);
+    EncodingTextReader(const std::string &charset);
 
     virtual ~EncodingTextReader() {
     }
 
 private:
-    // 持有编码转换器
-    std::shared_ptr<EncodingConverter> mConverter;
+    // 编码转换器
+    CharsetConverter mConverter;
 };
 
 

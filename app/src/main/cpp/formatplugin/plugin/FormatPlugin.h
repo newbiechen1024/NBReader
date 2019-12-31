@@ -66,7 +66,7 @@ public:
     readChaptersInternal(std::string &chapterPattern, std::vector<TextChapter> &chapterList) = 0;
 
     virtual bool
-    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t outSize) = 0;
+    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) = 0;
 
     // todo:读取源信息，暂不实现
     // virtual bool readMetaInfo() = 0;

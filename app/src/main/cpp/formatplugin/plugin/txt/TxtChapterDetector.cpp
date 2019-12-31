@@ -141,6 +141,8 @@ int TxtChapterDetector::calculateEncodingSize(CharsetConverter &converter, char 
     CharsetConverter::ResultCode code;
     int encodingCount = 0;
 
+    // TODO:按照 EncodingTextReader 的方式修改。
+
     // 设置当前已有数据
     sourceBuffer.position(bufferSize);
 

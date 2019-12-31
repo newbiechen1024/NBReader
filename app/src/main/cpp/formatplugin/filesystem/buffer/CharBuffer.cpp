@@ -23,6 +23,15 @@ CharBuffer::CharBuffer(char *buffer, size_t bufferLen) {
     isInnerBuffer = false;
 }
 
+CharBuffer::CharBuffer(char *buffer, size_t position, size_t bufferLen) {
+    mBuffer = buffer;
+    mBufferLen = bufferLen;
+    mLimit = mBufferLen;
+    mPosition = position;
+
+    isInnerBuffer = false;
+}
+
 CharBuffer::~CharBuffer() {
     // 如果是内部创建的 buffer 则自己创建
     if (isInnerBuffer) {

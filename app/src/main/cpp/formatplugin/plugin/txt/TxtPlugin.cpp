@@ -5,6 +5,7 @@
 #include <filesystem/io/FileInputStream.h>
 #include <util/Logger.h>
 #include <sstream>
+#include <reader/text/entity/TextChapter.h>
 #include "TxtPlugin.h"
 #include "PlainTextFormat.h"
 #include "TxtReader.h"
@@ -15,6 +16,10 @@ TxtPlugin::TxtPlugin() {
 }
 
 TxtPlugin::~TxtPlugin() {
+    if (mTxtReaderPtr != nullptr) {
+        delete mTxtReaderPtr;
+        mTxtReaderPtr = nullptr;
+    }
 }
 
 bool TxtPlugin::readEncodingInternal(std::string &outEncoding) {
@@ -44,37 +49,40 @@ TxtPlugin::readChaptersInternal(std::string &chapterPattern,
 }
 
 bool
-TxtPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t outSize) {
+TxtPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) {
 
-    // TODO:对于文本独有的数据信息，如何进行缓存？(暂时不考虑)
+    // TODO:对于文本独有的数据信息，如何进行缓存？就是解析 format 的情况，看下效率吧，如果效率特别高，不缓存也没问题(暂时不考虑)
 
-
-    // 创建文本参数信息
-    PlainTextFormat format(file);
-
-    // TODO：如果改成 chapter 解析，下面几种都可以根据章节来分析了，没必要遍历整本 book
-
+    File chapterFile(txtChapter.url);
     // 如果参数信息未初始化
-    if (!format.hasInitialized()) {
+    if (!mFormat.hasInitialized()) {
         // 调用探测器进行探测
         PlainTextDetector detector;
-        detector.detect(*fileInputStream, format);
+        detector.detect(chapterFile, mFormat);
     }
 
-    Logger::i("TxtPlugin", "readLanguageAndEncoding:开始");
-    // 读取文本的语言和编码信息
-    readLanguageAndEncoding(book);
+    // 如果无法探测到信息，直接 return
+    if (!mFormat.hasInitialized()) {
+        return false;
+    }
 
-    Logger::i("TxtPlugin",
-              "readLanguageAndEncoding: lang = " + book.getLanguage() + "   encoding = " +
-              book.getEncoding());
+    std::string bookEncoding;
 
-    Logger::i("TxtPlugin", "readDocument:解析开始");
+    readEncoding(bookEncoding);
 
     // 创建文本阅读器
-    TxtReader(bookModel, format, book.getEncoding()).readDocument(*fileInputStream);
+    if (mTxtReaderPtr == nullptr) {
+        mTxtReaderPtr = new TxtReader(mFormat, bookEncoding);
+    }
 
-    // TODO:阅读器，需要重构，能够读取一个章节的数据信息
+    // 通过阅读器解析章节内容
+    size_t result = mTxtReaderPtr->readContent(txtChapter, outBuffer);
 
+    // 是否解析失败
+    if (result < 0) {
+        return false;
+    }
+
+    (*outSize) = result;
     return false;
 }
