@@ -9,8 +9,8 @@
 #include <string>
 #include <filesystem/io/InputStream.h>
 #include <util/regex/Regex.h>
-#include <reader/textmodel/TextChapter.h>
 #include <filesystem/charset/CharsetConverter.h>
+#include <reader/text/entity/TextChapter.h>
 
 class TxtChapterDetector {
 public:

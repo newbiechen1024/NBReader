@@ -7,7 +7,6 @@
 
 
 #include <reader/book/Book.h>
-#include <reader/bookmodel/BookModel.h>
 #include "../FormatPlugin.h"
 #include "PlainTextFormat.h"
 #include "TxtReader.h"

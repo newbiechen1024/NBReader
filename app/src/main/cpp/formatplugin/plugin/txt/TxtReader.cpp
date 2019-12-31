@@ -3,7 +3,6 @@
 // description :
 
 #include <util/Logger.h>
-#include <reader/textmodel/tag/NBTagStyle.h>
 #include <reader/text/entity/TextChapter.h>
 #include "TxtReader.h"
 

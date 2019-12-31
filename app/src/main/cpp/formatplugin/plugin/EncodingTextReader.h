@@ -7,7 +7,6 @@
 #define NBREADER_ENCODINGTEXTREADER_H
 
 #include <string>
-#include <tools/encoding/EncodingConverter.h>
 #include <tools/encoding/Charset.h>
 #include <filesystem/charset/CharsetConverter.h>
 

@@ -11,10 +11,7 @@
 #include <filesystem/io/InputStream.h>
 #include "PlainTextFormat.h"
 #include <memory>
-#include <reader/bookmodel/BookModel.h>
-#include <reader/bookmodel/BookReader.h>
 #include <reader/book/BookEncoder.h>
-#include <reader/textmodel/TextChapter.h>
 
 class TxtReaderCore;
 

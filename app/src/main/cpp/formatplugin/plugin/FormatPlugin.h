@@ -7,9 +7,8 @@
 
 #include <string>
 #include <reader/book/Book.h>
-#include <reader/bookmodel/BookModel.h>
-#include <reader/textmodel/TextChapter.h>
 #include <filesystem/buffer/CharBuffer.h>
+#include <reader/text/entity/TextChapter.h>
 #include "FormatType.h"
 
 class FormatPlugin {

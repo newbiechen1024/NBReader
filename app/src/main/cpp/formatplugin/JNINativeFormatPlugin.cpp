@@ -7,7 +7,6 @@
 #include <string>
 #include <plugin/PluginManager.h>
 #include <reader/book/Book.h>
-#include <reader/bookmodel/BookModel.h>
 #include <util/Logger.h>
 #include <util/StringUtil.h>
 #include "util/AndroidUtil.h"
