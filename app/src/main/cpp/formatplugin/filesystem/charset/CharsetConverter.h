@@ -39,11 +39,19 @@ public:
      */
     ResultCode convert(CharBuffer &inBuffer, CharBuffer &outBuffer);
 
+    std::string getFromEncoding() {
+        return mFromEncoding;
+    }
+
+    std::string getToEncoding() {
+        return mToEncoding;
+    }
+
 private:
     // iconv 的句柄
     libiconv_t mIconvCd;
-    // 如果转码成相同的编码
-    bool isEncodingSame;
+    std::string mFromEncoding;
+    std::string mToEncoding;
 };
 
 

@@ -1,6 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book
 
 import android.content.Context
+import android.os.Environment
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.plugin.BookPluginManager
@@ -14,7 +15,10 @@ import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import java.io.File
 import java.lang.Exception
+import java.nio.ByteBuffer
+import java.nio.CharBuffer
 
 /**
  *  author : newbiechen
@@ -106,8 +110,8 @@ class BookManager constructor(
         val plugin = pluginManager.getPlugin(book.type)
             ?: throw IllegalAccessException("UnSupport Book Type")
 
-        // 根据 Book 实例化
-        mBookModel = BookModel.createBookModel(book, plugin)
+/*        // 根据 Book 实例化
+        mBookModel = BookModel.createBookModel(book, plugin)*/
 
 /*        // 对文本处理器，设置文本模块
         textProcessor.setTextModel(mBookModel!!.textModel!!)

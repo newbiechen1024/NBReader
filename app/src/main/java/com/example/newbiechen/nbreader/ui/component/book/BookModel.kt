@@ -19,7 +19,7 @@ class BookModel private constructor(val book: BookEntity) {
         private const val TAG = "BookModel"
         fun createBookModel(book: BookEntity, plugin: NativeFormatPlugin): BookModel {
             val bookModel = BookModel(book)
-            plugin.readModel(bookModel)
+            // plugin.readModel(bookModel)
             return bookModel
         }
     }

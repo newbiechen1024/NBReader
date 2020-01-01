@@ -52,11 +52,15 @@ void CharBuffer::put(char ch) {
 }
 
 void CharBuffer::compact() {
+
     // 获取剩余缓冲区的数据
     size_t remainSize = remaining();
-    // 说明数据已经全部读取完，直接走 clear
-    if (remainSize == 0) {
+
+    if (remainSize == 0) { // 说明数据已经全部读取完，直接走 clear
         clear();
+    } else if (remainSize == limit()) { // 说明剩余数据为整个 buffer
+        // 直接赋值就行了
+        mPosition = remainSize;
     } else {
         char remainBuffer[remainSize];
         char *bufferPtr = mBuffer + mPosition;

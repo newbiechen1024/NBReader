@@ -49,7 +49,7 @@ void PlainTextDetector::detect(InputStream &inputStream, PlainTextFormat &format
     unsigned int currentLineLength = 0;
     unsigned int currentLineIndent = 0;
 
-    char *buffer = new char[BUFFER_SIZE];
+    char *buffer = new char[BUFFER_SIZE]();
     int length;
 
     do {

@@ -35,21 +35,23 @@ size_t TextBufferAllocator::getBufferOffset() {
     return mBufferOffset;
 }
 
+
+// TODO:使用 close 是否正确？
 size_t TextBufferAllocator::close(char **buffer) {
-    char *totalBuffer = new char[getBufferOffset()];
+    size_t bufferSize = getBufferOffset();
+    char *outBuffer = new char[bufferSize];
 
-    size_t blockOffset = 0;
-
-    char *outBuffer = totalBuffer + blockOffset;
+    char *curBuffer = outBuffer;
 
     // 循环复制缓冲块的中的内容
     for (auto block:mBufferBlockList) {
-        std::memcpy(outBuffer, block->buffer(), block->position());
-        blockOffset += block->position();
+        std::memcpy(curBuffer, block->buffer(), block->position());
+        curBuffer += block->position();
     }
 
-    (*buffer) = totalBuffer;
-    return getBufferOffset();
+    (*buffer) = outBuffer;
+
+    return bufferSize;
 }
 
 char *TextBufferAllocator::allocate(size_t size) {
@@ -84,12 +86,13 @@ char *TextBufferAllocator::reallocateLast(char *ptr, size_t newSize) {
     const std::size_t oldOffset = ptr - curBlock->buffer();
 
     if (oldOffset + newSize <= mCurBlockSize) {
-        mCurBlockSize = oldOffset + newSize;
-        curBlock->position(mCurBlockSize);
+        mCurBlockOffset = oldOffset + newSize;
+        curBlock->position(mCurBlockOffset);
         return ptr;
     } else {
         mCurBlockSize = std::max(mDefaultBufferSize, newSize);
         CharBuffer *block = new CharBuffer(mCurBlockSize);
+
         size_t diffSize = mCurBlockOffset - oldOffset;
         std::memcpy(block->buffer(), ptr, diffSize);
         curBlock->position(mCurBlockOffset - diffSize);

@@ -41,7 +41,6 @@ public:
     static std::shared_ptr<StringMethod> Method_String_toLowerCase;
     static std::shared_ptr<StringMethod> Method_String_toUpperCase;
 
-    static std::shared_ptr<StringMethod> Method_NativeFormatPlugin_getSupportTypeByStr;
     static std::shared_ptr<ObjectMethod> Method_BookModel_getBook;
     static std::shared_ptr<StringMethod> Method_Book_getTitle;
     static std::shared_ptr<StringMethod> Method_Book_getUrl;

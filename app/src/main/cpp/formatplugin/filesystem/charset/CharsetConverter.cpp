@@ -4,35 +4,33 @@
 //
 
 #include <util/Logger.h>
+#include <util/StringUtil.h>
 #include "CharsetConverter.h"
 
 static const std::string TAG = "CharsetConverter";
 
 CharsetConverter::CharsetConverter(const std::string &fromEncoding, const std::string &toEncoding) {
-    isEncodingSame = false;
 
-    // TODO：将大写转换成小写
+    std::string lowFromEncoding = fromEncoding;
+    StringUtil::asciiToLowerInline(lowFromEncoding);
+    std::string lowToEncoding = toEncoding;
+    StringUtil::asciiToLowerInline(lowToEncoding);
 
     // 不处理 charset 不支持，或者写错的情况
-    mIconvCd = iconv_open(toEncoding.c_str(), fromEncoding.c_str());
+    mIconvCd = iconv_open(lowFromEncoding.c_str(), lowToEncoding.c_str());
 
     // 如果初始化失败，则 icon cd  为 null
     if (errno == EINVAL) {
         mIconvCd = nullptr;
-
-        //TODO: 直接抛出异常
-    }
-
-    // TODO:需要无视大小写
-
-    if (fromEncoding == toEncoding) {
-        isEncodingSame = true;
+        //TODO: 直接抛出异常，暂时为直接退出
+        exit(-1);
     }
 }
 
 CharsetConverter::~CharsetConverter() {
     if (mIconvCd != nullptr) {
         iconv_close(mIconvCd);
+        mIconvCd = nullptr;
     }
 }
 
@@ -42,12 +40,6 @@ CharsetConverter::convert(CharBuffer &inBuffer, CharBuffer &outBuffer) {
     if (mIconvCd == nullptr) {
         // TODO:未处理，暂时直接返回错误
         Logger::i(TAG, "iconv init error");
-        return UNKNOW;
-    }
-
-    if (isEncodingSame) {
-        // TODO:直接拷贝，还是不处理，没想好 (暂时直接返回错误)
-        Logger::i(TAG, "same encoding ");
         return UNKNOW;
     }
 

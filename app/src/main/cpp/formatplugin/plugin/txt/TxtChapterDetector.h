@@ -27,9 +27,7 @@ public:
      * @param charset
      * @param chapterList
      */
-    void detector(std::shared_ptr<InputStream> inputStream,
-                  const std::string &charset,
-                  std::vector<TextChapter> &chapterList);
+    void detector(const File &file, const std::string &charset, std::vector<TextChapter> &chapterList);
 
 private:
     /**
@@ -39,7 +37,7 @@ private:
      * @param bufferSize
      * @return
      */
-    int calculateEncodingSize(CharsetConverter &converter, char *inBuffer, size_t bufferSize);
+    int getOriginSize(CharsetConverter &converter, char *inBuffer, size_t bufferSize);
 
 private:
     std::shared_ptr<Pattern> mPattern;

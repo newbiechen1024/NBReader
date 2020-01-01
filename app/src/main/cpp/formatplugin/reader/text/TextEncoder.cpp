@@ -4,11 +4,15 @@
 //
 
 #include <reader/text/tag/TextTagType.h>
+#include <util/Logger.h>
 #include "TextEncoder.h"
 
 static const size_t BUFFER_SIZE = 8192;
 
-TextEncoder::TextEncoder() : mBufferAllocatorPtr(nullptr), mCurParagraphPtr(nullptr),
+static const std::string TAG = "TextEncoder";
+
+TextEncoder::TextEncoder() : mBufferAllocatorPtr(nullptr),
+                             mCurParagraphPtr(nullptr),
                              mCurTagPtr(nullptr) {
     mIsOpen = false;
 }
@@ -19,6 +23,8 @@ TextEncoder::~TextEncoder() {
 
 // TODO:不考虑多线程的情况
 void TextEncoder::open() {
+    Logger::i(TAG, "open");
+
     // 如果已经打开了，则默认返回 true
     if (isOpen()) {
         return;
@@ -30,6 +36,8 @@ void TextEncoder::open() {
 }
 
 size_t TextEncoder::close(char **outBuffer) {
+    Logger::i(TAG, "close");
+
     // 如果没有开启，则返回 -1，表示关闭失败
     if (!isOpen()) {
         return -1;
@@ -39,13 +47,12 @@ size_t TextEncoder::close(char **outBuffer) {
     flush();
 
     // 将 allocator 中的数据输出
-    mBufferAllocatorPtr->close(outBuffer);
-
-    // 设置当前编码其状态
-    mIsOpen = false;
+    size_t result = mBufferAllocatorPtr->close(outBuffer);
 
     // 释放无用资源操作
     release();
+
+    return result;
 }
 
 void TextEncoder::release() {
@@ -60,6 +67,9 @@ void TextEncoder::release() {
     }
 
     mCurTagPtr = nullptr;
+
+    // 设置当前编码器状态
+    mIsOpen = false;
 }
 
 void TextEncoder::checkEncoderState() {
@@ -72,12 +82,15 @@ void TextEncoder::checkEncoderState() {
 
 void TextEncoder::checkTagState() {
     // 如果编码器没有 open 处理，或者没有调用 createParagraph 都抛出异常
-    if (!isOpen() || mCurParagraphPtr == nullptr) {
+    checkEncoderState();
+
+    if (mCurParagraphPtr == nullptr) {
         exit(-1);
     }
 }
 
 void TextEncoder::createParagraph(TextParagraph::Type paragraphType) {
+
     // 检测编码器状态
     checkEncoderState();
 
@@ -86,20 +99,24 @@ void TextEncoder::createParagraph(TextParagraph::Type paragraphType) {
 
     // 创建新的段落
     mCurParagraphPtr = new TextParagraph(paragraphType);
+
 }
 
 void TextEncoder::flush() {
+    if (mCurParagraphPtr == nullptr) {
+        return;
+    }
+
     // 获取上一个段落
     TextParagraph *lastParagraphPtr = mCurParagraphPtr;
 
     // 将上一个段落数据写入到缓冲区中，一个 paragraph 占 4 字节
-    if (lastParagraphPtr != nullptr) {
-        char *paragraphTag = mBufferAllocatorPtr->allocate(4);
-        *paragraphTag = (char) TextTagType::PARAGRAPH;
-        *(paragraphTag + 1) = 0;
-        *(paragraphTag + 2) = lastParagraphPtr->type;
-        *(paragraphTag + 3) = 0;
-    }
+    char *paragraphTag = mBufferAllocatorPtr->allocate(4);
+
+    *paragraphTag = (char) TextTagType::PARAGRAPH;
+    *(paragraphTag + 1) = 0;
+    *(paragraphTag + 2) = lastParagraphPtr->type;
+    *(paragraphTag + 3) = 0;
 
     // 数据已经存储到缓冲区，释放段落指针
     delete mCurParagraphPtr;
@@ -119,6 +136,7 @@ void TextEncoder::flush() {
  * 4. 文本内容：占用文本长度字节。
  */
 void TextEncoder::addTextTag(const std::vector<std::string> &text) {
+
     // 检测添加 tag 的环境
     checkTagState();
 
@@ -132,6 +150,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
     // str 持有 UTF-8 编码的数据，通过 UTF-8 解析文本中有多少个字符
     for (const std::string &str : text) {
         wordCount = UnicodeUtil::utf8Length(str);
+        Logger::i(TAG, "addTextTag:" + str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;
@@ -202,6 +221,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
 void TextEncoder::addControlTag(TextStyleType style, bool isStartTag) {
+
     mCurTagPtr = mBufferAllocatorPtr->allocate(4);
     *mCurTagPtr = (char) TextTagType::CONTROL;
     *(mCurTagPtr + 1) = 0;

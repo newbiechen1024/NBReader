@@ -15,8 +15,7 @@
 
 class BookEncoder {
 public:
-    BookEncoder() {
-    }
+    BookEncoder();
 
     ~BookEncoder() {
     }

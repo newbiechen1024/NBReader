@@ -5,18 +5,26 @@
 
 #include "BookEncoder.h"
 
+BookEncoder::BookEncoder() {
+    isParagraphOpen = false;
+    isSectionContainsRegularContents = false;
+    isTitleParagraphOpen = false;
+}
+
 void BookEncoder::open() {
     mTextEncoder.open();
 }
 
 size_t BookEncoder::close(char **outBuffer) {
     size_t outSize = mTextEncoder.close(outBuffer);
-    isParagraphOpen = false;
-    mParagraphTextList.clear();
-    mTextStyleStack.clear();
+
     isParagraphOpen = false;
     isSectionContainsRegularContents = false;
     isTitleParagraphOpen = false;
+
+    mParagraphTextList.clear();
+    mTextStyleStack.clear();
+
     return outSize;
 }
 

@@ -73,7 +73,7 @@ public:
     virtual ~TxtReaderCore() {
     }
 
-    virtual size_t readContent(char *inBuffer, size_t bufferSize);
+    virtual void readContent(char *inBuffer, size_t bufferSize);
 
 protected:
     TxtReader &mReader;
@@ -86,7 +86,7 @@ public:
     virtual ~TxtReaderCoreUTF16() {
     };
 
-    size_t readContent(char *inBuffer, size_t bufferSize) override;
+    void readContent(char *inBuffer, size_t bufferSize) override;
 
 protected:
     virtual char getAscii(const char *ptr) = 0;

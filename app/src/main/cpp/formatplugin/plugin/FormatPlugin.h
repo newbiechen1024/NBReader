@@ -55,7 +55,7 @@ public:
      * @param outSize：输出缓冲区的大小
      * @return
      */
-    bool readChapterContent(TextChapter &txtChapter, char **outBuffer, size_t outSize);
+    bool readChapterContent(TextChapter &txtChapter, char **outBuffer, size_t *outSize);
 
     virtual bool readEncodingInternal(std::string &outEncoding) = 0;
 

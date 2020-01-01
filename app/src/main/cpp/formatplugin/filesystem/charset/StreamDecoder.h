@@ -55,7 +55,6 @@ public:
 private:
     /**
      * 读取流数据
-     * @return 是否读取到数据
      */
     bool readStream();
 

@@ -19,9 +19,7 @@
 
 #include <cstring>
 #include <map>
-#include <tools/encoding/EncodingConverter.h>
 #include <filesystem/io/InputStream.h>
-#include <tools/encoding/EncodingConverterManager.h>
 #include <filesystem/File.h>
 #include "XMLReaderInternal.h"
 #include "XMLReader.h"
@@ -77,7 +75,7 @@ void XMLReaderInternal::fEndElementHandler(void *userData, const char *name) {
 
 static int fUnknownEncodingHandler(void *, const XML_Char *name, XML_Encoding *encoding) {
 
-    // TODO:encoding 未知情况下的处理
+/*    // TODO:encoding 未知情况下的处理
 
     std::shared_ptr<EncodingConverter> converter = EncodingConverterManager::getInstance()
             .getEncodingConverter(name);
@@ -89,7 +87,7 @@ static int fUnknownEncodingHandler(void *, const XML_Char *name, XML_Encoding *e
         }
 
         return XML_STATUS_OK;
-    }
+    }*/
     return XML_STATUS_ERROR;
 }
 

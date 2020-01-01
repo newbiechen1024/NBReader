@@ -7,7 +7,8 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity
  */
 
 data class TextChapter(
-    val chapterTitle: String, // 章节标题
+    val url: String,
+    val title: String, // 章节标题
     val startIndex: Int, // 在源文件的起始偏移值
     val endIndex: Int // 在源文件的终止偏移值
 )

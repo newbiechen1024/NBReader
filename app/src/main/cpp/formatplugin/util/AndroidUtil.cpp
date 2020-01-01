@@ -31,7 +31,7 @@ JavaClass AndroidUtil::Class_EncodingConverter(
 );
 
 JavaClass AndroidUtil::Class_ChapterDetector(
-        PKG_NAME + "ui/component/book/text/util/TxtChapterDetector"
+        PKG_NAME + "ui/component/book/text/util/ChapterDetector"
 );
 
 // 初始化静态成员。。
@@ -42,7 +42,6 @@ std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_ChapterDetector_cr
 
 // 初始化普通成员
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
-std::shared_ptr<StringMethod> AndroidUtil::Method_NativeFormatPlugin_getSupportTypeByStr;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getTitle;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getUrl;
@@ -91,10 +90,6 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_String_toLowerCase = std::make_shared<StringMethod>(Class_String, "toLowerCase", "()");
     Method_String_toUpperCase = std::make_shared<StringMethod>(Class_String, "toUpperCase", "()");
 
-    Method_NativeFormatPlugin_getSupportTypeByStr = std::make_shared<StringMethod>(
-            Class_NativeFormatPlugin,
-            "getSupportTypeByStr",
-            "()");
     Method_BookModel_getBook = std::make_shared<ObjectMethod>(Class_BookModel, "getBook",
                                                               Class_BookEntity, "()");
 

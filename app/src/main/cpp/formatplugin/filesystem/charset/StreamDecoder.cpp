@@ -14,6 +14,9 @@ StreamDecoder::StreamDecoder(std::shared_ptr<InputStream> inputStream,
         : mInputStream(inputStream), mDecoder(fromEncoding, "utf-8"), mInBuffer(BUFFER_SIZE) {
     isDecodeFinish = false;
     mDecodeLength = 0;
+
+    // TODO：为了解决 readStream 时的 compact()，虽然很怪异，但是没有什么其他好办法解决问题
+    mInBuffer.position(BUFFER_SIZE);
 }
 
 StreamDecoder::~StreamDecoder() {
@@ -28,7 +31,7 @@ int StreamDecoder::read(char *buffer, size_t length) {
 
     // 检测传入参数
     if (buffer == nullptr) {
-        // TODO:抛出异常
+        exit(-1);
     }
 
     if (length == 0) {
@@ -45,56 +48,45 @@ int StreamDecoder::read(char *buffer, size_t length) {
 
     CharsetConverter::ResultCode resultCode;
 
-    // 读取数据
-    readStream();
     // 死循环
     for (;;) {
+        // 开始读取数据
+        if (!readStream()) {
+            // 如果输入数据没有可解析的了，那么就直接返回
+            isDecodeFinish = true;
+            // 如果读取不到数据直接返回
+            return outBuffer.position();
+        }
+
         // 进行转码操作
         resultCode = mDecoder.convert(mInBuffer, outBuffer);
         // 记录解析数据的总长度
         mDecodeLength += mInBuffer.position();
         // 根据错误提示进行具体的处理
         switch (resultCode) {
-            case CharsetConverter::OVERFLOW:
-                Logger::i(TAG,"OVERFLOW");
-
+            case CharsetConverter::OVERFLOW: // 说明 outBuffer 已经存满了
+                Logger::i(TAG, "OVERFLOW");
                 // 说明 buffer 填充成功，返回读取的长度
-                // TODO：待验证
                 return outBuffer.position();
-            case CharsetConverter::UNDERFLOW:
-                Logger::i(TAG,"UNDERFLOW");
-                // TODO：s如果不是从结尾导致的错误，而是中间的字符无法识别。该怎么处理
+            case CharsetConverter::UNDERFLOW: // 说明 inBuffer 中的数据不完整
+                Logger::i(TAG, "UNDERFLOW");
+                // TODO：如果不是从结尾导致的错误，而是中间的字符无法识别。该怎么处理
                 // TODO：判断 position 如果离结尾 < 6 字节，可能是结尾导致的 UNDERFLOW
                 // TODO：如果 position > 6 字节，可能是某个数据块无法识别，直接抛出异常？
                 // TODO：暂时不处理
-
-                // 重新从数据流中读取数据
-                if (!readStream()) {
-                    // 如果读取数据失败，标记解析完成
-                    isDecodeFinish = true;
-                    return outBuffer.position();
-                }
                 break;
-            case CharsetConverter::MALFORMED:
+            case CharsetConverter::MALFORMED: // 说明编码格式无法解析
                 Logger::i(TAG, "MALFORMED");
                 // TODO:说明 inBuffer 数据与编码不符合，应该抛出异常(当前，暂时处理为解析结束)
                 isDecodeFinish = true;
                 return outBuffer.position();
-            case CharsetConverter::SUCCESS:
-                // 说明 inBuffer 完全解析完成。
+            case CharsetConverter::SUCCESS: // 说明 inBuffer 完全解析完成。
                 Logger::i(TAG, "SUCCESS");
 
                 // 在完全解析完的情况下，判断 outBuffer 是否有剩余空间，如果没有剩余空间则直接返回。
                 // 虽然这种判断也不准确，但是聊胜于无。
                 if (outBuffer.position() == outBuffer.size()) {
                     return outBuffer.position();
-                } else {
-                    // 说明 inBuffer 被使用完了
-                    if (!readStream()) {
-                        isDecodeFinish = true;
-                        // 如果读取不到数据直接返回
-                        return outBuffer.position();
-                    }
                 }
                 break;
             default:
@@ -111,15 +103,17 @@ bool StreamDecoder::readStream() {
 
     int pos = mInBuffer.position();
 
-    char * readBuffer = mInBuffer.buffer() + pos;
+    char *readBuffer = mInBuffer.buffer() + pos;
 
-    int readSize = mInBuffer.remaining();
+    int remainSize = mInBuffer.remaining();
 
-    int resultSize = mInputStream->read(readBuffer, readSize);
+    // 如果剩余大小不为 0 才读取数据
+    if (remainSize != 0) {
+        int resultSize = mInputStream->read(readBuffer, remainSize);
+        mInBuffer.position(pos + resultSize);
+    }
 
-    mInBuffer.position(pos + resultSize);
-
-    return resultSize != 0;
+    return mInBuffer.position() != 0;
 }
 
 void StreamDecoder::close() {

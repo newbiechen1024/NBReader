@@ -74,7 +74,6 @@ private:
     TextBufferAllocator *mBufferAllocatorPtr;
     // 当前创建的文本段落指针
     TextParagraph *mCurParagraphPtr;
-
     // 当前标签指针
     char *mCurTagPtr;
     // 编码器是否打开
