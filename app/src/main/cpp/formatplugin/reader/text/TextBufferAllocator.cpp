@@ -11,7 +11,6 @@ TextBufferAllocator::TextBufferAllocator(const size_t defaultBufferSize) : mDefa
     mCurBlockSize = 0;
     mCurBlockOffset = 0;
     mBufferOffset = 0;
-    mIsBufferChanged = false;
 }
 
 TextBufferAllocator::~TextBufferAllocator() {
@@ -25,14 +24,11 @@ TextBufferAllocator::~TextBufferAllocator() {
 
 size_t TextBufferAllocator::getBufferOffset() {
     size_t result = 0;
-    if (mIsBufferChanged) {
-        for (auto block:mBufferBlockList) {
-            result += block->position();
-        }
 
-        mBufferOffset = result;
+    for (auto block:mBufferBlockList) {
+        result += block->position();
     }
-    return mBufferOffset;
+    return result;
 }
 
 
@@ -55,8 +51,6 @@ size_t TextBufferAllocator::close(char **buffer) {
 }
 
 char *TextBufferAllocator::allocate(size_t size) {
-    mIsBufferChanged = true;
-
     if (mBufferBlockList.empty()) {
         mCurBlockSize = std::max(mDefaultBufferSize, size);
         mBufferBlockList.push_back(new CharBuffer(mCurBlockSize));
@@ -80,7 +74,6 @@ char *TextBufferAllocator::allocate(size_t size) {
 
 char *TextBufferAllocator::reallocateLast(char *ptr, size_t newSize) {
     // 作用：如果之前请求分配的区域不够的话，需要重新申请分配内存的意思。 ==> 传入的 ptr 必须是最新 allocate 返回的值。
-    mIsBufferChanged = true;
 
     CharBuffer *curBlock = mBufferBlockList.back();
     const std::size_t oldOffset = ptr - curBlock->buffer();
@@ -101,6 +94,7 @@ char *TextBufferAllocator::reallocateLast(char *ptr, size_t newSize) {
         mBufferBlockList.push_back(block);
         mCurBlockOffset = newSize;
 
+        block->position(mCurBlockOffset);
         return block->buffer();
     }
 }

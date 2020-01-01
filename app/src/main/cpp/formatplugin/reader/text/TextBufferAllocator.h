@@ -93,9 +93,6 @@ private:
     // 当前缓冲块的大小
     size_t mCurBlockSize;
 
-    // 是否缓冲区改变了
-    bool mIsBufferChanged;
-
 private: // disable copying
     TextBufferAllocator(const TextBufferAllocator &);
 

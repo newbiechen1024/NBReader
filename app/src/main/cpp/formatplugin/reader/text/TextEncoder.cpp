@@ -150,7 +150,6 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
     // str 持有 UTF-8 编码的数据，通过 UTF-8 解析文本中有多少个字符
     for (const std::string &str : text) {
         wordCount = UnicodeUtil::utf8Length(str);
-        Logger::i(TAG, "addTextTag:" + str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;
@@ -169,8 +168,9 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
         // 将重新计算的长度写入 entry 中
         TextBufferAllocator::writeUInt32(mCurTagPtr + 2, newWordCount);
 
-        // 偏移 6 字节，指向 TextTag 的文本内容赋值位置
-        size_t offset = 6;
+        // TODO:这里和 FBReader有出入，我认为应该 *2,不知道对不对
+        // 偏移 6 字节，以及上一段数据的位置
+        size_t offset = 6 + oldWordCount * 2;
 
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2
@@ -200,7 +200,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
             // 获取转换后的总长度的字节数
             const size_t len = 2 * unicode2Str.size();
             // 进行复制操作
-            std::memcpy(mBufferAllocatorPtr + offset, &unicode2Str.front(), len);
+            std::memcpy(mCurTagPtr + offset, &unicode2Str.front(), len);
             unicode2Str.clear();
             // 下一文本的起始偏移位置
             offset += len;
