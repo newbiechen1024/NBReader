@@ -114,7 +114,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
         JNIEnv *env, jobject thiz, jstring format_type) {
     // TODO: implement createFormatPluginNative()
 
-/*    // 获取调用该方法的 NativePlugin 对应的 type
+    // 获取调用该方法的 NativePlugin 对应的 type
     std::string formatTypeStr = AndroidUtil::toCString(env, format_type);
 
     // 根据 type 查找并返回数据
@@ -125,65 +125,9 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     // 插入到 map 中缓存
     sPluginMap.insert(std::pair<int, std::shared_ptr<FormatPlugin>>(pluginIndex, pluginPtr));
 
-    sPluginIndex++;*/
+    sPluginIndex++;
 
-    // 地址
-
-    std::shared_ptr<FormatPlugin> pluginPtr = PluginManager::createFormatPlugin("txt");
-
-    // 测试书籍
-    std::string bookPath = "/sdcard/测试书籍/zxczxc.txt";
-
-    std::string cachePath = "";
-    std::string pattern = "^(.{0,8})(\xe7\xac\xac)([0-9\xe9\x9b\xb6\xe4\xb8\x80\xe4\xba\x8c\xe4\xb8\xa4\xe4\xb8\x89\xe5\x9b\x9b\xe4\xba\x94\xe5\x85\xad\xe4\xb8\x83\xe5\x85\xab\xe4\xb9\x9d\xe5\x8d\x81\xe7\x99\xbe\xe5\x8d\x83\xe4\xb8\x87\xe5\xa3\xb9\xe8\xb4\xb0\xe5\x8f\x81\xe8\x82\x86\xe4\xbc\x8d\xe9\x99\x86\xe6\x9f\x92\xe6\x8d\x8c\xe7\x8e\x96\xe6\x8b\xbe\xe4\xbd\xb0\xe4\xbb\x9f]{1,10})([\xe7\xab\xa0\xe8\x8a\x82\xe5\x9b\x9e\xe9\x9b\x86\xe5\x8d\xb7])(.{0,30})$";
-
-    pluginPtr->setConfigure(cachePath, pattern);
-    // 设置书籍资源
-    pluginPtr->setBookResource(bookPath);
-
-    // 读取章节信息
-    std::vector<TextChapter> chapters;
-
-    bool result;
-
-    result = pluginPtr->readChapters(chapters);
-
-    if (result) {
-        // 测试章节内容是否编码，并存储到一个缓存位置
-
-        auto chapter = chapters[0];
-
-        Logger::i(TAG,
-                  "createFormatPluginNative: chapter" + std::to_string(chapter.startIndex) + "  " +
-                  std::to_string(chapter.endIndex));
-
-        char *buffer;
-        size_t bufferSize;
-        result = pluginPtr->readChapterContent(chapters[0], &buffer, &bufferSize);
-
-        // 将 buffer 输出存储到本地文件
-        if (result) {
-            File file(
-                    "/storage/emulated/0/Android/data/com.example.newbiechen.nbreader/cache/plugin.txt");
-
-            if (!file.exists()) {
-                file.createFile();
-            }
-
-            auto outputStreamPtr = file.getOutputStream();
-
-            if (outputStreamPtr->open()) {
-                outputStreamPtr->write(buffer, bufferSize);
-                Logger::i(TAG, "createFormatPluginNative: success");
-            }
-            Logger::i(TAG, "createFormatPluginNative: " + std::to_string(bufferSize));
-        } else {
-            Logger::i(TAG, "createFormatPluginNative: chapter content failure");
-        }
-
-        delete[]buffer;
-    }
-    return 0;
+    return pluginIndex;
 }
 
 extern "C"
@@ -191,17 +135,19 @@ JNIEXPORT void JNICALL
 Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_releaseFormatPluginNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     // 释放 plugin 对象
-    // sPluginMap.erase(plugin_desc);
+    sPluginMap.erase(plugin_desc);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setPluginConfigureNative(
-        JNIEnv *env, jobject thiz, jint plugin_desc) {
+Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setConfigureNative(
+        JNIEnv *env, jobject thiz, jint plugin_desc, jstring cache_path, jstring chapter_pattern) {
     auto pluginPtr = sPluginMap[plugin_desc];
-/*    if (pluginPtr != nullptr) {
-        pluginPtr->setConfigure()
-    }*/
+    if (pluginPtr != nullptr) {
+        std::string cachePath = AndroidUtil::toCString(env, cachePath);
+        std::string chapterPattern = AndroidUtil::toCString(env, chapter_pattern);
+        pluginPtr->setConfigure(cachePath, chapterPattern);
+    }
 }
 
 extern "C"
@@ -240,17 +186,77 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
     return AndroidUtil::toJString(env, lang);
 }
 
-/*extern "C"
+extern "C"
 JNIEXPORT jobjectArray JNICALL
 Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getChaptersNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     // TODO: implement getChapters()
+    auto pluginPtr = sPluginMap[plugin_desc];
+    std::vector<TextChapter> chapters;
 
-}*/
+    if (pluginPtr != nullptr) {
+        pluginPtr->readChapters(chapters);
+    }
+
+    // 如果章节列表为空，则表示没有请求到返回 null
+    if (chapters.empty()) {
+        return 0;
+    }
+
+    jobjectArray jChapterArr = env->NewObjectArray(
+            chapters.size(), AndroidUtil::Class_TextChapter.getJClass(), 0
+    );
+
+    for (std::size_t i = 0; i < chapters.size(); ++i) {
+        auto chapter = chapters[i];
+        jstring jUrl = AndroidUtil::toJString(env, chapter.url);
+        jstring jTitle = AndroidUtil::toJString(env, chapter.title);
+
+        jobject jTextChapter = AndroidUtil::Constructor_TextChapter->call(jUrl, jTitle,
+                                                                          chapter.startIndex,
+                                                                          chapter.endIndex);
+        env->SetObjectArrayElement(jChapterArr, i, jTextChapter);
+        env->DeleteLocalRef(jTextChapter);
+    }
+    return jChapterArr;
+}
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readChapterContentNative(
-        JNIEnv *env, jobject thiz, jint plugin_desc) {
-    // TODO:应该返回一个数组的
+        JNIEnv *env, jobject thiz, jint plugin_desc, jobject text_chapter) {
+
+    std::string chapterUrl = AndroidUtil::Method_TextChapter_getUrl->callForCppString(text_chapter);
+    std::string chapterTitle = AndroidUtil::Method_TextChapter_getTitle->callForCppString(
+            text_chapter);
+    size_t chapterStartIndex = AndroidUtil::Method_TextChapter_getStartIndex->call(text_chapter);
+    size_t chapterEndIndex = AndroidUtil::Method_TextChapter_getEndIndex->call(text_chapter);
+
+    TextChapter chapter(chapterUrl, chapterTitle, chapterStartIndex, chapterEndIndex);
+
+    // TODO: 错误处理等之后再说
+    auto pluginPtr = sPluginMap[plugin_desc];
+
+    if (pluginPtr == nullptr) {
+        return 0;
+    }
+
+    bool result;
+    char *buffer;
+    size_t bufferSize;
+
+    result = pluginPtr->readChapterContent(chapter, &buffer, &bufferSize);
+
+    if (!result) {
+        return 0;
+    }
+
+    jbyteArray jContentArr = env->NewByteArray(bufferSize);
+
+    env->SetByteArrayRegion(jContentArr, 0, bufferSize, (jbyte *) buffer);
+
+    // 销毁 buffer
+    delete[] buffer;
+
+    return jContentArr;
 }

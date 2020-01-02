@@ -26,19 +26,12 @@ JavaClass AndroidUtil::Class_BookEntity(PKG_NAME + "data/entity/BookEntity");
 JavaClass AndroidUtil::Class_TextModel(
         PKG_NAME + "ui/component/book/text/TextModel");
 
-JavaClass AndroidUtil::Class_EncodingConverter(
-        PKG_NAME + "ui/component/book/text/util/EncodingConverter"
-);
-
-JavaClass AndroidUtil::Class_ChapterDetector(
-        PKG_NAME + "ui/component/book/text/util/ChapterDetector"
+JavaClass AndroidUtil::Class_TextChapter(
+        PKG_NAME + "ui/component/book/text/entity/TextChapter"
 );
 
 // 初始化静态成员。。
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
-std::shared_ptr<StaticBooleanMethod> AndroidUtil::StaticMethod_EncodingConverter_isEncodingSupport;
-std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_EncodingConverter_createEncodingConverter;
-std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_ChapterDetector_createChapterDetector;
 
 // 初始化普通成员
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
@@ -53,11 +46,7 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
 std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_createTextModel;
 std::shared_ptr<VoidMethod> AndroidUtil::Method_BookModel_setTextModel;
 
-std::shared_ptr<StringMethod> AndroidUtil::Method_EncodingConverter_getName;
-std::shared_ptr<IntMethod> AndroidUtil::Method_EncodingConverter_convert;
-std::shared_ptr<VoidMethod> AndroidUtil::Method_EncodingConverter_reset;
-std::shared_ptr<StringMethod> AndroidUtil::Method_ChapterDetector_getRegexStr;
-
+std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextChapter;
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -71,18 +60,6 @@ bool AndroidUtil::init(JavaVM *jvm) {
     StaticMethod_Locale_getDefault = std::make_shared<StaticObjectMethod>(Class_Locale,
                                                                           "getDefault",
                                                                           Class_Locale, "()");
-
-    StaticMethod_EncodingConverter_isEncodingSupport = std::make_shared<StaticBooleanMethod>(
-            Class_EncodingConverter,
-            "isEncodingSupport", "(Ljava/lang/String;)");
-
-    StaticMethod_EncodingConverter_createEncodingConverter = std::make_shared<StaticObjectMethod>(
-            Class_EncodingConverter,
-            "createEncodingConverter", Class_EncodingConverter, "(Ljava/lang/String;)");
-
-    StaticMethod_ChapterDetector_createChapterDetector = std::make_shared<StaticObjectMethod>(
-            Class_ChapterDetector,
-            "createChapterDetector", Class_ChapterDetector, "(Ljava/lang/String;)");
 
     Method_Locale_getLanguage = std::make_shared<StringMethod>(Class_Locale, "getLanguage", "()");
 
@@ -108,19 +85,17 @@ bool AndroidUtil::init(JavaVM *jvm) {
                                                                  "setTextModel",
                                                                  "(Lcom/example/newbiechen/nbreader/ui/component/book/text/TextModel;)");
 
-    Method_EncodingConverter_convert = std::make_shared<IntMethod>(Class_EncodingConverter,
-                                                                   "convert",
-                                                                   "([BII[C)");
+    Method_TextChapter_getUrl = std::make_shared<StringMethod>(Class_TextChapter, "getUrl", "()");
+    Method_TextChapter_getTitle = std::make_shared<StringMethod>(Class_TextChapter, "getTitle",
+                                                                 "()");
+    Method_TextChapter_getStartIndex = std::make_shared<LongMethod>(Class_TextChapter,
+                                                                   "getStartIndex", "()");
+    Method_TextChapter_getEndIndex = std::make_shared<LongMethod>(Class_TextChapter, "getEndIndex",
+                                                                 "()");
 
-    Method_EncodingConverter_getName = std::make_shared<StringMethod>(Class_EncodingConverter,
-                                                                      "getName", "()");
-
-    Method_EncodingConverter_reset = std::make_shared<VoidMethod>(Class_EncodingConverter, "reset",
-                                                                  "()");
-
-    Method_ChapterDetector_getRegexStr = std::make_shared<StringMethod>(Class_ChapterDetector,
-                                                                        "getRegexStr",
-                                                                        "(Ljava/lang/String;)");
+    // 参数：string、string、int、int
+    Constructor_TextChapter = std::make_shared<JavaConstructor>(Class_TextChapter,
+                                                                "(Ljava/lang/String;Ljava/lang/String;JJ)V");
     return true;
 }
 

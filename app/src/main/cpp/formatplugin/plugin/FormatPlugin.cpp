@@ -20,7 +20,6 @@ FormatPlugin::~FormatPlugin() {
 
 void FormatPlugin::setConfigure(const std::string &cachePath, const std::string &chapterPattern) {
     // TODO:是否应该有一个开启缓存的选项
-
     mCachePath = cachePath;
     // TODO：如果 title 存在，则直接从缓冲区读取数据
     mChapterPattern = chapterPattern;

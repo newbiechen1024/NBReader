@@ -9,6 +9,6 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity
 data class TextChapter(
     val url: String,
     val title: String, // 章节标题
-    val startIndex: Int, // 在源文件的起始偏移值
-    val endIndex: Int // 在源文件的终止偏移值
+    val startIndex: Long, // 在源文件的起始偏移值
+    val endIndex: Long // 在源文件的终止偏移值
 )

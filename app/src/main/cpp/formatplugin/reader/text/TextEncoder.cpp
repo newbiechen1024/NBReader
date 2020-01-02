@@ -150,6 +150,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
     // str 持有 UTF-8 编码的数据，通过 UTF-8 解析文本中有多少个字符
     for (const std::string &str : text) {
         wordCount = UnicodeUtil::utf8Length(str);
+        Logger::i(TAG, "str:" + str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;

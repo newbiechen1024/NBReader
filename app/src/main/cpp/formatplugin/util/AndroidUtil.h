@@ -24,16 +24,9 @@ public:
     static JavaClass Class_BookModel;
     static JavaClass Class_BookEntity;
     static JavaClass Class_TextModel;
-    // 编码转换器
-    static JavaClass Class_EncodingConverter;
-    // 章节探测器
-    static JavaClass Class_ChapterDetector;
-
+    // 上层的章节信息 Bean
+    static JavaClass Class_TextChapter;
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
-    static std::shared_ptr<StaticBooleanMethod> StaticMethod_EncodingConverter_isEncodingSupport;
-    static std::shared_ptr<StaticObjectMethod> StaticMethod_EncodingConverter_createEncodingConverter;
-
-    static std::shared_ptr<StaticObjectMethod> StaticMethod_ChapterDetector_createChapterDetector;
 
 
     static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
@@ -49,14 +42,13 @@ public:
     static std::shared_ptr<ObjectMethod> Method_BookModel_createTextModel;
     static std::shared_ptr<VoidMethod> Method_BookModel_setTextModel;
 
-    // JavaEncodingConverter
-    static std::shared_ptr<StringMethod> Method_EncodingConverter_getName;
-    static std::shared_ptr<IntMethod> Method_EncodingConverter_convert;
-    static std::shared_ptr<VoidMethod> Method_EncodingConverter_reset;
+    // TextChapter Method
+    static std::shared_ptr<StringMethod> Method_TextChapter_getUrl;
+    static std::shared_ptr<StringMethod> Method_TextChapter_getTitle;
+    static std::shared_ptr<LongMethod> Method_TextChapter_getStartIndex;
+    static std::shared_ptr<LongMethod> Method_TextChapter_getEndIndex;
 
-    static std::shared_ptr<StringMethod> Method_ChapterDetector_getRegexStr;
-
-
+    static std::shared_ptr<JavaConstructor> Constructor_TextChapter;
 public:
     static bool init(JavaVM *jvm);
 
