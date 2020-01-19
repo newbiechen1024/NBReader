@@ -91,7 +91,8 @@ JavaAny::~JavaAny() {}
  * Java Constructor
  */
 
-JavaConstructor::JavaConstructor(const JavaClass &cls, const std::string &parameters) : JavaAny(cls) {
+JavaConstructor::JavaConstructor(const JavaClass &cls, const std::string &parameters) : JavaAny(
+        cls) {
     char name[] = "<init>";
     mId = AndroidUtil::getEnv()->GetMethodID(getJClass(), name, parameters.c_str());
 }
@@ -110,7 +111,8 @@ jobject JavaConstructor::call(...) {
  * Java Field
  */
 
-JavaField::JavaField(const JavaClass &cls, const std::string &name, const JavaType &type) : JavaAny(cls), mName(name) {
+JavaField::JavaField(const JavaClass &cls, const std::string &name, const JavaType &type) : JavaAny(
+        cls), mName(name) {
     mId = AndroidUtil::getEnv()->GetFieldID(getJClass(), mName.c_str(), type.signature().c_str());
 }
 
@@ -135,7 +137,8 @@ JavaMethod::~JavaMethod() {
  * Static Method
  */
 
-JavaStaticMethod::JavaStaticMethod(const JavaClass &cls, const std::string &name, const JavaType &returnType,
+JavaStaticMethod::JavaStaticMethod(const JavaClass &cls, const std::string &name,
+                                   const JavaType &returnType,
                                    const std::string &param) : JavaAny(cls), mName(name) {
     const std::string signature = param + returnType.signature();
     mId = AndroidUtil::getEnv()->GetStaticMethodID(getJClass(), name.c_str(), signature.c_str());
@@ -178,6 +181,10 @@ jint IntMethod::call(jobject base, ...) {
     jint result = AndroidUtil::getEnv()->CallIntMethodV(base, mId, lst);
     va_end(lst);
     return result;
+}
+
+LongMethod::LongMethod(const JavaClass &cls, const std::string &name, const std::string &param)
+        : JavaMethod(cls, name, JavaBasicType::Int, param) {
 }
 
 jlong LongMethod::call(jobject base, ...) {
@@ -231,7 +238,8 @@ std::string StringMethod::callForCppString(jobject base, ...) {
     return str;
 }
 
-ObjectMethod::ObjectMethod(const JavaClass &cls, const std::string &name, const JavaClass &returnType,
+ObjectMethod::ObjectMethod(const JavaClass &cls, const std::string &name,
+                           const JavaClass &returnType,
                            const std::string &param) : JavaMethod(cls, name, returnType, param) {
 }
 

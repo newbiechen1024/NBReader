@@ -6,7 +6,7 @@ import com.example.newbiechen.nbreader.BuildConfig
 
 object LogHelper {
     const val TAG = "NBReader"
-    var isLogEnabled = BuildConfig.DEBUG
+    val isLogEnabled = BuildConfig.DEBUG
 
     fun i(subTag: String, msg: String) {
         if (isLogEnabled) {

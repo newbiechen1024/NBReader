@@ -25,7 +25,7 @@ import java.util.HashMap
 class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView.context) {
 
     // 上一页文本
-    private var mPrePage = TextPage()
+    private var mPrevPage = TextPage()
     // 当前页文本
     private var mCurPage = TextPage()
     // 下一页文本
@@ -51,21 +51,24 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     }
 
     /**
-     * 设置新的文本模块
+     * 设置文本来源
+     *
+     * TODO:这个接口的名字应该更好一点？
      */
     @Synchronized
-    fun setTextModel(plugin: NativeFormatPlugin) {
+    fun setTextSource(plugin: NativeFormatPlugin) {
         mTextModel = TextModel(plugin)
 
         // 重置成员变量
-        mPrePage.reset()
+        mPrevPage.reset()
         mCurPage.reset()
         mNextPage.reset()
 
         // 如果 model 中存在段落
-        if (mTextModel!!.getParagraphCount() > 0) {
-            // 初始化当前页面光标
-            mCurPage.initCursor(mCursorManager!![0])
+        if (mTextModel!!.getChapterCount() > 0) {
+            // TODO: 章节中一定存在段落，这个是否需要保证？
+            // 初始化当前页面光标，传入第一章的第一段
+            mCurPage.initCursor(mTextModel!!.getChapterCursor(0).getParagraphCursor(0))
         }
 
         // 通知 PageView 重置缓存
@@ -84,11 +87,11 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 // 当前页作为下一页
                 mNextPage = mCurPage
                 // 上一页作为当前页
-                mCurPage = mPrePage
+                mCurPage = mPrevPage
                 // 下一页被作为上一页的缓冲
-                mPrePage = swap
+                mPrevPage = swap
                 // 重置上一页
-                mPrePage.reset()
+                mPrevPage.reset()
 
                 // 判断当前页的状态
                 when (mCurPage.pageState) {
@@ -109,8 +112,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 }
             }
             PageType.NEXT -> {
-                val swap = mPrePage
-                mPrePage = mCurPage
+                val swap = mPrevPage
+                mPrevPage = mCurPage
                 mCurPage = mNextPage
                 mNextPage = swap
                 mNextPage.reset()
@@ -118,10 +121,10 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 when (mCurPage.pageState) {
                     TextPage.State.NONE -> {
                         // 准备上一页的数据
-                        preparePage(mPrePage)
+                        preparePage(mPrevPage)
                         // 配置当前页
-                        if (mPrePage.isEndCursorPrepared()) {
-                            mCurPage.initCursor(mPrePage.endWordCursor!!, true)
+                        if (mPrevPage.isEndCursorPrepared()) {
+                            mCurPage.initCursor(mPrevPage.endWordCursor!!, true)
                         }
                     }
                     TextPage.State.PREPARED -> {
@@ -178,7 +181,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         return mCurPage.endWordCursor
     }
 
-
     /**
      * 绘制页面，drawPage 只能绘制当前页的前一页和后一页。所以继续绘制下一页需要先进行
      * @see turnPage 翻页操作
@@ -196,7 +198,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         }
 
         // 如果 textModel 不存在直接 return
-        if (mTextModel == null || mTextModel!!.getParagraphCount() == 0) {
+        if (mTextModel == null || mTextModel!!.getChapterCount() == 0) {
             return
         }
 
@@ -206,17 +208,17 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         val page: TextPage = when (pageType) {
             PageType.PREVIOUS -> {
                 // 处理上一页之前，需要准备当前页
-                if (mPrePage.pageState == TextPage.State.NONE) {
+                if (mPrevPage.pageState == TextPage.State.NONE) {
                     // 先准备当前页面
                     preparePage(mCurPage)
 
                     // 初始化页面的光标位置
                     if (mCurPage.isStartCursorPrepared()) {
                         // 将 curPage 的起始光标，设置为 PrePage 的末尾光标
-                        mPrePage.initCursor(mCurPage.startWordCursor!!, false)
+                        mPrevPage.initCursor(mCurPage.startWordCursor!!, false)
                     }
                 }
-                mPrePage
+                mPrevPage
             }
 
             PageType.CURRENT -> {
@@ -272,7 +274,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     @Synchronized
     fun preparePage(pageType: PageType) {
         val page = when (pageType) {
-            PageType.PREVIOUS -> mPrePage
+            PageType.PREVIOUS -> mPrevPage
             PageType.CURRENT -> mCurPage
             PageType.NEXT -> mNextPage
         }
@@ -287,12 +289,10 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // 设置页面的视口
         page.setViewPort(viewWidth, viewHeight)
 
-
         // 如果未准备任何信息，或者已经准备完成，都直接 return
         if (page.pageState == TextPage.State.NONE || page.pageState == TextPage.State.PREPARED) {
             return
         }
-
 
         // 获取 Page 的旧状态
         val oldPageState = page.pageState
@@ -300,7 +300,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         for (lineInfo in page.lineInfoList) {
             mLineInfoCache[lineInfo] = lineInfo
         }
-
 
         // 根据当前 page 状态做相应绘制操作
         when (page.pageState) {
@@ -335,7 +334,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         if (page === mCurPage) {
             // 如果当前页已知结束位置，那么 PrePage 一定是无效的，直接重置
             if (oldPageState != TextPage.State.KNOW_START_CURSOR) {
-                mPrePage.reset()
+                mPrevPage.reset()
             }
 
             // 如果当前页已知起始位置，那么 NextPage 一定是无效的，直接重置
@@ -356,6 +355,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             return null
         }
 
+        // chapter 情况下 startCursor 有问题
         return findPageStartCursorInternal(
             page,
             page.endWordCursor!!,
@@ -370,6 +370,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         unit: Int,
         height: Int
     ): TextWordCursor {
+
+        // TODO：如果支持 chapter 隔离最后一页，那么这个就需要做处理，否则最后一页的空格就会给填满。
 
         var remainHeight = height
         val startCursor =
@@ -574,6 +576,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 // 将 line 添加到 page 中
                 page.lineInfoList.add(curLineInfo)
             }
+
+            // TODO:这里需要检测如果是章节的最后一个段落，nextParagraph 为 false。同时支持将光标移动到 nextParagraph
 
             // 是否存在下一段落
             hasNextParagraph =
@@ -920,7 +924,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         return getTextStyle().allowHyphenations()
     }
 
-
     private var mCachedWord: TextWordElement? = null
     private var mCachedInfo: TextHyphenInfo? = null
 
@@ -1010,7 +1013,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         }
 
         val paragraph = lineInfo.paragraphCursor
-        val paragraphIndex = paragraph.curParagraphIndex
+        val chapterIndex = paragraph.getChapterIndex()
+        val paragraphIndex = paragraph.getParagraphIndex()
         val endElementIndex = lineInfo.endElementIndex
         var charIndex = lineInfo.realStartCharIndex
         var spaceElement: TextElementArea? = null
@@ -1028,6 +1032,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                         // 是否是下划线
                         spaceElement = if (getTextStyle().isUnderline()) {
                             TextElementArea(
+                                chapterIndex,
                                 paragraphIndex,
                                 wordIndex,
                                 0,
@@ -1060,6 +1065,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                     }
                     page.textElementAreaVector.add(
                         TextElementArea(
+                            chapterIndex,
                             paragraphIndex,
                             wordIndex,
                             charIndex,
@@ -1098,7 +1104,9 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 val descent = context.getDescent()
                 page.textElementAreaVector.add(
                     TextElementArea(
-                        paragraphIndex, wordIndex, 0, len,
+                        chapterIndex,
+                        paragraphIndex,
+                        wordIndex, 0, len,
                         false, // is last in element
                         addHyphenationSign,
                         isStyleChange,

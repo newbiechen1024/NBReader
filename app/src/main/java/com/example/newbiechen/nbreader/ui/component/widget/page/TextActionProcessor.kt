@@ -1,11 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.widget.page
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Rect
-import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.ui.component.book.BookModel
-import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.example.newbiechen.nbreader.uilts.TouchProcessor
 
 /**

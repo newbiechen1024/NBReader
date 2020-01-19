@@ -10,6 +10,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.T
  */
 
 /**
+ * @param chapterIndex:章节索引
  * @param paragraphIndex:段落索引
  * @param elementIndex:元素索引
  * @param charIndex:字节索引
@@ -22,6 +23,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.T
  * @param endY:元素绘制区域的右下角点
  */
 class TextElementArea(
+    chapterIndex: Int,
     paragraphIndex: Int,
     elementIndex: Int,
     charIndex: Int,
@@ -35,4 +37,4 @@ class TextElementArea(
     val startY: Int,
     val endX: Int,
     val endY: Int
-) : TextFixedPosition(paragraphIndex, elementIndex, charIndex)
+) : TextFixedPosition(chapterIndex, paragraphIndex, elementIndex, charIndex)

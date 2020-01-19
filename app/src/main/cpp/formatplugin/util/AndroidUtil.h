@@ -21,26 +21,20 @@ public:
 
     static JavaClass Class_NativeFormatPlugin;
     static JavaClass Class_BoolPluginManager;
-    static JavaClass Class_BookModel;
     static JavaClass Class_BookEntity;
-    static JavaClass Class_TextModel;
     // 上层的章节信息 Bean
     static JavaClass Class_TextChapter;
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
-
 
     static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
 
     static std::shared_ptr<StringMethod> Method_String_toLowerCase;
     static std::shared_ptr<StringMethod> Method_String_toUpperCase;
 
-    static std::shared_ptr<ObjectMethod> Method_BookModel_getBook;
     static std::shared_ptr<StringMethod> Method_Book_getTitle;
     static std::shared_ptr<StringMethod> Method_Book_getUrl;
     static std::shared_ptr<StringMethod> Method_Book_getEncoding;
     static std::shared_ptr<StringMethod> Method_Book_getLang;
-    static std::shared_ptr<ObjectMethod> Method_BookModel_createTextModel;
-    static std::shared_ptr<VoidMethod> Method_BookModel_setTextModel;
 
     // TextChapter Method
     static std::shared_ptr<StringMethod> Method_TextChapter_getUrl;

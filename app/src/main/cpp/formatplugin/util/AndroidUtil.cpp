@@ -19,34 +19,32 @@ JavaClass AndroidUtil::Class_NativeFormatPlugin(
 JavaClass AndroidUtil::Class_BoolPluginManager(
         PKG_NAME + "ui/component/book/plugin/BookPluginManager");
 
-JavaClass AndroidUtil::Class_BookModel(PKG_NAME + "ui/component/book/BookModel");
-
 JavaClass AndroidUtil::Class_BookEntity(PKG_NAME + "data/entity/BookEntity");
-
-JavaClass AndroidUtil::Class_TextModel(
-        PKG_NAME + "ui/component/book/text/TextModel");
 
 JavaClass AndroidUtil::Class_TextChapter(
         PKG_NAME + "ui/component/book/text/entity/TextChapter"
 );
 
-// 初始化静态成员。。
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
 
-// 初始化普通成员
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
-std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_getBook;
+
+std::shared_ptr<StringMethod> AndroidUtil::Method_String_toLowerCase;
+std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
+
+// Book
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getTitle;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getUrl;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getEncoding;
 std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
-std::shared_ptr<StringMethod> AndroidUtil::Method_String_toLowerCase;
-std::shared_ptr<StringMethod> AndroidUtil::Method_String_toUpperCase;
 
-std::shared_ptr<ObjectMethod> AndroidUtil::Method_BookModel_createTextModel;
-std::shared_ptr<VoidMethod> AndroidUtil::Method_BookModel_setTextModel;
-
+// TextChapter
 std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextChapter;
+std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getUrl;
+std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getTitle;
+std::shared_ptr<LongMethod> AndroidUtil::Method_TextChapter_getStartIndex;
+std::shared_ptr<LongMethod> AndroidUtil::Method_TextChapter_getEndIndex;
+
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -67,31 +65,19 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_String_toLowerCase = std::make_shared<StringMethod>(Class_String, "toLowerCase", "()");
     Method_String_toUpperCase = std::make_shared<StringMethod>(Class_String, "toUpperCase", "()");
 
-    Method_BookModel_getBook = std::make_shared<ObjectMethod>(Class_BookModel, "getBook",
-                                                              Class_BookEntity, "()");
-
     /*Book*/
     Method_Book_getTitle = std::make_shared<StringMethod>(Class_BookEntity, "getTitle", "()");
     Method_Book_getUrl = std::make_shared<StringMethod>(Class_BookEntity, "getUrl", "()");
     Method_Book_getEncoding = std::make_shared<StringMethod>(Class_BookEntity, "getEncoding", "()");
     Method_Book_getLang = std::make_shared<StringMethod>(Class_BookEntity, "getLang", "()");
 
-    Method_BookModel_createTextModel = std::make_shared<ObjectMethod>(Class_BookModel,
-                                                                      "createTextModel",
-                                                                      Class_TextModel,
-                                                                      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)");
-
-    Method_BookModel_setTextModel = std::make_shared<VoidMethod>(Class_BookModel,
-                                                                 "setTextModel",
-                                                                 "(Lcom/example/newbiechen/nbreader/ui/component/book/text/TextModel;)");
-
     Method_TextChapter_getUrl = std::make_shared<StringMethod>(Class_TextChapter, "getUrl", "()");
     Method_TextChapter_getTitle = std::make_shared<StringMethod>(Class_TextChapter, "getTitle",
                                                                  "()");
     Method_TextChapter_getStartIndex = std::make_shared<LongMethod>(Class_TextChapter,
-                                                                   "getStartIndex", "()");
+                                                                    "getStartIndex", "()");
     Method_TextChapter_getEndIndex = std::make_shared<LongMethod>(Class_TextChapter, "getEndIndex",
-                                                                 "()");
+                                                                  "()");
 
     // 参数：string、string、int、int
     Constructor_TextChapter = std::make_shared<JavaConstructor>(Class_TextChapter,

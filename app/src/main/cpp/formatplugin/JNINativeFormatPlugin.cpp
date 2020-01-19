@@ -144,7 +144,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
         JNIEnv *env, jobject thiz, jint plugin_desc, jstring cache_path, jstring chapter_pattern) {
     auto pluginPtr = sPluginMap[plugin_desc];
     if (pluginPtr != nullptr) {
-        std::string cachePath = AndroidUtil::toCString(env, cachePath);
+        std::string cachePath = AndroidUtil::toCString(env, cache_path);
         std::string chapterPattern = AndroidUtil::toCString(env, chapter_pattern);
         pluginPtr->setConfigure(cachePath, chapterPattern);
     }

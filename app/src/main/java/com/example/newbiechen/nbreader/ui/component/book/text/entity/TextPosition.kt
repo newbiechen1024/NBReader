@@ -29,6 +29,12 @@ abstract class TextPosition : Comparable<TextPosition> {
     }
 
     override fun compareTo(position: TextPosition): Int {
+        val c0 = getChapterIndex()
+        val c1 = position.getChapterIndex()
+        if (c0 != c1) {
+            return if (c0 < c1) -1 else 1
+        }
+
         val p0 = getParagraphIndex()
         val p1 = position.getParagraphIndex()
         if (p0 != p1) {
@@ -39,16 +45,28 @@ abstract class TextPosition : Comparable<TextPosition> {
         val e1 = position.getElementIndex()
         return if (e0 != e1) {
             if (e0 < e1) -1 else 1
-        } else getCharIndex() - position.getCharIndex()
+        } else {
+            getCharIndex() - position.getCharIndex()
+        }
     }
 
     fun compareToIgnoreChar(position: TextPosition): Int {
-        val p0 = getParagraphIndex()
-        val p1 = position.getParagraphIndex()
-        return if (p0 != p1) {
-            if (p0 < p1) -1 else 1
-        } else getElementIndex() - position.getElementIndex()
+        val c0 = getChapterIndex()
+        val c1 = position.getChapterIndex()
 
+        return if (c0 != c1) {
+            if (c0 < c1) -1 else 1
+        } else {
+
+            val p0 = getParagraphIndex()
+            val p1 = position.getParagraphIndex()
+
+            if (p0 != p1) {
+                if (p0 < p1) -1 else 1
+            } else {
+                getElementIndex() - position.getElementIndex()
+            }
+        }
     }
 
     override fun hashCode(): Int {

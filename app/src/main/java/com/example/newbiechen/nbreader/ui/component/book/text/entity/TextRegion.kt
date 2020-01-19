@@ -5,8 +5,9 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity
  *  date : 2019-10-29 19:13
  *  description :将一个或多个 Element 捆绑成一组内容区域。
  *  举例：超链接是由一组 word 组成的，所以超链接就是一个 TextRegion
+ *
+ *  TODO：这部分暂时没有用到，只有一个骨架
  */
-
 
 /**
  * @param regionInterval:内容区域的区间对应 element 的区间
