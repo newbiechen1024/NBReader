@@ -1,6 +1,8 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
 
 /**
  *  author : newbiechen
@@ -104,13 +106,19 @@ class TextPage {
     fun initCursor(wordCursor: TextWordCursor, isStartCursor: Boolean) {
         // 起始光标和末尾光标同时指向起始光标
         if (startWordCursor == null) {
-            startWordCursor = TextWordCursor(wordCursor)
+            startWordCursor =
+                TextWordCursor(
+                    wordCursor
+                )
         } else {
             startWordCursor!!.updateCursor(wordCursor)
         }
 
         if (endWordCursor == null) {
-            endWordCursor = TextWordCursor(wordCursor)
+            endWordCursor =
+                TextWordCursor(
+                    wordCursor
+                )
         } else {
             endWordCursor!!.updateCursor(wordCursor)
         }
@@ -125,13 +133,19 @@ class TextPage {
     fun initCursor(paragraphCursor: TextParagraphCursor) {
         // 起始光标和末尾光标同时指向起始光标
         if (startWordCursor == null) {
-            startWordCursor = TextWordCursor(paragraphCursor)
+            startWordCursor =
+                TextWordCursor(
+                    paragraphCursor
+                )
         } else {
             startWordCursor!!.updateCursor(paragraphCursor)
         }
 
         if (endWordCursor == null) {
-            endWordCursor = TextWordCursor(paragraphCursor)
+            endWordCursor =
+                TextWordCursor(
+                    paragraphCursor
+                )
         } else {
             endWordCursor!!.updateCursor(paragraphCursor)
         }

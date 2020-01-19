@@ -1,9 +1,9 @@
-package com.example.newbiechen.nbreader.ui.component.book.text.processor
+package com.example.newbiechen.nbreader.ui.component.book.text.util
 
 /**
  *  author : newbiechen
  *  date : 2019-10-21 19:50
- *  description :
+ *  description :将一行文本数据，分割成单词。
  */
 
 object LineBreaker {
@@ -33,10 +33,20 @@ object LineBreaker {
         textData: CharArray, offset: Int,
         length: Int, lang: String, bytes: ByteArray
     ) {
-        setLineBreakForCharArray(textData, offset, length, lang, bytes)
+        setLineBreakForCharArray(
+            textData,
+            offset,
+            length,
+            lang,
+            bytes
+        )
     }
 
     fun setLineBreak(text: String, lang: String, bytes: ByteArray) {
-        setLineBreakForString(text, lang, bytes)
+        setLineBreakForString(
+            text,
+            lang,
+            bytes
+        )
     }
 }

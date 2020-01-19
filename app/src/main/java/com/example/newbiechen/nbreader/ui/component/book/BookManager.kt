@@ -44,8 +44,6 @@ class BookManager constructor(
         private const val TAG = "BookManager"
     }
 
-    private var mBookModel: BookModel? = null
-
     private var mBookListener: OnBookListener? = null
 
     fun setOnBookListener(bookListener: OnBookListener) {

@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.ui.component.book.text.processor
+package com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
@@ -42,8 +42,13 @@ class TextWordCursor : TextPosition {
         mCharIndex = wordCursor.getCharIndex()
     }
 
+    override fun getChapterIndex(): Int {
+        return mParagraphCursor.getChapterIndex()
+    }
+
+
     override fun getParagraphIndex(): Int {
-        return mParagraphCursor.curParagraphIndex
+        return mParagraphCursor.getParagraphIndex()
     }
 
     /**
@@ -64,7 +69,7 @@ class TextWordCursor : TextPosition {
     /**
      * 移动光标到下一个单词
      */
-    fun nextWord() {
+    fun moveToNextWord() {
         // TODO:没有判断 element 的索引超出的问题。
 
         mElementIndex++
@@ -74,7 +79,7 @@ class TextWordCursor : TextPosition {
     /**
      * 移动光标到上一个单词
      */
-    fun preWord() {
+    fun moveToPrevWord() {
         // TODO:没有判断 element 的索引超出的问题。
 
         mElementIndex--
@@ -82,10 +87,11 @@ class TextWordCursor : TextPosition {
     }
 
     /**
-     * 光标移动到下一个段落
+     * 光标移动到下一个段落的开头位置
+     * @return 是否成功移动到下一个段落
      */
-    fun nextParagraph(): Boolean {
-        return if (mParagraphCursor.isLastParagraph()) {
+    fun moveToNextParagraph(): Boolean {
+        return if (mParagraphCursor.isLastOfText()) {
             false
         } else {
             mParagraphCursor = mParagraphCursor.nextCursor()!!
@@ -96,19 +102,23 @@ class TextWordCursor : TextPosition {
     }
 
     /**
-     * 光标移动到上一个段落
+     * 光标移动到上一个段落，的开头位置
+     * @return 是否成功移动到上一个段落
      */
-    fun preParagraph(): Boolean {
-        return if (mParagraphCursor.isFirstParagraph()) {
+    fun moveToPrevParagraph(): Boolean {
+        return if (mParagraphCursor.isLastOfText()) {
             false
         } else {
-            mParagraphCursor = mParagraphCursor.preCursor()!!
+            mParagraphCursor = mParagraphCursor.prevCursor()!!
             // 跳转到下一段落的开头
             moveToParagraphStart()
             true
         }
     }
 
+    /**
+     * 移动到段落的指定位置
+     */
     fun moveTo(elementIndex: Int, charIndex: Int) {
         if (elementIndex == 0 && charIndex == 0) {
             mElementIndex = 0
@@ -122,12 +132,18 @@ class TextWordCursor : TextPosition {
                 mCharIndex = 0
             } else {
                 mElementIndex = elementIndex
-                setCharIndex(charIndex)
+                moveToCharIndex(charIndex)
             }
         }
     }
 
-    fun setCharIndex(charIndex: Int) {
+    /**
+     * 光标移动到当前 element 中的字节位置
+     */
+    fun moveToCharIndex(charIndex: Int) {
+
+        // TODO:需要检测越界
+
         var charIndex = charIndex
         charIndex = 0.coerceAtLeast(charIndex)
         mCharIndex = 0
@@ -143,7 +159,7 @@ class TextWordCursor : TextPosition {
     }
 
     /**
-     * 是否在段落的开头
+     * 光标是否在段落的开头
      */
     fun isStartOfParagraph(): Boolean {
         return mElementIndex == 0 && mCharIndex == 0
@@ -153,7 +169,7 @@ class TextWordCursor : TextPosition {
      * 是否是文本的开头
      */
     fun isStartOfText(): Boolean {
-        return isStartOfParagraph() && mParagraphCursor.isFirstParagraph()
+        return isStartOfParagraph() && mParagraphCursor.isFirstOfText()
     }
 
     /**
@@ -167,7 +183,7 @@ class TextWordCursor : TextPosition {
      * 光标是否指向文本的末尾
      */
     fun isEndOfText(): Boolean {
-        return isEndOfParagraph() && mParagraphCursor.isLastParagraph()
+        return isEndOfParagraph() && mParagraphCursor.isLastOfText()
     }
 
     /**
@@ -184,9 +200,5 @@ class TextWordCursor : TextPosition {
     fun moveToParagraphEnd() {
         mElementIndex = mParagraphCursor.getElementCount()
         mCharIndex = 0
-    }
-
-    override fun toString(): String {
-        return "TextWordCursor(mParagraphIndex=${mParagraphCursor.curParagraphIndex}, mElementIndex=$mElementIndex, mCharIndex=$mCharIndex)"
     }
 }

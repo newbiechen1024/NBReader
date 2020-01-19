@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.entity
 
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
-import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextParagraphCursor
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
 
 /**
  *  author : newbiechen

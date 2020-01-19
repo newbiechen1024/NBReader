@@ -1,5 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.entity
 
+import com.example.newbiechen.nbreader.uilts.HashCodeCreator
+
 /**
  *  author : newbiechen
  *  date : 2019-10-28 20:17
@@ -7,6 +9,8 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity
  */
 
 abstract class TextPosition : Comparable<TextPosition> {
+
+    abstract fun getChapterIndex(): Int
 
     // 获取行的位置
     abstract fun getParagraphIndex(): Int
@@ -48,23 +52,31 @@ abstract class TextPosition : Comparable<TextPosition> {
     }
 
     override fun hashCode(): Int {
-        return (getParagraphIndex() shl 16) + (getElementIndex() shl 8) + getCharIndex()
+        return HashCodeCreator.create()
+            .addValue(getChapterIndex())
+            .addValue(getParagraphIndex())
+            .addValue(getElementIndex())
+            .addValue(getCharIndex())
+            .build()
     }
 
     override fun equals(obj: Any?): Boolean {
         if (obj === this) {
             return true
         }
+
         if (obj !is TextPosition) {
             return false
         }
+
         val position = obj as TextPosition?
-        return getParagraphIndex() == position!!.getParagraphIndex() &&
+        return getChapterIndex() == position!!.getChapterIndex() &&
+                getParagraphIndex() == position!!.getParagraphIndex() &&
                 getElementIndex() == position!!.getElementIndex() &&
                 getCharIndex() == position!!.getCharIndex()
     }
 
     override fun toString(): String {
-        return javaClass.simpleName + " [" + getParagraphIndex() + "," + getElementIndex() + "," + getCharIndex() + "]"
+        return javaClass.simpleName + " [" + getChapterIndex() + "," + getParagraphIndex() + "," + getElementIndex() + "," + getCharIndex() + "]"
     }
 }

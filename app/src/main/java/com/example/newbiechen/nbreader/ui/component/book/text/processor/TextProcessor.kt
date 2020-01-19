@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.text.TextUtils
-import com.example.newbiechen.nbreader.ui.component.book.text.TextModel
+import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
@@ -9,6 +9,8 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.element.Tex
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHyphenInfo
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextTeXHyphenator
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
 import com.example.newbiechen.nbreader.uilts.LogHelper
@@ -28,10 +30,9 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     private var mCurPage = TextPage()
     // 下一页文本
     private var mNextPage = TextPage()
+
     // 文本模块
     private var mTextModel: TextModel? = null
-    // 段落光标管理器
-    private var mCursorManager: TextCursorManager? = null
 
     private object SizeUnit {
         const val PIXEL_UNIT = 0
@@ -53,10 +54,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
      * 设置新的文本模块
      */
     @Synchronized
-    fun setTextModel(textModel: TextModel) {
-        mTextModel = textModel
-        // 创建新的光标管理器
-        mCursorManager = TextCursorManager(textModel)
+    fun setTextModel(plugin: NativeFormatPlugin) {
+        mTextModel = TextModel(plugin)
 
         // 重置成员变量
         mPrePage.reset()
@@ -373,7 +372,10 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     ): TextWordCursor {
 
         var remainHeight = height
-        val startCursor = TextWordCursor(end)
+        val startCursor =
+            TextWordCursor(
+                end
+            )
         // 获取最后一段的高度
         var size = paragraphSize(page, startCursor, true, unit)
         // 当前高度减去最后一段
@@ -391,7 +393,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
                 break
             }
             // 跳转到上一个段落
-            if (!startCursor.preParagraph()) {
+            if (!startCursor.moveToPrevParagraph()) {
                 break
             }
 
@@ -416,8 +418,11 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             var sameStart = startCursor.isSamePosition(end)
             // 检测由于光标位置不同，导致 samePosition 判断失败的问题。
             if (!sameStart && startCursor.isEndOfParagraph() && end.isStartOfParagraph()) {
-                val startCopy = TextWordCursor(startCursor)
-                startCopy.nextParagraph()
+                val startCopy =
+                    TextWordCursor(
+                        startCursor
+                    )
+                startCopy.moveToNextParagraph()
                 sameStart = startCopy.isSamePosition(end)
             }
             // 如果指向的是同一个位置，则再进行匹配
@@ -571,7 +576,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             }
 
             // 是否存在下一段落
-            hasNextParagraph = findWordCursor.isEndOfParagraph() && findWordCursor.nextParagraph()
+            hasNextParagraph =
+                findWordCursor.isEndOfParagraph() && findWordCursor.moveToNextParagraph()
         } while (hasNextParagraph && remainAreaHeight > 0)
 
         // 重置文本样式

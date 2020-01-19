@@ -7,7 +7,8 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity
  */
 
 open class TextFixedPosition(
-    private val paragraphIndex: Int, private val elementIndex: Int,
+    private val paragraphIndex: Int,
+    private val elementIndex: Int,
     private val charIndex: Int
 ) : TextPosition() {
 

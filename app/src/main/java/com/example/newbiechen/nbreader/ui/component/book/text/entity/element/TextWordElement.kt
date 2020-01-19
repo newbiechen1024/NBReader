@@ -10,23 +10,24 @@ import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextPain
 
 /**
  * @param data：数据块
- * @param offset:文本在数据块中的偏移
- * @param length:文本的长度
- * @param paragraphOffset:文本在段落中的偏移位置
+ * @param offset:单词在数据块中的偏移
+ * @param length:单词的长度
  */
-class TextWordElement(data: CharArray, offset: Int, length: Int, paragraphOffset: Int) : TextElement() {
-    // 字符数组
+class TextWordElement(data: CharArray, offset: Int, length: Int) : TextElement() {
+    // 字节数组
     val data: CharArray = data
     // 起始位置
     val offset: Int = offset
-    // 单词长度
+    // 字节长度
     val length: Int = length
-    // 段落偏移
-    val paragraphOffset: Int = paragraphOffset
 
     private var mCacheWidth: Int? = null
 
-    constructor(word: String, paragraphOffset: Int) : this(word.toCharArray(), 0, word.length, paragraphOffset)
+    constructor(word: String) : this(
+        word.toCharArray(),
+        0,
+        word.length
+    )
 
     // 检测当前 Word 是否是 WhiteSpace
     fun isASpace(): Boolean {

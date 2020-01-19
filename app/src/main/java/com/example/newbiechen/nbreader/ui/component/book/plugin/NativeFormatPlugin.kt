@@ -2,7 +2,6 @@ package com.example.newbiechen.nbreader.ui.component.book.plugin
 
 import android.content.Context
 import com.example.newbiechen.nbreader.data.entity.BookEntity
-import com.example.newbiechen.nbreader.ui.component.book.BookModel
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import com.example.newbiechen.nbreader.ui.component.book.util.BookFileUtil
@@ -56,9 +55,12 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         return getLanguageNative(mNativePluginDesc)
     }
 
-    fun getChapters(): Array<TextChapter?> {
-        // return getChapters(mNativePluginDesc)
-        return arrayOfNulls(2)
+    fun getChapters(): Array<TextChapter>? {
+        return getChaptersNative(mNativePluginDesc)
+    }
+
+    fun getChapterContent(chapter: TextChapter): ByteArray? {
+        return readChapterContentNative(mNativePluginDesc, chapter)
     }
 
     protected fun getContext() = context
@@ -80,7 +82,11 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
     /**
      * 配置插件参数
      */
-    private external fun setConfigureNative(pluginDesc: Int,cachePath:String,chapterPattern:String)
+    private external fun setConfigureNative(
+        pluginDesc: Int,
+        cachePath: String,
+        chapterPattern: String
+    )
 
     /**
      * 设置待处理的书籍
@@ -88,8 +94,6 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
     private external fun setBookSourceNative(pluginDesc: Int, bookPath: String)
 
     // TODO:如何将错误信息通知给上层？
-
-    // TODO:是否返回空数据
 
     /**
      * 获取书籍的文字编码

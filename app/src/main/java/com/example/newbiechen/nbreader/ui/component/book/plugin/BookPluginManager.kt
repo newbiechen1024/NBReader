@@ -28,7 +28,6 @@ class BookPluginManager {
     private constructor(context: Context) {
         // 进行注册
         getSupportPluginTypes().forEach {
-            LogHelper.i(TAG, "pluginTypes: $it")
             // 根据 type 创建插件
             val plugin: NativeFormatPlugin = when (it.toUpperCase()) {
                 BookType.TXT.toString() -> NativeFormatPlugin(context, BookType.TXT)

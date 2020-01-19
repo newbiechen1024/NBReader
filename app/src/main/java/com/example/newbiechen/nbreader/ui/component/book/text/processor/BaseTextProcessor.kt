@@ -9,6 +9,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.C
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.ExplicitTextDecoratedStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
 import com.example.newbiechen.nbreader.ui.component.book.text.config.TextConfig
+import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
 import com.example.newbiechen.nbreader.ui.component.book.text.util.TextDimenUtil
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 
