@@ -36,6 +36,7 @@ set_target_properties(
         IMPORTED_LOCATION ${ABI_PATH}/libonig.so
 )
 
+# 编码转换
 add_library(
         iconv
         SHARED
@@ -48,7 +49,20 @@ set_target_properties(
         IMPORTED_LOCATION ${ABI_PATH}/libiconv.so
 )
 
-# 添加字符编码检测器
+# 单词分割
+add_library(
+        linebreak
+        SHARED
+        IMPORTED
+)
+
+set_target_properties(
+        linebreak
+        PROPERTIES
+        IMPORTED_LOCATION ${ABI_PATH}/libLineBreak.so
+)
+
+# 字符编码检测
 add_library(
         uchardet
         STATIC
@@ -93,7 +107,6 @@ aux_source_directory(./tools/encoding TOOLS_ENCODING_SOURCE)
 aux_source_directory(./tools/language TOOLS_LANGUAGE_SOURCE)
 aux_source_directory(./tools/xml TOOLS_XML_SOURCE)
 aux_source_directory(./filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
-aux_source_directory(./linebreak LINE_BREAK_SOURCE)
 
 
 add_library( # Sets the title of the library.
@@ -117,7 +130,6 @@ add_library( # Sets the title of the library.
         ${TOOLS_XML_SOURCE}
         ${TOOLS_ENCODING_SOURCE}
         ${TOOLS_LANGUAGE_SOURCE}
-        ${LINE_BREAK_SOURCE}
         ${FILE_SYSTEM_CHARSET_SOURCE}
         ${FILE_SYSTEM_BUFFER_SOURCE}
         ${READER_TEXT_SOURCE}
@@ -133,4 +145,5 @@ target_link_libraries(
         uchardet
         onig
         iconv
+        linebreak
 )

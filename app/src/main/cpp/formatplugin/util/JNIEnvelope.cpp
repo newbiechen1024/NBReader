@@ -184,7 +184,7 @@ jint IntMethod::call(jobject base, ...) {
 }
 
 LongMethod::LongMethod(const JavaClass &cls, const std::string &name, const std::string &param)
-        : JavaMethod(cls, name, JavaBasicType::Int, param) {
+        : JavaMethod(cls, name, JavaBasicType::Long, param) {
 }
 
 jlong LongMethod::call(jobject base, ...) {
