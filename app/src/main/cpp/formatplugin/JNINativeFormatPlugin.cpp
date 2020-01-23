@@ -112,7 +112,6 @@ extern "C"
 JNIEXPORT jint JNICALL
 Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_createFormatPluginNative(
         JNIEnv *env, jobject thiz, jstring format_type) {
-    // TODO: implement createFormatPluginNative()
 
     // 获取调用该方法的 NativePlugin 对应的 type
     std::string formatTypeStr = AndroidUtil::toCString(env, format_type);

@@ -157,7 +157,7 @@ abstract class BaseTextProcessor(private val context: Context) {
                 (control as TextHyperlinkControlElement).Hyperlink
             else null*/
 
-            val description = mTextConfig.getTextDecoratedStyleDesc(control.styleType)
+            val description = mTextConfig.getTextDecoratedStyleDesc(control.type)
             if (description != null) {
                 setTextStyle(CustomTextDecoratedStyle(mTextStyle!!, description))
             }

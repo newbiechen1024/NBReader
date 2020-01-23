@@ -30,13 +30,7 @@ object TextTagType {
  * TextControlTag 标签具有的子类型
  */
 object TextControlType {
-    const val REGULAR: Byte = 1
-    const val SECTION_TITLE: Byte = 2
-    const val POEM_TITLE: Byte = 3
-    const val SUBTITLE: Byte = 4
-    const val ANNOTATION: Byte = 5
-    const val EPIGRAPH: Byte = 6
-    const val STANZA: Byte = 7
+    const val REGULAR: Byte = 0
 }
 
 /**

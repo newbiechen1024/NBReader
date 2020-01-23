@@ -151,7 +151,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             override fun onLoadFailure(e: Throwable) {
                 // 关闭 loading Dialog
                 loadDialog!!.cancel()
-                LogHelper.i(TAG, "load book:${e.message}")
+                LogHelper.e(TAG, "load book:${e}")
             }
         })
         // TODO:需要有加载完成动画

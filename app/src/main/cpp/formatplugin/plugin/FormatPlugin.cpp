@@ -92,8 +92,8 @@ bool FormatPlugin::readLanguage(std::string &outLanguage) {
     // TODO:如果未设置 resource，则直接崩溃
 
     // 如果存在缓存
-    if (mLanguage.empty()) {
-        outLanguage = mEncoding;
+    if (!mLanguage.empty()) {
+        outLanguage = mLanguage;
         return true;
     }
 
@@ -103,7 +103,6 @@ bool FormatPlugin::readLanguage(std::string &outLanguage) {
         mLanguage = outLanguage;
 
         // TODO:将数据写到本地缓冲区中
-
     }
     return result;
 }

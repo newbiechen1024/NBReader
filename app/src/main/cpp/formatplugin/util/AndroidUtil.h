@@ -39,8 +39,8 @@ public:
     // TextChapter Method
     static std::shared_ptr<StringMethod> Method_TextChapter_getUrl;
     static std::shared_ptr<StringMethod> Method_TextChapter_getTitle;
-    static std::shared_ptr<LongMethod> Method_TextChapter_getStartIndex;
-    static std::shared_ptr<LongMethod> Method_TextChapter_getEndIndex;
+    static std::shared_ptr<IntMethod> Method_TextChapter_getStartIndex;
+    static std::shared_ptr<IntMethod> Method_TextChapter_getEndIndex;
 
     static std::shared_ptr<JavaConstructor> Constructor_TextChapter;
 public:

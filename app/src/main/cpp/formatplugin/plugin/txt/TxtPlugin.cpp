@@ -13,7 +13,7 @@
 
 static const std::string TAG = "TxtPlugin";
 
-TxtPlugin::TxtPlugin() {
+TxtPlugin::TxtPlugin() : mTxtReaderPtr(nullptr) {
 }
 
 TxtPlugin::~TxtPlugin() {

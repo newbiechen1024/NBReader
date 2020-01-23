@@ -39,7 +39,7 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
             // 重生后嫁给克妻皇帝
             // zh-gb18030
             ReadActivity.startActivity(context!!,
-                BookEntity("asda", "test_5", BookType.TXT, "/storage/emulated/0/测试书籍/test_5.txt", true)
+                BookEntity("test_utf-8", "test_utf-8", BookType.TXT, "/storage/emulated/0/测试书籍/test_utf-8.txt", true)
             )
         }
     }

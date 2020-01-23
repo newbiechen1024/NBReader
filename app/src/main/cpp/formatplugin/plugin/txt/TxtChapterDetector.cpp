@@ -67,7 +67,6 @@ void TxtChapterDetector::detector(const File &file, const std::string &charset,
 
         // 读取数据
         blockSize = isReader.read(block, BUFFER_SIZE);
-        Logger::i(TAG, "blocSize:" + std::to_string(blockSize));
         // 创建段落匹配器
         Matcher matcher(mPattern, block, blockSize);
 

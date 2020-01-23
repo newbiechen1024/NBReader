@@ -42,8 +42,8 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
 std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextChapter;
 std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getUrl;
 std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getTitle;
-std::shared_ptr<LongMethod> AndroidUtil::Method_TextChapter_getStartIndex;
-std::shared_ptr<LongMethod> AndroidUtil::Method_TextChapter_getEndIndex;
+std::shared_ptr<IntMethod> AndroidUtil::Method_TextChapter_getStartIndex;
+std::shared_ptr<IntMethod> AndroidUtil::Method_TextChapter_getEndIndex;
 
 
 JNIEnv *AndroidUtil::getEnv() {
@@ -74,14 +74,14 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_TextChapter_getUrl = std::make_shared<StringMethod>(Class_TextChapter, "getUrl", "()");
     Method_TextChapter_getTitle = std::make_shared<StringMethod>(Class_TextChapter, "getTitle",
                                                                  "()");
-    Method_TextChapter_getStartIndex = std::make_shared<LongMethod>(Class_TextChapter,
+    Method_TextChapter_getStartIndex = std::make_shared<IntMethod>(Class_TextChapter,
                                                                     "getStartIndex", "()");
-    Method_TextChapter_getEndIndex = std::make_shared<LongMethod>(Class_TextChapter, "getEndIndex",
+    Method_TextChapter_getEndIndex = std::make_shared<IntMethod>(Class_TextChapter, "getEndIndex",
                                                                   "()");
 
     // 参数：string、string、int、int
     Constructor_TextChapter = std::make_shared<JavaConstructor>(Class_TextChapter,
-                                                                "(Ljava/lang/String;Ljava/lang/String;JJ)V");
+                                                                "(Ljava/lang/String;Ljava/lang/String;II)V");
     return true;
 }
 

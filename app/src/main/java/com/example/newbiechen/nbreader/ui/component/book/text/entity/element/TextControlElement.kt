@@ -7,7 +7,7 @@ package com.example.newbiechen.nbreader.ui.component.book.text.entity.element
  */
 
 data class TextControlElement(
-    val styleType: Byte, // control 持有了 style 类型
+    val type: Byte, // control 持有了 style 类型
     val isStart: Boolean // 是起始控制标签还是结尾控制标签
 ) : TextElement() {
     companion object {

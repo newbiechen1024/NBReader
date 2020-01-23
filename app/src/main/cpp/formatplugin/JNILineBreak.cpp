@@ -8,20 +8,22 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_processor_LineBreaker_init(JNIEnv *env, jobject instance) {
+Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_init(JNIEnv *env,
+                                                                                       jobject instance) {
 
     init_linebreak();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_processor_LineBreaker_setLineBreakForCharArray(JNIEnv *env,
-                                                                                                           jobject instance,
-                                                                                                           jcharArray data_,
-                                                                                                           jint offset,
-                                                                                                           jint length,
-                                                                                                           jstring lang_,
-                                                                                                           jbyteArray breaks_) {
+Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForCharArray(
+        JNIEnv *env,
+        jobject instance,
+        jcharArray data_,
+        jint offset,
+        jint length,
+        jstring lang_,
+        jbyteArray breaks_) {
     jchar *dataArr = env->GetCharArrayElements(data_, NULL);
     jbyte *breakArr = env->GetByteArrayElements(breaks_, NULL);
     const char *lang = env->GetStringUTFChars(lang_, 0);
@@ -45,11 +47,12 @@ Java_com_example_newbiechen_nbreader_ui_component_book_text_processor_LineBreake
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_processor_LineBreaker_setLineBreakForString(JNIEnv *env,
-                                                                                                        jobject instance,
-                                                                                                        jstring data_,
-                                                                                                        jstring lang_,
-                                                                                                        jbyteArray breaks_) {
+Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForString(
+        JNIEnv *env,
+        jobject instance,
+        jstring data_,
+        jstring lang_,
+        jbyteArray breaks_) {
     const jchar *dataArr = env->GetStringChars(data_, 0);
     const char *lang = env->GetStringUTFChars(lang_, 0);
     jbyte *breakArr = env->GetByteArrayElements(breaks_, NULL);

@@ -13,10 +13,13 @@ import java.nio.ByteBuffer
 object ByteToDataUtil {
 
     fun readUInt32(byteArr: ByteArray): Long {
-        return ByteBuffer.allocate(8)
+        val byteBuffer = ByteBuffer.allocate(8)
             .put(byteArrayOf(0, 0, 0, 0))
             .put(byteArr)
-            .long
+
+        byteBuffer.position(0)
+
+        return byteBuffer.long
     }
 
     fun readBoolean(byte: Byte): Boolean {

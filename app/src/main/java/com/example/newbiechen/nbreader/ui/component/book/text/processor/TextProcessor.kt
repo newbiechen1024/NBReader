@@ -59,6 +59,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     fun setTextSource(plugin: NativeFormatPlugin) {
         mTextModel = TextModel(plugin)
 
+        mTextModel!!.getChapterCursor(0)
+
         // 重置成员变量
         mPrevPage.reset()
         mCurPage.reset()
@@ -374,10 +376,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         // TODO：如果支持 chapter 隔离最后一页，那么这个就需要做处理，否则最后一页的空格就会给填满。
 
         var remainHeight = height
-        val startCursor =
-            TextWordCursor(
-                end
-            )
+        val startCursor = TextWordCursor(end)
+
         // 获取最后一段的高度
         var size = paragraphSize(page, startCursor, true, unit)
         // 当前高度减去最后一段
@@ -420,10 +420,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             var sameStart = startCursor.isSamePosition(end)
             // 检测由于光标位置不同，导致 samePosition 判断失败的问题。
             if (!sameStart && startCursor.isEndOfParagraph() && end.isStartOfParagraph()) {
-                val startCopy =
-                    TextWordCursor(
-                        startCursor
-                    )
+                val startCopy = TextWordCursor(startCursor)
                 startCopy.moveToNextParagraph()
                 sameStart = startCopy.isSamePosition(end)
             }
@@ -443,6 +440,9 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         return startCursor
     }
 
+    /**
+     *
+     */
     private fun paragraphSize(
         page: TextPage,
         cursor: TextWordCursor,

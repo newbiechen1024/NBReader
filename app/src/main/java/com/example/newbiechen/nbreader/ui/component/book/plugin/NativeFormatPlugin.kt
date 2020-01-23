@@ -15,8 +15,7 @@ import java.io.File
  */
 
 open class NativeFormatPlugin(private val context: Context, private val bookType: BookType) {
-    //    章节探测
-    //    std::string pattern = "^(.{0,8})(\xe7\xac\xac)([0-9\xe9\x9b\xb6\xe4\xb8\x80\xe4\xba\x8c\xe4\xb8\xa4\xe4\xb8\x89\xe5\x9b\x9b\xe4\xba\x94\xe5\x85\xad\xe4\xb8\x83\xe5\x85\xab\xe4\xb9\x9d\xe5\x8d\x81\xe7\x99\xbe\xe5\x8d\x83\xe4\xb8\x87\xe5\xa3\xb9\xe8\xb4\xb0\xe5\x8f\x81\xe8\x82\x86\xe4\xbc\x8d\xe9\x99\x86\xe6\x9f\x92\xe6\x8d\x8c\xe7\x8e\x96\xe6\x8b\xbe\xe4\xbd\xb0\xe4\xbb\x9f]{1,10})([\xe7\xab\xa0\xe8\x8a\x82\xe5\x9b\x9e\xe9\x9b\x86\xe5\x8d\xb7])(.{0,30})$";
+
     companion object {
         private const val TAG = "NativeFormatPlugin"
 
@@ -42,9 +41,13 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         mNativePluginDesc = createFormatPluginNative(bookType.name)
     }
 
-    fun setBookResouce(bookPath: String) {
+    fun setBookResource(bookPath: String) {
         // 检测书籍路径是否正确
         setBookSourceNative(mNativePluginDesc, bookPath)
+    }
+
+    fun setConfigure(cachePath: String, chapterPattern: String) {
+        setConfigureNative(mNativePluginDesc, cachePath, chapterPattern)
     }
 
     fun getEncoding(): String {

@@ -13,21 +13,16 @@
 class TextBufferAllocator {
 public:
     static char *writeUInt16(char *ptr, uint16_t value) {
-        // 先写入前 8 位
-        *ptr++ = value;
-        // 再写入后 8 位
-        *ptr++ = value >> 8;
+        *ptr++ = 0xff & value;
+        *ptr++ = (0xff00 & value) >> 8;
         return ptr;
     }
 
     static char *writeUInt32(char *ptr, uint32_t value) {
-        *ptr++ = value;
-        value >>= 8;
-        *ptr++ = value;
-        value >>= 8;
-        *ptr++ = value;
-        value >>= 8;
-        *ptr++ = value;
+        *ptr++ = (0xff000000 & value) >> 24;
+        *ptr++ = (0xff0000 & value) >> 16;
+        *ptr++ = (0xff00 & value) >> 8;
+        *ptr++ = 0xff & value;
         return ptr;
     }
 

@@ -150,10 +150,12 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
     // str 持有 UTF-8 编码的数据，通过 UTF-8 解析文本中有多少个字符
     for (const std::string &str : text) {
         wordCount = UnicodeUtil::utf8Length(str);
-        Logger::i(TAG, "str:" + str);
+        Logger::i(TAG, "addTextTag: str = " + str);
     }
 
     UnicodeUtil::Ucs2String unicode2Str;
+
+    //  TODO:这部分不需要使用 utf-16 转码，直接使用 utf-8 存储
 
     // 是否是追加数据
     if (mCurTagPtr != nullptr && *mCurTagPtr == (char) TextTagType::TEXT) {
@@ -167,7 +169,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
         // 2 * newTextLength ==> utf-16 中一个字占用 2 个字节。所以空间为 2 * 字数
         mCurTagPtr = mBufferAllocatorPtr->reallocateLast(mCurTagPtr, 2 * newWordCount + 6);
         // 将重新计算的长度写入 entry 中
-        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, newWordCount);
+        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, 2 * newWordCount);
 
         // TODO:这里和 FBReader有出入，我认为应该 *2,不知道对不对
         // 偏移 6 字节，以及上一段数据的位置
@@ -192,8 +194,9 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
         // 用 0 为分割标记
         *(mCurTagPtr + 1) = 0;
         // 将总长度写入到 entry 中
-        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, wordCount);
+        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, 2 * wordCount);
         // 偏移 6 字节，指向 TextTag 的文本内容赋值位置
+
         size_t offset = 6;
         for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
             // 将 utf-8 转换成 unicode2

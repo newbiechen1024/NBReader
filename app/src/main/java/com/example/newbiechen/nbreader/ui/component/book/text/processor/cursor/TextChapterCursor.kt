@@ -4,6 +4,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagra
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.example.newbiechen.nbreader.ui.component.book.text.util.ByteToDataUtil
+import com.example.newbiechen.nbreader.uilts.LogHelper
 import java.lang.IndexOutOfBoundsException
 
 /**
@@ -27,6 +28,10 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
     // 章节信息
     private var mChapter = textModel.getChapter(chapterIndex)
 
+    companion object {
+        private const val TAG = "TextChapterCursor"
+    }
+
     init {
         // TODO:关于获取不到数据的错误处理，之后再说
         // 创建解析器解析
@@ -34,15 +39,16 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
             textModel.getChapterContent(chapterIndex)!!
         ).decode()
 
+        LogHelper.i(TAG, "init: ${mTextTagList!!.size}")
+
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
         // 解析成功后，取出 ParagraphTag 转换成 TextParagraph
-        mTextTagList!!.filterIndexed { index, textTag ->
+        val filterList = mTextTagList!!.forEachIndexed { index, textTag ->
+
             // 如果不是 paragraph 类型，直接返回 true
             if (textTag !is TextParagraphTag) {
-                true
+                return@forEachIndexed
             }
-
-            val paragraphTag = textTag as TextParagraphTag
 
             var lastTextParagraph: TextParagraph? = null
 
@@ -52,14 +58,12 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 
             mTextParagraphList.add(
                 TextParagraph(
-                    paragraphTag.type,
+                    textTag.type,
                     mTextParagraphList.size,
                     lastTextParagraph?.endOffset ?: 0,
                     index
                 )
             )
-
-            false
         }
     }
 
@@ -191,6 +195,10 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
     // 缓存区的偏移
     private var mBufferOffset = 0
 
+    companion object {
+        private const val TAG = "ChapterContentDecoder"
+    }
+
     /**
      * 进行解析操作
      */
@@ -202,7 +210,7 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
 
         val bufferLen = chapterContent.size
 
-        while (mBufferOffset <= bufferLen) {
+        while (mBufferOffset < bufferLen) {
 
             // 获取当前索引下的标签类型
             val tagType = readTagType()
@@ -211,7 +219,6 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
             var textTag: TextTag? = null
 
             when (tagType) {
-
                 TextTagType.TEXT -> {
                     textTag = readContentTag()
                 }
@@ -252,6 +259,7 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
     private fun readContentTag(): TextContentTag {
         // 获取文本长度字节数组
         val textLengthArr = chapterContent.copyOfRange(mBufferOffset, mBufferOffset + 4)
+
         // 进行偏移操作
         mBufferOffset += 4
 
@@ -259,7 +267,8 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
         var textLength = ByteToDataUtil.readUInt32(textLengthArr)
 
         // 文本内容
-        val textContent = String(chapterContent, mBufferOffset, textLength.toInt(), Charsets.UTF_16)
+        val textContent =
+            String(chapterContent, mBufferOffset, textLength.toInt(), Charsets.UTF_16LE)
 
         // 读取文本数据，并对 block 进行偏移
         mBufferOffset += textLength.toInt()
