@@ -9,6 +9,7 @@ BookEncoder::BookEncoder() {
     isParagraphOpen = false;
     isSectionContainsRegularContents = false;
     isTitleParagraphOpen = false;
+    isEnterTitle = false;
 }
 
 void BookEncoder::open() {
@@ -49,6 +50,11 @@ void BookEncoder::addText(const std::string &text) {
         return;
     }
 
+    // 如果正在输入标题，则非纯文本内容
+    if (!isEnterTitle) {
+        isSectionContainsRegularContents = true;
+    }
+
     // 添加段落文本到段落缓冲区
     mParagraphTextList.push_back(text);
 }
@@ -69,9 +75,19 @@ void BookEncoder::flushParagraphBuffer() {
     mParagraphTextList.clear();
 }
 
+/**
+ * 多级标题定义：
+ *
+ * 一级标题：
+ *    -- 二级标题
+ *    -- 二级标题
+ * 一级标题
+
+ * @param paragraphIndex
+ */
 void BookEncoder::beginTitleParagraph(int paragraphIndex) {
     isTitleParagraphOpen = true;
-    // TODO:标题的添加暂时不实现
+    // TODO:为实现多级标题而准备的，暂时不准备实现 (当前只支持一级标题)
 }
 
 void BookEncoder::addTitleText(const std::string &text) {
@@ -79,14 +95,14 @@ void BookEncoder::addTitleText(const std::string &text) {
         return;
     }
 
-    // TODO:标题的处理暂时不实现
+    // TODO:为实现多级标题而准备的，暂时不准备实现(当前只支持一级标题)
 }
 
 void BookEncoder::endTitleParagraph() {
     // 标记标题段落结束
     isTitleParagraphOpen = false;
 
-    // TODO:标题的处理暂时不实现
+    // TODO:为实现多级标题而准备的，暂时不准备实现(当前只支持一级标题)
 }
 
 /**

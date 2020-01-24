@@ -106,8 +106,10 @@ class BookManager constructor(
         val chapterPattern =
             "^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$"
 
+        val prologueTitle = "序章"
+
         // 设置配置参数
-        plugin.setConfigure(cachePath, chapterPattern)
+        plugin.setConfigure(cachePath, chapterPattern, prologueTitle)
 
         // 传入书籍资源
         plugin.setBookResource(book.url)

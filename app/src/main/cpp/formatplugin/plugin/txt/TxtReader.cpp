@@ -4,6 +4,7 @@
 
 #include <util/Logger.h>
 #include <reader/text/entity/TextChapter.h>
+#include <plugin/FormatPlugin.h>
 #include "TxtReader.h"
 
 static const std::string TAG = "TxtReader";
@@ -21,6 +22,8 @@ TxtReader::TxtReader(const PlainTextFormat &format, const std::string &charset)
     } else {
         mReaderCore = std::make_shared<TxtReaderCore>(*this);
     }
+
+    isTitleExist = false;
 }
 
 // todo：不考虑多线程的问题
@@ -56,6 +59,14 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
 
     // 打开书籍编码器
     mBookEncoder.open();
+
+    // 如果传入的 TxtChapter 非序章，则默认获取到的第一行段落就是标题
+    if (chapter.title != FormatPlugin::CHAPTER_PROLOGUE_TITLE) {
+        isTitleExist = true;
+    } else {
+        // TODO：对存在序章的处理(暂时不处理)
+    }
+
     Logger::i(TAG, "beginAnalyze");
     // 开始分析
     beginAnalyze();
@@ -66,6 +77,7 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
     mReaderCore->readContent(chapterBuffer, resultSize);
 
     Logger::i(TAG, "endAnalyze");
+
     // 结束分析
     endAnalyze();
 
@@ -79,6 +91,13 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
 void TxtReader::beginAnalyze() {
     // 标记初始文本为 REGULAR 标准类型
     mBookEncoder.pushTextStyle(TextStyleType::REGULAR);
+
+    if (isTitleExist) {
+        // 标记段落样式
+        mBookEncoder.pushTextStyle(TextStyleType::TITLE);
+        mBookEncoder.enterTitle();
+    }
+
     // 处理新段落
     // TODO: BookReader 的风格有点像 xml 解析器的风格。beginParagraph 就相当于创建一个 paragraph 标签，之后的操作都是填充标签的内容。
     mBookEncoder.beginParagraph();
@@ -93,7 +112,13 @@ void TxtReader::beginAnalyze() {
 }
 
 void TxtReader::endAnalyze() {
+    // 设置片段结束段落
+    mBookEncoder.insertEndOfSectionParagraph();
+
+    // 结束当前段落
     endParagraph();
+
+    isTitleExist = false;
 }
 
 bool TxtReader::createNewLine() {
@@ -106,6 +131,7 @@ bool TxtReader::createNewLine() {
     isCurLineEmpty = true;
     isNewLine = true;
     mCurLineSpaceCount = 0;
+
     // 默认为空行 ==> 如果不为空就被之前设置为 -1 了
     ++mConsecutiveEmptyLineCount;
 
@@ -116,48 +142,18 @@ bool TxtReader::createNewLine() {
             ((mFormat.getBreakType() & PlainTextFormat::BREAK_PARAGRAPH_AT_EMPTY_LINE) &&
              (mConsecutiveEmptyLineCount > 0));
 
-/*   TODO:不处理标题信息，标题已经自行处理了
-     // 如果文本类型包含标题
-    if (mFormat.existTitle()) {
-        // 如果当前不为 content 段落，并当前连续空行数等于 format 包含了最大连续空行数
-        if (!isTitleParagraph &&
-            (mConsecutiveEmptyLineCount == mFormat.getEmptyLinesBeforeNewSection())) {
-            // 文本段落结束
-            endParagraph();
+    // 取消标题 textStyle
+    if (isTitleExist) {
+        mBookEncoder.popTextStyle();
+        mBookEncoder.exitTitle();
+        isTitleExist = false;
 
-            // 插入片段结束段落标记
-            mBookEncoder.insertEndOfSectionParagraph();
-
-            // 启动标题段落
-            // TODO:注 beginTitleParagraph 和 beginParagraph 走的是两种逻辑，所以互不冲突
-            mBookEncoder.beginTitleParagraph();
-
-            // 标记下一段落的文本类型为 title 类型
-            // TODO:注 pushTagStyle 一定要在 beginParagraph()，pushTextStyle 作用是指定下一次 beginParagraph 的类型
-            mBookEncoder.pushTextStyle(NBTagStyle::SECTION_TITLE);
-            // 启动新的段落
-            mBookEncoder.beginParagraph();
-
-            // 标记当前行为 content 类型
-            isTitleParagraph = true;
-            // 取消更换段落
-            paragraphBreak = false;
-        }
-
-        // 当为 content paragraph 时，且连续空行为 1
-        if (isTitleParagraph && mConsecutiveEmptyLineCount == 1) {
-            // 结束标题段落
-            mBookEncoder.endTitleParagraph();
-            // 删除 SECTION_TITLE 文本样式标记
-            mBookEncoder.popTextStyle();
-
-            isTitleParagraph = false;
-            paragraphBreak = true;
-        }
-    }*/
+        paragraphBreak = true;
+    }
 
     // 是否允许更换段落
     if (paragraphBreak) {
+        // 结束当前段落
         endParagraph();
         // 通知开启新段落
         mBookEncoder.beginParagraph();
@@ -203,11 +199,6 @@ bool TxtReader::receiveText(std::string &str) {
         }
         // 将文本添加到 BookReader 中
         mBookEncoder.addText(str);
-/*        // 判断当前行是否是标题
-        if (isTitleParagraph) {
-            mBookEncoder.addTitleText(str);
-        }*/
-
         // 标记当前文本不是新行了
         isNewLine = false;
     }
@@ -301,7 +292,6 @@ void TxtReaderCoreUTF16::readContent(char *inBuffer, size_t bufferSize) {
             }
             startPtr = ptr + 2;
             mReader.createNewLine();
-            Logger::i(TAG, "createNewLine:");
         } else if (chr != 0 && ((*ptr) & 0x80) == 0 && std::isspace(chr)) {
             if (chr != '\t') {
                 setAscii(ptr, ' ');

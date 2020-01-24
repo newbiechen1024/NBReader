@@ -46,8 +46,8 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         setBookSourceNative(mNativePluginDesc, bookPath)
     }
 
-    fun setConfigure(cachePath: String, chapterPattern: String) {
-        setConfigureNative(mNativePluginDesc, cachePath, chapterPattern)
+    fun setConfigure(cachePath: String, chapterPattern: String, chapterPrologueTitle: String) {
+        setConfigureNative(mNativePluginDesc, cachePath, chapterPattern, chapterPrologueTitle)
     }
 
     fun getEncoding(): String {
@@ -88,7 +88,8 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
     private external fun setConfigureNative(
         pluginDesc: Int,
         cachePath: String,
-        chapterPattern: String
+        chapterPattern: String,
+        chapterPrologueTitle: String
     )
 
     /**

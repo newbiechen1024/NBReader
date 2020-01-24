@@ -81,6 +81,10 @@ class TextParagraphCursor : TextPosition {
         return mChapterCursor.isLastChapter() && isLastOfChapter()
     }
 
+    /**
+     * 检测段落是否是片段结束段落。该段落是片段的最后一段。
+     * 作用：表示之后的内容需要开启新的页面显示。
+     */
     fun isEndOfSection(): Boolean {
         return mParagraph.type == TextParagraphType.END_OF_SECTION_PARAGRAPH
     }

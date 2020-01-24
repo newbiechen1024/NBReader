@@ -7,6 +7,7 @@
 #include <util/Logger.h>
 #include <filesystem/File.h>
 #include <filesystem/FileSystem.h>
+#include <plugin/FormatPlugin.h>
 #include "TxtChapterDetector.h"
 
 
@@ -103,7 +104,7 @@ void TxtChapterDetector::detector(const File &file, const std::string &charset,
             if (chapterList.empty()) {
                 if (findStart != 0) {
                     // TODO：可能存在是空格的可能，所以判断如果序章字符太少，直接略过 (还未实现)
-                    TextChapter initChapter(filePath, "序章", 0, 0);
+                    TextChapter initChapter(filePath, FormatPlugin::CHAPTER_PROLOGUE_TITLE, 0, 0);
                     // 加入到列表中
                     chapterList.push_back(initChapter);
                 } else {

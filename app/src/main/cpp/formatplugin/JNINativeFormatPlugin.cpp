@@ -140,12 +140,14 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setConfigureNative(
-        JNIEnv *env, jobject thiz, jint plugin_desc, jstring cache_path, jstring chapter_pattern) {
+        JNIEnv *env, jobject thiz, jint plugin_desc,
+        jstring cache_path, jstring chapter_pattern, jstring chapter_prologue_title) {
     auto pluginPtr = sPluginMap[plugin_desc];
     if (pluginPtr != nullptr) {
         std::string cachePath = AndroidUtil::toCString(env, cache_path);
         std::string chapterPattern = AndroidUtil::toCString(env, chapter_pattern);
-        pluginPtr->setConfigure(cachePath, chapterPattern);
+        std::string chapterPrologueTitle = AndroidUtil::toCString(env, chapter_prologue_title);
+        pluginPtr->setConfigure(cachePath, chapterPattern, chapterPrologueTitle);
     }
 }
 

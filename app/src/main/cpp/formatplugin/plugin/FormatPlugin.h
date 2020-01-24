@@ -21,7 +21,9 @@ public:
      * TODO：暂时配置项只有缓存路径
      * @param cachePath：缓存路径
      */
-    void setConfigure(const std::string &cachePath, const std::string &chapterPattern);
+    void setConfigure(const std::string &cachePath,
+                      const std::string &chapterPattern,
+                      const std::string &chapterPrologueTitle);
 
     /**
      * 传入自定义的书籍信息，之后的 read 操作都会直接从 book 中获取数据。
@@ -81,6 +83,10 @@ protected:
 private:
     // 读取文本缓存
     void readTextCache();
+
+public:
+    // 序章的标题名
+    static std::string CHAPTER_PROLOGUE_TITLE;
 
 protected:
     // 书籍路径

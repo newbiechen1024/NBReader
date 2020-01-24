@@ -36,13 +36,23 @@ public:
     // 结束段落处理
     void endParagraph();
 
+    // 标记书籍正在输入标题
+    void enterTitle() {
+        isEnterTitle = true;
+    }
+
+    // 标记书籍输入标题结束
+    void exitTitle() {
+        isEnterTitle = false;
+    }
+
     // 添加文本数据
     void addText(const std::string &text);
 
     // 添加标题文本
     void addTitleText(const std::string &text);
 
-    // 插入 section paragraph 结束标记
+    // 插入片段结束段落
     void insertEndOfSectionParagraph();
 
     // 启动标题段落
@@ -79,6 +89,8 @@ private:
     bool isTitleParagraphOpen;
     // 是否区域包含纯文本内容
     bool isSectionContainsRegularContents;
+    // 当前是否正在输入标题
+    bool isEnterTitle;
 };
 
 #endif //NBREADER_BOOKENCODER_H

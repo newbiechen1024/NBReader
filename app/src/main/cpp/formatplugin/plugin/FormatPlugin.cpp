@@ -7,9 +7,13 @@
 #include "PluginManager.h"
 #include <util/Logger.h>
 
+std::string FormatPlugin::CHAPTER_PROLOGUE_TITLE;
+
 FormatPlugin::FormatPlugin() : mPath(""), mTitle(""), mEncoding(""),
                                mLanguage(""), mCachePath(""), mFilePtr(nullptr),
                                mChapterPattern("") {
+
+    CHAPTER_PROLOGUE_TITLE = "";
 }
 
 FormatPlugin::~FormatPlugin() {
@@ -18,11 +22,17 @@ FormatPlugin::~FormatPlugin() {
     }
 }
 
-void FormatPlugin::setConfigure(const std::string &cachePath, const std::string &chapterPattern) {
+void FormatPlugin::setConfigure(
+        const std::string &cachePath,
+        const std::string &chapterPattern,
+        const std::string &chapterPrologueTitle) {
+
     // TODO:是否应该有一个开启缓存的选项
     mCachePath = cachePath;
     // TODO：如果 title 存在，则直接从缓冲区读取数据
     mChapterPattern = chapterPattern;
+
+    CHAPTER_PROLOGUE_TITLE = chapterPrologueTitle;
 }
 
 void FormatPlugin::setBookResource(Book &book) {

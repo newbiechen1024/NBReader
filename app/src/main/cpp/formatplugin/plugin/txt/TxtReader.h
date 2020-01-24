@@ -41,6 +41,8 @@ private:
     int mCurLineSpaceCount;
     // 当前行之前的连续空行数
     int mConsecutiveEmptyLineCount;
+    // 是否存在标题
+    bool isTitleExist;
 
     // 启动文稿分析
     void beginAnalyze();

@@ -325,7 +325,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             }
         }
 
-
         // 更新当前 Page 状态
         page.setPageState(TextPage.State.PREPARED)
 
@@ -373,7 +372,7 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
         height: Int
     ): TextWordCursor {
 
-        // TODO：如果支持 chapter 隔离最后一页，那么这个就需要做处理，否则最后一页的空格就会给填满。
+        // TODO：段落向前翻页的处理。(当前逻辑有问题)
 
         var remainHeight = height
         val startCursor = TextWordCursor(end)
@@ -582,7 +581,9 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             // 是否存在下一段落
             hasNextParagraph =
                 findWordCursor.isEndOfParagraph() && findWordCursor.moveToNextParagraph()
-        } while (hasNextParagraph && remainAreaHeight > 0)
+
+            // 存在下一段且不为片段结束段落、存在剩余空间
+        } while (hasNextParagraph && remainAreaHeight > 0 && !paragraphCursor.isEndOfSection())
 
         // 重置文本样式
         resetTextStyle()
