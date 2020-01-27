@@ -118,11 +118,10 @@ class BookManager constructor(
             LogHelper.i(TAG, "openBookInternal: $it")
         }
 
-        // 对文本处理器，设置文本模块
-        textProcessor.setTextSource(plugin)
+        // TODO:BookManager 不应该直接获取到 TextProcessor，这个可以之后处理，连同传入 NativePlugin 一起修改了
 
-        // 通知刷新
-        textProcessor.posInvalidate()
+        // 对文本处理器，设置文本模块
+        textProcessor.setTextResource(plugin)
     }
 }
 

@@ -3,7 +3,6 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import kotlin.math.abs
 
 /**
@@ -12,7 +11,7 @@ import kotlin.math.abs
  *  description :
  */
 
-class SlidePageAnimation(view: View, pageManager: PageBitmapManager) : PageAnimation(view, pageManager) {
+class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnimation(view, pageManager) {
     // 图片在屏幕的可展示区域
     private var mFromSpaceRect = Rect()
     // 选取图片的片段区域

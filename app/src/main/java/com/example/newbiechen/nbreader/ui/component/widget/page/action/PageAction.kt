@@ -1,4 +1,6 @@
-package com.example.newbiechen.nbreader.ui.component.widget.page
+package com.example.newbiechen.nbreader.ui.component.widget.page.action
+
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 
 /**
  *  author : newbiechen
@@ -6,34 +8,38 @@ package com.example.newbiechen.nbreader.ui.component.widget.page
  *  description :页面行为的集合
  */
 
+// 页面行为标记
+interface PageAction
+
 // 下压页面事件
-data class PressPageAction(
+data class PressAction(
     val x: Int,
     val y: Int
-)
+) : PageAction
 
 // 移动页面事件
-data class MovePageAction(
+data class MoveAction(
     val x: Int,
     val y: Int
-)
+) : PageAction
 
 // 释放页面事件
-data class ReleasePageAction(
+data class ReleaseAction(
     val x: Int,
     val y: Int
-)
+) : PageAction
 
 // 单击页面事件
-data class TapPageAction(
+data class TapAction(
     val x: Int,
     val y: Int
-)
+) : PageAction
 
 // 翻页事件
 data class TurnPageAction(
     val pageType: PageType
-)
+) : PageAction
+
 
 // 点击页面菜单事件
-class ReadMenuAction
+class TapMenuAction : PageAction

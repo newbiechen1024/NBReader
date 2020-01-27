@@ -1,6 +1,9 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
+import android.content.Context
+import android.graphics.PorterDuff
 import android.text.TextUtils
+import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextLineInfo
@@ -11,6 +14,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHy
 import com.example.newbiechen.nbreader.ui.component.book.text.hyphenation.TextTeXHyphenator
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageTextView
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
 import com.example.newbiechen.nbreader.uilts.LogHelper
@@ -22,7 +26,7 @@ import java.util.HashMap
  *  description :文本处理器，处理与绘制页面
  */
 
-class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView.context) {
+class TextProcessor(private val context: Context) : BaseTextProcessor(context) {
 
     // 上一页文本
     private var mPrevPage = TextPage()
@@ -51,12 +55,10 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     }
 
     /**
-     * 设置文本来源
-     *
-     * TODO:这个接口的名字应该更好一点？
+     * 设置文本资源
      */
     @Synchronized
-    fun setTextSource(plugin: NativeFormatPlugin) {
+    fun setTextResource(plugin: NativeFormatPlugin) {
         mTextModel = TextModel(plugin)
 
         mTextModel!!.getChapterCursor(0)
@@ -73,8 +75,8 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
             mCurPage.initCursor(mTextModel!!.getChapterCursor(0).getParagraphCursor(0))
         }
 
-        // 通知 PageView 重置缓存
-        pageView.resetCache()
+        // 通知页面无效
+        pageInvalidate()
     }
 
     /**
@@ -157,13 +159,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
     }
 
     /**
-     * 请求刷新
-     */
-    fun posInvalidate() {
-        pageView.postInvalidate()
-    }
-
-    /**
      * 获取当前页面的起始光标
      */
     @Synchronized
@@ -191,14 +186,6 @@ class TextProcessor(private val pageView: PageView) : BaseTextProcessor(pageView
      */
     @Synchronized
     override fun drawInternal(canvas: TextCanvas, pageType: PageType) {
-
-        // 设置背景
-        if (!TextUtils.isEmpty(mTextConfig.wallpaperPath)) {
-            canvas.drawWallpaper(mTextConfig.wallpaperPath, pageView.context)
-        } else {
-            canvas.drawColor(mTextConfig.bgColor)
-        }
-
         // 如果 textModel 不存在直接 return
         if (mTextModel == null || mTextModel!!.getChapterCount() == 0) {
             return

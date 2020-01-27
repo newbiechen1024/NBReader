@@ -5,6 +5,7 @@ import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.example.newbiechen.nbreader.ui.component.book.BookManager
 import com.example.newbiechen.nbreader.ui.component.book.OnBookListener
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
+import com.example.newbiechen.nbreader.ui.component.widget.page.action.PageActionListener
 
 /**
  *  author : newbiechen
@@ -25,6 +26,8 @@ class PageController(private val pageView: PageView) {
      * @param bookDao：书籍数据库
      */
     fun init(bookDao: BookDao) {
+
+        // TODO：不应该直接持有 TextProcessor
         // 创建书籍管理器，并传入文本处理器给 BookDao
         if (mBookManager == null) {
             isInitialize = true
@@ -54,7 +57,7 @@ class PageController(private val pageView: PageView) {
     /**
      * 添加点击事件监听器
      */
-    fun setActionListener(pageActionListener: PageActionListener) {
+    fun setPageActionListener(pageActionListener: PageActionListener) {
         pageView.setPageActionListener(pageActionListener)
     }
 }

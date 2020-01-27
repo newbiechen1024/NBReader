@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.uilts
+package com.example.newbiechen.nbreader.ui.component.widget.page.action
 
 import android.content.Context
 import android.os.Handler
@@ -12,7 +12,8 @@ import kotlin.math.abs
  *  description : 点击事件处理器
  */
 
-class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener) {
+class TouchEventProcessor(context: Context, private var touchEventListener: OnTouchEventListener) {
+
     // 是否允许双击
     var isEnableDoubleTap = false
     // 延迟按下标记
@@ -50,7 +51,10 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
                     isPendingDoubleTap = true
                 } else {
                     // 则设置延迟长按事件
-                    mHandler.postDelayed(longPressRunnable, 2 * ViewConfiguration.getLongPressTimeout().toLong())
+                    mHandler.postDelayed(
+                        longPressRunnable,
+                        2 * ViewConfiguration.getLongPressTimeout().toLong()
+                    )
                     isPendingLongPress = true
                     // 添加延时按下标记
                     isPendingPress = true
@@ -72,7 +76,7 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
 
                 // 如果在移动之前触发过长按事件
                 if (isPerformLongPress) {
-                    fingerTouch.onMoveAfterLongPress(x, y)
+                    touchEventListener.onMoveAfterLongPress(x, y)
                 } else {
                     // 是否触发延迟按下事件
                     if (isPendingPress) {
@@ -93,7 +97,7 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
                             }
 
                             // 触发按下事件
-                            fingerTouch.onPress(mPressedX, mPressedY)
+                            touchEventListener.onPress(mPressedX, mPressedY)
                             // 取消延迟按下
                             isPendingPress = false
                         }
@@ -101,16 +105,16 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
 
                     // 如果已经处理按下事件，则处理移动事件
                     if (!isPendingPress) {
-                        fingerTouch.onMove(x, y)
+                        touchEventListener.onMove(x, y)
                     }
                 }
             }
             MotionEvent.ACTION_UP -> {
                 // 是否是延迟双击事件
                 if (isPendingDoubleTap) {
-                    fingerTouch.onDoubleTap(x, y)
+                    touchEventListener.onDoubleTap(x, y)
                 } else if (isPerformLongPress) { // 是否已经执行长按事件
-                    fingerTouch.onReleaseAfterLongPress(x, y)
+                    touchEventListener.onReleaseAfterLongPress(x, y)
                 } else {
                     // 如果长按事件未执行，则取消
                     if (isPendingLongPress) {
@@ -122,13 +126,16 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
                     if (isPendingPress) {
                         // 是否支持双击
                         if (isEnableDoubleTap) {
-                            mHandler.postDelayed(singleTapRunnable, ViewConfiguration.getDoubleTapTimeout().toLong())
+                            mHandler.postDelayed(
+                                singleTapRunnable,
+                                ViewConfiguration.getDoubleTapTimeout().toLong()
+                            )
                             isPendingSingleTap = true
                         } else {
-                            fingerTouch.onSingleTap(x, y)
+                            touchEventListener.onSingleTap(x, y)
                         }
                     } else {
-                        fingerTouch.onRelease(x, y)
+                        touchEventListener.onRelease(x, y)
                     }
                 }
 
@@ -143,7 +150,7 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
                 mHandler.removeCallbacks(singleTapRunnable)
                 mHandler.removeCallbacks(longPressRunnable)
                 // 发送取消事件
-                fingerTouch.onCancelTap()
+                touchEventListener.onCancelTap()
             }
         }
     }
@@ -152,7 +159,7 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
      * 单击事件
      */
     private var singleTapRunnable = Runnable {
-        fingerTouch.onSingleTap(mPressedX, mPressedY)
+        touchEventListener.onSingleTap(mPressedX, mPressedY)
         isPendingPress = false
     }
 
@@ -160,11 +167,11 @@ class TouchProcessor(context: Context, private var fingerTouch: OnTouchListener)
      * 长按事件
      */
     private var longPressRunnable = Runnable {
-        fingerTouch.onLongPress(mPressedX, mPressedY)
+        touchEventListener.onLongPress(mPressedX, mPressedY)
         isPerformLongPress = true
     }
 
-    interface OnTouchListener {
+    interface OnTouchEventListener {
         /**
          * 手指按下事件
          */

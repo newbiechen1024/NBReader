@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import kotlin.math.abs
 
 /**
@@ -13,7 +12,7 @@ import kotlin.math.abs
  *  description :
  */
 
-class CoverPageAnimation(view: View, pageManager: PageBitmapManager) : PageAnimation(view, pageManager) {
+class CoverPageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnimation(view, pageManager) {
 
     private val mBackShadowDrawableLR: GradientDrawable
     private val mSpaceRect: Rect = Rect()

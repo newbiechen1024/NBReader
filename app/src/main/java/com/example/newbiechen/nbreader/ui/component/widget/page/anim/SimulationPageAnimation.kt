@@ -3,7 +3,6 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import java.lang.Math.toDegrees
 import kotlin.math.*
 import kotlin.properties.Delegates
@@ -14,7 +13,8 @@ import kotlin.properties.Delegates
  *  description :
  */
 
-class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : PageAnimation(view, pageManager) {
+class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
+    PageAnimation(view, pageManager) {
 
     companion object {
         private const val TAG = "SimulationPageAnimation"
@@ -228,7 +228,13 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
                 (1 - mFloatTouchY) // 防止 mFloatTouchY 最终变为0
             }
         }
-        mScroller.startScroll(mFloatTouchX.toInt(), mFloatTouchY.toInt(), dx.toInt(), dy.toInt(), 400)
+        mScroller.startScroll(
+            mFloatTouchX.toInt(),
+            mFloatTouchY.toInt(),
+            dx.toInt(),
+            dy.toInt(),
+            400
+        )
     }
 
     /**
@@ -359,7 +365,12 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
         }
 
         rotateDegrees =
-            toDegrees(atan2(mFloatTouchX - mBezierControl1.x, mBezierControl1.y - mFloatTouchY).toDouble()).toFloat()
+            toDegrees(
+                atan2(
+                    mFloatTouchX - mBezierControl1.x,
+                    mBezierControl1.y - mFloatTouchY
+                ).toDouble()
+            ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
             leftX,
@@ -392,7 +403,12 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
             mCurrentPageShadow = mFrontShadowDrawableHBT
         }
         rotateDegrees =
-            toDegrees(atan2(mBezierControl2.y - mFloatTouchY, mBezierControl2.x - mFloatTouchX).toDouble()).toFloat()
+            toDegrees(
+                atan2(
+                    mBezierControl2.y - mFloatTouchY,
+                    mBezierControl2.x - mFloatTouchX
+                ).toDouble()
+            ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y)
         val temp: Float = if (mBezierControl2.y < 0)
             mBezierControl2.y - mViewHeight
@@ -493,13 +509,15 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
         mCornerX = if (x <= mViewWidth / 2) 0 else mViewWidth
         mCornerY = if (y <= mViewHeight / 2) 0 else mViewHeight
 
-        mIsRTandLB = ((mCornerX == 0 && mCornerY == mViewHeight) || (mCornerX == mViewWidth && mCornerY == 0))
+        mIsRTandLB =
+            ((mCornerX == 0 && mCornerY == mViewHeight) || (mCornerX == mViewWidth && mCornerY == 0))
     }
 
     private fun calcPoints() {
         mMiddleX = (mFloatTouchX + mCornerX) / 2
         mMiddleY = (mFloatTouchY + mCornerY) / 2
-        mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
+        mBezierControl1.x =
+            mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
         mBezierControl1.y = mCornerY.toFloat()
         mBezierControl2.x = mCornerX.toFloat()
 
@@ -508,7 +526,8 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
             mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
 
         } else {
-            mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
+            mBezierControl2.y =
+                mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
         }
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2
         mBezierStart1.y = mCornerY.toFloat()
@@ -530,16 +549,19 @@ class SimulationPageAnimation(view: View, pageManager: PageBitmapManager) : Page
                 mMiddleX = (mFloatTouchX + mCornerX) / 2
                 mMiddleY = (mFloatTouchY + mCornerY) / 2
 
-                mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
+                mBezierControl1.x =
+                    mMiddleX - (mCornerY - mMiddleY) * (mCornerY - mMiddleY) / (mCornerX - mMiddleX)
                 mBezierControl1.y = mCornerY.toFloat()
 
                 mBezierControl2.x = mCornerX.toFloat()
 
                 val f5 = mCornerY - mMiddleY
                 if (f5 == 0f) {
-                    mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
+                    mBezierControl2.y =
+                        mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / 0.1f
                 } else {
-                    mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
+                    mBezierControl2.y =
+                        mMiddleY - (mCornerX - mMiddleX) * (mCornerX - mMiddleX) / (mCornerY - mMiddleY)
                 }
 
                 mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x) / 2

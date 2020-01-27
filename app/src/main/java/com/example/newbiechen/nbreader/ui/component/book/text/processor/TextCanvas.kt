@@ -1,9 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor
 
-import android.content.Context
 import android.graphics.*
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import java.lang.Exception
 
 /**
  *  author : newbiechen
@@ -15,33 +12,14 @@ class TextCanvas(private val canvas: Canvas) {
 
     companion object {
         private const val TAG = "TextCanvas"
-        private var sWallpaperPath: String? = null
-        private var sWallpaperBitmap: Bitmap? = null
     }
 
-    /**
-     * 绘制背景
-     * TODO:暂时默认认为 wallpaper 都是从 asset 中获取的
-     */
-    fun drawWallpaper(wallpaperPath: String, context: Context) {
-        if (wallpaperPath != sWallpaperPath) {
-            try {
-                val fileInputStream = context.assets.open(wallpaperPath)
-                // 获取图片资源
-                sWallpaperBitmap = BitmapFactory.decodeStream(fileInputStream)
-            } catch (e: Exception) {
-                LogHelper.e(TAG, e.toString())
-            }
+    fun drawColor(color: Int, mode: PorterDuff.Mode? = null) {
+        if (mode != null) {
+            canvas.drawColor(color, mode)
+        } else {
+            canvas.drawColor(color)
         }
-
-        if (sWallpaperBitmap != null) {
-            // 直接绘制图片
-            canvas.drawBitmap(sWallpaperBitmap!!, 0f, 0f, Paint())
-        }
-    }
-
-    fun drawColor(color: Int) {
-        canvas.drawColor(color)
     }
 
     /**

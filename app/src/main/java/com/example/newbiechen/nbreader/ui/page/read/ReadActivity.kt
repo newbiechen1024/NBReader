@@ -17,7 +17,7 @@ import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
-import com.example.newbiechen.nbreader.ui.component.widget.page.ReadMenuAction
+import com.example.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import com.example.newbiechen.nbreader.uilts.LogHelper
@@ -95,9 +95,10 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             menuFrame.setOnClickListener(this@ReadActivity)
 
             mPageController = pvBook.getPageController()
+
             mPageController.init(mBookDao)
             // 添加页面事件回调
-            mPageController.setActionListener {
+            mPageController.setPageActionListener {
                 onPageAction(it)
             }
 
@@ -218,7 +219,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
     private fun onPageAction(action: Any) {
         when (action) {
-            is ReadMenuAction -> {
+            is TapMenuAction -> {
                 toggleMenu()
             }
         }

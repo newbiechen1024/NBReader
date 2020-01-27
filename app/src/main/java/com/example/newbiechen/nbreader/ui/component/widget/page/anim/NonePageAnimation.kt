@@ -2,7 +2,6 @@ package com.example.newbiechen.nbreader.ui.component.widget.page.anim
 
 import android.graphics.Canvas
 import android.view.View
-import com.example.newbiechen.nbreader.ui.component.widget.page.PageBitmapManager
 import com.example.newbiechen.nbreader.uilts.LogHelper
 
 /**
@@ -11,7 +10,7 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
  *  description :
  */
 
-class NonePageAnimation(view: View, pageManager: PageBitmapManager) :
+class NonePageAnimation(view: View, pageManager: IPageAnimCallback) :
     PageAnimation(view, pageManager) {
     companion object {
         private const val TAG = "NonePageAnimation"
