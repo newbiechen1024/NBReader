@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
@@ -17,6 +18,7 @@ import com.example.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.example.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.example.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageController
+import com.example.newbiechen.nbreader.ui.component.widget.page.PageView
 import com.example.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
@@ -94,15 +96,33 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             tvBright.setOnClickListener(this@ReadActivity)
             menuFrame.setOnClickListener(this@ReadActivity)
 
-            mPageController = pvBook.getPageController()
+            initPageView(pvBook)
+        }
 
-            mPageController.init(mBookDao)
-            // 添加页面事件回调
-            mPageController.setPageActionListener {
-                onPageAction(it)
-            }
+        openBook()
+    }
 
-            openBook()
+    private fun initPageView(pageView: PageView) {
+
+        // TODO:测试 header 和 footer
+
+        val headerView = LayoutInflater.from(this)
+            .inflate(R.layout.layout_page_header, pageView, false)
+
+        val footerView = LayoutInflater.from(this)
+            .inflate(R.layout.layout_page_footer, pageView, false)
+
+        // 设置顶部和底部
+        pageView.setHeaderView(headerView)
+        pageView.setFooterView(footerView)
+
+        mPageController = pageView.getPageController()
+
+        mPageController.init(mBookDao)
+
+        // 添加页面事件回调
+        mPageController.setPageActionListener {
+            onPageAction(it)
         }
     }
 

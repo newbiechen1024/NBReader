@@ -36,4 +36,7 @@
     <dimen name="height_vertical_read_setting_menu_item">36dp</dimen>
     <dimen name="height_read_setting_menu_button">74dp</dimen>
     <dimen name="margin_read_setting_menu_list">20dp</dimen>
+    
+    <!--page view-->
+    <dimen name="page_padding_width">8dp</dimen>
 </resources>
