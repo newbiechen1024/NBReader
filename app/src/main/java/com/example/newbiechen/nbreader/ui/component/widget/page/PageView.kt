@@ -325,14 +325,8 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
-        val currentTime = System.currentTimeMillis()
-
         // 直接绘制动画，不进行分发操作。
         mPageAnim.draw(canvas!!)
-
-        val resultTime = System.currentTimeMillis() - currentTime
-
-        LogHelper.i(TAG, "dispatchDraw: after: $resultTime")
     }
 
     override fun onDetachedFromWindow() {
@@ -351,8 +345,6 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun drawPage(canvas: Canvas, type: PageType) {
-        LogHelper.i(TAG, "drawPage: ")
-
         // 绘制背景信息
         drawBackground(canvas)
 

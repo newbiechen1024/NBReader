@@ -27,7 +27,7 @@ class PageTextView @JvmOverloads constructor(
 
     private var mTextProcessor: TextProcessor? = null
 
-    // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细分析)
+    // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细考虑怎么写)
     private var mPageActionProcessor = PageActionProcessor(this)
         .also {
             it.setPageActionListener(this::onDispatchAction)
@@ -120,9 +120,9 @@ class PageTextView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         // 从管理器中获取页面内容
-        val bitmap = mTextPageManager.getPage(mCurPageType)
+        val picture = mTextPageManager.getPage(mCurPageType)
         // 进行绘制
-        canvas!!.drawBitmap(bitmap, 0f, 0f, null)
+        canvas!!.drawPicture(picture)
     }
 
     private inner class PageTextCallback : TextPageManager.OnPageListener {
@@ -154,11 +154,6 @@ class PageTextView @JvmOverloads constructor(
         }
 
         override fun drawPage(canvas: Canvas, type: PageType) {
-            // 清屏操作
-            canvas.drawColor(
-                context.resources.getColor(R.color.colorTransparent),
-                PorterDuff.Mode.CLEAR
-            )
             // 绘制文本内容
             mTextProcessor?.draw(canvas, type)
 

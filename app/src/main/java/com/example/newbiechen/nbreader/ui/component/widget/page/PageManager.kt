@@ -52,9 +52,6 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback,
      * 根据 type 获取具体的 page
      */
     override fun getPage(type: PageType): Bitmap {
-
-        LogHelper.i(TAG, "getPage: $type")
-
         var pageIndex = 0
 
         // 如果动画正在运行，采用方案一进行缓存

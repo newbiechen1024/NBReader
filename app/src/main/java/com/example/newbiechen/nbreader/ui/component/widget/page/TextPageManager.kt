@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.ui.component.widget.page
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Picture
 import java.lang.RuntimeException
 
 /**
@@ -14,7 +15,7 @@ class TextPageManager(private var pageListener: OnPageListener) {
 
     companion object {
         // 页面的数量
-        private const val BITMAP_SIZE = 2
+        private const val PICTURE_SIZE = 2
     }
 
     var pageWidth = 0
@@ -22,17 +23,21 @@ class TextPageManager(private var pageListener: OnPageListener) {
     var pageHeight = 0
         private set
 
-    private var mBitmaps = arrayOfNulls<Bitmap>(BITMAP_SIZE)
-    private var mBitmapTypes = arrayOfNulls<PageType>(BITMAP_SIZE)
+    // 用 Picture 与 Bitmap 的 ARGB_8888 比较 (仅测试了一台机器，具体情况不好说，不管了先这么实现)
+    // Picture 绘制效率略低于 Bitmap ARGB_8888，差不是很大
+    // Picture 的内存占用小于 Bitmap ARGB_8888，差距明显
+    // 所以采用 Picture 存储信息
+    private var mPictures = arrayOfNulls<Picture>(PICTURE_SIZE)
+    private var mPictureTypes = arrayOfNulls<PageType>(PICTURE_SIZE)
 
     fun setPageSize(w: Int, h: Int) {
         if (pageWidth != w || pageHeight != h) {
             pageWidth = w
             pageHeight = h
             // 删除之前的 page 记录
-            for (i in 0 until BITMAP_SIZE) {
-                mBitmaps[i] = null
-                mBitmapTypes[i] = null
+            for (i in 0 until PICTURE_SIZE) {
+                mPictures[i] = null
+                mPictureTypes[i] = null
             }
 
             // 通知页面改变
@@ -48,39 +53,50 @@ class TextPageManager(private var pageListener: OnPageListener) {
     /**
      * 根据 type 获取具体的 page
      */
-    fun getPage(type: PageType): Bitmap {
+    fun getPage(type: PageType): Picture {
         // 查找缓冲区中是否已存在该 type 的 page
-        for (i in 0 until BITMAP_SIZE) {
-            if (type == mBitmapTypes[i]) {
-                return mBitmaps[i]!!
+        for (i in 0 until PICTURE_SIZE) {
+            if (type == mPictureTypes[i]) {
+                return mPictures[i]!!
             }
         }
 
         var pageIndex = findAvailablePage()
 
         // 设置 bitmap 类型
-        mBitmapTypes[pageIndex] = type
-        if (mBitmaps[pageIndex] == null) {
+        mPictureTypes[pageIndex] = type
+
+        if (mPictures[pageIndex] == null) {
             // 创建 bitmap
-            mBitmaps[pageIndex] =
-                Bitmap.createBitmap(pageWidth, pageHeight, Bitmap.Config.ARGB_8888)
+            mPictures[pageIndex] = Picture()
         }
-        pageListener.drawPage(Canvas(mBitmaps[pageIndex]!!), type)
-        return mBitmaps[pageIndex]!!
+
+        val picture = mPictures[pageIndex]!!
+
+        // 开始录制
+        val canvas = picture.beginRecording(pageWidth, pageHeight)
+
+        // 绘制页面
+        pageListener.drawPage(canvas, type)
+
+        // 停止录制
+        picture.endRecording()
+
+        return picture
     }
 
     // 查找可用的 page
     private fun findAvailablePage(): Int {
         // 查找是否存在未使用的图片
-        for (i in 0 until BITMAP_SIZE) {
-            if (mBitmapTypes[i] == null) {
+        for (i in 0 until PICTURE_SIZE) {
+            if (mPictureTypes[i] == null) {
                 return i
             }
         }
 
         // 查找非 current 的图片
-        for (i in 0 until BITMAP_SIZE) {
-            if (PageType.CURRENT != mBitmapTypes[i]) {
+        for (i in 0 until PICTURE_SIZE) {
+            if (PageType.CURRENT != mPictureTypes[i]) {
                 return i
             }
         }
@@ -94,12 +110,12 @@ class TextPageManager(private var pageListener: OnPageListener) {
      * @param isNext:是否翻到下一页
      */
     fun turnPage(isNext: Boolean) {
-        for (i in 0 until BITMAP_SIZE) {
-            if (mBitmapTypes[i] == null) {
+        for (i in 0 until PICTURE_SIZE) {
+            if (mPictureTypes[i] == null) {
                 continue
             }
-            mBitmapTypes[i] =
-                if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
+            mPictureTypes[i] =
+                if (isNext) mPictureTypes[i]!!.getPrevious() else mPictureTypes[i]!!.getNext()
         }
 
         // 通知回调
@@ -111,8 +127,8 @@ class TextPageManager(private var pageListener: OnPageListener) {
      */
     fun resetPages() {
         // 删除之前的 page 记录
-        for (i in 0 until BITMAP_SIZE) {
-            mBitmapTypes[i] = null
+        for (i in 0 until PICTURE_SIZE) {
+            mPictureTypes[i] = null
         }
     }
 
