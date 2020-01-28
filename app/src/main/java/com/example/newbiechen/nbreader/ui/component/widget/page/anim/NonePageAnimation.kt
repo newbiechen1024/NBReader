@@ -26,12 +26,10 @@ class NonePageAnimation(view: View, pageManager: IPageAnimCallback) :
     }
 
     override fun startAnimInternal() {
-        // 预加载 toPage，更新翻到下一页的页面 todo: 放这里似乎不太妥当，下次找个比较好的地方吧
-        getToPage()
+        // TODO:预加载 toPage，更新翻到下一页的页面 (忘记这干啥用的了)
+        // getToPage()
 
         // 直接结束动画
         finishAnim()
-
-        mView.postInvalidate()
     }
 }

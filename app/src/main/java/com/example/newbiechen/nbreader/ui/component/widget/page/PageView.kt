@@ -55,6 +55,7 @@ class PageView @JvmOverloads constructor(
 
     // 当前翻页动画
     private var mPageAnim: PageAnimation = SimulationPageAnimation(this, mPageManager)
+        .apply { setAnimationListener(mPageManager) }
 
     // 页面行为事件监听器
     private var mPageActionListener: PageActionListener? = null
@@ -179,6 +180,8 @@ class PageView @JvmOverloads constructor(
                 PageAnimType.SLIDE -> SlidePageAnimation(this, mPageManager)
                 PageAnimType.SIMULATION -> SimulationPageAnimation(this, mPageManager)
             }
+
+            mPageAnim.setAnimationListener(mPageManager)
 
             // 重置宽高
             mPageAnim.setup(width, height)
@@ -322,8 +325,14 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
+        val currentTime = System.currentTimeMillis()
+
         // 直接绘制动画，不进行分发操作。
         mPageAnim.draw(canvas!!)
+
+        val resultTime = System.currentTimeMillis() - currentTime
+
+        LogHelper.i(TAG, "dispatchDraw: after: $resultTime")
     }
 
     override fun onDetachedFromWindow() {
@@ -342,6 +351,8 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun drawPage(canvas: Canvas, type: PageType) {
+        LogHelper.i(TAG, "drawPage: ")
+
         // 绘制背景信息
         drawBackground(canvas)
 

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.example.newbiechen.nbreader.ui.component.widget.page.PageType
-import com.example.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.abs
 
 /**
@@ -49,6 +48,8 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     val isRunning: Boolean
         get() = mStatus != Status.NONE && mDirection != Direction.NONE
 
+    private var mAnimListener: PageAnimListener? = null
+
     private val mPageManager = pageManager
 
     // 是否取消翻页
@@ -57,6 +58,10 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     protected abstract fun drawStatic(canvas: Canvas)
 
     protected abstract fun drawMove(canvas: Canvas)
+
+    fun setAnimationListener(pageAnimListener: PageAnimListener) {
+        mAnimListener = pageAnimListener
+    }
 
     // 设置宽高 ==> 因为宽高可变的
     open fun setup(w: Int, h: Int) {
@@ -108,8 +113,13 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         // 上一触碰点
         setTouchPoint(x, y)
 
+        // 上一个状态是否是按下状态
+        var lastStatusIsPress = false
+
         // 是否是第一次滑动，决定翻页的方向
         if (mStatus == Status.ManualPress) {
+            lastStatusIsPress = true
+
             // 如果是翻阅到上一页
             mDirection = if (x - mStartX > 0) {
                 if (mPageManager.hasPage(PageType.PREVIOUS)) Direction.PREVIOUS else Direction.NONE
@@ -146,6 +156,12 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
 
         // 如果没有方向则不进行绘制
         if (mDirection != Direction.NONE) {
+            // 上一个是否是按下状态
+            if (lastStatusIsPress) {
+                // 通知翻页开始
+                mAnimListener?.onAnimationStart()
+            }
+
             // 请求刷新
             mView.postInvalidate()
         }
@@ -249,12 +265,14 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         if (mScroller.computeScrollOffset()) {
             // 模拟移动点击
             setTouchPoint(mScroller.currX, mScroller.currY)
+
+            mView.postInvalidate()
+
             // 如果滑动结束
             if (mScroller.isFinished) {
                 // 通知动画完成
                 finishAnim()
             }
-            mView.postInvalidate()
         }
     }
 
@@ -270,18 +288,19 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
             }
         }
 
+        // 通知翻页结束
+        mAnimListener?.onAnimationEnd()
+
         // 重置状态
         mStatus = Status.NONE
         mDirection = Direction.NONE
     }
 
     // 页面动画方向
-    enum class Direction constructor(val isHorizontal: Boolean) {
-        NONE(true),
-        PREVIOUS(true), // 上一页
-        NEXT(true), // 下一页
-        UP(false), //
-        DOWN(false)
+    enum class Direction {
+        NONE,
+        PREVIOUS, // 上一页
+        NEXT, // 下一页
     }
 
     // 动画状态
