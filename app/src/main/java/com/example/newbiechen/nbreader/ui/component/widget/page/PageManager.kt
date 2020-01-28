@@ -13,7 +13,7 @@ import java.lang.RuntimeException
 
 class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback {
     companion object {
-        // 页面的数量
+        // 页面数量
         private const val BITMAP_SIZE = 2
     }
 
@@ -21,7 +21,6 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback 
     private var mPageHeight = 0
 
     private var mBitmaps = arrayOfNulls<Bitmap>(BITMAP_SIZE)
-    private var mBitmapTypes = arrayOfNulls<PageType>(BITMAP_SIZE)
 
     override fun onPageSizeChanged(w: Int, h: Int) {
         if (mPageWidth != w || mPageHeight != h) {
@@ -31,7 +30,6 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback 
             // 删除之前的 page 记录
             for (i in 0 until BITMAP_SIZE) {
                 mBitmaps[i] = null
-                mBitmapTypes[i] = null
             }
         }
     }
@@ -45,50 +43,27 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback 
      * 根据 type 获取具体的 page
      */
     override fun getPage(type: PageType): Bitmap {
-        // TODO:CURRENT 可能会调用两次，导致崩溃。所以缓冲有问题
-        if (type == PageType.CURRENT) {
-            // 查找缓冲区中是否已存在该 type 的 page
-            for (i in 0 until BITMAP_SIZE) {
-                if (type == mBitmapTypes[i]) {
-                    return mBitmaps[i]!!
-                }
-            }
-        }
-
-        // 查找可以用的 page
-        var pageIndex = findAvailablePage()
-
-        // 设置 bitmap 类型
-        mBitmapTypes[pageIndex] = type
-
-        if (mBitmaps[pageIndex] == null) {
+        // 检测数组 bitmap 是否存在
+        if (mBitmaps[0] == null) {
             // 创建 bitmap
-            mBitmaps[pageIndex] =
-                Bitmap.createBitmap(mPageWidth, mPageHeight, Bitmap.Config.RGB_565)
+            mBitmaps[0] = Bitmap.createBitmap(mPageWidth, mPageHeight, Bitmap.Config.RGB_565)
         }
 
-        pageListener.drawPage(Canvas(mBitmaps[pageIndex]!!), type)
-        return mBitmaps[pageIndex]!!
+        // 获取 bitmap
+        val page = mBitmaps[0]!!
+
+        pageListener.drawPage(Canvas(page), type)
+
+        // 交换图片缓冲 (本质上是实现 lru，但是翻页只需要 2 张图，所以用 swap 就行了)
+        swapBitmap()
+
+        return page
     }
 
-    // 查找可用的 page
-    private fun findAvailablePage(): Int {
-        // 查找是否存在未使用的图片
-        for (i in 0 until BITMAP_SIZE) {
-            if (mBitmapTypes[i] == null) {
-                return i
-            }
-        }
-
-        // 查找非 current 的图片
-        for (i in 0 until BITMAP_SIZE) {
-            if (PageType.CURRENT != mBitmapTypes[i]) {
-                return i
-            }
-        }
-
-        // 如果都不存在，则表示代码有问题
-        throw RuntimeException("code error")
+    private fun swapBitmap() {
+        val temp = mBitmaps[1]
+        mBitmaps[1] = mBitmaps[0]
+        mBitmaps[0] = temp
     }
 
     /**
@@ -96,14 +71,6 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback 
      * @param isNext:是否翻到下一页
      */
     override fun turnPage(isNext: Boolean) {
-        for (i in 0 until BITMAP_SIZE) {
-            if (mBitmapTypes[i] == null) {
-                continue
-            }
-            mBitmapTypes[i] =
-                if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
-        }
-
         // 通知回调
         pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
     }

@@ -14,7 +14,7 @@ import com.example.newbiechen.nbreader.R
 /**
  *  author : newbiechen
  *  date : 2019-08-08 15:15
- *  description :
+ *  description：处理加载状态的 View
  */
 
 typealias OnRetryClickListener = (view: View) -> Unit
@@ -106,14 +106,14 @@ class StatusView @JvmOverloads constructor(
     //除了自带的数据，保证子类只能够添加一个子View
     override fun addView(child: View?) {
         if (childCount > 4) {
-            throw IllegalStateException("RefreshLayout can host only one direct child")
+            throw IllegalStateException("StatusView can host only one direct child")
         }
         super.addView(child)
     }
 
     override fun addView(child: View, index: Int) {
         if (childCount > 4) {
-            throw IllegalStateException("RefreshLayout can host only one direct child")
+            throw IllegalStateException("StatusView can host only one direct child")
         }
 
         super.addView(child, index)
@@ -121,7 +121,7 @@ class StatusView @JvmOverloads constructor(
 
     override fun addView(child: View, params: ViewGroup.LayoutParams) {
         if (childCount > 4) {
-            throw IllegalStateException("RefreshLayout can host only one direct child")
+            throw IllegalStateException("StatusView can host only one direct child")
         }
 
         super.addView(child, params)
@@ -129,7 +129,7 @@ class StatusView @JvmOverloads constructor(
 
     override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams) {
         if (childCount > 4) {
-            throw IllegalStateException("RefreshLayout can host only one direct child")
+            throw IllegalStateException("StatusView can host only one direct child")
         }
 
         super.addView(child, index, params)

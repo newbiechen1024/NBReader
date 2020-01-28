@@ -16,7 +16,7 @@ import com.example.newbiechen.nbreader.uilts.LogHelper
 /**
  *  author : newbiechen
  *  date : 2019-08-20 18:22
- *  description :
+ *  description :吸顶效果
  */
 
 class PinnedHeaderItemDecoration : RecyclerView.ItemDecoration() {
