@@ -1,5 +1,6 @@
 package com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor
 
+import android.util.LruCache
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.example.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.example.newbiechen.nbreader.ui.component.book.text.processor.TextModel
@@ -18,8 +19,8 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
     // 章节中的段落信息列表
     private var mTextParagraphList: ArrayList<TextParagraph> = ArrayList()
 
-    // 段落光标缓存
-    private var mTextParagraphCursorCache: HashMap<Int, TextParagraphCursor> = HashMap()
+    // 段落光标缓存 (200 最大值是自定义，可根据情况修改)
+    private var mTextParagraphCursorCache: LruCache<Int, TextParagraphCursor?> = LruCache(200)
 
     // 章节中包含的所有标签
     private var mTextTagList: ArrayList<TextTag>? = null
@@ -37,8 +38,6 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
         mTextTagList = ChapterContentDecoder(
             textModel.getChapterContent(chapterIndex)!!
         ).decode()
-
-        LogHelper.i(TAG, "init: ${mTextTagList!!.size}")
 
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
         // 解析成功后，取出 ParagraphTag 转换成 TextParagraph
@@ -150,11 +149,11 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
             throw IndexOutOfBoundsException("paragraph index out of chapter paragraph count")
         }
 
-        var textParagraphCursor = mTextParagraphCursorCache[index]
+        var textParagraphCursor = mTextParagraphCursorCache.get(index)
 
         if (textParagraphCursor == null) {
             textParagraphCursor = TextParagraphCursor(this, index)
-            mTextParagraphCursorCache[index] = textParagraphCursor
+            mTextParagraphCursorCache.put(index, textParagraphCursor)
         }
 
         return textParagraphCursor

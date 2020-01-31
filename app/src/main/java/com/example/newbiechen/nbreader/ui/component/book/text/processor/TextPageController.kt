@@ -361,9 +361,6 @@ class TextPageController(
         if (pageWrapper != null) {
             // 设置页面为当前页面
             mCurPageWrapper = pageWrapper
-
-            // TODO:优化 TextPage，需要调用 reset() 释放一些参数
-
             // 检测是否应该翻章处理
             when (type) {
                 PageType.PREVIOUS -> {
@@ -377,12 +374,24 @@ class TextPageController(
                     }
                 }
             }
+
+            // 优化 TextPage 内存，防止 TextPage 中 textLine 和 textElement 数据一直被缓存
+            val curPages = mCurPageWrapper!!.chapterWrapper.pages
+            val pageIndex = mCurPageWrapper!!.pageIndex
+
+            curPages.forEachIndexed { index, textPage ->
+                // 只缓存 3 个 Page 的数据
+                if (index < pageIndex - 1 || index > pageIndex + 1) {
+                    textPage.reset()
+                }
+            }
         }
 
         // 进行翻章节操作
         if (isTurnChapter) {
             turnChapter(type)
         }
+
 
         // TODO:通知章节回调、或者页面回调
     }
