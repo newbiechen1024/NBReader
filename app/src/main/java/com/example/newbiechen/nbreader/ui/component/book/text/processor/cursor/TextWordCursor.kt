@@ -119,7 +119,7 @@ class TextWordCursor : TextPosition {
     /**
      * 移动到段落的指定位置
      */
-    fun moveTo(elementIndex: Int, charIndex: Int) {
+    fun moveTo(elementIndex: Int, charIndex: Int = 0) {
         if (elementIndex == 0 && charIndex == 0) {
             mElementIndex = 0
             mCharIndex = 0

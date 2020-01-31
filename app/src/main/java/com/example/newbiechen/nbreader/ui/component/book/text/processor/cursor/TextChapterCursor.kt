@@ -13,7 +13,6 @@ import java.lang.IndexOutOfBoundsException
  *  description:章节光标
  */
 
-
 class TextChapterCursor(private val textModel: TextModel, private val chapterIndex: Int) {
 
     // 章节中的段落信息列表
@@ -43,7 +42,7 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
         // 解析成功后，取出 ParagraphTag 转换成 TextParagraph
-        val filterList = mTextTagList!!.forEachIndexed { index, textTag ->
+        mTextTagList!!.forEachIndexed { index, textTag ->
 
             // 如果不是 paragraph 类型，直接返回 true
             if (textTag !is TextParagraphTag) {

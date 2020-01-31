@@ -45,6 +45,8 @@ abstract class BaseTextProcessor(private val context: Context) {
 
     private var mWordHeight: Int? = null
 
+    protected abstract fun onSizeChanged(width: Int, height: Int)
+
     protected abstract fun drawInternal(canvas: TextCanvas, pageType: PageType)
 
     /**
@@ -53,6 +55,8 @@ abstract class BaseTextProcessor(private val context: Context) {
     fun setViewPort(width: Int, height: Int) {
         viewWidth = width
         viewHeight = height
+
+        onSizeChanged(width, height)
     }
 
     fun setPageInvalidateListener(listener: OnPageInvalidateListener) {

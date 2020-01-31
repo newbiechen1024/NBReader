@@ -9,7 +9,7 @@ import com.example.newbiechen.nbreader.ui.component.book.text.processor.cursor.T
  *  description :文本行信息
  */
 
-data class TextLineInfo(
+data class TextLine(
     val paragraphCursor: TextParagraphCursor,
     // 指向当前行元素的起始位置
     val startElementIndex: Int,
@@ -52,7 +52,7 @@ data class TextLineInfo(
     /**
      * 跟上一行进行裁决，更新当前 textLine 信息
      */
-    fun adjust(previous: TextLineInfo?) {
+    fun adjust(previous: TextLine?) {
         if (!previousInfoUsed && previous != null) {
             height -= previous!!.vSpaceAfter.coerceAtMost(vSpaceBefore)
             previousInfoUsed = true
@@ -60,7 +60,7 @@ data class TextLineInfo(
     }
 
     override fun equals(o: Any?): Boolean {
-        val info = o as TextLineInfo?
+        val info = o as TextLine?
         return paragraphCursor === info!!.paragraphCursor &&
                 startElementIndex == info!!.startElementIndex &&
                 startCharIndex == info!!.startCharIndex

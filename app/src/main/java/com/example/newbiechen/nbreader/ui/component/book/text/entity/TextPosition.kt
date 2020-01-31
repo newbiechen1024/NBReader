@@ -69,6 +69,13 @@ abstract class TextPosition : Comparable<TextPosition> {
         }
     }
 
+    /**
+     * 返回定位快照
+     */
+    fun snapshot(): TextFixedPosition {
+        return TextFixedPosition(this)
+    }
+
     override fun hashCode(): Int {
         return HashCodeCreator.create()
             .addValue(getChapterIndex())
