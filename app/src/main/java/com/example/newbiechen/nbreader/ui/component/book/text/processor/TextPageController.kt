@@ -117,12 +117,12 @@ class TextPageController(
      */
     private fun findPageWrapper(position: TextPosition): PageWrapper? {
         // 查找 position 对应的章节
-        var chapterWrapper: ChapterWrapper? = findChapterWrapper(position) ?: return null
+        val chapterWrapper: ChapterWrapper? = findChapterWrapper(position) ?: return null
 
         // 查找章节中的 page
         val pages = chapterWrapper!!.pages
         for ((index, page) in pages.withIndex()) {
-            if (page.endWordCursor!! > position) {
+            if (page.endWordCursor > position) {
                 return PageWrapper(chapterWrapper, index, page)
             }
         }
@@ -140,12 +140,12 @@ class TextPageController(
         }
 
         // 从 textModel 获取章节光标
-        var chapterCursor = textModel.getChapterCursor(chapterIndex)
+        val chapterCursor = textModel.getChapterCursor(chapterIndex)
 
         // TODO:是否存在 chapter 的段落为空的情况，暂时不考虑
 
         // 根据章节光标，获取单词光标
-        var curWordCursor = TextWordCursor(chapterCursor.getParagraphCursor(0))
+        val curWordCursor = TextWordCursor(chapterCursor.getParagraphCursor(0))
 
         // 获取最后一段的起始位置
         val endWordCursor =
@@ -156,7 +156,7 @@ class TextPageController(
 
         val pages = ArrayList<TextPage>()
 
-        var pageStartCursor = TextWordCursor(curWordCursor)
+        val pageStartCursor = TextWordCursor(curWordCursor)
 
         var pageEndCursor: TextWordCursor
 
@@ -223,8 +223,7 @@ class TextPageController(
             false
         } else {
             // 获取第一页的起始光标，如果起始光标不在整个文本的起始位置，则表示存在上一页
-            !mCurPageWrapper!!.textPage
-                .startWordCursor!!.isStartOfText()
+            !mCurPageWrapper!!.textPage.startWordCursor.isStartOfText()
         }
     }
 
@@ -233,8 +232,7 @@ class TextPageController(
             false
         } else {
             // 获取第一页的起始光标，如果起始光标不在整个文本的结尾位置，则表示存在下一页
-            !mCurPageWrapper!!.textPage
-                .endWordCursor!!.isEndOfText()
+            !mCurPageWrapper!!.textPage.endWordCursor.isEndOfText()
         }
     }
 
@@ -331,9 +329,9 @@ class TextPageController(
         // 获取页面列表
         val pages = chapterWrapper.pages
         // 选择索引和页面的最小值返回
-        val pageIndex = min(pages.size - 1, pageIndex)
+        val resultPageIndex = min(pages.size - 1, pageIndex)
         // 获取索引
-        return PageWrapper(chapterWrapper, pageIndex, pages[pageIndex])
+        return PageWrapper(chapterWrapper, resultPageIndex, pages[resultPageIndex])
     }
 
     /**
@@ -364,6 +362,8 @@ class TextPageController(
             // 设置页面为当前页面
             mCurPageWrapper = pageWrapper
 
+            // TODO:优化 TextPage，需要调用 reset() 释放一些参数
+
             // 检测是否应该翻章处理
             when (type) {
                 PageType.PREVIOUS -> {
@@ -372,7 +372,7 @@ class TextPageController(
                     }
                 }
                 PageType.NEXT -> {
-                    if (pageWrapper!!.pageIndex == 0) {
+                    if (pageWrapper.pageIndex == 0) {
                         isTurnChapter = true
                     }
                 }

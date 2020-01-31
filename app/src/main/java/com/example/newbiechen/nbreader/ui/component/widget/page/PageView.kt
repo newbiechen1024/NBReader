@@ -289,7 +289,7 @@ class PageView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val x = event!!.x.toInt()
-        val y = event!!.y.toInt()
+        val y = event.y.toInt()
 
         // 点击事件处理
         when (event.action) {

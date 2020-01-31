@@ -241,8 +241,8 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 curLine = prepareTextLine(
                     width,
                     paragraphCursor,
-                    curLine!!.endElementIndex,
-                    curLine!!.endCharIndex,
+                    curLine.endElementIndex,
+                    curLine.endCharIndex,
                     endElementIndex, preLineInfo
                 )
 
@@ -283,13 +283,13 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
             return
         }
 
-        val pageStartCursor = page.startWordCursor!!
-        val pageEndCursor = page.endWordCursor!!
+        val pageStartCursor = page.startWordCursor
+        val pageEndCursor = page.endWordCursor
 
         // 查找光标
-        var findCursor = TextWordCursor(pageStartCursor)
+        val findCursor = TextWordCursor(pageStartCursor)
         // 文本行列表
-        var textLines = page.textLineList
+        val textLines = page.textLineList
         // 当前行
         var curLine: TextLine? = null
 
@@ -326,8 +326,8 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 curLine = prepareTextLine(
                     getPageWidth(),
                     paragraphCursor,
-                    curLine!!.endElementIndex,
-                    curLine!!.endCharIndex,
+                    curLine.endElementIndex,
+                    curLine.endCharIndex,
                     endElementIndex, preLineInfo
                 )
 
@@ -375,17 +375,17 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         var curCharIndex = startCharIndex
 
         // 是否是段落中的第一行
-        var isFirstLine = startElementIndex == 0 && startCharIndex == 0
+        val isFirstLine = startElementIndex == 0 && startCharIndex == 0
 
         if (isFirstLine) {
             // 获取当前元素
-            var element = paragraphCursor.getElement(curElementIndex)!!
+            var element = paragraphCursor.getElement(curElementIndex)
 
             if (element != null) {
                 // 判断是否是文本样式元素
                 while (isStyleElement(element!!)) {
                     // 使用该元素
-                    applyStyleElement(element!!)
+                    applyStyleElement(element)
                     // 行起始位置向后移动一位
                     ++curElementIndex
                     curCharIndex = 0
@@ -415,7 +415,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         curLineInfo.leftIndent = curTextStyle.getLeftIndent(getMetrics())
 
         // 如果是第一行，且不为居中显示，则计算第一行的左缩进
-        if (isFirstLine && curTextStyle.getAlignment() !== TextAlignmentType.ALIGN_CENTER) {
+        if (isFirstLine && curTextStyle.getAlignment() != TextAlignmentType.ALIGN_CENTER) {
             curLineInfo.leftIndent += curTextStyle.getFirstLineIndent(getMetrics())
         }
 
@@ -529,12 +529,12 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
             (isHyphenationPossible() || curLineInfo.endElementIndex == startElementIndex)
         ) {
             // 获取当前元素
-            val element = paragraphCursor.getElement(curElementIndex)
+            val element = paragraphCursor.getElement(curElementIndex)!!
             if (element is TextWordElement) {
                 // 宽需要减去当前 element 的宽
                 newWidth -= getWordWidth(element, curCharIndex)
                 // 获取最大宽度和当前宽的差值，等于空格的宽度
-                var remainSpaceWidth = maxWidth - newWidth
+                val remainSpaceWidth = maxWidth - newWidth
                 // 如果当前元素大于 3 字节，并且剩余控件大于 2 倍的空格
                 // 或者单个元素独占一行
                 if ((element.length > 3 && remainSpaceWidth > 2 * mPaintContext.getSpaceWidth())
@@ -569,7 +569,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                                 element,
                                 curCharIndex,
                                 tempMid - curCharIndex,
-                                element.data[element.offset + tempMid - 1] !== '-'
+                                element.data[element.offset + tempMid - 1] != '-'
                             )
                             // 如果单词的宽小于剩余空间
                             if (wordWidth < remainSpaceWidth) {
@@ -587,7 +587,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                     if (hyphenIndex == curCharIndex && curLineInfo.endElementIndex == startElementIndex) {
                         subWordWidth = getWordWidth(element, curCharIndex, 1, false)
                         var right =
-                            if (element.length === curCharIndex + 1) element.length else element.length - 1
+                            if (element.length == curCharIndex + 1) element.length else element.length - 1
                         var left = curCharIndex + 1
                         while (right > left) {
                             val mid = (right + left + 1) / 2
@@ -595,7 +595,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                                 element,
                                 curCharIndex,
                                 mid - curCharIndex,
-                                element.data[element.offset + mid - 1] !== '-'
+                                element.data[element.offset + mid - 1] != '-'
                             )
                             if (w <= remainSpaceWidth) {
                                 left = mid
@@ -638,7 +638,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
 
         // 是否是第一行
         if (isFirstLine) {
-            curLineInfo.vSpaceBefore = curLineInfo.startStyle!!.getSpaceBefore(getMetrics())
+            curLineInfo.vSpaceBefore = curLineInfo.startStyle.getSpaceBefore(getMetrics())
             if (preLine != null) {
                 curLineInfo.previousInfoUsed = true
                 curLineInfo.height += 0.coerceAtLeast(curLineInfo.vSpaceBefore - preLine.vSpaceAfter)
@@ -669,6 +669,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         // 清空元素绘制区域数据
         page.textElementAreaVector.clear()
 
+        // TODO: x,y 用于设置外边距的，暂未实现外边距的设置
         var x = 0
         var y = 0
         var previous: TextLine? = null
@@ -699,15 +700,15 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         x: Int,
         y: Int
     ) {
-        var x = x
-        var y = y
+        var realX = x
+        var realY = y
         // 根据视口的最大高度取最小值
-        y = (y + line.height).coerceAtMost(mTextConfig.topMargin + getPageHeight() - 1)
+        realY = (realY + line.height).coerceAtMost(mTextConfig.topMargin + getPageHeight() - 1)
 
         val context = mPaintContext
         val paragraphCursor = line.paragraphCursor
         // 设置当前行的样式
-        setTextStyle(line.startStyle!!)
+        setTextStyle(line.startStyle)
         var spaceCount = line.spaceCount
         var fullCorrection = 0
         val isEndOfParagraph = line.isEndOfParagraph()
@@ -716,15 +717,15 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         // 是否样式改变
         var isStyleChange = true
 
-        x += line.leftIndent
+        realX += line.leftIndent
 
         val maxWidth = getPageWidth()
 
         when (getTextStyle().getAlignment()) {
-            TextAlignmentType.ALIGN_RIGHT -> x += maxWidth - getTextStyle().getRightIndent(
+            TextAlignmentType.ALIGN_RIGHT -> realX += maxWidth - getTextStyle().getRightIndent(
                 getMetrics()
             ) - line.width
-            TextAlignmentType.ALIGN_CENTER -> x += (maxWidth - getTextStyle().getRightIndent(
+            TextAlignmentType.ALIGN_CENTER -> realX += (maxWidth - getTextStyle().getRightIndent(
                 getMetrics()
             ) - line.width) / 2
             TextAlignmentType.ALIGN_JUSTIFY -> if (!isEndOfParagraph && paragraphCursor.getElement(
@@ -768,15 +769,15 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                                 isStyleChange = false, // changed style
                                 style = getTextStyle(),
                                 element = element,
-                                startX = x,
-                                startY = x + spaceLength,
-                                endX = y,
-                                endY = y
+                                startX = realX,
+                                startY = realX + spaceLength,
+                                endX = realY,
+                                endY = realY
                             )
                         } else {
                             null
                         }
-                        x += spaceLength
+                        realX += spaceLength
                         fullCorrection -= correction
                         isWordOccurred = false
                         --spaceCount
@@ -784,7 +785,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 } else if (element is TextWordElement) {
                     val height = getElementHeight(element)
                     val descent = getElementDescent(element)
-                    val length = if (element is TextWordElement) element.length else 0
+                    val length = element.length
                     if (spaceElement != null) {
                         page.textElementAreaVector.add(spaceElement!!)
                         spaceElement = null
@@ -801,10 +802,10 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                             isStyleChange = isStyleChange,
                             style = getTextStyle(),
                             element = element,
-                            startX = x,
-                            startY = x + width - 1,
-                            endX = y - height + 1,
-                            endY = y + descent
+                            startX = realX,
+                            startY = realX + width - 1,
+                            endX = realY - height + 1,
+                            endY = realY + descent
                         )
                     )
                     isStyleChange = false
@@ -813,7 +814,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                     applyStyleElement(element)
                     isStyleChange = true
                 }
-                x += width
+                realX += width
                 ++wordIndex
                 charIndex = 0
             }
@@ -824,7 +825,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
             if (len > 0) {
                 val wordIndex = line.endElementIndex
                 val wordElement = paragraph.getElement(wordIndex) as TextWordElement
-                val addHyphenationSign = wordElement.data[wordElement.offset + len - 1] !== '-'
+                val addHyphenationSign = wordElement.data[wordElement.offset + len - 1] != '-'
                 val width = getWordWidth(wordElement, 0, len, addHyphenationSign)
                 val height = getElementHeight(wordElement)
                 val descent = context.getDescent()
@@ -838,7 +839,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                         isStyleChange,
                         getTextStyle(),
                         wordElement,
-                        x, x + width - 1, y - height + 1, y + descent
+                        realX, realX + width - 1, realY - height + 1, realY + descent
                     )
                 )
             }
@@ -923,7 +924,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         }
 
         if (areaIndex < toAreaIndex) {
-            val area = pageAreas[areaIndex++]
+            val area = pageAreas[areaIndex]
             if (area.isStyleChange) {
                 setTextStyle(area.style)
             }
