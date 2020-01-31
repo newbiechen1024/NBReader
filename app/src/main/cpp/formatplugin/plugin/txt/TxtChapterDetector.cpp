@@ -65,7 +65,6 @@ void TxtChapterDetector::detector(const File &file, const std::string &charset,
 
     // 原理就是将 decode 的数据，慢慢 encoding 获取
     while (!isReader.isFinish()) {
-
         // 读取数据
         blockSize = isReader.read(block, BUFFER_SIZE);
         // 创建段落匹配器
@@ -83,10 +82,11 @@ void TxtChapterDetector::detector(const File &file, const std::string &charset,
             int chapterSize = findStart - blockOffset;
 
             // 计算章节大小
-            originChapterLen = getOriginSize(encodingConverter, chapterStartOffset,
+            originChapterLen = getOriginSize(encodingConverter,
+                                             chapterStartOffset,
                                              chapterSize);
 
-            // 如果计算失败，则直接返回
+            // TODO:如果计算失败，则直接返回(需要错误处理)
             if (originChapterLen == 0) {
                 return;
             }

@@ -17,7 +17,7 @@ CharsetConverter::CharsetConverter(const std::string &fromEncoding, const std::s
     StringUtil::asciiToLowerInline(lowToEncoding);
 
     // 不处理 charset 不支持，或者写错的情况
-    mIconvCd = iconv_open(lowFromEncoding.c_str(), lowToEncoding.c_str());
+    mIconvCd = iconv_open(lowToEncoding.c_str(), lowFromEncoding.c_str());
 
     // 如果初始化失败，则 icon cd  为 null
     if (errno == EINVAL) {
@@ -53,6 +53,8 @@ CharsetConverter::convert(CharBuffer &inBuffer, CharBuffer &outBuffer) {
         return SUCCESS;
     }
 
+    Logger::i(TAG, "inBufferLen = " + std::to_string(inBufferLen));
+
     // 输入缓冲指针
     char *inBufferPtr = inBuffer.buffer();
 
@@ -65,6 +67,8 @@ CharsetConverter::convert(CharBuffer &inBuffer, CharBuffer &outBuffer) {
     // 进行解析操作
     int resultCode = iconv(mIconvCd, &inBufferPtr, &resultInBufferLen, &outBufferPtr,
                            &resultOutBufferLen);
+
+    Logger::i(TAG, "resultInBufferLen = " + std::to_string(resultInBufferLen));
 
     // 处理 inBuffer
 

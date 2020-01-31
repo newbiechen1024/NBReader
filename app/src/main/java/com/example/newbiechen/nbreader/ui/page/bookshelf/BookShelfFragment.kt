@@ -38,8 +38,10 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
             // 指定一个文件路径 /sdcard/测试书籍/剑来.txt
             // 重生后嫁给克妻皇帝
             // zh-gb18030
-            ReadActivity.startActivity(context!!,
-                BookEntity("test_utf-8", "test_utf-8", BookType.TXT, "/storage/emulated/0/测试书籍/test_utf-8.txt", true)
+            // /sdcard/测试书籍/test_gbk.txt
+            ReadActivity.startActivity(
+                context!!,
+                BookEntity("test", "test", BookType.TXT, "/storage/emulated/0/测试书籍/test_gbk.txt", true)
             )
         }
     }

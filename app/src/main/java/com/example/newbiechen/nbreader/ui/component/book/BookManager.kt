@@ -114,14 +114,16 @@ class BookManager constructor(
         // 传入书籍资源
         plugin.setBookResource(book.url)
 
+        LogHelper.i(TAG, "openBookInternal: encoding = " + plugin.getEncoding())
+
         plugin.getChapters()!!.forEach {
             LogHelper.i(TAG, "openBookInternal: $it")
         }
 
         // TODO:BookManager 不应该直接获取到 TextProcessor，这个可以之后处理，连同传入 NativePlugin 一起修改了
 
-        // 对文本处理器，设置文本模块
-        textProcessor.setTextResource(plugin)
+/*        // 对文本处理器，设置文本模块
+        textProcessor.setTextResource(plugin)*/
     }
 }
 
