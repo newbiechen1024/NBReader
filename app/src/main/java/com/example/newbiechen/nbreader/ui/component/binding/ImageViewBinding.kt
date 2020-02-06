@@ -17,7 +17,7 @@ object ImageViewBinding {
 
         Glide.with(context)
             .load(url)
-            .placeholder(R.drawable.ic_image_load)
+            .placeholder(R.drawable.ic_image_loading)
             .error(R.drawable.ic_image_load_error)
             .override(200, 200)
             .into(this)

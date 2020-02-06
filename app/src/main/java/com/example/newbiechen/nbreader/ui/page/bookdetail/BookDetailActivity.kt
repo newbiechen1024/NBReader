@@ -107,7 +107,7 @@ class BookDetailActivity : BaseBindingActivity<ActivityBookDetailBinding>() {
                     Glide.with(this@BookDetailActivity)
                         .load(bookDetail.imgUrl)
                         .thumbnail(0.1f)
-                        .placeholder(R.drawable.ic_image_load)
+                        .placeholder(R.drawable.ic_image_loading)
                         .error(R.drawable.ic_image_load_error)
                         .apply(
                             RequestOptions.bitmapTransform(

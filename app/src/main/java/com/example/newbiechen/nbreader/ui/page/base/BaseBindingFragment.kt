@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import dagger.android.support.DaggerFragment
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlin.reflect.KClass
 
 abstract class BaseBindingFragment<T : ViewDataBinding> : DaggerFragment() {
@@ -15,7 +17,13 @@ abstract class BaseBindingFragment<T : ViewDataBinding> : DaggerFragment() {
 
     internal abstract fun initContentView(): Int
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private var compositeDisposable = CompositeDisposable()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         mDataBinding = DataBindingUtil.inflate(inflater, initContentView(), container, false)
         initData(savedInstanceState)
         return mDataBinding.root
@@ -25,6 +33,19 @@ abstract class BaseBindingFragment<T : ViewDataBinding> : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         processLogic()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
+    }
+
+    protected fun addDisposable(disposable: Disposable) {
+        compositeDisposable.add(disposable)
+    }
+
+    protected fun addAllDisposable(vararg disposable: Disposable) {
+        compositeDisposable.addAll(*disposable)
     }
 
     internal open fun initData(savedInstanceState: Bundle?) {

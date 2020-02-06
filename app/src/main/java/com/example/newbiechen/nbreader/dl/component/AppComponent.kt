@@ -4,6 +4,7 @@ import com.example.newbiechen.nbreader.NBApplication
 import com.example.newbiechen.nbreader.dl.module.DatabaseModule
 import com.example.newbiechen.nbreader.dl.module.NetworkModule
 import com.example.newbiechen.nbreader.dl.module.RepositoryModule
+import com.example.newbiechen.nbreader.dl.module.UtilModule
 import com.example.newbiechen.nbreader.dl.module.base.ActivityBindingModule
 import com.example.newbiechen.nbreader.dl.module.base.AppModule
 import com.example.newbiechen.nbreader.dl.module.base.ViewModelModule
@@ -18,7 +19,7 @@ import javax.inject.Singleton
     modules = [AndroidSupportInjectionModule::class, AppModule::class,
         ActivityBindingModule::class, ViewModelModule::class,
         RepositoryModule::class, DatabaseModule::class,
-        NetworkModule::class]
+        NetworkModule::class, UtilModule::class]
 )
 interface AppComponent : AndroidInjector<NBApplication> {
 

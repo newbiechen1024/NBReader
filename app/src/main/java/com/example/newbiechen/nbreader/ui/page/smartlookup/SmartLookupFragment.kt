@@ -1,32 +1,41 @@
 package com.example.newbiechen.nbreader.ui.page.smartlookup
 
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelStore
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.example.newbiechen.nbreader.databinding.FragmentSmartLookupBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter
 import com.example.newbiechen.nbreader.ui.component.decoration.PinnedHeaderItemDecoration
-import com.example.newbiechen.nbreader.ui.page.filesystem.IFileSystem
-import com.example.newbiechen.nbreader.ui.page.filesystem.IFileSystemCallback
+import com.example.newbiechen.nbreader.ui.page.filesystem.ILocalBookSystem
+import com.example.newbiechen.nbreader.ui.page.filesystem.ILocalBookCallback
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
+import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
+import javax.inject.Inject
 
 /**
  *  author : newbiechen
  *  date : 2019-08-17 12:34
- *  description :
+ *  description :文件智能查找页
  */
 
-class SmartLookupFragment : BaseBindingFragment<FragmentSmartLookupBinding>(), IFileSystem {
-    private lateinit var mViewModel: SmartLookupViewModel
+class SmartLookupFragment : BaseBindingFragment<FragmentSmartLookupBinding>(), ILocalBookSystem {
     private lateinit var mAdapter: SmartLookupAdapter
+    private lateinit var mViewModel: SmartLookupViewModel
 
     companion object {
         private const val TAG = "SmartLookupFragment"
+        fun newInstance() = SmartLookupFragment()
     }
 
-    private var mFileSystemCallback: IFileSystemCallback? = null
+    @Inject
+    lateinit var mViewModelFactory: ViewModelFactory
+
+    private var mLocalBookCallback: ILocalBookCallback? = null
 
     override fun initContentView(): Int = R.layout.fragment_smart_lookup
 
@@ -34,7 +43,7 @@ class SmartLookupFragment : BaseBindingFragment<FragmentSmartLookupBinding>(), I
         super.initView()
         mAdapter = SmartLookupAdapter().apply {
             setOnCheckedChangeListener { _, isChecked ->
-                mFileSystemCallback?.onCheckedChange(isChecked)
+                mLocalBookCallback?.onCheckedChange(isChecked)
             }
         }
 
@@ -47,36 +56,43 @@ class SmartLookupFragment : BaseBindingFragment<FragmentSmartLookupBinding>(), I
     }
 
     override fun processLogic() {
-        mViewModel = ViewModelProviders.of(this).get(SmartLookupViewModel::class.java)
+        mViewModel = ViewModelProvider(this, mViewModelFactory)
+            .get(SmartLookupViewModel::class.java)
+
         mDataBinding.viewModel = mViewModel
+
         // 加载本地书籍信息
-        mViewModel.loadLocalBookInfo(activity!!)
+        mViewModel.loadLocalBooks(activity!!)
     }
 
-    override fun setCheckedAll(isChecked: Boolean) {
-        if (mAdapter == null) return
+    override fun setBookCheckedAll(isChecked: Boolean) {
         mAdapter.setCheckedAll(isChecked)
     }
 
-    override fun getCheckedCount(): Int {
-        if (mAdapter == null) return 0
+    override fun getCheckedBookCount(): Int {
         return mAdapter.getCheckedCount()
     }
 
-    override fun deleteCheckedAll() {
-        var checkedBookIds = mAdapter.getCheckedBookInfo().map { it.id }
-        mViewModel.deleteBookInfos(checkedBookIds)
+    override fun deleteCheckedBooks() {
+        val checkedBookIds = mAdapter.getCheckedBooks().map { it.id }
+        mViewModel.deleteLocalBooks(checkedBookIds)
     }
 
-    override fun getCheckedFile(): List<String> {
-        return mAdapter.getCheckedBookInfo().map { it.path }
+    override fun getCheckedBooks(): List<LocalBookEntity> {
+        return mAdapter.getCheckedBooks()
     }
 
-    override fun setFileCallback(callback: IFileSystemCallback) {
-        mFileSystemCallback = callback
+    override fun setBookCallback(callback: ILocalBookCallback) {
+        mLocalBookCallback = callback
     }
 
-    override fun getFileCount(): Int {
+    override fun getBookCount(): Int {
         return mAdapter.getGroupChildCount()
+    }
+
+    override fun saveCheckedBooks() {
+        val localBooks = getCheckedBooks()
+        mAdapter.saveCheckedBooks()
+        mLocalBookCallback?.onSaveCheckedBooks(localBooks)
     }
 }

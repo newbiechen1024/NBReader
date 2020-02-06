@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
-    
+        <variable
+            name="viewModel"
+            type="com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfViewModel" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -11,17 +13,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         
-        <TextView
-            android:id="@+id/tv_read"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Book Shelf"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <com.github.jdsjlzx.recyclerview.LRecyclerView
+            android:id="@+id/rv_book"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:items="@{viewModel.cacheBookList}" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

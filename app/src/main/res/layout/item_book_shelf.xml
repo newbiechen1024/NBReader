@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        
+        <import type="android.view.View" />
+        
+        <variable
+            name="title"
+            type="String" />
+        
+        <variable
+            name="brief"
+            type="String" />
+        
+        <variable
+            name="detail"
+            type="String" />
+        
+        <variable
+            name="isUpdate"
+            type="Boolean" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <ImageView
+            android:id="@+id/iv_book_icon"
+            android:layout_width="54dp"
+            android:layout_height="72dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_image_loading"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+        <TextView
+            android:id="@+id/tv_book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:ellipsize="end"
+            android:maxEms="15"
+            android:maxLines="1"
+            android:text="@{title}"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_size_normal"
+            app:layout_constraintBottom_toTopOf="@id/tv_book_brief"
+            app:layout_constraintLeft_toRightOf="@id/iv_book_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_book_icon"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="逆鳞" />
+        
+        <TextView
+            android:id="@+id/tv_book_brief"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{brief}"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintBottom_toTopOf="@id/tv_book_detail"
+            app:layout_constraintLeft_toLeftOf="@id/tv_book_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_book_title"
+            tools:text="作者名 · 18章" />
+        
+        <TextView
+            android:id="@+id/tv_book_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{detail}"
+            app:layout_constraintBottom_toBottomOf="@id/iv_book_icon"
+            app:layout_constraintLeft_toLeftOf="@id/tv_book_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_book_brief"
+            tools:text="第xxx章 xxxxxx" />
+        
+        <ImageView
+            android:id="@+id/coll_book_iv_red_rot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:src="@drawable/ic_red_dot"
+            android:visibility="@{isUpdate ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_book_title"
+            app:layout_constraintLeft_toRightOf="@id/tv_book_title"
+            app:layout_constraintTop_toTopOf="@id/tv_book_title"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

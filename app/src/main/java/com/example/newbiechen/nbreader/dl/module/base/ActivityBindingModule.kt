@@ -12,7 +12,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 /**
- * 对 Activity 进行依赖注入
+ * 所有继承 BaseBindingActivity 的 Activity 都需要在这里注册
  */
 @Module
 internal abstract class ActivityBindingModule {

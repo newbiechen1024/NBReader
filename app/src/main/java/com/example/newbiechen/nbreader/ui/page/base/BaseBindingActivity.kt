@@ -10,6 +10,8 @@ import androidx.databinding.ViewDataBinding
 import com.example.newbiechen.nbreader.ui.component.extension.overlayStatusBar
 import com.example.newbiechen.nbreader.uilts.SystemBarUtil
 import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlin.reflect.KClass
 
 /**
@@ -18,6 +20,8 @@ import kotlin.reflect.KClass
 abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivity() {
 
     protected lateinit var mDataBinding: T
+
+    private var compositeDisposable = CompositeDisposable()
 
     internal abstract fun initContentView(): Int
 
@@ -29,6 +33,18 @@ abstract class BaseBindingActivity<T : ViewDataBinding> : DaggerAppCompatActivit
         processLogic()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
+    }
+
+    protected fun addDisposable(disposable: Disposable) {
+        compositeDisposable.add(disposable)
+    }
+
+    protected fun addAllDisposable(vararg disposable: Disposable) {
+        compositeDisposable.addAll(*disposable)
+    }
 
     internal open fun initData(savedInstanceState: Bundle?) {
     }

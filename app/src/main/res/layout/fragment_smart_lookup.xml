@@ -15,7 +15,7 @@
                 android:paddingLeft="22dp"
                 android:paddingRight="22dp"
                 android:overScrollMode="never"
-                app:items="@{viewModel.bookInfoGroups}">
+                app:items="@{viewModel.localBookWrapperGroups}">
         </androidx.recyclerview.widget.RecyclerView>
         
         <TextView

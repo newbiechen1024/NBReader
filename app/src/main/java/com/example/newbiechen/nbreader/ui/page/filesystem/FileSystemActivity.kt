@@ -3,24 +3,30 @@ package com.example.newbiechen.nbreader.ui.page.filesystem
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.newbiechen.nbreader.R
+import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.example.newbiechen.nbreader.databinding.ActivityFileSystemBinding
-import com.example.newbiechen.nbreader.ui.page.filecatalogy.FileCatalogFragment
+import com.example.newbiechen.nbreader.ui.page.filecatalog.FileCatalogFragment
 import com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupFragment
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingActivity
+import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
+import javax.inject.Inject
 
 /**
  *  author : newbiechen
  *  date : 2019-08-16 18:27
- *  description :
+ *  description :文件系统页面
  */
 
 class FileSystemActivity : BaseBindingActivity<ActivityFileSystemBinding>() {
 
-    private var mSmartLookupFrag = SmartLookupFragment()
+    private var mSmartLookupFrag = SmartLookupFragment.newInstance()
 
-    private var mFileCatalogFrag = FileCatalogFragment()
+    private var mFileCatalogFrag = FileCatalogFragment.newInstance()
+
+    @Inject
+    lateinit var mViewModelFactory: ViewModelFactory
 
     private lateinit var mCurFragment: Fragment
     private lateinit var mViewModel: FileSystemViewModel
@@ -38,7 +44,7 @@ class FileSystemActivity : BaseBindingActivity<ActivityFileSystemBinding>() {
 
     override fun processLogic() {
         super.processLogic()
-        mViewModel = ViewModelProviders.of(this).get(FileSystemViewModel::class.java)
+        mViewModel = ViewModelProvider(this, mViewModelFactory).get(FileSystemViewModel::class.java)
         mDataBinding.viewModel = mViewModel
     }
 
@@ -54,33 +60,43 @@ class FileSystemActivity : BaseBindingActivity<ActivityFileSystemBinding>() {
 
         supportActionBar!!.title = resources.getString(R.string.common_smart_import)
 
-        mSmartLookupFrag.setFileCallback(object : IFileSystemCallback {
-            override fun onCheckedChange(isChecked: Boolean) {
-                onCheckedChange()
-            }
-        })
-
         mDataBinding.apply {
             tvCheckedAll.setOnClickListener {
-                mSmartLookupFrag.setCheckedAll(!mViewModel.isCheckedAll.get()!!)
+                mSmartLookupFrag.setBookCheckedAll(!mViewModel.isCheckedAll.get()!!)
                 onCheckedChange()
             }
 
             tvDelete.setOnClickListener {
-                mSmartLookupFrag.deleteCheckedAll()
+                mSmartLookupFrag.deleteCheckedBooks()
             }
 
             tvAddBookshelf.setOnClickListener {
-                // 添加书籍
+                val fileSystem = mCurFragment as ILocalBookSystem
+                // 通知存储选中的书籍
+                fileSystem.saveCheckedBooks()
             }
         }
+
+        mSmartLookupFrag.setBookCallback(object : ILocalBookCallback {
+            override fun onCheckedChange(isChecked: Boolean) {
+                onCheckedChange()
+            }
+
+            override fun onSaveCheckedBooks(localBooks: List<LocalBookEntity>) {
+                mViewModel.saveBooks(localBooks)
+                onCheckedChange()
+            }
+
+            override fun onDeleteCheckedBooks(localBooks: List<LocalBookEntity>) {
+            }
+        })
     }
 
     private fun onCheckedChange() {
-        mViewModel.checkedCount.set(mSmartLookupFrag.getCheckedCount())
+        mViewModel.checkedCount.set(mSmartLookupFrag.getCheckedBookCount())
 
         // 是否全选
-        if (mSmartLookupFrag.getCheckedCount() == mSmartLookupFrag.getFileCount()) {
+        if (mSmartLookupFrag.getCheckedBookCount() == mSmartLookupFrag.getBookCount()) {
             if (!mViewModel.isCheckedAll.get()!!) {
                 mViewModel.isCheckedAll.set(true)
             }
@@ -93,7 +109,7 @@ class FileSystemActivity : BaseBindingActivity<ActivityFileSystemBinding>() {
 
 
     private fun toggleFragment() {
-        val tempFragment = if (mCurFragment == mSmartLookupFrag) {
+        val tempFragment: Fragment = if (mCurFragment == mSmartLookupFrag) {
             supportActionBar!!.title = resources.getString(R.string.common_phone_catalog)
             mFileCatalogFrag
         } else {

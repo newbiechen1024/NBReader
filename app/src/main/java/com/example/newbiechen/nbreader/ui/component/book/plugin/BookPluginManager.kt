@@ -19,7 +19,7 @@ class BookPluginManager {
         private const val TAG = "BookPluginManager"
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
-                instance ?: BookPluginManager(context.applicationContext).also { instance = it }
+                BookPluginManager(context.applicationContext).also { instance = it }
             }
     }
 

@@ -172,7 +172,6 @@ int TxtChapterDetector::getOriginSize(CharsetConverter &converter, char *inBuffe
             }
             case CharsetConverter::SUCCESS:
                 encodingCount += destBuffer.position();
-                Logger::i(TAG, "success" + std::to_string(encodingCount));
                 return encodingCount;
             default:
                 // TODO:抛出异常

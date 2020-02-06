@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.annotation.NonNull
 import androidx.loader.content.CursorLoader
+import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.example.newbiechen.nbreader.ui.component.book.type.BookType
 import java.io.File
 import java.lang.StringBuilder
@@ -58,8 +59,8 @@ class LocalBookLoader constructor(context: Context) :
         sortOrder = FILE_ORDER
     }
 
-    fun parseData(cursor: Cursor?): List<LocalBookInfo> {
-        val bookInfos = mutableListOf<LocalBookInfo>()
+    fun parseData(cursor: Cursor?): List<LocalBookEntity> {
+        val bookInfos = mutableListOf<LocalBookEntity>()
         if (cursor == null) {
             return bookInfos
         }
@@ -86,13 +87,14 @@ class LocalBookLoader constructor(context: Context) :
             var name = getValueFromCursor(cursor, MediaStore.Files.FileColumns.TITLE, "") as String
             var type = path.substringAfterLast(".")
             // time 的单位是 s
-            var createTime = getValueFromCursor(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED, 0L) as Long
+            var createTime =
+                getValueFromCursor(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED, 0L) as Long
             var bookType = BOOK_TYPES.first {
                 TextUtils.equals(it.name.toLowerCase(), type)
             }
 
             // 时间统一转换成 ms
-            val bookInfo = LocalBookInfo(id, name, bookType, size, createTime * 1000, path)
+            val bookInfo = LocalBookEntity(id, name, bookType, size, createTime * 1000, path)
             bookInfos.add(bookInfo)
         }
         return bookInfos
@@ -106,7 +108,10 @@ class LocalBookLoader constructor(context: Context) :
      * @param defaultValue
      * @return 当columnName无效时返回默认值；
      */
-    private fun getValueFromCursor(@NonNull cursor: Cursor, columnName: String, defaultValue: Any): Any {
+    private fun getValueFromCursor(
+        @NonNull cursor: Cursor, columnName: String,
+        defaultValue: Any
+    ): Any {
         try {
             val index = cursor.getColumnIndexOrThrow(columnName)
             val type = cursor.getType(index)
@@ -177,18 +182,5 @@ class LocalBookLoader constructor(context: Context) :
             return defaultValue
         }
 
-    }
-}
-
-data class LocalBookInfo(
-    val id: Long,
-    val name: String, // 书籍名
-    val type: BookType, // 书籍类型
-    val size: Long, // 书籍大小
-    val lastModified: Long, // 文件的添加时间，单位:ms
-    val path: String // 文件路径
-) {
-    override fun toString(): String {
-        return "BookInfo(id=$id, title='$name', type=$type, size=$size, lastModified=$lastModified, path='$path')"
     }
 }

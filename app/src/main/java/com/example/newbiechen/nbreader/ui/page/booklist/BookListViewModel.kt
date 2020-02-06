@@ -5,7 +5,7 @@ import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import com.example.newbiechen.nbreader.data.entity.NetBookEntity
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
-import com.example.newbiechen.nbreader.ui.page.base.RxViewModel
+import com.example.newbiechen.nbreader.ui.page.base.BaseViewModel
 import com.example.newbiechen.nbreader.ui.component.widget.StatusView
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.NetworkUtil
@@ -17,7 +17,7 @@ import javax.inject.Inject
 // 传递什么呢 error 还有 no more
 typealias OnLoadMoreStateChange = (state: LoadingFooter.State) -> Unit
 
-class BookListViewModel @Inject constructor(private val repository: IBookListRepository) : RxViewModel() {
+class BookListViewModel @Inject constructor(private val repository: IBookListRepository) : BaseViewModel() {
 
     companion object {
         // 每页加载的数据量
@@ -64,7 +64,7 @@ class BookListViewModel @Inject constructor(private val repository: IBookListRep
 
         pageStatus.set(StatusView.STATUS_LOADING)
         // 请求书籍
-        compositeDisposable.add(
+        addDisposable(
             repository.getBookList(alias, sort, curItemPos, PAGE_LIMIT, cat, isserial, updated)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -103,7 +103,7 @@ class BookListViewModel @Inject constructor(private val repository: IBookListRep
         }
 
         // 请求书籍
-        compositeDisposable.add(
+        addDisposable(
             repository.getBookList(alias!!, sort!!, curItemPos, PAGE_LIMIT, cat, isserial, updated)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

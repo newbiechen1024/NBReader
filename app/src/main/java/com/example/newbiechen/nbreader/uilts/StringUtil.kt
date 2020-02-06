@@ -14,6 +14,9 @@ import kotlin.math.pow
 
 object StringUtil {
 
+    /**
+     * 存储大小转化成字符串
+     */
     fun size2Str(size: Long): String {
         if (size <= 0) return "0"
         val units = arrayOf("B", "KB", "M", "G", "T")

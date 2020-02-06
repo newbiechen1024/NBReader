@@ -36,10 +36,10 @@ data class CatalogEntity(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.createStringArrayList(),
-        parcel.createStringArrayList()
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

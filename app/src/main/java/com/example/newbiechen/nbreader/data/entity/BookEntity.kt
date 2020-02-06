@@ -52,10 +52,10 @@ data class BookEntity(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        BookType.valueOf(parcel.readString()),
-        parcel.readString(),
+        parcel.readString()!!,
+        parcel.readString()!!,
+        BookType.valueOf(parcel.readString()!!),
+        parcel.readString()!!,
         parcel.readByte() != 0.toByte(),
         parcel.readString(),
         parcel.readString(),
@@ -84,7 +84,6 @@ data class BookEntity(
     }
 
     override fun describeContents(): Int {
-        var charSet = Charsets.UTF_8
         return 0
     }
 

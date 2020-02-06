@@ -1,10 +1,8 @@
 package com.example.newbiechen.nbreader.dl.module
 
-import com.example.newbiechen.nbreader.ui.page.filecatalogy.FileCatalogFragment
+import com.example.newbiechen.nbreader.ui.page.filecatalog.FileCatalogFragment
 import com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupFragment
-import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 
 /**

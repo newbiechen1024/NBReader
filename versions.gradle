@@ -12,7 +12,7 @@ versions.espresso_core = "3.2.0"
 versions.room = '2.2.1'
 versions.retrofit = '2.6.2'
 versions.okhttp = '4.2.2'
-versions.rxjava2 = "2.2.10"
+versions.rxjava2 = "2.4.0"
 versions.rxandroid = "2.1.1"
 versions.stetho = '1.5.1'
 versions.lifecycle = '2.2.0-rc01'
@@ -82,7 +82,7 @@ deps.dagger = dagger
 
 // rxjava
 def reactivex = [:]
-reactivex.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+reactivex.rxjava2 = "io.reactivex.rxjava2:rxkotlin:$versions.rxjava2"
 reactivex.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 deps.reactivex = reactivex
 

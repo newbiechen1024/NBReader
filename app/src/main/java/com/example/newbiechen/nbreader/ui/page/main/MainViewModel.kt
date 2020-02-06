@@ -2,7 +2,6 @@ package com.example.newbiechen.nbreader.ui.page.main
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
-import com.example.newbiechen.nbreader.ui.page.base.RxViewModel
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor() : ViewModel() {

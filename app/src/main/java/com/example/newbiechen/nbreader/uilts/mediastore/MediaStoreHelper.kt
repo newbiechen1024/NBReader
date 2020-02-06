@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
+import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 
 /**
  *  author : newbiechen
@@ -20,7 +21,7 @@ object MediaStoreHelper {
 
     fun cursorLocalBooks(
         activity: FragmentActivity,
-        resultCallback: OnMediaResultCallback<List<LocalBookInfo>>
+        resultCallback: OnMediaResultCallback<List<LocalBookEntity>>
     ) {
         val loaderManager: LoaderManager = LoaderManager.getInstance(activity)
         loaderManager.initLoader(

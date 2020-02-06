@@ -6,7 +6,7 @@ import io.reactivex.Flowable
 /**
  *  author : newbiechen
  *  date : 2019-08-14 18:28
- *  description :
+ *  description :书籍详细信息仓库 (NetBookDetail)
  */
 
 interface IBookDetailRepository {

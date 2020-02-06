@@ -3,9 +3,10 @@ package com.example.newbiechen.nbreader.ui.component.binding
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
+import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.example.newbiechen.nbreader.ui.component.adapter.FindAdapter
+import com.example.newbiechen.nbreader.ui.component.adapter.LocalBookWrapper
 import com.example.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter
-import com.example.newbiechen.nbreader.uilts.mediastore.LocalBookInfo
 
 object RecyclerViewBinding {
 
@@ -19,7 +20,7 @@ object RecyclerViewBinding {
 
     @BindingAdapter("app:items")
     @JvmStatic
-    fun RecyclerView.setBookInfoGroup(groups: List<Pair<String, List<LocalBookInfo>>>?) {
+    fun RecyclerView.setBookInfoGroup(groups: List<Pair<String, List<LocalBookWrapper>>>?) {
         if (groups == null) {
             return
         }

@@ -2,6 +2,7 @@ package com.example.newbiechen.nbreader.data.local.room.dao
 
 import androidx.room.*
 import com.example.newbiechen.nbreader.data.entity.BookEntity
+import io.reactivex.Maybe
 
 /**
  *  author : newbiechen
@@ -15,14 +16,15 @@ interface BookDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertBook(book: BookEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertBooks(books: List<BookEntity>)
+
     @Update
     fun updateBook(book: BookEntity)
 
     @Delete
     fun removeBook(book: BookEntity)
 
-/*    fun removeBookById(book: Book)
-
-    fun getBookById(id: Long)
-    fun getBookByPath(path: String)*/
+    @Query("SELECT * FROM book_entity")
+    fun getAllBooks(): Maybe<List<BookEntity>>
 }

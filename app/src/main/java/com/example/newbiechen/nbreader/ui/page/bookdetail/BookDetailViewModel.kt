@@ -5,7 +5,7 @@ import androidx.databinding.ObservableField
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.repository.impl.IBookDetailRepository
 import com.example.newbiechen.nbreader.ui.component.widget.StatusView
-import com.example.newbiechen.nbreader.ui.page.base.RxViewModel
+import com.example.newbiechen.nbreader.ui.page.base.BaseViewModel
 import com.example.newbiechen.nbreader.uilts.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -17,7 +17,7 @@ import javax.inject.Inject
  *  description :
  */
 
-class BookDetailViewModel @Inject constructor(private val repository: IBookDetailRepository) : RxViewModel() {
+class BookDetailViewModel @Inject constructor(private val repository: IBookDetailRepository) : BaseViewModel() {
 
     companion object {
         private const val TAG = "BookDetailViewModel"
@@ -40,7 +40,7 @@ class BookDetailViewModel @Inject constructor(private val repository: IBookDetai
 
         pageStatus.set(StatusView.STATUS_LOADING)
 
-        compositeDisposable.add(
+        addDisposable(
             repository.getBookDetail(bookId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
