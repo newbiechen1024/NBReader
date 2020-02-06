@@ -1,8 +1,8 @@
-package com.example.newbiechen.nbreader.dl.module.base
+package com.example.newbiechen.nbreader.di.module.base
 
-import com.example.newbiechen.nbreader.dl.annotation.scope.ActivityScoped
-import com.example.newbiechen.nbreader.dl.module.FileSystemModule
-import com.example.newbiechen.nbreader.dl.module.MainModule
+import com.example.newbiechen.nbreader.di.annotation.scope.ActivityScoped
+import com.example.newbiechen.nbreader.di.module.FileSystemModule
+import com.example.newbiechen.nbreader.di.module.MainModule
 import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListActivity
 import com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemActivity

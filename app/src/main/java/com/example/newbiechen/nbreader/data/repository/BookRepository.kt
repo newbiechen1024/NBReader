@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.data.repository
 
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.repository.impl.IBookRepository
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.LocalData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.LocalData
 import io.reactivex.Flowable
 import javax.inject.Inject
 

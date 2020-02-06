@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.module
+package com.example.newbiechen.nbreader.di.module
 
 import android.content.Context
 import androidx.room.Room

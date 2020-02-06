@@ -1,8 +1,8 @@
-package com.example.newbiechen.nbreader.dl.module.base
+package com.example.newbiechen.nbreader.di.module.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.newbiechen.nbreader.dl.annotation.key.ViewModelKey
+import com.example.newbiechen.nbreader.di.annotation.key.ViewModelKey
 import com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailViewModel
 import com.example.newbiechen.nbreader.ui.page.booklist.BookListViewModel
 import com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfViewModel

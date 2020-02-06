@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.module
+package com.example.newbiechen.nbreader.di.module
 
 import com.example.newbiechen.nbreader.data.remote.api.BookApi
 import com.example.newbiechen.nbreader.uilts.Constants

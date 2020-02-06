@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.annotation.scope
+package com.example.newbiechen.nbreader.di.annotation.scope
 
 import javax.inject.Scope
 

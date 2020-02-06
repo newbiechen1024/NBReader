@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.annotation.key
+package com.example.newbiechen.nbreader.di.annotation.key
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

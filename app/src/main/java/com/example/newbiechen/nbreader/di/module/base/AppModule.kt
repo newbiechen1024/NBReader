@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.module.base
+package com.example.newbiechen.nbreader.di.module.base
 
 import android.app.Application
 import android.content.Context

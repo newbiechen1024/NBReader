@@ -1,12 +1,12 @@
-package com.example.newbiechen.nbreader.dl.module
+package com.example.newbiechen.nbreader.di.module
 
-import com.example.newbiechen.nbreader.dl.annotation.scope.ActivityScoped
+import com.example.newbiechen.nbreader.di.annotation.scope.ActivityScoped
 import com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfFragment
 import com.example.newbiechen.nbreader.ui.page.find.FindFragment
 import com.example.newbiechen.nbreader.ui.page.mine.MineFragment
 import com.example.newbiechen.nbreader.uilts.factory.MainFragFactory
 import com.example.newbiechen.nbreader.uilts.factory.NBMainFragFactory
-import com.example.newbiechen.nbreader.dl.annotation.scope.FragmentScoped
+import com.example.newbiechen.nbreader.di.annotation.scope.FragmentScoped
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

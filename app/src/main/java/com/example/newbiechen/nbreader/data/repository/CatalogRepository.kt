@@ -2,8 +2,8 @@ package com.example.newbiechen.nbreader.data.repository
 
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
 import com.example.newbiechen.nbreader.data.repository.impl.ICatalogRepository
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.LocalData
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.RemoteData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.LocalData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.RemoteData
 import io.reactivex.Flowable
 import javax.inject.Inject
 

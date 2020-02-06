@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.module
+package com.example.newbiechen.nbreader.di.module
 
 import com.example.newbiechen.nbreader.ui.page.filecatalog.FileCatalogFragment
 import com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupFragment

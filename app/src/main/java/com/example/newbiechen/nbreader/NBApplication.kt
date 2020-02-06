@@ -1,7 +1,7 @@
 package com.example.newbiechen.nbreader
 
 import android.content.Context
-import com.example.newbiechen.nbreader.dl.component.DaggerAppComponent
+import com.example.newbiechen.nbreader.di.component.DaggerAppComponent
 import com.facebook.stetho.Stetho
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication

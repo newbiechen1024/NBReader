@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.annotation.qualifier
+package com.example.newbiechen.nbreader.di.annotation.qualifier
 
 import javax.inject.Qualifier
 

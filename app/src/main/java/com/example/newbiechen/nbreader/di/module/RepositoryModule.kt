@@ -1,4 +1,4 @@
-package com.example.newbiechen.nbreader.dl.module
+package com.example.newbiechen.nbreader.di.module
 
 import com.example.newbiechen.nbreader.data.local.BookLocalDataSource
 import com.example.newbiechen.nbreader.data.local.CatalogLocalDataSource
@@ -13,8 +13,8 @@ import com.example.newbiechen.nbreader.data.repository.impl.IBookDetailRepositor
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
 import com.example.newbiechen.nbreader.data.repository.impl.IBookRepository
 import com.example.newbiechen.nbreader.data.repository.impl.ICatalogRepository
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.LocalData
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.RemoteData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.LocalData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.RemoteData
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton

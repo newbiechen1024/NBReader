@@ -2,7 +2,7 @@ package com.example.newbiechen.nbreader.data.repository
 
 import com.example.newbiechen.nbreader.data.entity.NetBookListWrapper
 import com.example.newbiechen.nbreader.data.repository.impl.IBookListRepository
-import com.example.newbiechen.nbreader.dl.annotation.qualifier.RemoteData
+import com.example.newbiechen.nbreader.di.annotation.qualifier.RemoteData
 import io.reactivex.Flowable
 import javax.inject.Inject
 
