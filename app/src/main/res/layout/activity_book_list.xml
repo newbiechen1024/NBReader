@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
-        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.booklist.BookListViewModel"/>
+        <variable name="viewModel" type="com.newbiechen.nbreader.ui.page.booklist.BookListViewModel"/>
     </data>
     
     <androidx.drawerlayout.widget.DrawerLayout
@@ -60,7 +60,7 @@
                         app:layout_constraintRight_toRightOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
             
-            <com.example.newbiechen.nbreader.ui.component.widget.StatusView
+            <com.newbiechen.nbreader.ui.component.widget.StatusView
                     android:id="@+id/sv_status"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -77,7 +77,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:items="@{viewModel.bookList}"/>
-            </com.example.newbiechen.nbreader.ui.component.widget.StatusView>
+            </com.newbiechen.nbreader.ui.component.widget.StatusView>
         
         </androidx.constraintlayout.widget.ConstraintLayout>
         

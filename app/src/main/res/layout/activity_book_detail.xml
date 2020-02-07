@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.bookdetail.BookDetailViewModel"/>
+        <variable name="viewModel" type="com.newbiechen.nbreader.ui.page.bookdetail.BookDetailViewModel"/>
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -230,7 +230,7 @@
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintRight_toRightOf="parent"/>
                         
-                        <com.example.newbiechen.nbreader.ui.component.widget.FoldableTextView
+                        <com.newbiechen.nbreader.ui.component.widget.FoldableTextView
                                 android:id="@+id/tv_book_brief"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

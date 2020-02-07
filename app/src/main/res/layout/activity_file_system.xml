@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.text.Html"/>
-        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.filesystem.FileSystemViewModel"/>
+        <variable name="viewModel" type="com.newbiechen.nbreader.ui.page.filesystem.FileSystemViewModel"/>
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

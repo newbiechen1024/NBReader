@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.find.FindViewModel"/>
+        <variable name="viewModel" type="com.newbiechen.nbreader.ui.page.find.FindViewModel"/>
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

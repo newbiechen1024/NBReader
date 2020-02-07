@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/page_padding_width"
     android:paddingRight="@dimen/page_padding_width">
     
-    <com.example.newbiechen.nbreader.ui.component.widget.BatteryView
+    <com.newbiechen.nbreader.ui.component.widget.BatteryView
         android:id="@+id/bv_progress"
         android:layout_width="18dp"
         android:layout_height="10dp"

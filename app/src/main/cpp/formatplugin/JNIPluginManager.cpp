@@ -14,7 +14,7 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(
         JNIEnv *env,
         jobject instance,
         jobject manager) {
@@ -29,7 +29,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_
  */
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getSupportPluginTypes(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getSupportPluginTypes(
         JNIEnv *env,
         jobject instance) {
     using namespace std;

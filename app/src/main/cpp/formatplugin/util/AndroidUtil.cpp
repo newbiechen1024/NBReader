@@ -7,7 +7,7 @@
 
 JavaVM *AndroidUtil::sJavaVM = 0;
 
-const std::string PKG_NAME = "com/example/newbiechen/nbreader/";
+const std::string PKG_NAME = "com/newbiechen/nbreader/";
 
 JavaClass AndroidUtil::Class_String("java/lang/String");
 

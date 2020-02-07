@@ -27,7 +27,7 @@
  */
 /*extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readModelNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readModelNative(
         JNIEnv *env,
         jobject instance,
         jobject jBookModel,
@@ -110,7 +110,7 @@ static const std::string TAG = "JNINativeFormatPlugin";
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_createFormatPluginNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_createFormatPluginNative(
         JNIEnv *env, jobject thiz, jstring format_type) {
 
     // 获取调用该方法的 NativePlugin 对应的 type
@@ -131,7 +131,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_releaseFormatPluginNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_releaseFormatPluginNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     // 释放 plugin 对象
     sPluginMap.erase(plugin_desc);
@@ -139,7 +139,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setConfigureNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setConfigureNative(
         JNIEnv *env, jobject thiz, jint plugin_desc,
         jstring cache_path, jstring chapter_pattern, jstring chapter_prologue_title) {
     auto pluginPtr = sPluginMap[plugin_desc];
@@ -153,7 +153,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setBookSourceNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_setBookSourceNative(
         JNIEnv *env, jobject thiz, jint plugin_desc, jstring book_path) {
 
     auto pluginPtr = sPluginMap[plugin_desc];
@@ -165,7 +165,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getEncodingNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getEncodingNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     auto pluginPtr = sPluginMap[plugin_desc];
     std::string encoding("");
@@ -177,7 +177,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getLanguageNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getLanguageNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     auto pluginPtr = sPluginMap[plugin_desc];
     std::string lang("");
@@ -189,7 +189,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getChaptersNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getChaptersNative(
         JNIEnv *env, jobject thiz, jint plugin_desc) {
     // TODO: implement getChapters()
     auto pluginPtr = sPluginMap[plugin_desc];
@@ -224,7 +224,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin
 
 extern "C"
 JNIEXPORT jbyteArray JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readChapterContentNative(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readChapterContentNative(
         JNIEnv *env, jobject thiz, jint plugin_desc, jobject text_chapter) {
 
     std::string chapterUrl = AndroidUtil::Method_TextChapter_getUrl->callForCppString(text_chapter);

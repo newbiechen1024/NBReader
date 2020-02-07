@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.newbiechen.nbreader.ui.page.bookshelf.BookShelfViewModel" />
+            type="com.newbiechen.nbreader.ui.page.bookshelf.BookShelfViewModel" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View"/>
-        <variable name="viewModel" type="com.example.newbiechen.nbreader.ui.page.smartlookup.SmartLookupViewModel"/>
+        <variable name="viewModel" type="com.newbiechen.nbreader.ui.page.smartlookup.SmartLookupViewModel"/>
     </data>
     <RelativeLayout
             android:layout_width="match_parent"

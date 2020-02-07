@@ -8,8 +8,9 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion build_versions.target_sdk
+
     defaultConfig {
-        applicationId "com.example.newbiechen.nbreader"
+        applicationId "com.newbiechen.nbreader"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
@@ -56,6 +57,13 @@ android {
     // 支持 DataBinding
     dataBinding {
         enabled = true
+    }
+
+    android {
+        compileOptions{
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
 }
 

@@ -9,7 +9,7 @@
         
         <variable
             name="viewModel"
-            type="com.example.newbiechen.nbreader.ui.page.read.ReadViewModel" />
+            type="com.newbiechen.nbreader.ui.page.read.ReadViewModel" />
     </data>
     
     <androidx.drawerlayout.widget.DrawerLayout
@@ -22,7 +22,7 @@
             android:layout_height="match_parent">
             
             <!--绘制内容-->
-            <com.example.newbiechen.nbreader.ui.component.widget.page.PageView
+            <com.newbiechen.nbreader.ui.component.widget.page.PageView
                 android:id="@+id/pv_book"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

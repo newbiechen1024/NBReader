@@ -8,7 +8,7 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_init(JNIEnv *env,
+Java_com_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_init(JNIEnv *env,
                                                                                        jobject instance) {
 
     init_linebreak();
@@ -16,7 +16,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_ini
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForCharArray(
+Java_com_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForCharArray(
         JNIEnv *env,
         jobject instance,
         jcharArray data_,
@@ -47,7 +47,7 @@ Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_set
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForString(
+Java_com_newbiechen_nbreader_ui_component_book_text_util_LineBreaker_setLineBreakForString(
         JNIEnv *env,
         jobject instance,
         jstring data_,
