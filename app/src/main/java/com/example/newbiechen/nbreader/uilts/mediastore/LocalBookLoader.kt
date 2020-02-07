@@ -23,7 +23,7 @@ class LocalBookLoader constructor(context: Context) :
     CursorLoader(context) {
 
     companion object {
-        private val TAG = "LocalBookLoader"
+        private const val TAG = "LocalBookLoader"
         // 获取系统外置文件数据表
         private val FILE_URI = Uri.parse("content://media/external/file")
         // 需要获取的书籍信息
@@ -44,7 +44,7 @@ class LocalBookLoader constructor(context: Context) :
         // 初始化 cursor 参数
         val selectionBuilder = StringBuilder()
         selectionBuilder.append(MediaStore.Files.FileColumns.DATA)
-        for (i in 0 until BOOK_TYPES.size) {
+        for (i in BOOK_TYPES.indices) {
             if (i == 0) {
                 selectionBuilder.append(" like ?")
             } else {
@@ -67,29 +67,29 @@ class LocalBookLoader constructor(context: Context) :
         // 重复使用Loader时，需要重置cursor的position；
         cursor.moveToPosition(-1)
         while (cursor.moveToNext()) {
-            var path = getValueFromCursor(cursor, MediaStore.Files.FileColumns.DATA, "") as String
+            val path = getValueFromCursor(cursor, MediaStore.Files.FileColumns.DATA, "") as String
             // 获取的文件路径无效
             if (TextUtils.isEmpty(path)) {
                 continue
             } else {
-                var file = File(path)
+                val file = File(path)
                 if (!file.exists() || file.isDirectory) {
                     continue
                 }
             }
 
-            var size = getValueFromCursor(cursor, MediaStore.Files.FileColumns.SIZE, 0L) as Long
+            val size = getValueFromCursor(cursor, MediaStore.Files.FileColumns.SIZE, 0L) as Long
             // 如果文件大小为 0，则不加入
             if (size == 0L) {
                 continue
             }
-            var id = getValueFromCursor(cursor, MediaStore.Files.FileColumns._ID, 0L) as Long
-            var name = getValueFromCursor(cursor, MediaStore.Files.FileColumns.TITLE, "") as String
-            var type = path.substringAfterLast(".")
+            val id = getValueFromCursor(cursor, MediaStore.Files.FileColumns._ID, 0L) as Long
+            val name = getValueFromCursor(cursor, MediaStore.Files.FileColumns.TITLE, "") as String
+            val type = path.substringAfterLast(".")
             // time 的单位是 s
-            var createTime =
+            val createTime =
                 getValueFromCursor(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED, 0L) as Long
-            var bookType = BOOK_TYPES.first {
+            val bookType = BOOK_TYPES.first {
                 TextUtils.equals(it.name.toLowerCase(), type)
             }
 
@@ -114,8 +114,7 @@ class LocalBookLoader constructor(context: Context) :
     ): Any {
         try {
             val index = cursor.getColumnIndexOrThrow(columnName)
-            val type = cursor.getType(index)
-            when (type) {
+            when (cursor.getType(index)) {
                 Cursor.FIELD_TYPE_STRING -> {
                     // TO SOLVE:某些手机的数据库将数值类型存为String类型
                     val value = cursor.getString(index)

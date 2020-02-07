@@ -109,6 +109,9 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
             } else {
                 calcCornerXY(mStartX, mStartY)
             }
+            else -> {
+                // 不处理
+            }
         }
     })
 
@@ -190,6 +193,9 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
                 drawNextPageAreaAndShadow(canvas, getToPage())
                 drawCurrentPageShadow(canvas)
                 drawCurrentBackArea(canvas, getFromPage())
+            }
+            else -> {
+                // 不处理
             }
         }
     }
@@ -342,7 +348,6 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mPath1.lineTo(mBezierControl1.x, mBezierControl1.y)
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y)
         mPath1.close()
-        var rotateDegrees: Float
         canvas.save()
         try {
             canvas.clipPath(mPath0, Region.Op.XOR)
@@ -364,8 +369,7 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
             mCurrentPageShadow = mFrontShadowDrawableVRL
         }
 
-        rotateDegrees =
-            toDegrees(
+        var rotateDegrees: Float = toDegrees(
                 atan2(
                     mFloatTouchX - mBezierControl1.x,
                     mBezierControl1.y - mFloatTouchY

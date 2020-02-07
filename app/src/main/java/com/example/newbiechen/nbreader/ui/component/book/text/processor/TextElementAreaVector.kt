@@ -44,7 +44,10 @@ class TextElementAreaVector {
     fun add(area: TextElementArea): Boolean {
         synchronized(mAreaList) {
             // 如果要加入的 area 在当前 Region 可以容纳区域内
-            if (myCurrentElementRegion != null && myCurrentElementRegion!!.regionInterval.isContain(area)) {
+            if (myCurrentElementRegion != null && myCurrentElementRegion!!.regionInterval.isContain(
+                    area
+                )
+            ) {
                 // 则 Region 扩大一位。
                 myCurrentElementRegion!!.extend()
             } else {
@@ -73,7 +76,7 @@ class TextElementAreaVector {
             return null
         }
         for (area in mAreaList) {
-            if (position!! <= area) {
+            if (position <= area) {
                 return area
             }
         }
@@ -86,7 +89,7 @@ class TextElementAreaVector {
         }
         for (i in mAreaList.indices.reversed()) {
             val area = mAreaList[i]
-            if (position!! > area) {
+            if (position > area) {
                 return area
             }
         }
@@ -118,7 +121,7 @@ class TextElementAreaVector {
             return null
         }
         for (region in myElementRegions) {
-            if (interval!! == region.regionInterval) {
+            if (interval == region.regionInterval) {
                 return region
             }
         }

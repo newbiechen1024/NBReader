@@ -85,6 +85,9 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         // 如果当前正在执行动画，先取消动画
         when (mStatus) {
             Status.AutoForward, Status.AutoBackward -> abortAnim()
+            else -> {
+                // 不处理
+            }
         }
 
         setStartPoint(x, y)

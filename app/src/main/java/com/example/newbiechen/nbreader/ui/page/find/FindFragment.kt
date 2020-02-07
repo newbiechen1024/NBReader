@@ -1,6 +1,6 @@
 package com.example.newbiechen.nbreader.ui.page.find
 
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.newbiechen.nbreader.R
 
@@ -28,14 +28,14 @@ class FindFragment : BaseBindingFragment<FragmentFindBinding>() {
     }
 
     override fun initView() {
-        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(FindViewModel::class.java)
+        mViewModel = ViewModelProvider(this, viewModelFactory).get(FindViewModel::class.java)
         mDataBinding.apply {
             viewModel = mViewModel
             rvBookCatalog.apply {
                 layoutManager = GridLayoutManager(activity, 3)
                 addItemDecoration(SpaceItemDecoration(verticalSpace = context.resources.getDimensionPixelSize(R.dimen.item_find_space)))
                 adapter = FindAdapter().apply {
-                    setOnItemClickListener { pos, value ->
+                    setOnItemClickListener { _, value ->
                         BookListActivity.startActivity(context, value)
                     }
                 }

@@ -1,15 +1,9 @@
 package com.example.newbiechen.nbreader.ui.component.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ItemBookListFilterBinding
-import com.example.newbiechen.nbreader.uilts.LogHelper
-import com.zhy.view.flowlayout.FlowLayout
-import com.zhy.view.flowlayout.TagAdapter
 
 /**
  *  author : newbiechen
@@ -74,7 +68,7 @@ class BookListFilterAdapter : RecyclerView.Adapter<BookListFilterAdapter.BookLis
         mCurSelectedTagMap.clear()
         if (preSelectedMap != null) {
             // 载入 preSelcted Tag
-            mCurSelectedTagMap.putAll(preSelectedMap!!)
+            mCurSelectedTagMap.putAll(preSelectedMap)
         }
         // 刷新 adapter
         notifyDataSetChanged()
@@ -98,7 +92,7 @@ class BookListFilterAdapter : RecyclerView.Adapter<BookListFilterAdapter.BookLis
                         // 将选中的列表存储到 map 中
                         mCurSelectedTagMap[title] = it.toList()
                     }
-                    setOnTagClickListener { view, position, parent ->
+                    setOnTagClickListener { _, position, _ ->
                         mTagSelectedListener?.invoke(title, position)
                         true
                     }

@@ -3,11 +3,11 @@ package com.example.newbiechen.nbreader.ui.page.booklist
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -101,7 +101,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
         mDataBinding.apply {
             tvFilter.setOnClickListener {
                 // 展开侧滑栏
-                dlSlide.openDrawer(Gravity.RIGHT, true)
+                dlSlide.openDrawer(GravityCompat.END, true)
             }
         }
     }
@@ -194,7 +194,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
                 false
             )
 
-            setOnTagChangeListener { key, value ->
+            setOnTagChangeListener { _, _ ->
                 // tag 改变了
                 isTagChange = true
             }
@@ -225,7 +225,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
             isTagChange = false
 
             // 关闭 drawer
-            mDataBinding.dlSlide.closeDrawer(Gravity.RIGHT, true)
+            mDataBinding.dlSlide.closeDrawer(GravityCompat.END, true)
 
             // 刷新 ViewModel
             refreshBookList()
@@ -249,7 +249,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
     }
 
     override fun processLogic() {
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(BookListViewModel::class.java)
+        mViewModel = ViewModelProvider(this, mViewModelFactory).get(BookListViewModel::class.java)
         mDataBinding.viewModel = mViewModel
         // 请求书籍信息
         refreshBookList()
@@ -271,7 +271,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
             // 获取书籍状态
             var isserial: Boolean? = null
-            var isserialResult = mLastSelectedTagMap!![mStatusTagTitle]?.get(0)
+            val isserialResult = mLastSelectedTagMap!![mStatusTagTitle]?.get(0)
             if (isserialResult != null) {
                 isserial = isserialResult == 0
             }
@@ -279,9 +279,9 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
             var update: Int? = null
 
             // 获取更新时间
-            var updateResult = mLastSelectedTagMap!![mUpdateTagTitle]?.get(0)
+            val updateResult = mLastSelectedTagMap!![mUpdateTagTitle]?.get(0)
             if (updateResult != null) {
-                update = mUpdateTagList[updateResult!!]
+                update = mUpdateTagList[updateResult]
             }
 
             mViewModel.refreshBookList(

@@ -1,6 +1,5 @@
 package com.example.newbiechen.nbreader.ui.page.read
 
-import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -8,7 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.data.local.room.dao.BookDao
@@ -141,7 +140,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
     override fun processLogic() {
         super.processLogic()
-        mViewModel = ViewModelProviders.of(this).get(ReadViewModel::class.java)
+        mViewModel = ViewModelProvider(this).get(ReadViewModel::class.java)
         // 需要对 viewmodel 做一次初始化操作
         mViewModel.init(this)
         mDataBinding.viewModel = mViewModel

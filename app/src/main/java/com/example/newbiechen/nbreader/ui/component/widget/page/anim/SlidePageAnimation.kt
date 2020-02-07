@@ -11,7 +11,8 @@ import kotlin.math.abs
  *  description :
  */
 
-class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnimation(view, pageManager) {
+class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) :
+    PageAnimation(view, pageManager) {
     // 图片在屏幕的可展示区域
     private var mFromSpaceRect = Rect()
     // 选取图片的片段区域
@@ -35,7 +36,7 @@ class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnima
     }
 
     override fun drawMove(canvas: Canvas) {
-        var dis = 0
+        var dis: Int
         when (mDirection) {
             Direction.PREVIOUS -> {
                 dis = mTouchX - mStartX
@@ -70,6 +71,9 @@ class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnima
 
                 canvas.drawBitmap(getFromPage(), mFromSpaceRect, mFromBitmapRect, null)
                 canvas.drawBitmap(getToPage(), mToSpaceRect, mToBitmapRect, null)
+            }
+            else -> {
+                // 不处理
             }
         }
     }

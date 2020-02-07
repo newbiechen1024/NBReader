@@ -42,7 +42,7 @@ class TextParagraphCursor : TextPosition {
     constructor(chapterCursor: TextChapterCursor, index: Int = 0) {
         mChapterCursor = chapterCursor
         mParagraphIndex = index
-        mParagraph = chapterCursor.getParagraph(index)!!
+        mParagraph = chapterCursor.getParagraph(index)
         mTextModel = chapterCursor.getChapterModel()
 
         // 将段落的 tag 元素解析成 element 元素
@@ -217,11 +217,10 @@ private class ParagraphContentDecoder(
 
     private fun processTextParagraph() {
         val tagIterator = paragraphContent
-        var textTag: TextTag? = null
+        var textTag: TextTag
 
         while (tagIterator.hasNext()) {
             textTag = tagIterator.next()
-
             when (textTag) {
                 is TextContentTag -> {
                     processTextContentTag(textTag)

@@ -190,7 +190,7 @@ class StatusView @JvmOverloads constructor(
 
     //数据存储
     override fun onSaveInstanceState(): Parcelable? {
-        val superParcel = super.onSaveInstanceState()
+        val superParcel = super.onSaveInstanceState() ?: return null
         val savedState = SavedState(superParcel)
         savedState.status = mStatus
         return savedState

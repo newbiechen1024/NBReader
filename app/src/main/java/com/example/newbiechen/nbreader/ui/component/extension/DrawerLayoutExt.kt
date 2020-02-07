@@ -22,7 +22,6 @@ fun DrawerLayout.getDrawerView(): View? {
         // 检测是否是 DrawerView
         if (isDrawerView(child)) {
             return child
-            break
         }
     }
     return null

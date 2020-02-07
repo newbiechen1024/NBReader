@@ -154,7 +154,7 @@ class BatteryView @JvmOverloads constructor(
             height.toFloat() - borderSpace
         )
 
-        canvas!!.drawRect(mOutlineRect, mOutlinePaint)
+        canvas.drawRect(mOutlineRect, mOutlinePaint)
 
         // 内部间距
         val innerPadding = mBorderWidth + borderSpace

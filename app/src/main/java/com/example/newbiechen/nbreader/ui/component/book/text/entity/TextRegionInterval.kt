@@ -38,26 +38,26 @@ abstract class TextRegionInterval(
 
         val region = other as TextRegionInterval?
         return chapterIndex == region!!.chapterIndex &&
-                paragraphIndex == region!!.paragraphIndex &&
-                startElementIndex == region!!.startElementIndex &&
-                endElementIndex == region!!.endElementIndex
+                paragraphIndex == region.paragraphIndex &&
+                startElementIndex == region.startElementIndex &&
+                endElementIndex == region.endElementIndex
     }
 
     // 判断是否是包含关系
-    override operator fun compareTo(interval: TextRegionInterval): Int {
-        if (chapterIndex != interval.chapterIndex) {
-            return if (chapterIndex < interval.chapterIndex) -1 else 1
+    override operator fun compareTo(other: TextRegionInterval): Int {
+        if (chapterIndex != other.chapterIndex) {
+            return if (chapterIndex < other.chapterIndex) -1 else 1
         }
 
-        if (paragraphIndex != interval.paragraphIndex) {
-            return if (paragraphIndex < interval.paragraphIndex) -1 else 1
+        if (paragraphIndex != other.paragraphIndex) {
+            return if (paragraphIndex < other.paragraphIndex) -1 else 1
         }
 
-        if (endElementIndex < interval.startElementIndex) {
+        if (endElementIndex < other.startElementIndex) {
             return -1
         }
         //
-        return if (startElementIndex > interval.endElementIndex) {
+        return if (startElementIndex > other.endElementIndex) {
             1
         } else 0
     }

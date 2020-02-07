@@ -28,7 +28,7 @@ object DrawerLayoutBinding {
 
         // 遍历查找 DrawerView 的 gravity
         for (i in 0 until childCount) {
-            var child = getChildAt(i)
+            val child = getChildAt(i)
             // 检测是否是 DrawerView
             if (isDrawerView(child)) {
                 // 如果显示状态相同，则不处理
@@ -51,10 +51,10 @@ object DrawerLayoutBinding {
             gravity,
             ViewCompat.getLayoutDirection(child)
         )
-        if (absGravity and Gravity.LEFT != 0) {
+        if (absGravity and GravityCompat.START != 0) {
             // This child is a left-edge drawer
             return true
         }
-        return absGravity and Gravity.RIGHT != 0
+        return absGravity and GravityCompat.END != 0
     }
 }

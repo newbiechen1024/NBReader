@@ -47,6 +47,7 @@ class SmartLookupViewModel @Inject constructor(
             // 从数据库中获取缓存书籍
             addDisposable(
                 // 从数据库中获取所有书籍
+                // TODO:还应该加一个判断必须是 localBook
                 bookRepository.getBooks(true)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -58,7 +59,7 @@ class SmartLookupViewModel @Inject constructor(
                         }
 
                         val localBookWrappers: List<LocalBookWrapper> =
-                            cursorLocalBooks!!.map { systemLocalBook ->
+                            cursorLocalBooks.map { systemLocalBook ->
                                 // 判断 localBook 的 id 是否和缓存列表中的 id 一致
                                 val localBookWrapper: LocalBookWrapper =
                                     if (cacheBookMap.contains(systemLocalBook.id)) {
@@ -86,13 +87,13 @@ class SmartLookupViewModel @Inject constructor(
             return
         }
 
-        var groups = localBookWrapperGroups.get()
+        val groups = localBookWrapperGroups.get()
         if (groups != null) {
             for (element in groups) {
-                var localBook = (element.second as MutableList<LocalBookEntity>).iterator()
+                val localBook = (element.second as MutableList<LocalBookEntity>).iterator()
                 // 遍历 LocalBook
                 while (localBook.hasNext()) {
-                    var bookInfo = localBook.next()
+                    val bookInfo = localBook.next()
                     // 如果包含该 id 则删除
                     if (localBookIds.contains(bookInfo.id)) {
                         localBook.remove()
@@ -128,7 +129,7 @@ class SmartLookupViewModel @Inject constructor(
                 // 创建 groupItem
                 groupItem = Pair(type, itemList!!)
                 // 添加到列表中
-                groupList.add(groupItem!!)
+                groupList.add(groupItem)
             } else {
                 itemList!!.add(it)
             }

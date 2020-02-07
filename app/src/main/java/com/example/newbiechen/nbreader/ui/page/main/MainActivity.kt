@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.forEach
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.newbiechen.nbreader.R
 import com.example.newbiechen.nbreader.databinding.ActivityMainBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.MainPagerAdapter
@@ -75,7 +75,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
     override fun processLogic() {
         super.processLogic()
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(MainViewModel::class.java)
+        mViewModel = ViewModelProvider(this, mViewModelFactory).get(MainViewModel::class.java)
         mViewModel.curPageTitle.set(getString(R.string.common_book_shelf))
         mDataBinding.viewModel = mViewModel
     }

@@ -28,25 +28,25 @@ abstract class TextPosition : Comparable<TextPosition> {
         return compareTo(position) == 0
     }
 
-    override fun compareTo(position: TextPosition): Int {
+    override fun compareTo(other: TextPosition): Int {
         val c0 = getChapterIndex()
-        val c1 = position.getChapterIndex()
+        val c1 = other.getChapterIndex()
         if (c0 != c1) {
             return if (c0 < c1) -1 else 1
         }
 
         val p0 = getParagraphIndex()
-        val p1 = position.getParagraphIndex()
+        val p1 = other.getParagraphIndex()
         if (p0 != p1) {
             return if (p0 < p1) -1 else 1
         }
 
         val e0 = getElementIndex()
-        val e1 = position.getElementIndex()
+        val e1 = other.getElementIndex()
         return if (e0 != e1) {
             if (e0 < e1) -1 else 1
         } else {
-            getCharIndex() - position.getCharIndex()
+            getCharIndex() - other.getCharIndex()
         }
     }
 
@@ -85,20 +85,20 @@ abstract class TextPosition : Comparable<TextPosition> {
             .build()
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj === this) {
+    override fun equals(other: Any?): Boolean {
+        if (other === this) {
             return true
         }
 
-        if (obj !is TextPosition) {
+        if (other !is TextPosition) {
             return false
         }
 
-        val position = obj as TextPosition?
+        val position = other as TextPosition?
         return getChapterIndex() == position!!.getChapterIndex() &&
-                getParagraphIndex() == position!!.getParagraphIndex() &&
-                getElementIndex() == position!!.getElementIndex() &&
-                getCharIndex() == position!!.getCharIndex()
+                getParagraphIndex() == position.getParagraphIndex() &&
+                getElementIndex() == position.getElementIndex() &&
+                getCharIndex() == position.getCharIndex()
     }
 
     override fun toString(): String {

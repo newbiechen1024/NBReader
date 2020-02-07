@@ -13,7 +13,7 @@ object TextDimenUtil {
 
     fun getDisplayDPI(context: Context): Int {
         val metrics = getMetrics(context)
-        return if (metrics == null) 0 else (160 * metrics!!.density).toInt()
+        return (160 * metrics.density).toInt()
     }
 
     private fun getMetrics(context: Context): DisplayMetrics {

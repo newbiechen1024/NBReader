@@ -18,7 +18,7 @@ class ViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val model = modelMap[modelClass]
-            ?: modelMap.entries.firstOrNull { (key, value) ->
+            ?: modelMap.entries.firstOrNull { (key, _) ->
                 modelClass.isAssignableFrom(key)
             }?.value
             ?: throw IllegalArgumentException("Unknown model class $modelClass")

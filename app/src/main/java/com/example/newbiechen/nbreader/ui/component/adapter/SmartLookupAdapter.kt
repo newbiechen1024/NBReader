@@ -66,7 +66,7 @@ class SmartLookupAdapter : PinnedHeaderAdapter<String, LocalBookWrapper>() {
     fun getCheckedCount() = mCheckedCount
 
     fun getCheckedBooks(): List<LocalBookEntity> {
-        var bookEntities = mutableListOf<LocalBookEntity>()
+        val bookEntities = mutableListOf<LocalBookEntity>()
 
         mGroupList.flatMap {
             it.second  // 将 group 下的 List 合

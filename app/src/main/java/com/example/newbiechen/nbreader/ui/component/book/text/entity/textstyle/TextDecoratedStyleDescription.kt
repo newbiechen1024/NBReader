@@ -24,7 +24,10 @@ import java.util.HashMap
  * @param selectorName: 选择器的名字，如 p
  * @param valueMap:选择器包含的值
  */
-class TextDecoratedStyleDescription(private val selectorName: String, private val valueMap: Map<String, String>) {
+class TextDecoratedStyleDescription(
+    private val selectorName: String,
+    private val valueMap: Map<String, String>
+) {
 
     companion object {
         // 自定义 css 具有的属性名
@@ -66,7 +69,7 @@ class TextDecoratedStyleDescription(private val selectorName: String, private va
 
     fun hasNonZeroVerticalAlign(): Boolean {
         val length = parseLength(valueMap[ATTR_VERTICAL_ALIGN])
-        return length != null && length!!.size != 0.toShort()
+        return length != null && length.size != 0.toShort()
     }
 
     fun getLeftMargin(metrics: TextMetrics, base: Int, fontSize: Int): Int {
@@ -194,15 +197,30 @@ class TextDecoratedStyleDescription(private val selectorName: String, private va
                     TextStyleEntry.SizeUnit.PERCENT
                 )
                 value.endsWith("rem") -> length = TextStyleEntry.Length(
-                    (100 * java.lang.Double.valueOf(value.substring(0, value.length - 2))).toShort(),
+                    (100 * java.lang.Double.valueOf(
+                        value.substring(
+                            0,
+                            value.length - 2
+                        )
+                    )).toShort(),
                     TextStyleEntry.SizeUnit.REM_100
                 )
                 value.endsWith("em") -> length = TextStyleEntry.Length(
-                    (100 * java.lang.Double.valueOf(value.substring(0, value.length - 2))).toShort(),
+                    (100 * java.lang.Double.valueOf(
+                        value.substring(
+                            0,
+                            value.length - 2
+                        )
+                    )).toShort(),
                     TextStyleEntry.SizeUnit.EM_100
                 )
                 value.endsWith("ex") -> length = TextStyleEntry.Length(
-                    (100 * java.lang.Double.valueOf(value.substring(0, value.length - 2))).toShort(),
+                    (100 * java.lang.Double.valueOf(
+                        value.substring(
+                            0,
+                            value.length - 2
+                        )
+                    )).toShort(),
                     TextStyleEntry.SizeUnit.EX_100
                 )
                 value.endsWith("px") -> length = TextStyleEntry.Length(

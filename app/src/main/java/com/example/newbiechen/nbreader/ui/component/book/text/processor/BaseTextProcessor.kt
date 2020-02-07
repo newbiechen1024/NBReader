@@ -259,27 +259,27 @@ abstract class BaseTextProcessor(private val context: Context) {
         length: Int,
         addHyphenationSign: Boolean
     ): Int {
-        var length = length
-        if (length == -1) {
+        var len = length
+        if (len == -1) {
             if (start == 0) {
                 return word.getWidth(mPaintContext)
             }
-            length = word.length - start
+            len = word.length - start
         }
 
         if (!addHyphenationSign) {
-            return mPaintContext.getStringWidth(word.data, word.offset + start, length)
+            return mPaintContext.getStringWidth(word.data, word.offset + start, len)
         }
 
         var part = mWordPartArray
-        if (length + 1 > part.size) {
-            part = CharArray(length + 1)
+        if (len + 1 > part.size) {
+            part = CharArray(len + 1)
             mWordPartArray = part
         }
 
-        System.arraycopy(word.data, word.offset + start, part, 0, length)
-        part[length] = '-'
-        return mPaintContext.getStringWidth(part, 0, length + 1)
+        System.arraycopy(word.data, word.offset + start, part, 0, len)
+        part[len] = '-'
+        return mPaintContext.getStringWidth(part, 0, len + 1)
     }
 
 
@@ -311,22 +311,22 @@ abstract class BaseTextProcessor(private val context: Context) {
         if (start == 0 && length == -1) {
             drawString(canvas, x, y, word.data, word.offset, word.length, color, 0)
         } else {
-            var length = length
-            if (length == -1) {
-                length = word.length - start
+            var len = length
+            if (len == -1) {
+                len = word.length - start
             }
             if (!addHyphenationSign) {
-                drawString(canvas, x, y, word.data, word.offset + start, length, color, start)
+                drawString(canvas, x, y, word.data, word.offset + start, len, color, start)
             } else {
                 var part = mWordPartArray
-                if (length + 1 > part.size) {
-                    part = CharArray(length + 1)
+                if (len + 1 > part.size) {
+                    part = CharArray(len + 1)
                     mWordPartArray = part
                 }
 
-                System.arraycopy(word.data, word.offset + start, part, 0, length)
-                part[length] = '-'
-                drawString(canvas, x, y, part, 0, length + 1, color, start)
+                System.arraycopy(word.data, word.offset + start, part, 0, len)
+                part[len] = '-'
+                drawString(canvas, x, y, part, 0, len + 1, color, start)
             }
         }
     }

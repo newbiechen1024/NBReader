@@ -87,6 +87,10 @@ data class BookEntity(
         return 0
     }
 
+    override fun toString(): String {
+        return "BookEntity(id='$id', title='$title', type=$type, url='$url', isLocal=$isLocal, author=$author, cover=$cover, encoding=$encoding, lang=$lang, curChapter=$curChapter, totalChapter=$totalChapter, lastChapter=$lastChapter, isUpdate=$isUpdate)"
+    }
+
     companion object CREATOR : Parcelable.Creator<BookEntity> {
         override fun createFromParcel(parcel: Parcel): BookEntity {
             return BookEntity(parcel)

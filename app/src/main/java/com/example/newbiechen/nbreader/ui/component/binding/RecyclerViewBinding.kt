@@ -3,7 +3,6 @@ package com.example.newbiechen.nbreader.ui.component.binding
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newbiechen.nbreader.data.entity.CatalogEntity
-import com.example.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.example.newbiechen.nbreader.ui.component.adapter.FindAdapter
 import com.example.newbiechen.nbreader.ui.component.adapter.LocalBookWrapper
 import com.example.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter

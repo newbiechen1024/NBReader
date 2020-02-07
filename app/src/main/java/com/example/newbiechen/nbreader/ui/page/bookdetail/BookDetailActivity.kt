@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.Observable
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
@@ -69,8 +69,8 @@ class BookDetailActivity : BaseBindingActivity<ActivityBookDetailBinding>() {
         mDataBinding.apply {
             // 初始化 toolbar
             supportActionBar(toolbar)
-            // 解决 toolbar 顶到 statusbar 的问题
-            var toolbarMarginLayout: ViewGroup.MarginLayoutParams = toolbar.layoutParams as ViewGroup.MarginLayoutParams
+            // 解决 toolbar 顶到 statusBar 的问题
+            val toolbarMarginLayout: ViewGroup.MarginLayoutParams = toolbar.layoutParams as ViewGroup.MarginLayoutParams
             toolbarMarginLayout.topMargin = SystemBarUtil.getStatusBarHeight(this@BookDetailActivity)
 
             statusLayout.ivBack.setOnClickListener {
@@ -96,7 +96,7 @@ class BookDetailActivity : BaseBindingActivity<ActivityBookDetailBinding>() {
 
     override fun processLogic() {
         super.processLogic()
-        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(BookDetailViewModel::class.java)
+        mViewModel = ViewModelProvider(this, viewModelFactory).get(BookDetailViewModel::class.java)
         mDataBinding.viewModel = mViewModel
 
         mViewModel.bookDetail.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {

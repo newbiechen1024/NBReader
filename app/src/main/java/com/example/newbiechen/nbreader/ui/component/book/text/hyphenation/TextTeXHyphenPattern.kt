@@ -97,14 +97,14 @@ class TextTeXHyphenPattern(pattern: CharArray, offset: Int, length: Int, useValu
         return mLength
     }
 
-    override fun equals(o: Any?): Boolean {
-        val pattern = o as TextTeXHyphenPattern?
+    override fun equals(other: Any?): Boolean {
+        val pattern = other as TextTeXHyphenPattern?
         var len = mLength
         if (len != pattern!!.mLength) {
             return false
         }
         val symbols0 = mSymbols
-        val symbols1 = pattern!!.mSymbols
+        val symbols1 = pattern.mSymbols
         while (len-- != 0) {
             if (symbols0[len] != symbols1[len]) {
                 return false

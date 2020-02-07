@@ -51,9 +51,9 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
         var count = 0
         var p = parent
 
-        while (p != p!!.parent) {
+        while (p != p.parent) {
             if (p is ExplicitTextDecoratedStyle) {
-                if (p.styleEntry.depth !== styleEntry.depth) {
+                if (p.styleEntry.depth != styleEntry.depth) {
                     return p
                 }
             } else {
@@ -61,7 +61,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
                     return p
                 }
             }
-            p = p.parent!!
+            p = p.parent
         }
         return p
     }
@@ -83,7 +83,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
         return if (styleEntry.isFeatureSupported(LENGTH_FONT_SIZE)) {
             styleEntry.getLength(LENGTH_FONT_SIZE, metrics, baseFontSize)
         } else {
-            parent!!.getFontSize(metrics)
+            parent.getFontSize(metrics)
         }
     }
 
@@ -100,22 +100,22 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun isItalicInternal(): Boolean {
-        var result = styleEntry.getFontModifier(FONT_MODIFIER_ITALIC)
+        val result = styleEntry.getFontModifier(FONT_MODIFIER_ITALIC)
         return result ?: parent.isItalic()
     }
 
     override fun isBoldInternal(): Boolean {
-        var result = styleEntry.getFontModifier(FONT_MODIFIER_BOLD)
+        val result = styleEntry.getFontModifier(FONT_MODIFIER_BOLD)
         return result ?: parent.isBold()
     }
 
     override fun isUnderlineInternal(): Boolean {
-        var result = styleEntry.getFontModifier(FONT_MODIFIER_UNDERLINED)
+        val result = styleEntry.getFontModifier(FONT_MODIFIER_UNDERLINED)
         return result ?: parent.isUnderline()
     }
 
     override fun isStrikeThroughInternal(): Boolean {
-        var result = styleEntry.getFontModifier(FONT_MODIFIER_STRIKEDTHROUGH)
+        val result = styleEntry.getFontModifier(FONT_MODIFIER_STRIKEDTHROUGH)
         return result ?: parent.isStrikeThrough()
     }
 
@@ -146,7 +146,9 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
 
     override fun isVerticallyAlignedInternal(): Boolean {
         return when {
-            styleEntry.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleEntry.hasNonZeroLength(LENGTH_VERTICAL_ALIGN)
+            styleEntry.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleEntry.hasNonZeroLength(
+                LENGTH_VERTICAL_ALIGN
+            )
             styleEntry.isFeatureSupported(NON_LENGTH_VERTICAL_ALIGN) -> when (styleEntry.getVerticalAlignCode()) {
                 0.toByte(), 1.toByte() -> true
                 else -> false
@@ -159,7 +161,11 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
         return if (!styleEntry.isFeatureSupported(LENGTH_MARGIN_LEFT)) {
             parent.getLeftMargin(metrics)
         } else {
-            getTreeParent().getLeftMargin(metrics) + styleEntry.getLength(LENGTH_MARGIN_LEFT, metrics, fontSize)
+            getTreeParent().getLeftMargin(metrics) + styleEntry.getLength(
+                LENGTH_MARGIN_LEFT,
+                metrics,
+                fontSize
+            )
         }
     }
 
@@ -167,20 +173,32 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
         return if (!styleEntry.isFeatureSupported(LENGTH_MARGIN_RIGHT)) {
             parent.getRightMargin(metrics)
         } else {
-            getTreeParent().getRightMargin(metrics) + styleEntry.getLength(LENGTH_MARGIN_RIGHT, metrics, fontSize)
+            getTreeParent().getRightMargin(metrics) + styleEntry.getLength(
+                LENGTH_MARGIN_RIGHT,
+                metrics,
+                fontSize
+            )
         }
     }
 
     override fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
         return if (!styleEntry.isFeatureSupported(LENGTH_PADDING_LEFT)) {
             parent.getLeftPadding(metrics)
-        } else getTreeParent().getLeftPadding(metrics) + styleEntry.getLength(LENGTH_PADDING_LEFT, metrics, fontSize)
+        } else getTreeParent().getLeftPadding(metrics) + styleEntry.getLength(
+            LENGTH_PADDING_LEFT,
+            metrics,
+            fontSize
+        )
     }
 
     override fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
         return if (!styleEntry.isFeatureSupported(LENGTH_PADDING_RIGHT)) {
             parent.getRightPadding(metrics)
-        } else getTreeParent().getRightPadding(metrics) + styleEntry.getLength(LENGTH_PADDING_RIGHT, metrics, fontSize)
+        } else getTreeParent().getRightPadding(metrics) + styleEntry.getLength(
+            LENGTH_PADDING_RIGHT,
+            metrics,
+            fontSize
+        )
     }
 
     override fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int {

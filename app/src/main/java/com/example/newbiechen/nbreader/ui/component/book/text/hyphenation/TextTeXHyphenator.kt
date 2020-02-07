@@ -42,34 +42,34 @@ class TextTeXHyphenator private constructor() {
 
     // TODO:如果存在没有对应 language 对应的 pattern 资源文件的情况该怎么办？
     fun load(context: Context, language: String?) {
-        var language = language
-        if (language == null || ExtLanguage.OTHER_CODE == language) {
-            language = Locale.getDefault().language
+        var lang = language
+        if (lang == null || ExtLanguage.OTHER_CODE == lang) {
+            lang = Locale.getDefault().language
         }
-        if (language == null || language == mLanguage) {
+
+        if (lang == null || lang == mLanguage) {
             return
         }
-        mLanguage = language
+
+        mLanguage = lang
 
         clear()
 
-        if (language != null) {
-            // 创建 sax 解析器
-            val saxParserFactory = SAXParserFactory.newInstance()
-            val saxParser = saxParserFactory.newSAXParser()
-            // 创建 Hyphenator 解析器
-            val hyphenHandler = TextTeXHyphenHandler(this)
-            var resourceInputStream: InputStream? = null
+        // 创建 sax 解析器
+        val saxParserFactory = SAXParserFactory.newInstance()
+        val saxParser = saxParserFactory.newSAXParser()
+        // 创建 Hyphenator 解析器
+        val hyphenHandler = TextTeXHyphenHandler(this)
+        var resourceInputStream: InputStream? = null
+        try {
+            resourceInputStream = context.assets.open("hyphenationPatterns/$lang.pattern")
+            saxParser.parse(resourceInputStream, hyphenHandler)
+        } catch (exception: IOException) {
+            // 可能存在资源文件不存在的情况
+        } finally {
             try {
-                resourceInputStream = context.assets.open("hyphenationPatterns/$language.pattern")
-                saxParser.parse(resourceInputStream, hyphenHandler)
-            } catch (exception: IOException) {
-                // 可能存在资源文件不存在的情况
-            } finally {
-                try {
-                    resourceInputStream?.close()
-                } catch (e: Exception) {
-                }
+                resourceInputStream?.close()
+            } catch (e: Exception) {
             }
         }
     }
@@ -100,9 +100,7 @@ class TextTeXHyphenator private constructor() {
             while (--len > 0) {
                 pattern.reset(len)
                 val toApply = table[pattern] as TextTeXHyphenPattern
-                if (toApply != null) {
-                    toApply!!.apply(values, offset)
-                }
+                toApply.apply(values, offset)
             }
         }
 

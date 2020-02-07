@@ -1,24 +1,15 @@
 package com.example.newbiechen.nbreader.ui.page.bookshelf
 
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newbiechen.nbreader.R
-import com.example.newbiechen.nbreader.data.entity.BookEntity
 import com.example.newbiechen.nbreader.databinding.FragmentBookShelfBinding
 import com.example.newbiechen.nbreader.ui.component.adapter.BookShelfAdapter
-import com.example.newbiechen.nbreader.ui.component.book.type.BookType
-import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.example.newbiechen.nbreader.ui.page.base.BaseBindingFragment
+import com.example.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.example.newbiechen.nbreader.uilts.LogHelper
 import com.example.newbiechen.nbreader.uilts.factory.ViewModelFactory
-import com.example.newbiechen.nbreader.uilts.rxbus.CacheBookChangedEvent
-import com.example.newbiechen.nbreader.uilts.rxbus.RxBus
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
@@ -41,7 +32,7 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
     }
 
     override fun processLogic() {
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory)
+        mViewModel = ViewModelProvider(this, mViewModelFactory)
             .get(BookShelfViewModel::class.java)
 
         mDataBinding.viewModel = mViewModel
@@ -53,13 +44,14 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
         val bookAdapter = BookShelfAdapter()
         // 初始化 book 的 recyclerView
         mDataBinding.rvBook.apply {
+
             layoutManager = LinearLayoutManager(context)
 
             adapter = LRecyclerViewAdapter(bookAdapter).apply {
                 setOnItemClickListener { _, position ->
                     val book = bookAdapter.getItem(position)!!
-/*                    // 设置点击事件
-                    ReadActivity.startActivity(context, book)*/
+                    // 设置点击事件
+                    ReadActivity.startActivity(context, book)
                 }
             }
 
