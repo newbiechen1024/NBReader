@@ -17,7 +17,6 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
 
     companion object {
         private const val TAG = "NativeFormatPlugin"
-
         /**
          * 获取缓存目录
          */

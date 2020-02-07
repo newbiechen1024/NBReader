@@ -13,9 +13,16 @@ import com.newbiechen.nbreader.ui.component.book.type.BookType
 class BookPluginManager {
 
     companion object {
+        private const val TAG = "BookPluginManager"
+
         @Volatile
         private var instance: BookPluginManager? = null
-        private const val TAG = "BookPluginManager"
+
+        // 加载书籍处理库
+        init {
+            System.loadLibrary("nbbook")
+        }
+
         fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 BookPluginManager(context.applicationContext).also { instance = it }
