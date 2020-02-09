@@ -39,7 +39,7 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
         mNativePluginDesc = createFormatPluginNative(bookType.name)
     }
 
-    fun setBookResource(bookPath: String) {
+    fun openBook(bookPath: String) {
         // 检测书籍路径是否正确
         setBookSourceNative(mNativePluginDesc, bookPath)
     }
@@ -62,6 +62,10 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
 
     fun getChapterContent(chapter: TextChapter): ByteArray? {
         return readChapterContentNative(mNativePluginDesc, chapter)
+    }
+
+    fun release() {
+        releaseFormatPluginNative(mNativePluginDesc)
     }
 
     protected fun getContext() = context

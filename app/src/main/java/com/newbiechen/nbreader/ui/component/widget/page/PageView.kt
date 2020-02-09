@@ -44,7 +44,7 @@ class PageView @JvmOverloads constructor(
     private var mTextProcessor: TextProcessor = TextProcessor(context)
 
     // 页面控制器
-    private var mPageController: PageController = PageController(this)
+    private var mPageController: PageController = PageController(this, mTextProcessor)
 
     // todo：文本配置信息(暂时先放这里，等弄到动态修改文本配置项时再处理，感觉 TextConfig 不应该直接从 TextProcessor 中获取)
     private var mTextConfig: TextConfig = mTextProcessor.getTextConfig()
@@ -194,11 +194,6 @@ class PageView @JvmOverloads constructor(
      * 获取页面控制器
      */
     fun getPageController() = mPageController
-
-    /**
-     * 返回文本处理器
-     */
-    fun getTextProcessor() = mTextProcessor
 
     /**
      * 监听 PageTextView 返回的点击事件

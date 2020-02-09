@@ -115,21 +115,14 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         pageView.setHeaderView(headerView)
         pageView.setFooterView(footerView)
 
+        // 获取页面控制器
         mPageController = pageView.getPageController()
-
-        mPageController.init(mBookDao)
-
-        // 添加页面事件回调
-        mPageController.setPageActionListener {
-            onPageAction(it)
-        }
     }
 
 
     private fun showSystemBar() {
         //显示
         SystemBarUtil.showUnStableStatusBar(this)
-        // SystemBarUtil.showUnStableNavBar(this)
     }
 
     private fun hideSystemBar() {
@@ -146,14 +139,14 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         mDataBinding.viewModel = mViewModel
 
         // 打开书籍
-        // openBook()
+        openBook()
     }
 
     private fun openBook() {
 
         var loadDialog: ProgressDialog? = null
 
-        mPageController.setBookListener(object : OnBookListener {
+/*        mPageController.setBookListener(object : OnBookListener {
 
             override fun onLoading() {
                 // 弹出一个 Loading Dialog
@@ -174,8 +167,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 LogHelper.e(TAG, "load book:${e}")
             }
         })
+
         // TODO:需要有加载完成动画
-        mPageController.openBook(mBook)
+        mPageController.openBook(mBook)*/
     }
 
     override fun onBackPressed() {

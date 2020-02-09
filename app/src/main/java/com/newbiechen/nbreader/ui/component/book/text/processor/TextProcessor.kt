@@ -36,10 +36,10 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
     private var isPagePrepared = false
 
     /**
-     * 设置文本资源
+     * 初始化处理器
      */
     @Synchronized
-    fun setTextResource(plugin: NativeFormatPlugin) {
+    fun initProcessor(plugin: NativeFormatPlugin) {
         // 创建文本模块
         mTextModel = TextModel(plugin)
 
