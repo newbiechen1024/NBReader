@@ -33,6 +33,8 @@ class TextPageController(
     var pageHeight: Int = 0
         private set
 
+    private var mTextPageListener: TextPageListener? = null
+
     private var mPrevChapterWrapper: ChapterWrapper? = null
     private var mCurChapterWrapper: ChapterWrapper? = null
     private var mNextChapterWrapper: ChapterWrapper? = null
@@ -92,6 +94,13 @@ class TextPageController(
                 }
             }
         }
+    }
+
+    /**
+     * 文本页面监听
+     */
+    fun setTextPageListener(textPageListener: TextPageListener) {
+        mTextPageListener = textPageListener
     }
 
     /**
@@ -184,11 +193,21 @@ class TextPageController(
         return mCurPageWrapper?.textPage
     }
 
-    fun getCurentPageSize(): Int {
-        return getPageSize(PageType.CURRENT)
+    fun getCurrentPageIndex(): Int? {
+        return mCurPageWrapper?.pageIndex
     }
 
-    private fun getPageSize(type: PageType): Int {
+    /**
+     * 获取当前页面总数h
+     */
+    fun getCurrentPageCount(): Int {
+        return getPageCount(PageType.CURRENT)
+    }
+
+    /**
+     * 根据类型获取页面数
+     */
+    private fun getPageCount(type: PageType): Int {
         val chapterWrapper = when (type) {
             PageType.PREVIOUS -> {
                 mPrevChapterWrapper
@@ -364,7 +383,7 @@ class TextPageController(
             // 检测是否应该翻章处理
             when (type) {
                 PageType.PREVIOUS -> {
-                    if (pageWrapper.pageIndex == getPageSize(type) - 1) {
+                    if (pageWrapper.pageIndex == getPageCount(type) - 1) {
                         isTurnChapter = true
                     }
                 }
@@ -389,9 +408,10 @@ class TextPageController(
 
         // 进行翻章节操作
         if (isTurnChapter) {
+            // TODO:暂时拿不到总进度
+            mTextPageListener?.onPageChanged(mCurPageWrapper!!.pageIndex, getCurrentPageCount(), 0f)
             turnChapter(type)
         }
-
 
         // TODO:通知章节回调、或者页面回调
     }
@@ -408,6 +428,9 @@ class TextPageController(
                 if (hasPrevChapter()) {
                     // 走一个 load 逻辑
                 }
+
+                // 通知章节改变
+                mTextPageListener?.onChapterChanged(mCurChapterWrapper!!.chapterIndex)
             }
             PageType.NEXT -> {
                 mPrevChapterWrapper = mCurChapterWrapper
@@ -418,6 +441,8 @@ class TextPageController(
                 if (hasNextChapter()) {
 
                 }
+
+                mTextPageListener?.onChapterChanged(mCurChapterWrapper!!.chapterIndex)
             }
         }
     }
@@ -466,16 +491,20 @@ class TextPageController(
         val pageIndex: Int,
         val textPage: TextPage
     )
+}
 
-    interface OnTextPageListener {
-        /**
-         * 页面改变通知
-         */
-        fun onPageChanged(pageIndex: Int, pageCount: Int, progress: Float)
+interface TextPageListener {
+    /**
+     * 页面改变通知
+     * @param pageIndex:页面索引
+     * @param pageCount:页面总数
+     * @param progress:当前页面相对总进度
+     *
+     */
+    fun onPageChanged(pageIndex: Int, pageCount: Int, progress: Float)
 
-        /**
-         * 章节改变
-         */
-        fun onChapterChanged(chapterIndex: Int)
-    }
+    /**
+     * 章节改变
+     */
+    fun onChapterChanged(chapterIndex: Int)
 }

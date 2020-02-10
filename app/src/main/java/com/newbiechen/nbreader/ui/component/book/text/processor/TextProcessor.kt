@@ -1,7 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.content.Context
-import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextLine
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
@@ -35,6 +34,8 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
     // 是否页面已经准备
     private var isPagePrepared = false
 
+    private var mTextPageListener: TextPageListener? = null
+
     /**
      * 初始化处理器
      */
@@ -60,6 +61,11 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
             // 创建页面控制器
             mTextPageController = TextPageController(mTextModel!!, this::findPageEndCursor)
 
+            // 设置页面监听器
+            if (mTextPageListener != null) {
+                mTextPageController!!.setTextPageListener(mTextPageListener!!)
+            }
+
             // 设置视口
             mTextPageController!!.setViewPort(width, height)
 
@@ -72,6 +78,11 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         } else {
             mTextPageController!!.setViewPort(width, height)
         }
+    }
+
+    fun setPageListener(pageListener: TextPageListener) {
+        mTextPageController?.setTextPageListener(pageListener)
+        mTextPageListener = pageListener
     }
 
     fun getPageWidth(): Int {
@@ -88,6 +99,13 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
     @Synchronized
     fun hasPage(type: PageType): Boolean {
         return mTextPageController?.hasPage(type) ?: false
+    }
+
+    fun hasChapter(type: PageType): Boolean {
+        val curChapterCursor = getCurPageStartCursor()
+            ?.getParagraphCursor()
+            ?.getChapterCursor()
+        return curChapterCursor?.hasChapter(type) ?: false
     }
 
     /**
@@ -122,6 +140,34 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         } else {
             mTextPageController?.getCurrentPage()?.startWordCursor
         }
+    }
+
+    fun getCurPageIndex(): Int {
+        val pageIndex = mTextPageController?.getCurrentPageIndex()
+
+        // TODO：如果失败，暂时全部抛出异常
+        check(pageIndex != null) {
+            "page not exist"
+        }
+
+        return pageIndex!!
+    }
+
+    fun getCurChapterIndex(): Int {
+        val cursor = getCurPageStartCursor()
+        // TODO：如果失败，暂时全部抛出异常
+        check(cursor != null) {
+            "chapter not exist"
+        }
+
+        return cursor.getChapterIndex()
+    }
+
+    /**
+     * 获取当前页面数
+     */
+    fun getCurPageCount(): Int {
+        return mTextPageController?.getCurrentPageCount() ?: 0
     }
 
     /**

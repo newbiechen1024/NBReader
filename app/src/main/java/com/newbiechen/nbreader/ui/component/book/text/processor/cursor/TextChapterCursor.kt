@@ -5,6 +5,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.ByteToDataUtil
+import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import java.lang.IndexOutOfBoundsException
 
 /**
@@ -78,30 +79,36 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
      * 获取上一个章节光标
      */
     fun prevCursor(): TextChapterCursor? {
-        return if (hasPrevChapter()) {
+        return if (hasChapter(PageType.PREVIOUS)) {
             textModel.getChapterCursor(chapterIndex - 1)
         } else {
             null
         }
     }
 
-    private fun hasPrevChapter(): Boolean {
-        return chapterIndex - 1 >= 0
+    fun hasChapter(type: PageType): Boolean {
+        return when (type) {
+            PageType.PREVIOUS -> {
+                chapterIndex - 1 >= 0
+            }
+            PageType.NEXT -> {
+                chapterIndex + 1 < textModel.getChapterCount()
+            }
+            PageType.CURRENT -> {
+                true
+            }
+        }
     }
 
     /**
      * 获取下一个章节光标
      */
     fun nextCursor(): TextChapterCursor? {
-        return if (hasNextChapter()) {
+        return if (hasChapter(PageType.NEXT)) {
             textModel.getChapterCursor(chapterIndex + 1)
         } else {
             null
         }
-    }
-
-    private fun hasNextChapter(): Boolean {
-        return chapterIndex + 1 < textModel.getChapterCount()
     }
 
     /**

@@ -62,9 +62,8 @@ class PageController(
      * 设置页面回调
      */
     fun setPageListener() {
-
+        // TODO：回调监听还没想好
     }
-
 
     /**
      * 打开本地书籍
@@ -75,8 +74,6 @@ class PageController(
             "please setConfigure() before open book"
         }
 
-        // TODO:是否需要释放旧的 NativePlugin
-
         // 根据类型获取插件
         mFormatPlugin = mBookPluginFactory.getPlugin(bookType)
         // 设置参数
@@ -84,7 +81,7 @@ class PageController(
         // 打开书籍
         mFormatPlugin!!.openBook(bookPath)
 
-        // TODO:使用的 TextModel 策略(暂时不更新 TextModel)
+        // TODO:TextModel 需要重构，下次再说
 
         // 创建本地文本模块
         var textModel = TextModel(mFormatPlugin!!)
@@ -117,21 +114,21 @@ class PageController(
      * 跳转到指定位置
      */
     fun skipPosition() {
-
+        // TODO:暂未实现
     }
 
     /**
      * 跳转页面
      */
     fun skipPage(type: PageType) {
-
+        pageDisplayController.skipPage(type)
     }
 
     /**
      * 跳转章节
      */
     fun skipChapter(type: PageType) {
-
+        // TODO:暂未实现
     }
 
     /**********************************************返回信息方法**********************************************/
@@ -159,22 +156,22 @@ class PageController(
     /**
      * 获取当前章节，获取当前章节索引
      */
-    fun getCurChapterIndex() {
-
+    fun getCurChapterIndex(): Int {
+        return pageContentController.getCurChapterIndex()
     }
 
     /**
      * 获取当前页面索引
      */
-    fun getCurPageIndex() {
-
+    fun getCurPageIndex(): Int {
+        return pageContentController.getCurPageIndex()
     }
 
     /**
      * 获取当前页面数量
      */
-    fun getCurPageCount() {
-
+    fun getCurPageCount(): Int {
+        return pageContentController.getCurPageCount()
     }
 
     /**
@@ -219,7 +216,7 @@ class PageController(
     /**
      * 是否章节存在
      */
-    fun hasChapter(type: PageType) {
-
+    fun hasChapter(type: PageType): Boolean {
+        return pageContentController.hasChapter(type)
     }
 }

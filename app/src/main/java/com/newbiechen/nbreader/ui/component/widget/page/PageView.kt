@@ -198,6 +198,20 @@ class PageView @JvmOverloads constructor(
      */
     fun getPageController() = mPageController
 
+    internal fun skipPage(type: PageType) {
+        // 通过模拟点击进行翻页操作
+        when (type) {
+            PageType.PREVIOUS -> {
+                onPageAction(ReleaseAction(0, height / 2))
+            }
+            PageType.NEXT -> {
+                onPageAction(ReleaseAction(width, height / 2))
+            }
+            else -> {
+            }
+        }
+    }
+
     /**
      * 监听 PageTextView 返回的点击事件
      */

@@ -151,6 +151,10 @@ class TextParagraphCursor : TextPosition {
         return mElementList.size
     }
 
+    fun getChapterCursor(): TextChapterCursor {
+        return mChapterCursor
+    }
+
     override fun getChapterIndex(): Int {
         return mChapterCursor.getChapterIndex()
     }
