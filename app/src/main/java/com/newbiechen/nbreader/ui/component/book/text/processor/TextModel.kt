@@ -44,6 +44,7 @@ class TextModel(private val plugin: NativeFormatPlugin) {
      * 获取章节的内容
      */
     fun getChapterContent(index: Int): ByteArray? {
+        // 应该获取的是
         return plugin.getChapterContent(getChapter(index))
     }
 

@@ -10,19 +10,17 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.BookEntity
-import com.newbiechen.nbreader.data.local.room.dao.BookDao
 import com.newbiechen.nbreader.databinding.ActivityReadBinding
-import com.newbiechen.nbreader.ui.component.book.OnBookListener
+import com.newbiechen.nbreader.ui.component.book.BookController
+import com.newbiechen.nbreader.ui.component.book.OnLoadListener
 import com.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.newbiechen.nbreader.ui.component.extension.openDrawer
-import com.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.newbiechen.nbreader.ui.component.widget.page.PageView
 import com.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
 import com.newbiechen.nbreader.uilts.SystemBarUtil
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import com.newbiechen.nbreader.uilts.LogHelper
-import javax.inject.Inject
 
 /**
  *  author : newbiechen
@@ -43,14 +41,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         }
     }
 
-    @Inject
-    lateinit var mBookDao: BookDao
-
     private lateinit var mViewModel: ReadViewModel
 
     private lateinit var mBook: BookEntity
 
-    private lateinit var mPageController: PageController
+    private lateinit var mBookController: BookController
 
     override fun initContentView(): Int = R.layout.activity_read
 
@@ -97,26 +92,27 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
             initPageView(pvBook)
         }
-
-        openBook()
     }
 
     private fun initPageView(pageView: PageView) {
-
-        // TODO:测试 header 和 footer
-
+        // TODO:未完善的 Header 和 Footer
         val headerView = LayoutInflater.from(this)
             .inflate(R.layout.layout_page_header, pageView, false)
 
         val footerView = LayoutInflater.from(this)
             .inflate(R.layout.layout_page_footer, pageView, false)
 
-        // 设置顶部和底部
-        pageView.setHeaderView(headerView)
-        pageView.setFooterView(footerView)
+        pageView.apply {
+            // 设置顶部和底部
+            setHeaderView(headerView)
+            setFooterView(footerView)
 
-        // 获取页面控制器
-        mPageController = pageView.getPageController()
+            // 设置行为监听
+            setActionListener(this@ReadActivity::onPageAction)
+
+            // 将页面控制器，封装为书籍控制器
+            mBookController = BookController(getPageController())
+        }
     }
 
 
@@ -143,10 +139,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     }
 
     private fun openBook() {
+        // TODO:需要有加载完成动画
 
         var loadDialog: ProgressDialog? = null
 
-/*        mPageController.setBookListener(object : OnBookListener {
+        mBookController.setOnLoadListener(object : OnLoadListener {
 
             override fun onLoading() {
                 // 弹出一个 Loading Dialog
@@ -168,8 +165,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             }
         })
 
-        // TODO:需要有加载完成动画
-        mPageController.openBook(mBook)*/
+        addDisposable(mBookController.open(this, mBook))
     }
 
     override fun onBackPressed() {
@@ -236,5 +232,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 toggleMenu()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 关闭书籍
+        mBookController.close()
     }
 }

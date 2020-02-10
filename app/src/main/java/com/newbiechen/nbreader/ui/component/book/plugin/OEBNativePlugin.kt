@@ -9,6 +9,6 @@ import com.newbiechen.nbreader.ui.component.book.type.BookType
  *  description : epub 格式解析器
  */
 
-class OEBNativePlugin(context: Context, bookType: BookType) :
-    NativeFormatPlugin(context, bookType) {
+class OEBNativePlugin(bookType: BookType) :
+    NativeFormatPlugin(bookType) {
 }

@@ -1,10 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.plugin
 
-import android.content.Context
-import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.newbiechen.nbreader.ui.component.book.type.BookType
-import com.newbiechen.nbreader.ui.component.book.util.BookFileUtil
 import java.io.File
 
 /**
@@ -13,38 +10,50 @@ import java.io.File
  *  description :原生解析插件
  */
 
-open class NativeFormatPlugin(private val context: Context, private val bookType: BookType) {
-
-    companion object {
-        private const val TAG = "NativeFormatPlugin"
-        /**
-         * 获取缓存目录
-         */
-        fun getCacheDir(context: Context): String {
-            return BookFileUtil.getPluginCacheDir(context)
-        }
-
-        /**
-         * 获取书籍的缓存目录
-         */
-        fun getBookCacheDir(context: Context, bookEntity: BookEntity): String {
-            return getCacheDir(context) + File.separator + bookEntity.title
-        }
-    }
+open class NativeFormatPlugin(private val bookType: BookType) {
 
     private val mNativePluginDesc: Int
+    // 书籍路径
+    private var mBookPath: String? = null
 
     init {
         // 在 native 层创建插件，获取插件描述符
         mNativePluginDesc = createFormatPluginNative(bookType.name)
     }
 
+    /**
+     * 根据本地书籍路径打开书籍
+     */
     fun openBook(bookPath: String) {
+        // 如果是已经添加过的路径，就不要重复添加
+        if (bookPath == mBookPath) {
+            return
+        }
+
+        mBookPath = bookPath
+
         // 检测书籍路径是否正确
         setBookSourceNative(mNativePluginDesc, bookPath)
     }
 
+    /**
+     * 传入书籍组信息，用于处理书籍中有多个单一的章节文件，通过自定义 TextChapter 实现解析的逻辑
+     */
+    fun openBook(bookGroup: BookGroup) {
+        // TODO：暂未实现
+    }
+
     fun setConfigure(cachePath: String, chapterPattern: String, chapterPrologueTitle: String) {
+        val cacheDir = File(cachePath)
+
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs()
+        }
+
+        check(cacheDir.exists()) {
+            "please input right cachePath"
+        }
+
         setConfigureNative(mNativePluginDesc, cachePath, chapterPattern, chapterPrologueTitle)
     }
 
@@ -67,8 +76,6 @@ open class NativeFormatPlugin(private val context: Context, private val bookType
     fun release() {
         releaseFormatPluginNative(mNativePluginDesc)
     }
-
-    protected fun getContext() = context
 
     // 返回插件类型
     fun getPluginType() = bookType

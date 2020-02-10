@@ -138,7 +138,10 @@ class PageView @JvmOverloads constructor(
         mFlFooter.visibility = View.VISIBLE
     }
 
-    fun setPageActionListener(pageActionListener: PageActionListener) {
+    /**
+     * 设置事件监听
+     */
+    fun setActionListener(pageActionListener: PageActionListener) {
         mPageActionListener = pageActionListener
     }
 

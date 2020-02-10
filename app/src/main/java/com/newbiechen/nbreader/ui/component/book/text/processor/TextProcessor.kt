@@ -39,9 +39,11 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
      * 初始化处理器
      */
     @Synchronized
-    fun initProcessor(plugin: NativeFormatPlugin) {
+    fun initProcessor(model: TextModel) {
+        // TODO:需要处理重新初始化的情况
+
         // 创建文本模块
-        mTextModel = TextModel(plugin)
+        mTextModel = model
 
         initTextPageController(viewWidth, viewHeight)
 

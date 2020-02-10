@@ -218,7 +218,7 @@ class TextPageController(
         }
     }
 
-    fun hasPrevPage(): Boolean {
+    private fun hasPrevPage(): Boolean {
         return if (mCurPageWrapper == null) {
             false
         } else {
@@ -227,7 +227,7 @@ class TextPageController(
         }
     }
 
-    fun hasNextPage(): Boolean {
+    private fun hasNextPage(): Boolean {
         return if (mCurPageWrapper == null) {
             false
         } else {

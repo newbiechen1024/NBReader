@@ -14,7 +14,7 @@
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_registerAssetManager(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginFactory_registerAssetManagerNative(
         JNIEnv *env,
         jobject instance,
         jobject manager) {
@@ -29,12 +29,13 @@ Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_register
  */
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginManager_getSupportPluginTypes(
+Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginFactory_getSupportPluginTypesNative(
         JNIEnv *env,
         jobject instance) {
     using namespace std;
     // 获取支持的插件类型
     vector<const string> pluginTypes;
+
     // 支持的编码类型就是插件类型
     PluginManager::readSupportFormat(pluginTypes);
 

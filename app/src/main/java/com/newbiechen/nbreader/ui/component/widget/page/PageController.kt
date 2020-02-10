@@ -1,7 +1,10 @@
 package com.newbiechen.nbreader.ui.component.widget.page
 
+import com.newbiechen.nbreader.ui.component.book.plugin.BookGroup
+import com.newbiechen.nbreader.ui.component.book.plugin.BookPluginFactory
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
+import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.book.type.BookType
 import java.io.File
@@ -13,17 +16,20 @@ import java.io.File
  *  @param pageDisplayController：页面显示控制器
  *  @param pageContentController：页面内容控制器
  */
+
 class PageController(
     private val pageDisplayController: PageView,
     private val pageContentController: TextProcessor
 ) {
-
     private var mContext = pageDisplayController.context
+    private var mBookPluginFactory = BookPluginFactory.getInstance(mContext)
 
     // 参数
     private var mCachePath: String? = null
     private var mInitChapterTitle: String? = null
     private var mChapterPattern: String? = null
+    // 是否参数配置
+    private var isConfigure = false
 
     // 文本内容解析器
     private var mFormatPlugin: NativeFormatPlugin? = null
@@ -41,6 +47,8 @@ class PageController(
         mCachePath = cachePath
         mInitChapterTitle = initChapterTitle
         mChapterPattern = chapterPattern
+
+        isConfigure = true
     }
 
     /**
@@ -51,42 +59,49 @@ class PageController(
     }
 
     /**
-     * 打开书籍
+     * 设置页面回调
+     */
+    fun setPageListener() {
+
+    }
+
+
+    /**
+     * 打开本地书籍
      * @param bookPath：只支持本地书籍
      */
     fun open(bookPath: String, bookType: BookType) {
-        check(File(bookPath).exists()) {
-            "book path not found"
+        check(isConfigure) {
+            "please setConfigure() before open book"
         }
 
-        // TODO：检测书籍是否是支持的类型，如果不支持，直接抛出异常。
+        // TODO:是否需要释放旧的 NativePlugin
 
-        // 创建插件
-        mFormatPlugin = NativeFormatPlugin(mContext, bookType)
-
-        // TODO:检测是否存在配置项
+        // 根据类型获取插件
+        mFormatPlugin = mBookPluginFactory.getPlugin(bookType)
         // 设置参数
         mFormatPlugin!!.setConfigure(mCachePath!!, mChapterPattern!!, mInitChapterTitle!!)
-
         // 打开书籍
         mFormatPlugin!!.openBook(bookPath)
 
-        // TODO：是直接 open 呢，还是配置成功后，然后再自己 open ?
-        // TODO：如果存在书籍缓存怎么办？
+        // TODO:使用的 TextModel 策略(暂时不更新 TextModel)
 
-        // 设置页面内容
+        // 创建本地文本模块
+        var textModel = TextModel(mFormatPlugin!!)
+        // 初始化页面内容控制器
+
         // TODO：需要传入的是 ChapterModel
-        pageContentController.initProcessor(mFormatPlugin!!)
+        pageContentController.initProcessor(textModel)
 
         // TODO：如果 FormatPlugin 先改变，会导致 拿到的数据错误的问题，该怎么解决。
-        // TODO：比如 TextProcessor 在异步加载缓存数据，然后发现数据错误了。(由于 FormatPlugin 的改变，这个需要好好思考)
+        // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。
     }
 
     /**
-     * 对于分章的网络书籍，传入 BookEntity，生成一个 Book
+     * 打开自定义书籍
      */
-    fun open() {
-        // TODO：网络书籍需要特殊的处理方案
+    fun open(bookGroup: BookGroup, bookType: BookType) {
+        // 暂未实现
     }
 
     /**
@@ -119,29 +134,6 @@ class PageController(
 
     }
 
-    /**********************************************设置回调方法**********************************************/
-
-    /**
-     * 设置点击事件回调
-     */
-    fun setActionListener() {
-
-    }
-
-    /**
-     * 设置页面回调
-     */
-    fun setPageListener() {
-
-    }
-
-    /**
-     * 设置书籍回调
-     */
-    fun setLoadListener() {
-
-    }
-
     /**********************************************返回信息方法**********************************************/
 
     /**
@@ -157,17 +149,24 @@ class PageController(
     fun getChapters(): Array<TextChapter> {
         // 检测是否书籍已经打开
         check(mFormatPlugin != null) {
-
+            "please invoke open() before getChapters()"
         }
 
-        // TODO:只是测试，实际没这么简单
+        // TODO:未处理章节不存在的情况
         return mFormatPlugin!!.getChapters()!!
     }
 
     /**
-     * 获取当前章节
+     * 获取当前章节，获取当前章节索引
      */
-    fun getCurChapter() {
+    fun getCurChapterIndex() {
+
+    }
+
+    /**
+     * 获取当前页面索引
+     */
+    fun getCurPageIndex() {
 
     }
 
@@ -186,17 +185,35 @@ class PageController(
     }
 
     /**
+     * 是否是支持的书籍类型
+     */
+    fun isSupportBookType(type: BookType): Boolean {
+        return mBookPluginFactory.isSupportType(type)
+    }
+
+    /**
      * 获取支持的书籍类型
      */
-    fun getSupportBookType() {
-        // NativePlugin 本身自带这个逻辑
+    fun getSupportBookType(): List<BookType> {
+        return mBookPluginFactory.getSupportPluginTypes()
     }
 
     /**
      * 是否页面存在
      */
-    fun hasPage(type: PageType) {
-
+    fun hasPage(type: PageType): Boolean {
+        // 从内容控制器中判断，是否存在页面
+        return when (type) {
+            PageType.PREVIOUS -> {
+                pageContentController.hasPage(PageType.PREVIOUS)
+            }
+            PageType.NEXT -> {
+                pageContentController.hasPage(PageType.NEXT)
+            }
+            PageType.CURRENT -> {
+                pageContentController.hasPage(PageType.CURRENT)
+            }
+        }
     }
 
     /**
