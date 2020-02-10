@@ -88,5 +88,4 @@ lint/tmp/
 
 # local
 /reference/
-/doc
 app/sampledata/
