@@ -8,7 +8,7 @@ import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.LocalBookEntity
 import com.newbiechen.nbreader.databinding.FragmentSmartLookupBinding
 import com.newbiechen.nbreader.ui.component.adapter.SmartLookupAdapter
-import com.newbiechen.nbreader.ui.component.decoration.PinnedHeaderItemDecoration
+import com.newbiechen.nbreader.ui.component.decoration.PinnedHeaderDecoration
 import com.newbiechen.nbreader.ui.page.filesystem.ILocalBookSystem
 import com.newbiechen.nbreader.ui.page.filesystem.ILocalBookCallback
 import com.newbiechen.nbreader.ui.page.base.BaseBindingFragment
@@ -49,7 +49,7 @@ class SmartLookupFragment : BaseBindingFragment<FragmentSmartLookupBinding>(), I
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
             addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
-            addItemDecoration(PinnedHeaderItemDecoration())
+            addItemDecoration(PinnedHeaderDecoration())
         }
     }
 

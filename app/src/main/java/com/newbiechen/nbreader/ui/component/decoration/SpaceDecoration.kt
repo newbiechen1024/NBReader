@@ -14,7 +14,7 @@ import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
  *  description :
  */
 
-class SpaceItemDecoration(private val horizonSpace: Int? = null, private val verticalSpace: Int? = null) :
+class SpaceDecoration(private val horizonSpace: Int? = null, private val verticalSpace: Int? = null) :
     RecyclerView.ItemDecoration() {
 
     // 设置第一行的顶部间距

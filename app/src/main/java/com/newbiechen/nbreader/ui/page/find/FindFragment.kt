@@ -10,7 +10,7 @@ import com.newbiechen.nbreader.uilts.factory.ViewModelFactory
 
 import com.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 import javax.inject.Inject
-import com.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
+import com.newbiechen.nbreader.ui.component.decoration.SpaceDecoration
 import com.newbiechen.nbreader.ui.page.booklist.BookListActivity
 
 
@@ -33,7 +33,7 @@ class FindFragment : BaseBindingFragment<FragmentFindBinding>() {
             viewModel = mViewModel
             rvBookCatalog.apply {
                 layoutManager = GridLayoutManager(activity, 3)
-                addItemDecoration(SpaceItemDecoration(verticalSpace = context.resources.getDimensionPixelSize(R.dimen.item_find_space)))
+                addItemDecoration(SpaceDecoration(verticalSpace = context.resources.getDimensionPixelSize(R.dimen.item_find_space)))
                 adapter = FindAdapter().apply {
                     setOnItemClickListener { _, value ->
                         BookListActivity.startActivity(context, value)

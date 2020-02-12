@@ -8,6 +8,10 @@
         <variable
             name="title"
             type="String" />
+        
+        <variable
+            name="isSelected"
+            type="Boolean" />
     </data>
     
     <LinearLayout
@@ -24,7 +28,7 @@
             android:text="@{title}"
             android:textColor="@color/selector_chapter"
             android:textSize="16sp"
+            app:selected="@{isSelected}"
             tools:text="章节标题" />
-    
     </LinearLayout>
 </layout>

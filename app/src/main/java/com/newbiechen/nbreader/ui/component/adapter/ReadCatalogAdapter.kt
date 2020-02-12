@@ -39,23 +39,23 @@ class ReadCatalogAdapter : SimpleBindingAdapter<Chapter>() {
     }
 
     inner class ChapterViewHolder : IViewHolder<Chapter> {
-        private lateinit var mDataBinding: ItemReadCatalogyBinding
+        private lateinit var dataBinding: ItemReadCatalogyBinding
 
         override fun createBinding(parent: ViewGroup): ViewDataBinding {
-            mDataBinding = ItemReadCatalogyBinding.inflate(
+            dataBinding = ItemReadCatalogyBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent, false
             )
-            return mDataBinding
+            return dataBinding
         }
 
         override fun onBind(value: Chapter, pos: Int) {
-            mDataBinding.apply {
+            dataBinding.apply {
                 title = value.title
-                tvChapter.isSelected = pos == mSelectedPos
+                isSelected = pos == mSelectedPos
             }
 
-            mDataBinding.root.setOnClickListener {
+            dataBinding.root.setOnClickListener {
                 mItemClickListener?.invoke(pos, value)
 
                 mSelectedPos = pos
@@ -63,6 +63,8 @@ class ReadCatalogAdapter : SimpleBindingAdapter<Chapter>() {
                 // 通知刷新
                 notifyDataSetChanged()
             }
+
+            dataBinding.executePendingBindings()
         }
     }
 }

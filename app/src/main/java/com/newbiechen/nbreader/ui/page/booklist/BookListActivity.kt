@@ -17,7 +17,7 @@ import com.newbiechen.nbreader.databinding.ActivityBookListBinding
 import com.newbiechen.nbreader.ui.component.adapter.BookListAdapter
 import com.newbiechen.nbreader.ui.component.adapter.BookListFilterAdapter
 import com.newbiechen.nbreader.ui.component.adapter.BookListSortAdapter
-import com.newbiechen.nbreader.ui.component.decoration.SpaceItemDecoration
+import com.newbiechen.nbreader.ui.component.decoration.SpaceDecoration
 import com.newbiechen.nbreader.ui.page.bookdetail.BookDetailActivity
 import com.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
@@ -159,7 +159,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
                     }
                 }
             }
-            addItemDecoration(SpaceItemDecoration(itemSpace, itemSpace))
+            addItemDecoration(SpaceDecoration(itemSpace, itemSpace))
             // 禁止刷新
             setPullRefreshEnabled(false)
             // 加载更多监听

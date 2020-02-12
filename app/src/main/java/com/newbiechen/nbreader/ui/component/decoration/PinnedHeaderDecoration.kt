@@ -12,7 +12,7 @@ import com.newbiechen.nbreader.ui.component.adapter.base.WrapViewHolder
  *  description :吸顶效果
  */
 
-class PinnedHeaderItemDecoration : RecyclerView.ItemDecoration() {
+class PinnedHeaderDecoration : RecyclerView.ItemDecoration() {
     companion object {
         private const val TAG = "PinnedHeaderItemDecoration"
         private const val INVALID_POS = -1
