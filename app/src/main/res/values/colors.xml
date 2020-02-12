@@ -12,6 +12,7 @@
     <color name="text_emphasized_light">#fff5a623</color>
     <color name="text_disable">#59222222</color>
     
+    <color name="light_translucent">#23000000</color>
     <color name="light_pink">#fb9090</color>
     <color name="light_white">#EEEEEE</color>
     <color name="light_coffee">#A58D5E</color>
@@ -22,7 +23,6 @@
     
     <!--book_list-->
     <color name="bg_book_list_filter_sure">#fffe960e</color>
-    
     
     <!--tag-->
     <color name="bg_tag_normal">#EEEEEE</color>
@@ -62,4 +62,7 @@
     <!--button-->
     <color name="bg_button_normal">@color/colorWhite</color>
     <color name="bg_button_press">#E3E3E3</color>
+    
+    <!--read activity-->
+    <color name="read_catalog_divider">#263d3a3a</color>
 </resources>

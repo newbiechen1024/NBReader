@@ -11,6 +11,7 @@
     <dimen name="text_size_super_large">24dp</dimen>
     <dimen name="height_shadow">5dp</dimen>
     <dimen name="radius_corner">30dp</dimen>
+    <dimen name="common_divider">1px</dimen>
     
     <!--Find 页面-->
     <dimen name="item_find_space">16dp</dimen>

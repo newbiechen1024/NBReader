@@ -3,16 +3,20 @@ package com.newbiechen.nbreader.ui.page.read
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.databinding.ActivityReadBinding
+import com.newbiechen.nbreader.ui.component.adapter.ReadCatalogAdapter
 import com.newbiechen.nbreader.ui.component.book.BookController
 import com.newbiechen.nbreader.ui.component.book.OnLoadListener
+import com.newbiechen.nbreader.ui.component.decoration.DividerDecoration
 import com.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.newbiechen.nbreader.ui.component.extension.openDrawer
@@ -47,6 +51,8 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
     private lateinit var mBookController: BookController
 
+    private lateinit var mCatalogAdapter: ReadCatalogAdapter
+
     override fun initContentView(): Int = R.layout.activity_read
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -63,6 +69,25 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             overStatusBar(toolbar)
             // 隐藏系统状态栏
             hideSystemBar()
+
+            // 初始化点击事件
+            tvCategory.setOnClickListener(this@ReadActivity)
+            tvNightMode.setOnClickListener(this@ReadActivity)
+            tvSetting.setOnClickListener(this@ReadActivity)
+            tvBright.setOnClickListener(this@ReadActivity)
+            menuFrame.setOnClickListener(this@ReadActivity)
+
+            initPageView()
+
+            initSlideView()
+        }
+    }
+
+    /**
+     * 初始化侧滑栏
+     */
+    private fun initSlideView() {
+        mDataBinding.apply {
             // 初始化侧滑栏
             dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
@@ -80,21 +105,41 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
                 override fun onDrawerOpened(drawerView: View) {
                     dlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    // 让状态栏消失
+                    hideSystemBar()
                 }
             })
 
-            // 初始化点击事件
-            tvCategory.setOnClickListener(this@ReadActivity)
-            tvNightMode.setOnClickListener(this@ReadActivity)
-            tvSetting.setOnClickListener(this@ReadActivity)
-            tvBright.setOnClickListener(this@ReadActivity)
-            menuFrame.setOnClickListener(this@ReadActivity)
+            // 设置背景图片
+            val slideBg = Drawable.createFromStream(assets.open("wallpaper/paper.jpg"), null);
 
-            initPageView(pvBook)
+            llSlideContainer.background = slideBg
+
+            // 初始化目录标题
+            tvBookTitle.text = mBook.title
+
+            // 初始化 RecyclerView
+            mCatalogAdapter = ReadCatalogAdapter()
+
+            mCatalogAdapter.setOnItemClickListener { pos, value ->
+                // 通知切换章节
+            }
+
+            rvCatalog.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = mCatalogAdapter
+                addItemDecoration(
+                    DividerDecoration(
+                        dividerColor = context.resources.getColor(R.color.read_catalog_divider)
+                    )
+                )
+            }
         }
     }
 
-    private fun initPageView(pageView: PageView) {
+    private fun initPageView() {
+        val pageView = mDataBinding.pvBook
+
         // TODO:未完善的 Header 和 Footer
         val headerView = LayoutInflater.from(this)
             .inflate(R.layout.layout_page_header, pageView, false)
@@ -114,7 +159,6 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             mBookController = BookController(getPageController())
         }
     }
-
 
     private fun showSystemBar() {
         //显示
@@ -156,6 +200,9 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             override fun onLoadSuccess() {
                 // 关闭 loading Dialog
                 loadDialog!!.cancel()
+
+                // 显示章节信息
+                mCatalogAdapter.refreshItems(mBookController.getChapters())
             }
 
             override fun onLoadFailure(e: Throwable) {

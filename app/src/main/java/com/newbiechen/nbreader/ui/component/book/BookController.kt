@@ -4,7 +4,6 @@ import android.content.Context
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.newbiechen.nbreader.uilts.FileUtil
-import com.newbiechen.nbreader.uilts.LogHelper
 import com.newbiechen.nbreader.uilts.Void
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -63,7 +62,6 @@ class BookController constructor(
                     mLoadListener?.onLoadFailure(error)
                 }
             )
-
     }
 
     private fun openBookInternal(context: Context, book: BookEntity) {
@@ -75,10 +73,29 @@ class BookController constructor(
         pageController.open(book.url, book.type)
     }
 
+    /**
+     * 获取章节列表
+     */
+    fun getChapters(): List<Chapter> {
+        // 检测是否打开书籍
+        check(pageController.isOpen()) {
+            "Please open book before read chapters"
+        }
+        // 将章节数据转换成章节
+        return pageController.getChapters().mapIndexed { index, textChapter ->
+            Chapter(index, textChapter.title)
+        }
+    }
+
     fun close() {
         pageController.close()
     }
 }
+
+data class Chapter(
+    val index: Int,
+    val title: String
+)
 
 interface OnLoadListener {
     // 加载书籍

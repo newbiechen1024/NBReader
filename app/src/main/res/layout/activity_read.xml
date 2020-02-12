@@ -387,29 +387,36 @@
         
         <!--侧滑栏-->
         <LinearLayout
-            android:layout_width="300dp"
+            android:id="@+id/ll_slide_container"
+            android:layout_width="320dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@color/colorPrimary"
             android:clickable="true"
             android:orientation="vertical"
-            android:paddingTop="16dp"
             android:paddingBottom="16dp">
             
             <TextView
+                android:id="@+id/tv_book_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="22dp"
                 android:text="@string/common_category"
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp" />
             
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/common_divider"
+                android:background="@color/read_catalog_divider" />
+            
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_category"
+                android:id="@+id/rv_catalog"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:scrollbars="vertical" />
         </LinearLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

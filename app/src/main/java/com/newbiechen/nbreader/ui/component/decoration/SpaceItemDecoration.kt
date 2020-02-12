@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.decoration
 
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
