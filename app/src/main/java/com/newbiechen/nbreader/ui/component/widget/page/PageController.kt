@@ -111,13 +111,6 @@ class PageController(
     }
 
     /**
-     * 跳转到指定位置
-     */
-    fun skipPosition() {
-        // TODO:暂未实现
-    }
-
-    /**
      * 跳转页面
      */
     fun skipPage(type: PageType) {
@@ -128,7 +121,14 @@ class PageController(
      * 跳转章节
      */
     fun skipChapter(type: PageType) {
-        // TODO:暂未实现
+        pageDisplayController.skipChapter(type)
+    }
+
+    /**
+     * 跳转章节
+     */
+    fun skipChapter(index: Int) {
+        pageDisplayController.skipChapter(index)
     }
 
     /**********************************************返回信息方法**********************************************/

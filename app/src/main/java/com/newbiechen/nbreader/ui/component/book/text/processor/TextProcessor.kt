@@ -1,9 +1,11 @@
 package com.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.content.Context
+import android.util.Range
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextLine
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
+import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
@@ -71,7 +73,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
 
             // 如果 model 中存在段落
             if (mTextModel!!.getChapterCount() > 0) {
-                mTextPageController!!.setCurrentPage(
+                mTextPageController!!.skipPage(
                     mTextModel!!.getChapterCursor(0).getParagraphCursor(0)
                 )
             }
@@ -101,11 +103,41 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         return mTextPageController?.hasPage(type) ?: false
     }
 
+    /**
+     * 当前章节的页面
+     */
+    fun hasPage(index: Int): Boolean {
+        if (index < 0) {
+            return false
+        }
+        return mTextPageController != null && (index < mTextPageController!!.getCurrentPageCount())
+    }
+
+    fun hasChapter(index: Int): Boolean {
+        if (index < 0) {
+            return false
+        }
+        return mTextModel != null && (index < mTextModel!!.getChapterCount())
+    }
+
     fun hasChapter(type: PageType): Boolean {
         val curChapterCursor = getCurPageStartCursor()
             ?.getParagraphCursor()
             ?.getChapterCursor()
         return curChapterCursor?.hasChapter(type) ?: false
+    }
+
+    /**
+     * 跳转页面
+     */
+    @Synchronized
+    fun skipPage(position: TextPosition) {
+        mTextPageController?.skipPage(position)
+    }
+
+    @Synchronized
+    fun skipPage(position: PagePosition) {
+        mTextPageController?.skipPage(position)
     }
 
     /**

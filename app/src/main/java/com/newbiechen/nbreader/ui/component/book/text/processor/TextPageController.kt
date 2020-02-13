@@ -59,15 +59,47 @@ class TextPageController(
             // 重置数据
             reset()
             // 重新设置当前页面
-            setCurrentPage(curTextPosition)
+            skipPage(curTextPosition)
         }
     }
 
     /**
-     * 设置当前页面
-     * @param position：页面的访问定位
+     * 页面访问定位
      */
-    fun setCurrentPage(position: TextPosition) {
+    fun skipPage(position: PagePosition) {
+        check(pageWidth > 0 && pageHeight > 0) {
+            "pageWidth or pageHeight mustn't zero"
+        }
+
+        val pageWrapper = findPageWrapper(position)
+
+        if (pageWrapper == null) {
+            // 重置缓存
+            reset()
+            // 加载章节
+            mCurChapterWrapper = loadChapterPages(position.chapterIndex)
+            // 重新获取页面
+            mCurPageWrapper = findPageWrapper(position)!!
+        } else {
+            // 将 page 设置为当前页
+            mCurPageWrapper = pageWrapper
+
+            when (mCurPageWrapper!!.chapterWrapper) {
+                mPrevChapterWrapper -> {
+                    turnPage(PageType.PREVIOUS)
+                }
+                mNextChapterWrapper -> {
+                    turnPage(PageType.NEXT)
+                }
+            }
+        }
+    }
+
+    /**
+     * 跳转到页面的位置
+     * @param position：页面的详细访问定位
+     */
+    fun skipPage(position: TextPosition) {
         check(pageWidth > 0 && pageHeight > 0) {
             "pageWidth or pageHeight mustn't zero"
         }
@@ -106,9 +138,7 @@ class TextPageController(
     /**
      * 查找 postion 所属的 chapterWrapper
      */
-    private fun findChapterWrapper(position: TextPosition): ChapterWrapper? {
-        val chapterIndex = position.getChapterIndex()
-
+    private fun findChapterWrapper(chapterIndex: Int): ChapterWrapper? {
         for (chapterWrapper in arrayOf(
             mPrevChapterWrapper,
             mCurChapterWrapper,
@@ -126,7 +156,8 @@ class TextPageController(
      */
     private fun findPageWrapper(position: TextPosition): PageWrapper? {
         // 查找 position 对应的章节
-        val chapterWrapper: ChapterWrapper? = findChapterWrapper(position) ?: return null
+        val chapterWrapper: ChapterWrapper? =
+            findChapterWrapper(position.getChapterIndex()) ?: return null
 
         // 查找章节中的 page
         val pages = chapterWrapper!!.pages
@@ -137,6 +168,21 @@ class TextPageController(
         }
 
         return null
+    }
+
+    private fun findPageWrapper(position: PagePosition): PageWrapper? {
+        // 查找 position 对应的章节
+        val chapterWrapper: ChapterWrapper? =
+            findChapterWrapper(position.chapterIndex) ?: return null
+
+        // 查找章节中的 page
+        val pages = chapterWrapper!!.pages
+
+        return if (position.pageIndex < pages.size) {
+            PageWrapper(chapterWrapper, position.pageIndex, pages[position.pageIndex])
+        } else {
+            null
+        }
     }
 
     /**
@@ -508,3 +554,8 @@ interface TextPageListener {
      */
     fun onChapterChanged(chapterIndex: Int)
 }
+
+data class PagePosition(
+    val chapterIndex: Int,
+    val pageIndex: Int
+)

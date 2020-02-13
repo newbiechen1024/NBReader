@@ -5,8 +5,11 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
+import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -19,6 +22,10 @@ class PageTextView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+    companion object {
+        private const val TAG = "PageTextView"
+    }
 
     private val mTextPageManager = TextPageManager(PageTextCallback())
 
@@ -72,6 +79,74 @@ class PageTextView @JvmOverloads constructor(
      */
     fun hasPage(type: PageType): Boolean {
         return mTextPageManager.hasPage(type)
+    }
+
+    fun hasChapter(type: PageType): Boolean {
+        return mTextProcessor?.hasChapter(type) ?: false
+    }
+
+    fun hasChapter(index: Int): Boolean {
+        check(mTextProcessor != null) {
+            "Please setTextProcessor"
+        }
+        return mTextProcessor!!.hasChapter(index)
+    }
+
+    fun getCurChapterIndex(): Int {
+        check(mTextProcessor != null) {
+            "Please setTextProcessor"
+        }
+        return mTextProcessor!!.getCurChapterIndex()
+    }
+
+    fun skipChapter(type: PageType) {
+        if (!hasChapter(type)) {
+            return
+        }
+
+        val currentIndex = getCurChapterIndex()
+
+        val index = when (type) {
+            PageType.PREVIOUS -> {
+                currentIndex - 1
+            }
+            PageType.NEXT -> {
+                currentIndex + 1
+            }
+            else -> {
+                currentIndex
+            }
+        }
+
+        skipPage(index, 0)
+    }
+
+    fun skipChapter(index: Int) {
+        if (!hasChapter(index)) {
+            return
+        }
+
+        skipPage(index, 0)
+    }
+
+    fun skipPage(chapterIndex: Int, pageIndex: Int) {
+        // TODO:需要检测 position 是否正确
+        if (mTextProcessor != null) {
+            // 跳转页面
+            mTextProcessor!!.skipPage(PagePosition(chapterIndex, pageIndex))
+            // 通知重绘
+            onPageInvalidate()
+        }
+    }
+
+    fun skipPage(position: TextPosition) {
+        // TODO:需要检测 position 是否正确
+        if (mTextProcessor != null) {
+            // 跳转页面
+            mTextProcessor!!.skipPage(position)
+            // 通知重绘
+            onPageInvalidate()
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import androidx.annotation.FloatRange
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
+import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageManager.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
@@ -198,6 +199,9 @@ class PageView @JvmOverloads constructor(
      */
     fun getPageController() = mPageController
 
+    /**
+     * 进行翻页操作
+     */
     internal fun skipPage(type: PageType) {
         // 通过模拟点击进行翻页操作
         when (type) {
@@ -210,6 +214,38 @@ class PageView @JvmOverloads constructor(
             else -> {
             }
         }
+    }
+
+    internal fun skipChapter(type: PageType) {
+        mPtvContent.skipChapter(type)
+        postInvalidate()
+    }
+
+    /**
+     * 跳转章节操作
+     * @param index:章节索引
+     */
+    internal fun skipChapter(index: Int) {
+        // 如果索引存在
+        mPtvContent.skipChapter(index)
+        postInvalidate()
+    }
+
+    /**
+     * 跳转页面操作
+     */
+    internal fun skipPage(chapterIndex: Int = mPtvContent.getCurChapterIndex(), pageIndex: Int) {
+        mPtvContent.skipPage(chapterIndex, pageIndex)
+        postInvalidate()
+    }
+
+    /**
+     * 进行跳转页面操作
+     */
+    internal fun skipPage(position: TextFixedPosition) {
+        // 调用页面内容 View 进行页面跳转
+        mPtvContent.skipPage(position)
+        postInvalidate()
     }
 
     /**

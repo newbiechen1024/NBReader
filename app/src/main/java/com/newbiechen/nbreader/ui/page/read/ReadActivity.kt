@@ -121,8 +121,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             // 初始化 RecyclerView
             mCatalogAdapter = ReadCatalogAdapter()
 
-            mCatalogAdapter.setOnItemClickListener { pos, value ->
+            mCatalogAdapter.setOnItemClickListener { _, value ->
                 // 通知切换章节
+                mBookController.skipChapter(value.index)
+                // 关闭滑动
+                dlSlide.closeDrawer()
             }
 
             rvCatalog.apply {
