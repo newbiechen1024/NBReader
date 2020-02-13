@@ -49,6 +49,11 @@ class TextPageManager(private var pageListener: OnPageListener) {
         return pageListener.hasPage(type)
     }
 
+    fun preparePage(type: PageType) {
+        // getPage 会进行预加载操作
+        getPage(type)
+    }
+
     /**
      * 根据 type 获取具体的 page
      */

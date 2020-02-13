@@ -2,7 +2,6 @@ package com.newbiechen.nbreader.ui.component.widget.page
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
@@ -11,6 +10,8 @@ import androidx.annotation.FloatRange
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageManager.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
@@ -24,6 +25,8 @@ import kotlin.math.abs
  *  date : 2020-01-26 14:22
  *  description : 页面容器类
  */
+
+typealias OnPreparePageListener = (pagePosition: PagePosition, pageProgress: PageProgress) -> Unit
 
 class PageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -60,10 +63,14 @@ class PageView @JvmOverloads constructor(
     // 页面行为事件监听器
     private var mPageActionListener: PageActionListener? = null
 
+    private var mPreparePageListener: OnPreparePageListener? = null
+
     // 唤起菜单区域(默认选中区域)
     private var mMenuRatioRect: RectF = RectF(0.2f, 0.3f, 0.8f, 0.7f)
 
     private var mMenuRect: RectF = RectF()
+
+    private var mBackgroundRect: Rect = Rect()
 
     // 容器
     private lateinit var mFlHeader: FrameLayout
@@ -194,6 +201,10 @@ class PageView @JvmOverloads constructor(
         }
     }
 
+    fun setOnPreparePageListener(preparePageListener: OnPreparePageListener) {
+        mPreparePageListener = preparePageListener
+    }
+
     /**
      * 获取页面控制器
      */
@@ -206,9 +217,11 @@ class PageView @JvmOverloads constructor(
         // 通过模拟点击进行翻页操作
         when (type) {
             PageType.PREVIOUS -> {
+                mCurDrawType = null
                 onPageAction(ReleaseAction(0, height / 2))
             }
             PageType.NEXT -> {
+                mCurDrawType = null
                 onPageAction(ReleaseAction(width, height / 2))
             }
             else -> {
@@ -217,6 +230,7 @@ class PageView @JvmOverloads constructor(
     }
 
     internal fun skipChapter(type: PageType) {
+        mCurDrawType = null
         mPtvContent.skipChapter(type)
         postInvalidate()
     }
@@ -226,6 +240,7 @@ class PageView @JvmOverloads constructor(
      * @param index:章节索引
      */
     internal fun skipChapter(index: Int) {
+        mCurDrawType = null
         // 如果索引存在
         mPtvContent.skipChapter(index)
         postInvalidate()
@@ -235,6 +250,8 @@ class PageView @JvmOverloads constructor(
      * 跳转页面操作
      */
     internal fun skipPage(chapterIndex: Int = mPtvContent.getCurChapterIndex(), pageIndex: Int) {
+        mCurDrawType = null
+
         mPtvContent.skipPage(chapterIndex, pageIndex)
         postInvalidate()
     }
@@ -243,6 +260,8 @@ class PageView @JvmOverloads constructor(
      * 进行跳转页面操作
      */
     internal fun skipPage(position: TextFixedPosition) {
+        mCurDrawType = null
+
         // 调用页面内容 View 进行页面跳转
         mPtvContent.skipPage(position)
         postInvalidate()
@@ -327,6 +346,7 @@ class PageView @JvmOverloads constructor(
             mMenuRatioRect.right * width,
             mMenuRatioRect.bottom * height
         )
+        mBackgroundRect.set(0, 0, w, h)
     }
 
     private var mPressedX = 0
@@ -391,12 +411,26 @@ class PageView @JvmOverloads constructor(
         return mPtvContent.hasPage(type)
     }
 
+    private var mCurDrawType: PageType? = null
+
     override fun drawPage(canvas: Canvas, type: PageType) {
         // 绘制背景信息
         drawBackground(canvas)
 
-        // 指定 content 绘制的页面
-        mPtvContent.setDrawPage(type)
+        // 准备要绘制的页面
+        mPtvContent.preparePage(type)
+
+        // 如果绘制新页面，则通知页面准备
+        if (mCurDrawType != type) {
+            val pagePosition = mPtvContent.getPagePosition(type)
+            val pageProgress = mPtvContent.getPageProgress(type)
+
+            if (pagePosition != null && pageProgress != null) {
+                mPreparePageListener?.invoke(pagePosition, pageProgress)
+            }
+
+            mCurDrawType = type
+        }
 
         // 调用父类分发绘制逻辑
         super.dispatchDraw(canvas)
@@ -404,11 +438,14 @@ class PageView @JvmOverloads constructor(
 
     // 绘制背景页面
     private fun drawBackground(canvas: Canvas) {
-        if (!TextUtils.isEmpty(mTextConfig.wallpaperPath)) {
+/*        if (!TextUtils.isEmpty(mTextConfig.wallpaperPath)) {
             drawWallpaper(canvas, mTextConfig.wallpaperPath)
         } else {
             canvas.drawColor(mTextConfig.bgColor)
-        }
+        }*/
+
+        // TODO:测试壁纸
+        drawWallpaper(canvas, "wallpaper/paper.jpg")
     }
 
     /**
@@ -428,7 +465,7 @@ class PageView @JvmOverloads constructor(
 
         if (sWallpaperBitmap != null) {
             // 直接绘制图片
-            canvas.drawBitmap(sWallpaperBitmap!!, 0f, 0f, Paint())
+            canvas.drawBitmap(sWallpaperBitmap!!, null, mBackgroundRect, null)
         }
     }
 

@@ -14,6 +14,7 @@ import kotlin.math.min
  *  description :文本页面控制器
  *
  *  TODO：需要支持章节预加载
+ *  TODO：向前翻页逻辑有问题
  */
 
 // 查找页面的结尾光标
@@ -253,7 +254,7 @@ class TextPageController(
     /**
      * 根据类型获取页面数
      */
-    private fun getPageCount(type: PageType): Int {
+    fun getPageCount(type: PageType): Int {
         val chapterWrapper = when (type) {
             PageType.PREVIOUS -> {
                 mPrevChapterWrapper
@@ -267,6 +268,50 @@ class TextPageController(
         }
 
         return chapterWrapper?.pages?.size ?: 0
+    }
+
+    fun getPagePosition(type: PageType): PagePosition? {
+        val pageWrapper = when (type) {
+            PageType.PREVIOUS -> {
+                prevPageWrapper()
+            }
+            PageType.CURRENT -> {
+                mCurPageWrapper
+            }
+            PageType.NEXT -> {
+                nextPageWrapper()
+            }
+        }
+
+        return if (pageWrapper != null) {
+            return PagePosition(pageWrapper.chapterWrapper.chapterIndex, pageWrapper.pageIndex)
+        } else {
+            null
+        }
+    }
+
+    fun getPageProgress(type: PageType): PageProgress? {
+        val pageWrapper = when (type) {
+            PageType.PREVIOUS -> {
+                prevPageWrapper()
+            }
+            PageType.CURRENT -> {
+                mCurPageWrapper
+            }
+            PageType.NEXT -> {
+                nextPageWrapper()
+            }
+        }
+
+        return if (pageWrapper != null) {
+            return PageProgress(
+                pageWrapper.pageIndex,
+                pageWrapper.chapterWrapper.pages.size,
+                0f  // TODO:暂时无法给出
+            )
+        } else {
+            null
+        }
     }
 
     fun hasPage(type: PageType): Boolean {
@@ -555,7 +600,19 @@ interface TextPageListener {
     fun onChapterChanged(chapterIndex: Int)
 }
 
+/**
+ * 页面定位
+ */
 data class PagePosition(
     val chapterIndex: Int,
     val pageIndex: Int
+)
+
+/**
+ * 页面进度
+ */
+data class PageProgress(
+    val pageIndex: Int,
+    val pageCount: Int,
+    val totalProgress: Float
 )

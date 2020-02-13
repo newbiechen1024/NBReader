@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.uilts.LogHelper
@@ -43,7 +44,6 @@ class PageTextView @JvmOverloads constructor(
 
     private var isPrepareSize = false
 
-
     /**
      * 设置文本处理器
      */
@@ -70,8 +70,10 @@ class PageTextView @JvmOverloads constructor(
      * 指定要绘制的页面
      * @param: 绘制的页面类型
      */
-    fun setDrawPage(type: PageType) {
+    fun preparePage(type: PageType) {
         mCurPageType = type
+
+        mTextPageManager.preparePage(mCurPageType)
     }
 
     /**
@@ -97,6 +99,18 @@ class PageTextView @JvmOverloads constructor(
             "Please setTextProcessor"
         }
         return mTextProcessor!!.getCurChapterIndex()
+    }
+
+    fun getPagePosition(pageType: PageType): PagePosition? {
+        return mTextProcessor?.getPagePosition(pageType)
+    }
+
+    fun getPageProgress(type: PageType): PageProgress? {
+        return mTextProcessor?.getPageProgress(type) ?: null
+    }
+
+    fun getPageCount(pageType: PageType): Int {
+        return mTextProcessor?.getPageCount(pageType) ?: 0
     }
 
     fun skipChapter(type: PageType) {
@@ -230,7 +244,6 @@ class PageTextView @JvmOverloads constructor(
             mTextProcessor?.draw(canvas, type)
 
             // TODO:页面预加载逻辑(暂时先不处理)
-
 /*            // 如果绘制的是当前页，预加载下一页
             if (type == PageType.CURRENT && hasPage(PageType.NEXT)) {
                 mSingleExecutor.execute {

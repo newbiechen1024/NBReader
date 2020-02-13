@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.databinding.ActivityReadBinding
+import com.newbiechen.nbreader.databinding.LayoutPageFooterBinding
+import com.newbiechen.nbreader.databinding.LayoutPageHeaderBinding
 import com.newbiechen.nbreader.ui.component.adapter.ReadCatalogAdapter
 import com.newbiechen.nbreader.ui.component.book.BookController
 import com.newbiechen.nbreader.ui.component.book.OnLoadListener
@@ -143,25 +145,50 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     private fun initPageView() {
         val pageView = mDataBinding.pvBook
 
-        // TODO:未完善的 Header 和 Footer
-        val headerView = LayoutInflater.from(this)
-            .inflate(R.layout.layout_page_header, pageView, false)
+        val headerBinding = LayoutPageHeaderBinding.inflate(
+            LayoutInflater.from(this), pageView, false
+        )
 
-        val footerView = LayoutInflater.from(this)
-            .inflate(R.layout.layout_page_footer, pageView, false)
+        val footerBinding = LayoutPageFooterBinding.inflate(
+            LayoutInflater.from(this), pageView, false
+        )
 
         pageView.apply {
             // 设置顶部和底部
-            setHeaderView(headerView)
-            setFooterView(footerView)
+            setHeaderView(headerBinding.root)
+            setFooterView(footerBinding.root)
 
             // 设置行为监听
             setActionListener(this@ReadActivity::onPageAction)
+
+            // 页面准备监听
+            setOnPreparePageListener { pagePosition, pageProgress ->
+                // TODO:异步加载书籍，会导致异步获取到了章节，但是还没有嫁给 catalogAdapter 就回调了。
+                if (mCatalogAdapter.getItem(pagePosition.chapterIndex) == null) {
+                    return@setOnPreparePageListener
+                }
+
+                // 设置顶部信息
+                headerBinding.title = resources.getString(
+                    R.string.read_chapter_title,
+                    mCatalogAdapter.getItem(pagePosition.chapterIndex)!!.title
+                )
+
+                // 设置底部信息
+                footerBinding.pageTip = resources.getString(
+                    R.string.read_page_tip, pageProgress.pageIndex + 1, pageProgress.pageCount
+                )
+
+                // 请求刷新
+                headerBinding.invalidateAll()
+                footerBinding.invalidateAll()
+            }
 
             // 将页面控制器，封装为书籍控制器
             mBookController = BookController(getPageController())
         }
     }
+
 
     private fun showSystemBar() {
         //显示
@@ -206,12 +233,14 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
                 // 显示章节信息
                 mCatalogAdapter.refreshItems(mBookController.getChapters())
+
+                // 刷新页面
+                mDataBinding.executePendingBindings()
             }
 
             override fun onLoadFailure(e: Throwable) {
                 // 关闭 loading Dialog
                 loadDialog!!.cancel()
-                LogHelper.e(TAG, "load book:${e}")
             }
         })
 

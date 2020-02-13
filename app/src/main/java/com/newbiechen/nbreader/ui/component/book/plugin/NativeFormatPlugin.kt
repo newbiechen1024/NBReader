@@ -57,14 +57,17 @@ open class NativeFormatPlugin(private val bookType: BookType) {
         setConfigureNative(mNativePluginDesc, cachePath, chapterPattern, chapterPrologueTitle)
     }
 
+    @Synchronized
     fun getEncoding(): String {
         return getEncodingNative(mNativePluginDesc)
     }
 
+    @Synchronized
     fun getLanguage(): String {
         return getLanguageNative(mNativePluginDesc)
     }
 
+    @Synchronized
     fun getChapters(): Array<TextChapter>? {
         return getChaptersNative(mNativePluginDesc)
     }

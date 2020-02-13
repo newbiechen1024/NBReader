@@ -185,6 +185,18 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         return pageIndex!!
     }
 
+    fun getPageCount(type: PageType): Int {
+        return mTextPageController?.getPageCount(type) ?: 0
+    }
+
+    fun getPagePosition(type: PageType): PagePosition? {
+        return mTextPageController?.getPagePosition(type) ?: null
+    }
+
+    fun getPageProgress(type: PageType): PageProgress? {
+        return mTextPageController?.getPageProgress(type) ?: null
+    }
+
     fun getCurChapterIndex(): Int {
         val cursor = getCurPageStartCursor()
         // TODO：如果失败，暂时全部抛出异常
