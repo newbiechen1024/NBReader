@@ -6,7 +6,7 @@
 #ifndef NBREADER_BOOKENCODER_H
 #define NBREADER_BOOKENCODER_H
 
-#include "../text/tag/TextStyleType.h"
+#include "../text/tag/TextKind.h"
 #include "../text/entity/TextParagraph.h"
 #include "../text/TextEncoder.h"
 #include <string>
@@ -25,10 +25,10 @@ public:
     size_t close(char **outBuffer);
 
     // 标签样式标记入栈
-    void pushTextStyle(TextStyleType type);
+    void pushTextKind(TextKind kind);
 
     // 标签样式标记出栈
-    bool popTextStyle();
+    bool popTextKind();
 
     // 开始处理段落，传入参数指定段落段落
     void beginParagraph(TextParagraph::Type type = TextParagraph::TEXT_PARAGRAPH);
@@ -81,7 +81,7 @@ private:
     // 文本编码器
     TextEncoder mTextEncoder;
     // 文本样式栈
-    std::vector<TextStyleType> mTextStyleStack;
+    std::vector<TextKind> mTextKindStack;
     // 段落文本列表
     std::vector<std::string> mParagraphTextList;
     // 是否已经存在打开的段落

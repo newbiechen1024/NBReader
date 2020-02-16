@@ -90,11 +90,11 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
 
 void TxtReader::beginAnalyze() {
     // 标记初始文本为 REGULAR 标准类型
-    mBookEncoder.pushTextStyle(TextStyleType::REGULAR);
+    mBookEncoder.pushTextKind(TextKind::REGULAR);
 
     if (isTitleExist) {
         // 标记段落样式
-        mBookEncoder.pushTextStyle(TextStyleType::TITLE);
+        mBookEncoder.pushTextKind(TextKind::TITLE);
         mBookEncoder.enterTitle();
     }
 
@@ -144,7 +144,7 @@ bool TxtReader::createNewLine() {
 
     // 取消标题 textStyle
     if (isTitleExist) {
-        mBookEncoder.popTextStyle();
+        mBookEncoder.popTextKind();
         mBookEncoder.exitTitle();
         isTitleExist = false;
 

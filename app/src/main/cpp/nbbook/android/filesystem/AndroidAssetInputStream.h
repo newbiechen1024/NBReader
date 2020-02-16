@@ -26,6 +26,8 @@ public:
 
     virtual size_t offset() const override;
 
+    size_t length() const override;
+
     virtual void close() override;
 
 private:

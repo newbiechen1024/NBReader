@@ -3,4 +3,4 @@
 // description : 
 //
 
-#include "TextStyleType.h"
+#include "TextKind.h"

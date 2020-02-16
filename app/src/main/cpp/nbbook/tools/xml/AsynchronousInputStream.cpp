@@ -24,7 +24,8 @@ AsynchronousInputStream::Handler::~Handler() {
 }
 
 
-AsynchronousInputStream::AsynchronousInputStream(const char *encoding) : myData(0), myDataLen(0), myInitialized(false),
+AsynchronousInputStream::AsynchronousInputStream(const char *encoding) : myData(0), myDataLen(0),
+                                                                         myInitialized(false),
                                                                          myEof(false) {
     if (encoding != 0) {
         myEncoding.assign(encoding);

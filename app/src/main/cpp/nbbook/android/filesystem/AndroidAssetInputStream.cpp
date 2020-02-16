@@ -5,7 +5,8 @@
 
 #include "AndroidAssetInputStream.h"
 
-AndroidAssetInputStream::AndroidAssetInputStream(AAssetManager *aAssetManager, const std::string &assetPath)
+AndroidAssetInputStream::AndroidAssetInputStream(AAssetManager *aAssetManager,
+                                                 const std::string &assetPath)
         : mAAssetManager(aAssetManager), mAssetPath(assetPath), mAssetFile(nullptr) {
 }
 
@@ -35,7 +36,12 @@ void AndroidAssetInputStream::seek(int offset, bool absoluteOffset) {
 }
 
 size_t AndroidAssetInputStream::offset() const {
-    return mAssetFile == nullptr ? 0 : (AAsset_getLength(mAssetFile) - AAsset_getRemainingLength(mAssetFile));
+    return mAssetFile == nullptr ? 0 : (AAsset_getLength(mAssetFile) -
+                                        AAsset_getRemainingLength(mAssetFile));
+}
+
+size_t AndroidAssetInputStream::length() const {
+    return AAsset_getLength(mAssetFile);
 }
 
 void AndroidAssetInputStream::close() {

@@ -31,6 +31,8 @@ public:
     // 当前位置
     size_t offset() const override;
 
+    size_t length() const override;
+
     // 关闭输入流
     void close() override;
 

@@ -11,6 +11,8 @@
 class InputStream {
 
 public:
+    InputStream();
+
     virtual ~InputStream();
 
     // 打开输入流
@@ -25,11 +27,11 @@ public:
     // 当前位置
     virtual size_t offset() const = 0;
 
+    // 获取流数据的大小
+    virtual size_t length() const = 0;
+
     // 关闭输入流
     virtual void close() = 0;
-
-protected:
-    InputStream();
 
 /*private:
     InputStream(const InputStream & is);

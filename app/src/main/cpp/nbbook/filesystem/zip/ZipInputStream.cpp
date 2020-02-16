@@ -9,8 +9,10 @@
 
 // TODO :ZLInputStreamDecorator 的作用是什么。。暂不处理
 ZipInputStream::ZipInputStream(std::shared_ptr<InputStream> inputStream, const std::string &zipPath,
-                               const std::string &itemName) : mInputStream(inputStream), mZipPath(zipPath),
-                                                              mItemName(itemName), isDeflated(false),
+                               const std::string &itemName) : mInputStream(inputStream),
+                                                              mZipPath(zipPath),
+                                                              mItemName(itemName),
+                                                              isDeflated(false),
                                                               isOpen(false), mUncompressedSize(0) {
 
 }
@@ -97,4 +99,8 @@ void ZipInputStream::seek(int offset, bool absoluteOffset) {
 
 size_t ZipInputStream::offset() const {
     return mOffset;
+}
+
+size_t ZipInputStream::length() const {
+    return mUncompressedSize;
 }

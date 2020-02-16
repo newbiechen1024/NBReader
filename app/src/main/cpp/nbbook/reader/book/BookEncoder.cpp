@@ -24,7 +24,7 @@ size_t BookEncoder::close(char **outBuffer) {
     isTitleParagraphOpen = false;
 
     mParagraphTextList.clear();
-    mTextStyleStack.clear();
+    mTextKindStack.clear();
 
     return outSize;
 }
@@ -37,7 +37,7 @@ void BookEncoder::beginParagraph(TextParagraph::Type type) {
     mTextEncoder.createParagraph(type);
 
     // 将所有的 style 作为标记添加到新创建的段落中
-    for (TextStyleType &textStyle : mTextStyleStack) {
+    for (TextKind &textStyle : mTextKindStack) {
         mTextEncoder.addControlTag(textStyle, true);
     }
 
@@ -107,19 +107,19 @@ void BookEncoder::endTitleParagraph() {
 
 /**
  * 添加文本样式
- * @param style ：文本样式类型
+ * @param type ：文本样式类型
  */
-void BookEncoder::pushTextStyle(TextStyleType style) {
-    mTextStyleStack.push_back(style);
+void BookEncoder::pushTextKind(TextKind kind) {
+    mTextKindStack.push_back(kind);
 }
 
 /**
  * 删除文本样式
  * @return
  */
-bool BookEncoder::popTextStyle() {
-    if (!mTextStyleStack.empty()) {
-        mTextStyleStack.pop_back();
+bool BookEncoder::popTextKind() {
+    if (!mTextKindStack.empty()) {
+        mTextKindStack.pop_back();
         return true;
     }
     return false;

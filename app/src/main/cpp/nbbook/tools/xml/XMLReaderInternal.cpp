@@ -74,7 +74,8 @@ void XMLReaderInternal::fEndElementHandler(void *userData, const char *name) {
 
 static int fUnknownEncodingHandler(void *, const XML_Char *name, XML_Encoding *encoding) {
 
-/*    // TODO:encoding 未知情况下的处理
+/*    // TODO:检测到未知编码的情况，获取编码转换器，将未知的 encoding 传入编码器做处理？(看来这个之后需要实现啊)
+     // TODO:从文档上说 expat 支持 4 中格式解析，如果是新的编码格式，会回调当前方法，进行处理
 
     std::shared_ptr<EncodingConverter> converter = EncodingConverterManager::getInstance()
             .getEncodingConverter(name);

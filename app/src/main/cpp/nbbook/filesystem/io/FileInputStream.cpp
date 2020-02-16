@@ -64,3 +64,16 @@ void FileInputStream::seek(int offset, bool absoluteOffset) {
 size_t FileInputStream::offset() const {
     return mFilePtr == nullptr ? 0 : ftell(mFilePtr);
 }
+
+size_t FileInputStream::length() const {
+    if (mFilePtr == nullptr) {
+        return 0;
+    }
+
+    long pos = ftell(mFilePtr);
+    fseek(mFilePtr, 0, SEEK_END);
+    long size = ftell(mFilePtr);
+    fseek(mFilePtr, pos, SEEK_SET);
+
+    return size;
+}

@@ -5,7 +5,7 @@
 
 #include "TextEncoder.h"
 #include "../../util/Logger.h"
-#include "tag/TextTagType.h"
+#include "type/TextTagType.h"
 
 static const size_t BUFFER_SIZE = 8192;
 
@@ -224,12 +224,12 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
  * 3. 样式标签：占用 1 字节 ==> 详见 TextParagraph::Type
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
-void TextEncoder::addControlTag(TextStyleType style, bool isStartTag) {
+void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
 
     mCurTagPtr = mBufferAllocatorPtr->allocate(4);
     *mCurTagPtr = (char) TextTagType::CONTROL;
     *(mCurTagPtr + 1) = 0;
-    *(mCurTagPtr + 2) = (char) style;
+    *(mCurTagPtr + 2) = (char) kind;
     *(mCurTagPtr + 3) = isStartTag ? 1 : 0;
 }
 

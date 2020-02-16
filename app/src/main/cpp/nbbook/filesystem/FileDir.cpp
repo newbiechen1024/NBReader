@@ -19,6 +19,7 @@ void FileDir::readFilePaths(std::vector<std::string> &paths) const {
 }
 
 std::string FileDir::fileNameToPath(const std::string &name) const {
+    // TODO：需要考虑传入的 .. 返回上一级的情况。
     return mPath + getSeparator() + name;
 }
 

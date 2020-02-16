@@ -7,7 +7,7 @@
 
 #include "TextBufferAllocator.h"
 #include "entity/TextParagraph.h"
-#include "tag/TextStyleType.h"
+#include "tag/TextKind.h"
 #include <string>
 
 class TextEncoder {
@@ -58,7 +58,7 @@ public:
      * @param style:   NBReader 具有的文本样式类型
      * @param isStartTag：是否是起始标签
      */
-    void addControlTag(TextStyleType style, bool isStartTag);
+    void addControlTag(TextKind kind, bool isStartTag);
 
 private:
     void checkEncoderState();

@@ -14,7 +14,7 @@ import kotlin.experimental.or
 class TextStyleEntry(val depth: Short) { // 样式的深度
 
     /**
-     * 当前 TextStyle 支持的标签样式
+     * 当前 TextKind 支持的标签样式
      */
     object Feature {
         const val LENGTH_PADDING_LEFT = 0

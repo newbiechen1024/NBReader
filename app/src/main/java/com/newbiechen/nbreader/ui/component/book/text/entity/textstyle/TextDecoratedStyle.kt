@@ -5,7 +5,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
 /**
  *  author : newbiechen
  *  date : 2019-10-26 16:04
- *  description :对传入的 TextStyle 的装饰
+ *  description :对传入的 TextKind 的装饰
  */
 
 abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {

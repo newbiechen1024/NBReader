@@ -1,12 +1,12 @@
 // author : newbiechen
 // date : 2019-12-30 14:29
-// description : 文本具有的样式类型
+// description : 文本基础类型
 //
 
-#ifndef NBREADER_TEXTSTYLETYPE_H
-#define NBREADER_TEXTSTYLETYPE_H
+#ifndef NBREADER_TEXTKIND_H
+#define NBREADER_TEXTKIND_H
 
-enum class TextStyleType :char{
+enum class TextKind : char {
     REGULAR = 0, // 常规
     TITLE = 1, // 标题
     SECTION_TITLE = 2, // 单元标题
@@ -47,4 +47,4 @@ enum class TextStyleType :char{
 };
 
 
-#endif //NBREADER_TEXTSTYLETYPE_H
+#endif //NBREADER_TEXTKIND_H

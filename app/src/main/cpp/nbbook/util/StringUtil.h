@@ -7,6 +7,7 @@
 #define NBREADER_STRINGUTIL_H
 
 #include <string>
+#include <vector>
 
 class StringUtil {
 private:
@@ -21,6 +22,15 @@ public:
     static void appendNumber(std::string &str, unsigned int num);
 
     static void asciiToLowerInline(std::string &asciiString);
+
+    static void stripWhiteSpaces(std::string &str);
+
+    static std::vector<std::string>
+    split(const std::string &str, const std::string &delimiter, bool skipEmpty);
+
+    static int parseDecimal(const std::string &str, int defaultValue);
+
+    static double stringToDouble(const std::string &value, double defaultValue);
 };
 
 
