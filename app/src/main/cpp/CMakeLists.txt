@@ -16,14 +16,14 @@ set(CODE_PATH ./nbbook)
 # 添加 xml 解析库
 add_library(
         expat
-        STATIC
+        SHARED
         IMPORTED
 )
 
 set_target_properties(
         expat
         PROPERTIES
-        IMPORTED_LOCATION ${ABI_PATH}/libexpat.a
+        IMPORTED_LOCATION ${ABI_PATH}/libexpat.so
 )
 
 # 正则表达式

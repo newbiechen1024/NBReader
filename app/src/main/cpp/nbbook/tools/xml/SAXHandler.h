@@ -56,6 +56,15 @@ public:
 
     virtual void endDocument() {};
 
+    virtual void startNamespace(std::string &prefix, std::string &uri) {
+        // TODO：该回调暂未实现
+    };
+
+
+    virtual void endNamespace(std::string &prefix) {
+        // TODO：该回调暂未实现
+    };
+
     virtual void startElement(
             std::string &localName,
             std::string &fullName,

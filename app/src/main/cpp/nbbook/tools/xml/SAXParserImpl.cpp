@@ -74,7 +74,7 @@ void SAXParserImpl::initParser() {
     //  如果已经初始化，则进行重置操作
     if (!isInitialized) {
         // 创建解析器，并传入编码类型
-        mXmlParser = XML_ParserCreateNS(NULL, '\0');
+        mXmlParser = XML_ParserCreate(NULL);
         isInitialized = true;
     } else {
         XML_ParserReset(mXmlParser, 0);
@@ -82,8 +82,8 @@ void SAXParserImpl::initParser() {
 
     // 将当前对象作为上下文传递
     XML_SetUserData(mXmlParser, this);
-    // 对命名空间的处理
-    XML_SetNamespaceDeclHandler(mXmlParser, startNamespaceHandler, endNamespaceHandler);
+    // TODO:对命名空间的处理 (expat 库使用 XML_ParserCreateNS 会崩溃，暂时先不处理)
+    // XML_SetNamespaceDeclHandler(mXmlParser, startNamespaceHandler, endNamespaceHandler);
     // 起始标记回调
     XML_SetElementHandler(mXmlParser, startElementHandler, endElementHandler);
     // 标记数据回调
@@ -93,12 +93,16 @@ void SAXParserImpl::initParser() {
 }
 
 void SAXParserImpl::startNamespace(const char *prefix, const char *uri) {
-    Logger::i(TAG,
-              "startNamespace: prefix = " + std::string(prefix) + "  uri = " + std::string(uri));
+    std::string prefixValue(prefix);
+    std::string uriValue(uri);
+
+    mParserHandler->startNamespace(prefixValue, uriValue);
 }
 
 void SAXParserImpl::endNamespace(const char *prefix) {
-    Logger::i(TAG, "endNamespace: prefix = " + std::string(prefix));
+    std::string prefixValue(prefix);
+
+    mParserHandler->endNamespace(prefixValue);
 }
 
 void SAXParserImpl::startElement(const char *name, const char **attributes) {
