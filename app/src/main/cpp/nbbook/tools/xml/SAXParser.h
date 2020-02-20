@@ -22,7 +22,7 @@ public:
 
     void parse(const std::string &path, SAXHandler &handler);
 
-    void parse(File &file, SAXHandler &handler);
+    void parse(const File &file, SAXHandler &handler);
 
     virtual void parse(std::shared_ptr<InputStream> &is, SAXHandler &handler) = 0;
 

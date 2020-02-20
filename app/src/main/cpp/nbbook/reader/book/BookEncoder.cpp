@@ -131,7 +131,6 @@ void BookEncoder::insertEndOfSectionParagraph() {
 
 // 插入结束段落，保证 section 与文本不结合在一起
 void BookEncoder::insertEndParagraph(TextParagraph::Type type) {
-
     // 如果片段是标准的内容
     if (isSectionContainsRegularContents) {
         TextParagraph *paragraph = mTextEncoder.getCurParagraph();
@@ -143,4 +142,125 @@ void BookEncoder::insertEndParagraph(TextParagraph::Type type) {
             isSectionContainsRegularContents = false;
         }
     }
+}
+
+void BookEncoder::addControlTag(TextKind kind, bool isStart) {
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addControlTag(kind, isStart);
+    }
+
+    // 超链接处理
+/*    if (!isStart && !myHyperlinkReference.empty() && (kind == myHyperlinkKind)) {
+        myHyperlinkReference.erase();
+    }*/
+}
+
+void BookEncoder::addFixedHSpaceTag(unsigned char length) {
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addFixedHSpace(length);
+    }
+}
+
+void BookEncoder::addStyleTag(const TextStyleTag &tag,
+                              const std::vector<std::string> &fontFamilies, unsigned char depth) {
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addStyleTag(tag, fontFamilies, depth);
+    }
+}
+
+void BookEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addStyleTag(tag, depth);
+    }
+}
+
+void BookEncoder::addStyleCloseTag() {
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addStyleCloseTag();
+    }
+}
+
+
+void BookEncoder::addInnerLabelResource(const std::string &label) {
+    // TODO:到底名字要不要叫 resource 呢？
+
+    // 获取当前的段落索引数
+/*    int paragraphNumber = mTextEncoder.paragraphsNumber();
+    if (hasParagraphOpen()) {
+        --paragraphNumber;
+    }
+    addInnerLabelResource(label, paragraphNumber);*/
+}
+
+void BookEncoder::addInnerLabelResource(const std::string &label, int paragraphNumber) {
+    // TODO:看样子是要将资源返回，之后实现
+/*    myModel.myInternalHyperlinks.insert(std::make_pair(
+            label, BookModel::Label(myCurrentTextModel, paragraphNumber)
+    ));*/
+}
+
+void BookEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
+    myHyperlinkKind = kind;
+    std::string type;
+    switch (myHyperlinkKind) {
+        case TextKind::INTERNAL_HYPERLINK:
+            myHyperlinkType = HYPERLINK_INTERNAL;
+            type = "internal";
+            break;
+        case TextKind::FOOTNOTE:
+            myHyperlinkType = HYPERLINK_FOOTNOTE;
+            type = "footnote";
+            break;
+        case TextKind::EXTERNAL_HYPERLINK:
+            myHyperlinkType = HYPERLINK_EXTERNAL;
+            type = "external";
+            break;
+        default:
+            myHyperlinkType = HYPERLINK_NONE;
+            break;
+    }
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        mTextEncoder.addHyperlinkControlTag(kind, myHyperlinkType, label);
+    }
+    myHyperlinkReference = label;
+}
+
+void BookEncoder::addVideoTag(const VideoTag &entry) {
+    mySectionContainsRegularContents = true;
+    endParagraph();
+    beginParagraph();
+    myCurrentTextModel->addVideoEntry(entry);
+    endParagraph();
+}
+
+void BookEncoder::addExtensionTag(const std::string &action,
+                                  const std::map<std::string, std::string> &data) {
+    myCurrentTextModel->addExtensionEntry(action, data);
+}
+
+void BookEncoder::addImageTag(ImageTag &tag) {
+    // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。
+}
+
+void BookEncoder::addExtensionResource() {
+    // TODO：扩展资源信息，暂时用不到。
+}
+
+void BookEncoder::addExtensionBookResource() {
+    // TODO: 扩展书籍资源，暂时用不到。
+}
+
+std::string
+BookEncoder::addFontResource(const std::string &family, std::shared_ptr<FontEntry> fontEntry) {
+    // TODO:到底名字要不要叫 resource 呢？先不想了
+}
+
+void BookEncoder::insertPseudoEndOfSectionParagraph() {
+    insertEndParagraph(TextParagraph::PSEUDO_END_OF_SECTION_PARAGRAPH);
 }

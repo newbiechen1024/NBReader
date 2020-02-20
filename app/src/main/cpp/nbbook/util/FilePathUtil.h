@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2015 FBReader.ORG Limited <contact@fbreader.org>
+ * Copyright (C) 2010-2015 FBReader.ORG Limited <contact@fbreader.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,18 @@
  * 02110-1301, USA.
  */
 
-#ifndef __MISCUTIL_H__
-#define __MISCUTIL_H__
+#ifndef __ZLFILEUTIL_H__
+#define __ZLFILEUTIL_H__
 
 #include <string>
-#include "../reader/text/tag/TextKind.h"
 
-class MiscUtil {
-
-private:
-    MiscUtil();
+class FilePathUtil {
 
 public:
-    static TextKind referenceType(const std::string &link);
+    static std::string normalizeUnixPath(const std::string &path);
 
-    static std::string htmlDirectoryPrefix(const std::string &fileName);
-
-    static std::string htmlFileName(const std::string &fileName);
-
-    // 用于解决 url 浏览器编码的问题，如在浏览器中显示 https://www.xxx.com?wd=%05%47%27%44
-    // 详见 https://www.w3school.com.cn/tags/html_ref_urlencode.html(不支持中文)
-    static std::string decodeHtmlURL(const std::string &encodedURL);
+private:
+    FilePathUtil();
 };
 
-#endif /* __MISCUTIL_H__ */
+#endif /* __ZLFILEUTIL_H__ */

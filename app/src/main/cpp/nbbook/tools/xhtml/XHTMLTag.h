@@ -17,27 +17,29 @@
  * 02110-1301, USA.
  */
 
-#ifndef __MISCUTIL_H__
-#define __MISCUTIL_H__
+#ifndef __XHTMLTAGINFO_H__
+#define __XHTMLTAGINFO_H__
 
 #include <string>
-#include "../reader/text/tag/TextKind.h"
+#include <vector>
 
-class MiscUtil {
+class CSSSelector;
 
-private:
-    MiscUtil();
+struct XHTMLTag {
+    const std::string Tag;
+    const std::vector<std::string> Classes;
 
-public:
-    static TextKind referenceType(const std::string &link);
+    XHTMLTag(const std::string &tag, const std::vector<std::string> &classes);
 
-    static std::string htmlDirectoryPrefix(const std::string &fileName);
-
-    static std::string htmlFileName(const std::string &fileName);
-
-    // 用于解决 url 浏览器编码的问题，如在浏览器中显示 https://www.xxx.com?wd=%05%47%27%44
-    // 详见 https://www.w3school.com.cn/tags/html_ref_urlencode.html(不支持中文)
-    static std::string decodeHtmlURL(const std::string &encodedURL);
+    bool matches(const CSSSelector &selector) const;
 };
 
-#endif /* __MISCUTIL_H__ */
+class XHTMLTagList : public std::vector<XHTMLTag> {
+
+public:
+    int find(const CSSSelector &selector, int from, int to) const;
+
+    bool matches(const CSSSelector &selector, int index) const;
+};
+
+#endif /* __XHTMLTAGINFO_H__ */

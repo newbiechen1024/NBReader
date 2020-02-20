@@ -7,6 +7,7 @@
 #define NBREADER_TEXTKIND_H
 
 enum class TextKind : char {
+    NONE = -1,
     REGULAR = 0, // 常规
     TITLE = 1, // 标题
     SECTION_TITLE = 2, // 单元标题

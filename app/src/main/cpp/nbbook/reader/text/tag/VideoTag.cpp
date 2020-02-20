@@ -17,27 +17,12 @@
  * 02110-1301, USA.
  */
 
-#ifndef __MISCUTIL_H__
-#define __MISCUTIL_H__
+#include "VideoTag.h"
 
-#include <string>
-#include "../reader/text/tag/TextKind.h"
+void VideoTag::addSource(const std::string &type, const std::string &path) {
+    mySources.insert(std::make_pair(type, path));
+}
 
-class MiscUtil {
-
-private:
-    MiscUtil();
-
-public:
-    static TextKind referenceType(const std::string &link);
-
-    static std::string htmlDirectoryPrefix(const std::string &fileName);
-
-    static std::string htmlFileName(const std::string &fileName);
-
-    // 用于解决 url 浏览器编码的问题，如在浏览器中显示 https://www.xxx.com?wd=%05%47%27%44
-    // 详见 https://www.w3school.com.cn/tags/html_ref_urlencode.html(不支持中文)
-    static std::string decodeHtmlURL(const std::string &encodedURL);
-};
-
-#endif /* __MISCUTIL_H__ */
+const std::map<std::string, std::string> &VideoTag::sources() const {
+    return mySources;
+}

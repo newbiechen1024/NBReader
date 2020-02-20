@@ -17,27 +17,23 @@
  * 02110-1301, USA.
  */
 
-#ifndef __MISCUTIL_H__
-#define __MISCUTIL_H__
+#ifndef __ZLVIDEOENTRY_H__
+#define __ZLVIDEOENTRY_H__
 
+#include <map>
 #include <string>
-#include "../reader/text/tag/TextKind.h"
 
-class MiscUtil {
+#include "TextTag.h"
 
-private:
-    MiscUtil();
+class VideoTag : public TextTag {
 
 public:
-    static TextKind referenceType(const std::string &link);
+    void addSource(const std::string &type, const std::string &path);
 
-    static std::string htmlDirectoryPrefix(const std::string &fileName);
+    const std::map<std::string, std::string> &sources() const;
 
-    static std::string htmlFileName(const std::string &fileName);
-
-    // 用于解决 url 浏览器编码的问题，如在浏览器中显示 https://www.xxx.com?wd=%05%47%27%44
-    // 详见 https://www.w3school.com.cn/tags/html_ref_urlencode.html(不支持中文)
-    static std::string decodeHtmlURL(const std::string &encodedURL);
+private:
+    std::map<std::string, std::string> mySources;
 };
 
-#endif /* __MISCUTIL_H__ */
+#endif /* __ZLVIDEOENTRY_H__ */

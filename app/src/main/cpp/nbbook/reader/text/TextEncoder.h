@@ -8,6 +8,7 @@
 #include "TextBufferAllocator.h"
 #include "entity/TextParagraph.h"
 #include "tag/TextKind.h"
+#include "tag/TextStyleTag.h"
 #include <string>
 
 class TextEncoder {
@@ -60,6 +61,24 @@ public:
      */
     void addControlTag(TextKind kind, bool isStartTag);
 
+    void addFixedHSpace(unsigned char length);
+
+    void addStyleTag(const TextStyleTag &tag, unsigned char depth);
+
+    void addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
+                     unsigned char depth);
+
+    void addStyleCloseTag();
+
+    void addHyperlinkControlTag(TextKind kind, const std::string &label);
+
+    // TODO：添加资源标签
+    void addResouceTag();
+
+    size_t getCurParagraphCount() {
+        return mCurParagraphCount;
+    }
+
 private:
     void checkEncoderState();
 
@@ -70,6 +89,9 @@ private:
     void release();
 
 private:
+    // TODO:需要带有资源缓冲区
+
+    size_t mCurParagraphCount;
     // 文本数据存储缓冲
     TextBufferAllocator *mBufferAllocatorPtr;
     // 当前创建的文本段落指针

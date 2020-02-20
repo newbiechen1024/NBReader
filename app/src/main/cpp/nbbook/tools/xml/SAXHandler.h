@@ -8,6 +8,8 @@
 
 #include <string>
 #include <cstdlib>
+#include <map>
+#include "SAXParserImpl.h"
 
 class Attributes {
 public:
@@ -31,7 +33,9 @@ public:
      * @param key
      * @return
      */
-    std::string getValue(std::string &key) const;
+    std::string getValue(const std::string &key) const;
+
+    std::map<std::string, std::string> getAttributeMap();
 
 private:
     const char **data;
@@ -51,6 +55,8 @@ public:
     bool isInterrupt() {
         return isInterrupted;
     }
+
+protected:
 
     virtual void startDocument() {};
 
@@ -91,6 +97,8 @@ private:
     void interrupt() {
         isInterrupted = true;
     }
+
+    friend SAXParserImpl;
 };
 
 #endif //NBREADER_SAXHANDLER_H

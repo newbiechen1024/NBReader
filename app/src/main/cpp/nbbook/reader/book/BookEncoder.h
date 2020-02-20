@@ -9,6 +9,10 @@
 #include "../text/tag/TextKind.h"
 #include "../text/entity/TextParagraph.h"
 #include "../text/TextEncoder.h"
+#include "../text/tag/TextStyleTag.h"
+#include "../../tools/font/FontMap.h"
+#include "../text/tag/VideoTag.h"
+#include "../text/tag/ImageTag.h"
 #include <string>
 #include <vector>
 #include <stack>
@@ -70,6 +74,86 @@ public:
     bool hasTitleParagraphOpen() {
         return isTitleParagraphOpen;
     }
+
+    size_t getCurParagraphCount() {
+        return mTextEncoder.getCurParagraphCount();
+    }
+
+    void insertPseudoEndOfSectionParagraph();
+
+    /**
+     * 控制标签
+     * @param kind
+     * @param isStart
+     */
+    void addControlTag(TextKind kind, bool isStart);
+
+    /**
+     * 间距修复标签
+     * @param length
+     */
+    void addFixedHSpaceTag(unsigned char length);
+
+    /**
+     * 样式标签
+     * @param tag
+     * @param depth
+     */
+    void addStyleTag(const TextStyleTag &tag, unsigned char depth);
+
+    void addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
+                     unsigned char depth);
+
+    /**
+     * 关闭样式标签
+     */
+    void addStyleCloseTag();
+
+    /**
+     * 添加内部标记资源
+     * 用于处理内部超链接定位
+     * @param label
+     */
+    void addInnerLabelResource(const std::string &label);
+
+    void addInnerLabelResource(const std::string &label, int paragraphNumber);
+
+    /**
+     * 添加字体资源
+     * @param family
+     * @param fontEntry
+     * @return
+     */
+    std::string addFontResource(const std::string &family, std::shared_ptr<FontEntry> fontEntry);
+
+    /**
+     * 添加超链接标签
+     * @param kind
+     * @param label
+     */
+    void addHyperlinkControlTag(TextKind kind, const std::string &label);
+
+    /**
+     * 添加视频标签
+     * @param tag
+     */
+    void addVideoTag(VideoTag &tag);
+
+    /**
+     * 添加图片标签
+     * @param tag
+     */
+    void addImageTag(ImageTag &tag);
+
+    // 添加扩展标签
+    void
+    addExtensionTag(const std::string &action, const std::map<std::string, std::string> &data);
+
+    // TODO：扩展资源标签
+    void addExtensionResource();
+
+    // TODO：书籍扩展资源标签
+    void addExtensionBookResource();
 
 private:
     void insertEndParagraph(TextParagraph::Type type);

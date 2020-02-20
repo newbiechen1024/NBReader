@@ -12,6 +12,7 @@
 #include "FileDir.h"
 #include "io/FileOutputStream.h"
 #include "io/InputStream.h"
+#include "../tools/drm/FileEncryptionInfo.h"
 
 class File {
 public:
@@ -97,7 +98,7 @@ public:
     // TODO:返回文件夹 ==> 返回的是指针，还是 shared\_ptr
     std::shared_ptr<FileDir> getDirectory() const;
 
-    std::shared_ptr<InputStream> getInputStream() const;
+    std::shared_ptr<InputStream> getInputStream(std::shared_ptr<EncryptionMap> encryptionMap = 0) const;
 
     std::shared_ptr<FileOutputStream> getOutputStream() const;
 

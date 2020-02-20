@@ -12,10 +12,26 @@ static const std::string TAG = "SAXParserImpl";
 static const size_t BUFFER_SIZE = 1024 * 8;
 static const char TEXT_SPLIT = ':';
 
-
 // 起始标签回调
 static void startElementHandler(void *userData, const char *name, const char **attributes) {
     SAXParserImpl *parser = (SAXParserImpl *) userData;
+
+    // TODO：暂时通过这种方式查找 namespace，之后需要修改逻辑，或者使用 libxml，还是看下 expat 源码到底哪里有问题。。。
+    for (const char **a = attributes; (*a != 0) && (*(a + 1) != 0); a += 2) {
+        if (std::strncmp(*a, "xmlns", 5) == 0) {
+            std::string id;
+            // 如果查找到值
+            if ((*a)[5] == ':') {
+                id = *a + 6;
+            } else if ((*a)[5] != '\0') {
+                continue;
+            }
+
+            const std::string reference(*(a + 1));
+            parser->startNamespace(id.c_str(), reference.c_str());
+        }
+    }
+
     parser->startElement(name, attributes);
 }
 

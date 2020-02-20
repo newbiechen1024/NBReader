@@ -113,8 +113,11 @@ aux_source_directory(${CODE_PATH}/tools/font TOOLS_FONT_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/encoding ENCODING_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/language LANGUAGE_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/xml XML_TOOLS_SOURCE)
+aux_source_directory(${CODE_PATH}/tools/xhtml XHTML_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/css CSS_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/drm DRM_TOOLS_SOURCE)
+aux_source_directory(${CODE_PATH}/tools/constant CONSTANT_TOOLS_SOURCE)
+
 
 
 aux_source_directory(${CODE_PATH}/filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
@@ -140,10 +143,12 @@ add_library( # Sets the title of the library.
         ${BOOK_READER_SOURCE}
         ${TOOLS_FONT_SOURCE}
         ${XML_TOOLS_SOURCE}
+        ${XHTML_TOOLS_SOURCE}
         ${CSS_TOOLS_SOURCE}
         ${DRM_TOOLS_SOURCE}
         ${ENCODING_TOOLS_SOURCE}
         ${LANGUAGE_TOOLS_SOURCE}
+        ${CONSTANT_TOOLS_SOURCE}
         ${FILE_SYSTEM_CHARSET_SOURCE}
         ${FILE_SYSTEM_BUFFER_SOURCE}
         ${READER_TEXT_SOURCE}

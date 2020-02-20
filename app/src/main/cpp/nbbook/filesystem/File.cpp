@@ -140,7 +140,10 @@ std::shared_ptr<FileDir> File::getDirectory() const {
 }
 
 // TODO:暂时不处理加密相关逻辑
-std::shared_ptr<InputStream> File::getInputStream() const {
+std::shared_ptr<InputStream>
+File::getInputStream(std::shared_ptr<EncryptionMap> encryptionMap) const {
+    // TODO:未处理加密事件
+
     std::shared_ptr<InputStream> stream;
 
     int index = FileSystem::getInstance().findArchiveNameDelimiter(mPath);

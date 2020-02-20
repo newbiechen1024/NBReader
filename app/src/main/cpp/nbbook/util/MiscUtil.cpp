@@ -46,10 +46,13 @@ std::string MiscUtil::htmlDirectoryPrefix(const std::string &fileName) {
     std::string shortName = file.getName();
     std::string path = file.getPath();
     int index = -1;
+    // 如果路路径类似 prefixName:shortName 的情况
     if ((path.length() > shortName.length()) &&
         (path[path.length() - shortName.length() - 1] == ':')) {
+        // 获取 shortName 的 / 位置
         index = shortName.rfind('/');
     }
+    // 返回结果 prefixName:xxxxxx/ 的位置。
     return path.substr(0, path.length() - shortName.length() + index + 1);
 }
 

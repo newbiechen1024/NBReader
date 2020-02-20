@@ -15,7 +15,7 @@ void SAXParser::parse(const std::string &path, SAXHandler &handler) {
     }
 }
 
-void SAXParser::parse(File &file, SAXHandler &handler) {
+void SAXParser::parse(const File &file, SAXHandler &handler) {
     auto is = file.getInputStream();
     parse(is, handler);
 }

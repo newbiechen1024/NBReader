@@ -47,6 +47,14 @@ void StringUtil::appendNumber(std::string &str, unsigned int num) {
     }
 }
 
+
+std::string StringUtil::numberToString(unsigned int n) {
+    std::string str;
+    appendNumber(str, n);
+    return str;
+}
+
+
 void StringUtil::asciiToLowerInline(std::string &asciiString) {
     for (int i = asciiString.size() - 1; i >= 0; --i) {
         asciiString[i] = std::tolower(asciiString[i]);

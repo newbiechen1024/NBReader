@@ -15,6 +15,7 @@ TextEncoder::TextEncoder() : mBufferAllocatorPtr(nullptr),
                              mCurParagraphPtr(nullptr),
                              mCurTagPtr(nullptr) {
     mIsOpen = false;
+    mCurParagraphCount = 0;
 }
 
 TextEncoder::~TextEncoder() {
@@ -122,6 +123,8 @@ void TextEncoder::flush() {
     delete mCurParagraphPtr;
 
     mCurParagraphPtr = nullptr;
+
+    mCurParagraphCount++;
 }
 
 /**
@@ -233,3 +236,100 @@ void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
     *(mCurTagPtr + 3) = isStartTag ? 1 : 0;
 }
 
+
+void TextEncoder::addFixedHSpace(unsigned char length) {
+    myLastEntryStart = myAllocator->allocate(4);
+    *myLastEntryStart = ZLTextParagraphEntry::FIXED_HSPACE_ENTRY;
+    *(myLastEntryStart + 1) = 0;
+    *(myLastEntryStart + 2) = length;
+    *(myLastEntryStart + 3) = 0;
+    myParagraphs.back()->addEntry(myLastEntryStart);
+    ++myParagraphLengths.back();
+}
+
+void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
+    addStyleTag(tag, tag.fontFamilies(), depth);
+}
+
+void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
+                              unsigned char depth) {
+
+    std::size_t len = 4; // entry type + feature mask
+    for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
+        if (tag.isFeatureSupported((TextFeature) i)) {
+            len += 4; // each supported length
+        }
+    }
+    if (tag.isFeatureSupported(TextFeature::ALIGNMENT_TYPE) ||
+        tag.isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
+        len += 2;
+    }
+    if (tag.isFeatureSupported(TextFeature::FONT_FAMILY)) {
+        len += 2;
+    }
+    if (tag.isFeatureSupported(TextFeature::FONT_STYLE_MODIFIER)) {
+        len += 2;
+    }
+
+    myLastEntryStart = myAllocator->allocate(len);
+    char *address = myLastEntryStart;
+
+    *address++ = entry.entryKind();
+    *address++ = depth;
+    address = ZLCachedMemoryAllocator::writeUInt16(address, entry.myFeatureMask);
+
+    for (int i = 0; i < ZLTextStyleEntry::NUMBER_OF_LENGTHS; ++i) {
+        if (entry.isFeatureSupported((ZLTextStyleEntry::Feature) i)) {
+            const ZLTextStyleEntry::LengthType &len = entry.myLengths[i];
+            address = ZLCachedMemoryAllocator::writeUInt16(address, len.Size);
+            *address++ = len.Unit;
+            *address++ = 0;
+        }
+    }
+    if (entry.isFeatureSupported(ZLTextStyleEntry::ALIGNMENT_TYPE) ||
+        entry.isFeatureSupported(ZLTextStyleEntry::NON_LENGTH_VERTICAL_ALIGN)) {
+        *address++ = entry.myAlignmentType;
+        *address++ = entry.myVerticalAlignCode;
+    }
+    if (entry.isFeatureSupported(ZLTextStyleEntry::FONT_FAMILY)) {
+        address = ZLCachedMemoryAllocator::writeUInt16(address,
+                                                       myFontManager.familyListIndex(fontFamilies));
+    }
+    if (entry.isFeatureSupported(ZLTextStyleEntry::FONT_STYLE_MODIFIER)) {
+        *address++ = entry.mySupportedFontModifier;
+        *address++ = entry.myFontModifier;
+    }
+    // --- writing entry
+
+    myParagraphs.back()->addEntry(myLastEntryStart);
+    ++myParagraphLengths.back();
+
+}
+
+void TextEncoder::addStyleCloseTag() {
+    myLastEntryStart = myAllocator->allocate(2);
+    char *address = myLastEntryStart;
+
+    *address++ = ZLTextParagraphEntry::STYLE_CLOSE_ENTRY;
+    *address++ = 0;
+
+    myParagraphs.back()->addEntry(myLastEntryStart);
+    ++myParagraphLengths.back();
+}
+
+void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
+    ZLUnicodeUtil::Ucs2String ucs2label;
+    ZLUnicodeUtil::utf8ToUcs2(ucs2label, label);
+
+    const std::size_t len = ucs2label.size() * 2;
+
+    myLastEntryStart = myAllocator->allocate(len + 6);
+    *myLastEntryStart = ZLTextParagraphEntry::HYPERLINK_CONTROL_ENTRY;
+    *(myLastEntryStart + 1) = 0;
+    *(myLastEntryStart + 2) = textKind;
+    *(myLastEntryStart + 3) = hyperlinkType;
+    ZLCachedMemoryAllocator::writeUInt16(myLastEntryStart + 4, ucs2label.size());
+    std::memcpy(myLastEntryStart + 6, &ucs2label.front(), len);
+    myParagraphs.back()->addEntry(myLastEntryStart);
+    ++myParagraphLengths.back();
+}

@@ -21,6 +21,9 @@ public:
     // 在 string 后添加 num 数字
     static void appendNumber(std::string &str, unsigned int num);
 
+    static std::string numberToString(unsigned int n);
+
+
     static void asciiToLowerInline(std::string &asciiString);
 
     static void stripWhiteSpaces(std::string &str);
