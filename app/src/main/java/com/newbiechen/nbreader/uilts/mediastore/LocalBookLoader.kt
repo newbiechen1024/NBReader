@@ -48,7 +48,7 @@ class LocalBookLoader constructor(context: Context) :
             if (i == 0) {
                 selectionBuilder.append(" like ?")
             } else {
-                selectionBuilder.append(" or ?")
+                selectionBuilder.append(" or (${MediaStore.Files.FileColumns.DATA} like ?)")
             }
         }
 

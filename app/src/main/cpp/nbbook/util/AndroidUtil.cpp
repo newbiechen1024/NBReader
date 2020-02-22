@@ -102,6 +102,7 @@ std::string AndroidUtil::toCString(JNIEnv *env, jstring from) {
     return result;
 }
 
+/*
 std::string AndroidUtil::convertNonUtfString(const std::string &str) {
     if (UnicodeUtil::isUtf8String(str)) {
         return str;
@@ -119,4 +120,4 @@ std::string AndroidUtil::convertNonUtfString(const std::string &str) {
     delete[] chars;
 
     return result;
-}
+}*/

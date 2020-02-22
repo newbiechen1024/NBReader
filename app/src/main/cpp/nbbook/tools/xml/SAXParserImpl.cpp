@@ -6,6 +6,7 @@
 #include "SAXParserImpl.h"
 #include "../../util/StringUtil.h"
 #include "../../util/Logger.h"
+#include "SAXHandler.h"
 
 static const std::string TAG = "SAXParserImpl";
 
@@ -109,6 +110,10 @@ void SAXParserImpl::initParser() {
 }
 
 void SAXParserImpl::startNamespace(const char *prefix, const char *uri) {
+    if (mParserHandler->isInterrupt()) {
+        return;
+    }
+
     std::string prefixValue(prefix);
     std::string uriValue(uri);
 
@@ -116,8 +121,11 @@ void SAXParserImpl::startNamespace(const char *prefix, const char *uri) {
 }
 
 void SAXParserImpl::endNamespace(const char *prefix) {
-    std::string prefixValue(prefix);
+    if (mParserHandler->isInterrupt()) {
+        return;
+    }
 
+    std::string prefixValue(prefix);
     mParserHandler->endNamespace(prefixValue);
 }
 
@@ -157,9 +165,7 @@ void SAXParserImpl::characterData(const char *text, int len) {
 
 void SAXParserImpl::endElement(const char *name) {
     // 将 attributes 进行封装
-    if (mParserHandler->isInterrupt()) {
-        return;
-    }
+
 
     // 分割线的位置
     const char *splitIndex = strchr(name, TEXT_SPLIT);
@@ -225,6 +231,13 @@ bool SAXParserImpl::parseBuffer(const char *buffer, std::size_t len) {
     }
 
     return result;
+}
+
+bool SAXParserImpl::checkState() {
+    // TODO:如果停止，是否要调用 XML_STOP() 呢，
+    // 之后思考，参考文档 http://web.mit.edu/freebsd/head/contrib/expat/doc/reference.html#XML_StopParser
+
+    return mParserHandler->isInterrupt();
 }
 
 void SAXParserImpl::reset() {

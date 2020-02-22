@@ -238,13 +238,13 @@ void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
 
 
 void TextEncoder::addFixedHSpace(unsigned char length) {
-    myLastEntryStart = myAllocator->allocate(4);
+/*    myLastEntryStart = myAllocator->allocate(4);
     *myLastEntryStart = ZLTextParagraphEntry::FIXED_HSPACE_ENTRY;
     *(myLastEntryStart + 1) = 0;
     *(myLastEntryStart + 2) = length;
     *(myLastEntryStart + 3) = 0;
     myParagraphs.back()->addEntry(myLastEntryStart);
-    ++myParagraphLengths.back();
+    ++myParagraphLengths.back();*/
 }
 
 void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
@@ -271,7 +271,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
         len += 2;
     }
 
-    myLastEntryStart = myAllocator->allocate(len);
+/*    myLastEntryStart = myAllocator->allocate(len);
     char *address = myLastEntryStart;
 
     *address++ = entry.entryKind();
@@ -302,23 +302,22 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
     // --- writing entry
 
     myParagraphs.back()->addEntry(myLastEntryStart);
-    ++myParagraphLengths.back();
-
+    ++myParagraphLengths.back();*/
 }
 
 void TextEncoder::addStyleCloseTag() {
-    myLastEntryStart = myAllocator->allocate(2);
+/*    myLastEntryStart = myAllocator->allocate(2);
     char *address = myLastEntryStart;
 
     *address++ = ZLTextParagraphEntry::STYLE_CLOSE_ENTRY;
     *address++ = 0;
 
     myParagraphs.back()->addEntry(myLastEntryStart);
-    ++myParagraphLengths.back();
+    ++myParagraphLengths.back();*/
 }
 
 void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
-    ZLUnicodeUtil::Ucs2String ucs2label;
+/*    ZLUnicodeUtil::Ucs2String ucs2label;
     ZLUnicodeUtil::utf8ToUcs2(ucs2label, label);
 
     const std::size_t len = ucs2label.size() * 2;
@@ -331,5 +330,5 @@ void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
     ZLCachedMemoryAllocator::writeUInt16(myLastEntryStart + 4, ucs2label.size());
     std::memcpy(myLastEntryStart + 6, &ucs2label.front(), len);
     myParagraphs.back()->addEntry(myLastEntryStart);
-    ++myParagraphLengths.back();
+    ++myParagraphLengths.back();*/
 }

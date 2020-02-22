@@ -34,9 +34,10 @@
 static const std::string ANY = "*";
 static const std::string EMPTY = "";
 
-
 static const XHTMLTagList EMPTY_INFO_LIST = XHTMLTagList();
 
+std::map<std::string, XHTMLTagAction *> XHTMLReader::ourTagActions;
+std::map<std::shared_ptr<NsXMLFilter>, XHTMLTagAction *> XHTMLReader::ourNsTagActions;
 
 /*** Filter:XHTMLSvgImageNamePredicate ***/
 
@@ -45,7 +46,7 @@ class XHTMLSvgImageFilter : public NsXMLFilter {
 public:
     XHTMLSvgImageFilter();
 
-    bool accepts(const NsSAXHandler &handler, const char *name) const;
+    bool accept(const NsSAXHandler &handler, const char *patternName) const override;
 
 private:
     bool myIsEnabled;
@@ -57,7 +58,7 @@ XHTMLSvgImageFilter::XHTMLSvgImageFilter() : NsXMLFilter(
         XMLNamespace::XLink, "href"), myIsEnabled(false) {
 }
 
-bool XHTMLSvgImageFilter::accepts(const NsSAXHandler &handler, const char *name) const {
+bool XHTMLSvgImageFilter::accept(const NsSAXHandler &handler, const char *name) const {
     return myIsEnabled && NsXMLFilter::accept(handler, name);
 }
 
@@ -181,14 +182,10 @@ void XHTMLTagLinkAction::doAtStart(XHTMLReader &reader, Attributes &attributes) 
         parser = std::make_shared<StyleSheetParserWithCache>(cssFile,
                                                              MiscUtil::htmlDirectoryPrefix(
                                                                      cssFilePath),
-                                                             0,
+                                                             nullptr,
                                                              reader.myEncryptionMap);
         reader.myFileParsers[cssFilePath] = parser;
         Logger::i("CSS", "creating stream");
-        // TODO:需要有加密操作
-        // 源代码：
-        // std::shared_ptr<InputStream> cssStream = cssFile.inputStream(reader.myEncryptionMap);
-
         std::shared_ptr<InputStream> cssStream = cssFile.getInputStream(reader.myEncryptionMap);
         if (!cssStream) {
             Logger::i("CSS", "parsing file");
@@ -260,7 +257,6 @@ void XHTMLTagBodyAction::doAtEnd(XHTMLReader &reader) {
 
 
 /*** XHTMLTagSectionAction ***/
-
 
 class XHTMLTagSectionAction : public XHTMLGlobalTagAction {
 
@@ -349,7 +345,7 @@ bool XHTMLTagSourceAction::isEnabled(XHTMLReadingState state) {
 void XHTMLTagSourceAction::doAtStart(XHTMLReader &reader, Attributes &attributes) {
     std::string mime = attributes.getValue("type");
     std::string href = attributes.getValue("src");
-    if (mime != 0 && href != 0) {
+    if (!mime.empty() && !href.empty()) {
         reader.myVideoEntry->addSource(
                 mime,
                 File(pathPrefix(reader) + MiscUtil::decodeHtmlURL(href)).getPath()
@@ -366,7 +362,7 @@ class XHTMLTagImageAction : public XHTMLTextModeTagAction {
 
 public:
     // TODO:支持自定义的过滤方式
-    XHTMLTagImageAction(std::shared_ptr<NsXMLFilter> predicate);
+    XHTMLTagImageAction(NsXMLFilter *predicate);
 
     XHTMLTagImageAction(const std::string &attributeName);
 
@@ -375,12 +371,12 @@ public:
     void doAtEnd(XHTMLReader &reader);
 
 private:
-    std::shared_ptr<NsXMLFilter> mFilter;
+    NsXMLFilter *mFilter;
     std::string mAttributeName;
 };
 
 
-XHTMLTagImageAction::XHTMLTagImageAction(std::shared_ptr<NsXMLFilter> filter) {
+XHTMLTagImageAction::XHTMLTagImageAction(NsXMLFilter *filter) {
     mFilter = filter;
 }
 
@@ -441,26 +437,26 @@ void XHTMLTagImageAction::doAtEnd(XHTMLReader &) {
 class XHTMLTagSvgAction : public XHTMLTextModeTagAction {
 
 public:
-    XHTMLTagSvgAction(XHTMLSvgImageFilter &predicate);
+    XHTMLTagSvgAction(XHTMLSvgImageFilter *predicate);
 
     void doAtStart(XHTMLReader &reader, Attributes &attributes);
 
     void doAtEnd(XHTMLReader &reader);
 
 private:
-    XHTMLSvgImageFilter &myPredicate;
+    XHTMLSvgImageFilter *myPredicate;
 };
 
-XHTMLTagSvgAction::XHTMLTagSvgAction(XHTMLSvgImageFilter &predicate) : myPredicate(
+XHTMLTagSvgAction::XHTMLTagSvgAction(XHTMLSvgImageFilter *predicate) : myPredicate(
         predicate) {
 }
 
 void XHTMLTagSvgAction::doAtStart(XHTMLReader &, Attributes &attributes) {
-    myPredicate.myIsEnabled = true;
+    myPredicate->myIsEnabled = true;
 }
 
 void XHTMLTagSvgAction::doAtEnd(XHTMLReader &) {
-    myPredicate.myIsEnabled = false;
+    myPredicate->myIsEnabled = false;
 }
 
 /*** XHTMLTagListAction ***/
@@ -554,7 +550,6 @@ void XHTMLTagHyperlinkAction::doAtStart(XHTMLReader &reader, Attributes &attribu
             static const std::string NOTEREF = "noteref";
             std::string epubType = attributes.getValue("epub:type");
             if (epubType.empty()) {
-                // TODO:支持多种方式获取信息
                 // popular ePub mistake: ':' in attribute name coverted to ascii code
                 std::string epubTypePredicate = "epubu0003atype";
 
@@ -563,7 +558,7 @@ void XHTMLTagHyperlinkAction::doAtStart(XHTMLReader &reader, Attributes &attribu
 
                 epubType = attributes.getValue(epubTypePredicate);
             }
-            if (epubType != 0 && NOTEREF == epubType) {
+            if (!epubType.empty() && NOTEREF == epubType) {
                 hyperlinkType = TextKind::FOOTNOTE;
             }
 
@@ -708,8 +703,8 @@ XHTMLReader::XHTMLReader(BookEncoder &modelReader, std::shared_ptr<EncryptionMap
     mParser = SAXParserFactory::getParser();
 }
 
-XHTMLReader::~xHTMLReader() {
-    // TODO:销毁创建的 Action
+XHTMLReader::~XHTMLReader() {
+    // ourTagActions 是静态变量，Action 没必要销毁
 }
 
 void XHTMLReader::setMarkFirstImageAsCover() {
@@ -729,7 +724,7 @@ XHTMLReader::addAction(const std::string &ns, const std::string &name, XHTMLTagA
 XHTMLTagAction *XHTMLReader::getAction(const std::string &tag) {
     const std::string lTag = UnicodeUtil::toLower(tag);
     XHTMLTagAction *action = ourTagActions[lTag];
-    if (action != 0) {
+    if (action != nullptr) {
         return action;
     }
     // TODO:感觉逻辑有点复杂
@@ -823,11 +818,11 @@ void XHTMLReader::initXHTMLTags() {
         addAction("img", new XHTMLTagImageAction("src"));
         addAction("object", new XHTMLTagImageAction("data"));
         XHTMLSvgImageFilter *predicate = new XHTMLSvgImageFilter();
-        addAction("svg", new XHTMLTagSvgAction(*predicate));
+        addAction("svg", new XHTMLTagSvgAction(predicate));
         addAction("image", new XHTMLTagImageAction(predicate));
 
         // TODO:添加带有 namespace 的 Action
-        addAction(XMLNamespace::Svg, "svg", new XHTMLTagSvgAction(*predicate));
+        addAction(XMLNamespace::Svg, "svg", new XHTMLTagSvgAction(predicate));
         addAction(XMLNamespace::Svg, "image", new XHTMLTagImageAction(predicate));
         addAction(XMLNamespace::FBReaderXhtml, "opds", new XHTMLTagOpdsAction());
 
@@ -1138,7 +1133,7 @@ XHTMLReader::startElement(std::string &localName, std::string &fullName, Attribu
 
     // 启动 action 执行相应操作
     XHTMLTagAction *action = getAction(sTag);
-    if (action != 0 && action->isEnabled(myReadState)) {
+    if (action != nullptr && action->isEnabled(myReadState)) {
         action->doAtStart(*this, attributes);
     }
 
@@ -1234,7 +1229,7 @@ void XHTMLReader::endElement(std::string &localName, std::string &fullName) {
     }
 
     XHTMLTagAction *action = getAction(sTag);
-    if (action != 0 && action->isEnabled(myReadState)) {
+    if (action != nullptr && action->isEnabled(myReadState)) {
         action->doAtEnd(*this);
         myNewParagraphInProgress = false;
     }

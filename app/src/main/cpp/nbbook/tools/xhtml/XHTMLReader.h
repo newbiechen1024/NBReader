@@ -85,11 +85,21 @@ public:
         TagData();
     };
 
-protected:
-    void startDocument() override;
+public:
+    static void addAction(const std::string &tag, XHTMLTagAction *action);
 
-    void endDocument() override;
+    static void
+    addAction(const std::string &ns, const std::string &name, XHTMLTagAction *action);
 
+    static void initXHTMLTags();
+
+
+private:
+    static std::map<std::string, XHTMLTagAction *> ourTagActions;
+    static std::map<std::shared_ptr<NsXMLFilter>, XHTMLTagAction *>
+            ourNsTagActions;
+
+public:
     void
     startElement(std::string &localName, std::string &fullName, Attributes &attributes) override;
 
@@ -99,24 +109,11 @@ protected:
 
     void error(std::string &err) override;
 
-
-public:
-    static void addAction(const std::string &tag, XHTMLTagAction *action);
-
-    static void
-    addAction(const std::string &ns, const std::string &name, XHTMLTagAction *action);
-
-    static void initXHTMLTags();
-
-private:
-    static std::map<std::string, XHTMLTagAction *> ourTagActions;
-    static std::map<std::shared_ptr<NsXMLFilter>, XHTMLTagAction *>
-            ourNsTagActions;
-
 public:
     XHTMLReader(BookEncoder &modelReader, std::shared_ptr<EncryptionMap> map);
 
-    ~xHTMLReader();
+    ~XHTMLReader();
+
 
     void readFile(const File &file, const std::string &referenceName);
 
@@ -128,14 +125,6 @@ public:
 
 private:
     XHTMLTagAction *getAction(const std::string &tag);
-
-    void startElementHandler(const char *tag, const char **attributes);
-
-    void endElementHandler(const char *tag);
-
-    void characterDataHandler(const char *text, std::size_t len);
-
-    const std::vector<std::string> &externalDTDs() const;
 
     bool processNamespaces() const;
 

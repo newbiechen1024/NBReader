@@ -13,8 +13,12 @@
 #include "io/FileOutputStream.h"
 #include "io/InputStream.h"
 #include "../tools/drm/FileEncryptionInfo.h"
+#include "FileSystem.h"
 
 class File {
+
+public:
+    static const File NO_FILE;
 public:
     // 压缩类型
     enum ArchiveType {
@@ -28,29 +32,50 @@ public:
     const std::string SUFFIX_ZIP = ".zip";
     const std::string SUFFIX_GZIP = ".gz";
 
+    File();
+
     File(const std::string &path);
 
     ~File() {}
 
-    // 获取文件名,如：xx/xx/file.txt ，返回 file
+    /**
+     * 获取文件名,如：xx/xx/file.txt ，返回 file
+     * @return
+     */
     const std::string &getName() const {
         return mName;
     }
 
-    // 获取完整名称，如：xx/xx/file.txt ，返回 file.txt
+    /**
+     * 获取完整名称，如：xx/xx/file.txt ，返回 file.txt
+     * @return
+     */
     const std::string &getFullName() const {
         return mFullName;
     }
 
-    // 获取扩展名，如：xx/xx/file.txt ，返回 txt
+    /**
+     * 获取扩展名，如：xx/xx/file.txt ，返回 txt
+     * @return
+     */
     const std::string &getExtension() const {
         return mExtension;
     }
 
-    // 获取绝对路径
+    /**
+     * 获取绝对路径
+     * @return
+     */
     const std::string &getPath() const {
         return mPath;
     }
+
+    /**
+     * 如果是压缩文件，则获取压缩包路径。
+     * 如：/home/xxx.zip:path/test 则会返回 /home/xxx.zip
+     * @return
+     */
+    const std::string getArchivePkgPath() const;
 
     // 文件是否存在
     bool exists() const {
@@ -95,10 +120,18 @@ public:
     // 创建整个文件目录
     bool mkdirs() const;
 
-    // TODO:返回文件夹 ==> 返回的是指针，还是 shared\_ptr
+    /**
+     * 将 File 强制转化成压缩包类型
+     * @param type
+     */
+    void forceArchiveType(ArchiveType type) const {
+        mArchiveType = type;
+    }
+
     std::shared_ptr<FileDir> getDirectory() const;
 
-    std::shared_ptr<InputStream> getInputStream(std::shared_ptr<EncryptionMap> encryptionMap = 0) const;
+    std::shared_ptr<InputStream>
+    getInputStream(std::shared_ptr<EncryptionMap> encryptionMap = 0) const;
 
     std::shared_ptr<FileOutputStream> getOutputStream() const;
 
@@ -116,7 +149,7 @@ private:
     std::string mFullName;
     std::string mExtension;
     FileStat mFileStat;
-    ArchiveType mArchiveType;
+    mutable ArchiveType mArchiveType;
     bool isInitFileStat;
 
     FileStat &getFileStat();

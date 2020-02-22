@@ -7,6 +7,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.book.type.BookType
+import com.newbiechen.nbreader.uilts.LogHelper
 import java.io.File
 
 /**
@@ -33,6 +34,10 @@ class PageController(
 
     // 文本内容解析器
     private var mFormatPlugin: NativeFormatPlugin? = null
+
+    companion object {
+        private const val TAG = "PageController"
+    }
 
     /**********************************************功能方法**********************************************/
 
@@ -76,12 +81,21 @@ class PageController(
 
         // 根据类型获取插件
         mFormatPlugin = mBookPluginFactory.getPlugin(bookType)
-        // 设置参数
+/*        // 设置参数
         mFormatPlugin!!.setConfigure(mCachePath!!, mChapterPattern!!, mInitChapterTitle!!)
         // 打开书籍
-        mFormatPlugin!!.openBook(bookPath)
+        mFormatPlugin!!.openBook(bookPath)*/
 
-        // TODO:TextModel 需要重构，下次再说
+/*        // 获取章节信息
+        var resultChapters = mFormatPlugin!!.getChapters()
+
+        if (resultChapters != null) {
+            resultChapters!!.forEach {
+                LogHelper.i(TAG, "open: $it")
+            }
+        }*/
+
+/*        // TODO:TextModel 需要重构，下次再说
 
         // 创建本地文本模块
         var textModel = TextModel(mFormatPlugin!!)
@@ -91,7 +105,7 @@ class PageController(
         pageContentController.initProcessor(textModel)
 
         // TODO：如果 FormatPlugin 先改变，会导致 拿到的数据错误的问题，该怎么解决。
-        // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。
+        // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。*/
     }
 
     /**

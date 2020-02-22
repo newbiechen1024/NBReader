@@ -6,7 +6,7 @@
 #ifndef NBREADER_TEXTKIND_H
 #define NBREADER_TEXTKIND_H
 
-enum class TextKind : char {
+enum class TextKind {
     NONE = -1,
     REGULAR = 0, // 常规
     TITLE = 1, // 标题

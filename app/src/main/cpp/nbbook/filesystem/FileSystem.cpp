@@ -25,7 +25,7 @@ void FileSystem::deleteInstance() {
 void FileSystem::normalize(std::string &path) {
     // 处理压缩包的问题
     int archiveIndex = findArchiveNameDelimiter(path);
-    if (archiveIndex == -1) {
+    if (path.empty() || archiveIndex == -1) {
         normalizeInternal(path);
     } else {
         std::string realPath = path.substr(0, archiveIndex);

@@ -186,6 +186,7 @@ void BookEncoder::addStyleCloseTag() {
 }
 
 
+// TODO:要换个名字，这个不好听
 void BookEncoder::addInnerLabelResource(const std::string &label) {
     // TODO:到底名字要不要叫 resource 呢？
 
@@ -205,7 +206,7 @@ void BookEncoder::addInnerLabelResource(const std::string &label, int paragraphN
 }
 
 void BookEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
-    myHyperlinkKind = kind;
+/*    myHyperlinkKind = kind;
     std::string type;
     switch (myHyperlinkKind) {
         case TextKind::INTERNAL_HYPERLINK:
@@ -228,23 +229,23 @@ void BookEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
         flushParagraphBuffer();
         mTextEncoder.addHyperlinkControlTag(kind, myHyperlinkType, label);
     }
-    myHyperlinkReference = label;
+    myHyperlinkReference = label;*/
 }
 
 void BookEncoder::addVideoTag(const VideoTag &entry) {
-    mySectionContainsRegularContents = true;
+/*    mySectionContainsRegularContents = true;
     endParagraph();
     beginParagraph();
     myCurrentTextModel->addVideoEntry(entry);
-    endParagraph();
+    endParagraph();*/
 }
 
 void BookEncoder::addExtensionTag(const std::string &action,
                                   const std::map<std::string, std::string> &data) {
-    myCurrentTextModel->addExtensionEntry(action, data);
+/*    myCurrentTextModel->addExtensionEntry(action, data);*/
 }
 
-void BookEncoder::addImageTag(ImageTag &tag) {
+void BookEncoder::addImageTag(const ImageTag &tag) {
     // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。
 }
 

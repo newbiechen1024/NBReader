@@ -3,15 +3,15 @@
 // description : 全局上下文抽象类
 //
 
-#ifndef NBREADER_FORMATPLUGINAPP_H
-#define NBREADER_FORMATPLUGINAPP_H
+#ifndef NBREADER_NBBOOKAPP_H
+#define NBREADER_NBBOOKAPP_H
 
 #include <string>
 #include <jni.h>
 
-class FormatPluginApp {
+class NBBookApp {
 public:
-    static FormatPluginApp &getInstance() {
+    static NBBookApp &getInstance() {
         return *sInstance;
     }
 
@@ -27,11 +27,11 @@ public:
     virtual std::string version() = 0;
 
 protected:
-    static FormatPluginApp *sInstance;
+    static NBBookApp *sInstance;
 
-    FormatPluginApp() {}
+    NBBookApp() {}
 
-    virtual ~FormatPluginApp() {}
+    virtual ~NBBookApp() {}
 };
 
-#endif //NBREADER_FORMATPLUGINAPP_H
+#endif //NBREADER_NBBOOKAPP_H

@@ -9,6 +9,7 @@ import com.newbiechen.nbreader.ui.page.base.BaseBindingFragment
 import com.newbiechen.nbreader.ui.page.read.ReadActivity
 import com.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
+import com.newbiechen.nbreader.ui.component.book.plugin.BookPluginFactory
 import javax.inject.Inject
 
 class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
@@ -16,6 +17,11 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
     companion object {
         private const val TAG = "BookShelfFragment"
         fun newInstance() = BookShelfFragment()
+
+        init {
+            System.loadLibrary("nbbook")
+        }
+
     }
 
     @Inject

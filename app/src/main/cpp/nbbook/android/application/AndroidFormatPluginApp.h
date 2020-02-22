@@ -7,9 +7,9 @@
 #define NBREADER_ANDROIDFORMATPLUGINAPP_H
 
 
-#include "../../FormatPluginApp.h"
+#include "../../NBBookApp.h"
 
-class AndroidFormatPluginApp : FormatPluginApp {
+class AndroidFormatPluginApp : NBBookApp {
 public:
     // 创建 app
     static void newInstance();

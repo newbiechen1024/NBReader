@@ -9,8 +9,9 @@
 
 #include <memory>
 #include "../../filesystem/io/InputStream.h"
-#include "SAXHandler.h"
 #include "../../filesystem/File.h"
+
+class SAXHandler;
 
 class SAXParser {
 public:

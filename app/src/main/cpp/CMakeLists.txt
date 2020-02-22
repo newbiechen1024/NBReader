@@ -117,9 +117,6 @@ aux_source_directory(${CODE_PATH}/tools/xhtml XHTML_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/css CSS_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/drm DRM_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/constant CONSTANT_TOOLS_SOURCE)
-
-
-
 aux_source_directory(${CODE_PATH}/filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
 
 

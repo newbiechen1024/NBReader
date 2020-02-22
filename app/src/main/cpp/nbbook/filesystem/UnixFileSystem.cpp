@@ -74,6 +74,12 @@ void UnixFileSystem::normalizeInternal(std::string &path) const {
     } else if (path[0] != '/') {
         path = pwdDir + '/' + path;
     }
+
+    // 如果 path 还是为空，则直接返回
+    if (path.empty()) {
+        return;
+    }
+
     int last = path.length() - 1;
     while ((last > 0) && (path[last] == '/')) {
         --last;

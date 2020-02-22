@@ -19,6 +19,7 @@
 
 #include <cctype>
 #include <cstring>
+#include <list>
 
 #include "StyleSheetParser.h"
 #include "StyleSheetUtil.h"
@@ -369,8 +370,8 @@ void StyleSheetParserWithCache::importCSS(const std::string &path) {
     std::shared_ptr<InputStream> stream = fileToImport.getInputStream();
 
     if (!stream) {
-        StyleSheetParserWithCache importParser(fileToImport, myPathPrefix, myFontMap,
-                                               myEncryptionMap);
+        StyleSheetParserWithCache importParser(fileToImport, myPathPrefix,
+                                               myFontMap, myEncryptionMap);
         importParser.myProcessedFiles.insert(myProcessedFiles.begin(), myProcessedFiles.end());
         importParser.parseStream(stream);
         myEntries.insert(myEntries.end(),

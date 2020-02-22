@@ -137,13 +137,13 @@ public:
      * 添加视频标签
      * @param tag
      */
-    void addVideoTag(VideoTag &tag);
+    void addVideoTag(const VideoTag &tag);
 
     /**
      * 添加图片标签
      * @param tag
      */
-    void addImageTag(ImageTag &tag);
+    void addImageTag(const ImageTag &tag);
 
     // 添加扩展标签
     void

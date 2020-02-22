@@ -9,7 +9,8 @@
 
 #include "../FormatPlugin.h"
 
-class OebPlugin : FormatPlugin {
+class OebPlugin : public FormatPlugin {
+public:
     OebPlugin();
 
     ~OebPlugin();
@@ -23,6 +24,21 @@ class OebPlugin : FormatPlugin {
 
     bool
     readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) override;
+
+private:
+    /**
+     * 从文件中查找并获取 opf 文件
+     * @param oebFile
+     * @return
+     */
+    static File findOpfFile(const File &oebFile);
+
+    /**
+     * 从文件中查找并获取 epub 文件
+     * @param oebFile
+     * @return
+     */
+    static File findEpubFile(const File &oebFile);
 };
 
 

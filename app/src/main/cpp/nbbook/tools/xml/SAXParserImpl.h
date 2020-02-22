@@ -8,7 +8,6 @@
 
 #include <expat/expat.h>
 #include "../../filesystem/File.h"
-#include "SAXHandler.h"
 #include "SAXParser.h"
 
 class SAXParserImpl : public SAXParser {
@@ -38,6 +37,9 @@ private:
 
     // 解析缓冲区数据
     bool parseBuffer(const char *buffer, std::size_t len);
+
+    // 检查状态
+    bool checkState();
 
 private:
     // xml 解析器

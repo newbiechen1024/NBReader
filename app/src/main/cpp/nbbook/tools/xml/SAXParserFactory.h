@@ -15,7 +15,7 @@ class SAXParserFactory {
 
 public:
     static std::shared_ptr<SAXParser> getParser() {
-        return std::make_shared<SAXParserImpl>();;
+        return std::make_shared<SAXParserImpl>();
     }
 
 private:

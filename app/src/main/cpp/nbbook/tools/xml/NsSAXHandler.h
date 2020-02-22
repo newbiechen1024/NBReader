@@ -8,7 +8,6 @@
 
 
 #include "SAXHandler.h"
-#include "../../../../../../../../../../Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include/c++/v1/string"
 
 class NsSAXHandler : public SAXHandler {
 
@@ -25,10 +24,9 @@ public:
         return std::string();
     }
 
-protected:
-    virtual void startNamespace(std::string &prefix, std::string &uri);
+    void startNamespace(std::string &prefix, std::string &uri) override;
 
-    virtual void endNamespace(std::string &prefix);
+    void endNamespace(std::string &prefix) override;
 
 private:
     // 存储 namespace 的容器

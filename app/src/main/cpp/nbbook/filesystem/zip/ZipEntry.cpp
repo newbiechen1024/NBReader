@@ -10,6 +10,7 @@
 
 ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
     File zipFile = File(path);
+
     mLastModifiedTime = zipFile.lastModified();
 
     std::shared_ptr<InputStream> inputStream = zipFile.getInputStream();
@@ -17,6 +18,7 @@ ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
     if (!inputStream->open()) {
         return;
     }
+
     ZipItemHeader itemHeader;
     // 从 stream 中循环读取一个 ZipItemHeader
     while (ZipHeaderDetector::readItemHeader(*inputStream, itemHeader)) {
@@ -28,10 +30,12 @@ ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
             // 读取 item name
             if ((unsigned int) inputStream->read((char *) itemName.data(), itemHeader.nameLength) ==
                 itemHeader.nameLength) {
-                // todo ==> 一定要经过 jstring 去处理吗，直接获取的文本有问题?
-                itemName = AndroidUtil::convertNonUtfString(itemName);
+
+                // todo ==> 一定要经过 jstring 去处理吗，直接获取的文本有问题?，暂时屏蔽，等出问题再说
+                // itemName = AndroidUtil::convertNonUtfString(itemName);
                 // 从 map 中获取 itemName，如果 name 不存在则会创建一个默认的 itemInfo
                 // 获取这个默认 itemInfo 的引用
+                // itemName 拿到的应该是文件在 zip 中的路径，如 path/file，不单单是名字
                 ZipItemInfo &info = mItemMap[itemName];
 
                 info.offset = inputStream->offset() + itemHeader.extraLength;

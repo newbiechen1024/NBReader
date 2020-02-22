@@ -1,19 +1,29 @@
 // author : newbiechen
 // date : 2019-09-22 19:48
 // description : 
-//
+// 压缩包处理方案：
 
 #include "File.h"
-#include "FileSystem.h"
 #include "../util/StringUtil.h"
 #include "../util/UnicodeUtil.h"
 #include "zip/ZipInputStream.h"
 #include "io/FileInputStream.h"
 #include "zip/ZipFileDir.h"
 
-File::File(const std::string &path) : mPath(path), mArchiveType(NONE) {
+const File File::NO_FILE;
+
+File::File() : isInitFileStat(true) {
+}
+
+File::File(const std::string &path) : mPath(path), mName(""), mFullName(""),
+                                      mExtension(""), mArchiveType(NONE) {
     // 标准化地址
     FileSystem::getInstance().normalize(mPath);
+
+    if (mPath.empty()) {
+        return;
+    }
+
     // 查找文件名的前缀
     size_t lastNameIndex = FileSystem::getInstance().findLastNameDelimiter(mPath);
 
@@ -89,15 +99,16 @@ FileStat &File::getFileStat() {
 
     if (dir != nullptr) {
         std::string itemName = mPath.substr(index + 1);
+        // TODO:返回的是压缩文件的压缩包信息，不是实际的压缩文件信息。因为获取压缩文件信息，每次都需要对压缩包进行解析处理，太麻烦了。
+        // TODO:这个之后的想一个办法解决。
         mFileStat = archive.getFileStat();
         mFileStat.isDirectory = false;
         mFileStat.exists = false;
         std::vector<std::string> items;
         dir->readFileNames(items);
 
-        // 如果 zip 目录中存在的文件与当前":"对应的文件名相同
-        for (std::vector<std::string>::const_iterator it = items.begin();
-             it != items.end(); ++it) {
+        // 如果 zip 目录中存在的文件与当前 ":" 对应的文件名相同
+        for (auto it = items.begin(); it != items.end(); ++it) {
             if (*it == itemName) {
                 mFileStat.exists = true;
                 break;
@@ -123,6 +134,14 @@ bool File::mkdirs() const {
     return FileSystem::getInstance().createDirectory(mPath);
 }
 
+const std::string File::getArchivePkgPath() const {
+    const int index = FileSystem::getInstance().findArchiveNameDelimiter(mPath);
+    if (index == -1) {
+        return std::string();
+    }
+    return mPath.substr(0, index);
+}
+
 std::shared_ptr<FileDir> File::getDirectory() const {
     if (!exists()) {
         return nullptr;
@@ -136,7 +155,6 @@ std::shared_ptr<FileDir> File::getDirectory() const {
     } else {
         return nullptr;
     }
-
 }
 
 // TODO:暂时不处理加密相关逻辑

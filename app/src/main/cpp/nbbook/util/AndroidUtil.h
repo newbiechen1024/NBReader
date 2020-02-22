@@ -51,8 +51,8 @@ public:
     static std::string toCString(JNIEnv *env, jstring from);
 
     static jstring toJString(JNIEnv *env, const std::string &str);
-
-    static std::string convertNonUtfString(const std::string &str);
+/*
+    static std::string convertNonUtfString(const std::string &str);*/
 
 /*    static jintArray createJavaIntArray(JNIEnv *env, const std::vector<jint> &data);
 

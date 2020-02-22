@@ -38,7 +38,7 @@ public:
      */
     void setBookResource(const std::string &bookPath);
 
-    std::string getPath() const {
+    const std::string &getPath() const {
         return mPath;
     }
 
@@ -80,6 +80,9 @@ protected:
     bool detectEncoding(std::string &outEncoding);
 
     // 提供子类写入缓冲的方法
+    File &getBookFile() {
+        return *mFilePtr;
+    }
 
 private:
     // 读取文本缓存
@@ -90,6 +93,8 @@ public:
     static std::string CHAPTER_PROLOGUE_TITLE;
 
 protected:
+    // TODO:通过 get 拿更好吧，protected 容易出错
+
     // 书籍路径
     std::string mPath;
     // 书籍名
@@ -100,6 +105,7 @@ protected:
     std::string mLanguage;
     // 章节列表
     std::vector<TextChapter> mChapterList;
+    // TODO:作者信息
 
     // 文件指针
     File *mFilePtr;

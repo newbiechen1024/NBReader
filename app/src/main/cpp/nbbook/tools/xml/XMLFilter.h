@@ -18,7 +18,7 @@ public:
      */
     NsXMLFilter(const std::string &nsUrl, const std::string &attrName);
 
-    bool accept(const NsSAXHandler &handler, const char *patternName) const;
+    virtual bool accept(const NsSAXHandler &handler, const char *patternName) const;
 
     /**
      *
@@ -26,17 +26,13 @@ public:
      * @param checkName：待检测的名字
      * @return
      */
-    bool accept(const NsSAXHandler &handler, const std::string &patternName) const;
+    virtual bool accept(const NsSAXHandler &handler, const std::string &patternName) const;
 
     std::string pattern(const NsSAXHandler &handler, const Attributes &attrs) const;
 
 
     const std::string &getAttributetName() {
         return mAttrName;
-    }
-
-    bool operator==() {
-
     }
 
 private:

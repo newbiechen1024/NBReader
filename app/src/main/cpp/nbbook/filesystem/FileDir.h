@@ -15,7 +15,13 @@ public:
     ~FileDir() {
     }
 
-    // 获取目录下的文件名
+    /**
+     * 获取目录下的文件名
+     * 如：path/xxx，得 xxx
+     * 对于 zip dir 返回的应该是子目录
+     * 如：xxx.zip 文件，包含 path/test 这个文件，得到的 name 就是 path/test
+     * @param names
+     */
     void readFileNames(std::vector<std::string> &names) const;
 
     // 获取文件路径
@@ -31,6 +37,11 @@ public:
 protected:
     FileDir(const std::string &path);
 
+    /**
+     * 读取目录下的文件路径
+     * @param paths：
+     * @param fullPath：是否是完整的路径
+     */
     virtual void readFilePaths(std::vector<std::string> &paths, bool fullPath) const = 0;
 
     virtual std::string getSeparator() const;

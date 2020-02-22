@@ -17,7 +17,9 @@ public:
 
 public:
     // 获取参数个数
-    size_t getLength() const;
+    size_t getLength() const {
+        return length;
+    }
 
     std::string getKey(int index) const;
 
@@ -49,14 +51,16 @@ public:
     }
 
     ~SAXHandler() {
-
     }
 
     bool isInterrupt() {
         return isInterrupted;
     }
 
-protected:
+    // 停止解析
+    void interrupt() {
+        isInterrupted = true;
+    }
 
     virtual void startDocument() {};
 
@@ -93,12 +97,7 @@ protected:
 private:
     bool isInterrupted;
 
-    // 停止解析
-    void interrupt() {
-        isInterrupted = true;
-    }
-
-    friend SAXParserImpl;
+    friend SAXParser;
 };
 
 #endif //NBREADER_SAXHANDLER_H

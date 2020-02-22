@@ -87,7 +87,7 @@ private:
     unsigned char myVerticalAlignCode;
     TextDisplayCode myDisplayCode;
 
-    friend class ZLTextModel;
+    friend class TextEncoder;
 };
 
 inline TextStyleTag::TextStyleTag(TextTagType styleType) : myEntryKind(styleType),

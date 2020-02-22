@@ -11,4 +11,5 @@ import com.newbiechen.nbreader.ui.component.book.type.BookType
 
 class OEBNativePlugin(bookType: BookType) :
     NativeFormatPlugin(bookType) {
+    // 获取封面，获取作者信息，等
 }
