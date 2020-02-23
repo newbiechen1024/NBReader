@@ -11,11 +11,11 @@ NsXMLFilter::NsXMLFilter(const std::string &nsUrl, const std::string &attrName) 
                                                                                           attrName) {
 }
 
-bool NsXMLFilter::accept(const NsSAXHandler &handler, const char *checkName) const {
+bool NsXMLFilter::accept(const BaseHandler &handler, const char *checkName) const {
     return accept(handler, std::string(checkName));
 }
 
-bool NsXMLFilter::accept(const NsSAXHandler &handler, const std::string &patternName) const {
+bool NsXMLFilter::accept(const BaseHandler &handler, const std::string &patternName) const {
     const std::size_t index = patternName.find(':');
     const std::string namespaceId =
             index == std::string::npos ? std::string() : patternName.substr(0, index);
@@ -26,7 +26,7 @@ bool NsXMLFilter::accept(const NsSAXHandler &handler, const std::string &pattern
            && handler.getNamespaceUrl(namespaceId) == mNsUrl;
 }
 
-std::string NsXMLFilter::pattern(const NsSAXHandler &handler, const Attributes &attrs) const {
+std::string NsXMLFilter::pattern(const BaseHandler &handler, const Attributes &attrs) const {
     size_t attrsCount = attrs.getLength();
     std::string attr;
 

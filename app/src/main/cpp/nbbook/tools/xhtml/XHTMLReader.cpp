@@ -46,7 +46,7 @@ class XHTMLSvgImageFilter : public NsXMLFilter {
 public:
     XHTMLSvgImageFilter();
 
-    bool accept(const NsSAXHandler &handler, const char *patternName) const override;
+    bool accept(const BaseHandler &handler, const char *patternName) const override;
 
 private:
     bool myIsEnabled;
@@ -58,7 +58,7 @@ XHTMLSvgImageFilter::XHTMLSvgImageFilter() : NsXMLFilter(
         XMLNamespace::XLink, "href"), myIsEnabled(false) {
 }
 
-bool XHTMLSvgImageFilter::accept(const NsSAXHandler &handler, const char *name) const {
+bool XHTMLSvgImageFilter::accept(const BaseHandler &handler, const char *name) const {
     return myIsEnabled && NsXMLFilter::accept(handler, name);
 }
 

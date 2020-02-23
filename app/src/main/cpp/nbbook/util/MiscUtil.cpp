@@ -43,7 +43,7 @@ TextKind MiscUtil::referenceType(const std::string &link) {
 
 std::string MiscUtil::htmlDirectoryPrefix(const std::string &fileName) {
     File file(fileName);
-    std::string shortName = file.getName();
+    std::string shortName = file.getFullName();
     std::string path = file.getPath();
     int index = -1;
     // 如果路路径类似 prefixName:shortName 的情况

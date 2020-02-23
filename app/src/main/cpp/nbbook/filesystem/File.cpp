@@ -1,7 +1,8 @@
 // author : newbiechen
 // date : 2019-09-22 19:48
 // description : 
-// 压缩包处理方案：
+// 1. 对于在压缩包内的文件路径，xxx.zip/path/file 不作为压缩文件，只有压缩包的才是压缩文件。
+// 2. 如果 xxx.zip/path/file 是压缩包内的文件，获取文件信息的时候，会先获取 zip 压缩包，再从压缩包中认证该 file 的 FileStat 信息
 
 #include "File.h"
 #include "../util/StringUtil.h"
@@ -9,14 +10,21 @@
 #include "zip/ZipInputStream.h"
 #include "io/FileInputStream.h"
 #include "zip/ZipFileDir.h"
+#include "FileSystem.h"
 
 const File File::NO_FILE;
+
+static const std::string SUFFIX_ZIP = ".zip";
+static const std::string SUFFIX_GZIP = ".gz";
+
 
 File::File() : isInitFileStat(true) {
 }
 
 File::File(const std::string &path) : mPath(path), mName(""), mFullName(""),
                                       mExtension(""), mArchiveType(NONE) {
+    isInitFileStat = false;
+
     // 标准化地址
     FileSystem::getInstance().normalize(mPath);
 
@@ -36,21 +44,28 @@ File::File(const std::string &path) : mPath(path), mName(""), mFullName(""),
 
     mName = mFullName;
 
-    // 将文件名，转换为小写
-    std::string lowerCaseName = UnicodeUtil::toLower(mFullName);
+    // 从缓存中判断该 path 是否被强转
+    ArchiveType forceFileType = FileSystem::getInstance().getForceArchiveFile(mPath);
 
-    // 判断是否是 gz
-    if (StringUtil::endsWith(lowerCaseName, SUFFIX_GZIP)) {
-        int endLength = SUFFIX_GZIP.length();
-        mName = mFullName.substr(0, mFullName.length() - endLength);
-        mArchiveType = static_cast<ArchiveType>(mArchiveType | GZIP);
+    if (forceFileType != NONE) {
+        mArchiveType = forceFileType;
+    } else {
+        // 将文件名，转换为小写
+        std::string lowerCaseName = UnicodeUtil::toLower(mFullName);
 
-        lowerCaseName = lowerCaseName.substr(0, lowerCaseName.length() - endLength);
-    }
+        // 判断是否是 gz
+        if (StringUtil::endsWith(lowerCaseName, SUFFIX_GZIP)) {
+            int endLength = SUFFIX_GZIP.length();
+            mName = mFullName.substr(0, mFullName.length() - endLength);
+            mArchiveType = static_cast<ArchiveType>(mArchiveType | GZIP);
 
-    // 判断是否是 zip
-    if (StringUtil::endsWith(lowerCaseName, SUFFIX_ZIP)) {
-        mArchiveType = static_cast<ArchiveType>(mArchiveType | ZIP);
+            lowerCaseName = lowerCaseName.substr(0, lowerCaseName.length() - endLength);
+        }
+
+        // 判断是否是 zip
+        if (StringUtil::endsWith(lowerCaseName, SUFFIX_ZIP)) {
+            mArchiveType = static_cast<ArchiveType>(mArchiveType | ZIP);
+        }
     }
 
     // 如果是压缩格式，一般 extension 为 null
@@ -102,6 +117,7 @@ FileStat &File::getFileStat() {
         // TODO:返回的是压缩文件的压缩包信息，不是实际的压缩文件信息。因为获取压缩文件信息，每次都需要对压缩包进行解析处理，太麻烦了。
         // TODO:这个之后的想一个办法解决。
         mFileStat = archive.getFileStat();
+        // todo：这个 size 能不能是单独文件的 size？
         mFileStat.isDirectory = false;
         mFileStat.exists = false;
         std::vector<std::string> items;
@@ -157,6 +173,12 @@ std::shared_ptr<FileDir> File::getDirectory() const {
     }
 }
 
+void File::forceArchiveType(ArchiveType type) const {
+    mArchiveType = type;
+    // 将强转为压缩文件的路径添加到缓存中
+    FileSystem::getInstance().addForceArchiveFile(mPath, type);
+}
+
 // TODO:暂时不处理加密相关逻辑
 std::shared_ptr<InputStream>
 File::getInputStream(std::shared_ptr<EncryptionMap> encryptionMap) const {
@@ -177,7 +199,7 @@ File::getInputStream(std::shared_ptr<EncryptionMap> encryptionMap) const {
         const std::string baseName = mPath.substr(0, index);
         const File baseFile(baseName);
         std::shared_ptr<InputStream> base = baseFile.getInputStream();
-        if (base == nullptr) {
+        if (base != nullptr) {
             // 如果是 zip 压缩格式
             if (baseFile.mArchiveType & ZIP) {
                 std::shared_ptr<ZipInputStream> zipInputStream(

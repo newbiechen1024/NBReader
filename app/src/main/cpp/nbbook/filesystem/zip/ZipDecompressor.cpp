@@ -4,6 +4,7 @@
 //
 
 #include "ZipDecompressor.h"
+#include "../../util/Logger.h"
 
 const std::size_t IN_BUFFER_SIZE = 2048;
 const std::size_t OUT_BUFFER_SIZE = 32768;
@@ -31,10 +32,10 @@ size_t ZipDecompressor::decompress(InputStream &stream, char *buffer, size_t max
     while (mBuffer.length() < maxSize && mAvailableSize > 0) {
         // 设置读取数据的大小
         std::size_t size = std::min(mAvailableSize, (std::size_t) IN_BUFFER_SIZE);
-        // 待解析的数据
-        mZStream->next_in = (Bytef *) mInBuffer;
         // 待解析的数据大小
         mZStream->avail_in = stream.read(mInBuffer, size);
+        // 待解析的数据
+        mZStream->next_in = (Bytef *) mInBuffer;
         if (mZStream->avail_in == size) {
             mAvailableSize -= size;
         } else {
@@ -50,13 +51,11 @@ size_t ZipDecompressor::decompress(InputStream &stream, char *buffer, size_t max
             mZStream->avail_out = OUT_BUFFER_SIZE;
             // 输出数据缓冲
             mZStream->next_out = (Bytef *) mOutBuffer;
-
             int code = ::inflate(mZStream, Z_SYNC_FLUSH);
             // 判断是否解析出错
             if (code != Z_OK && code != Z_STREAM_END) {
                 break;
             }
-            //
             if (OUT_BUFFER_SIZE != mZStream->avail_out) {
                 mBuffer.append(mOutBuffer, OUT_BUFFER_SIZE - mZStream->avail_out);
             }

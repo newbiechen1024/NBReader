@@ -16,7 +16,6 @@ public:
     static void deleteInstance();
 
     ~ZipEntryManager() {
-
     }
 
     std::shared_ptr<ZipEntry> getZipEntry(const std::string &zipPath);
@@ -30,7 +29,8 @@ private:
     int mCacheIndex;
 
     ZipEntryManager() {
-
+        memset(mZipEntryArr, '\0', MAX_CACHE_COUNT);
+        mCacheIndex = 0;
     }
 };
 

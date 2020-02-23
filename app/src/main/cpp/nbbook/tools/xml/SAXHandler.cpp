@@ -7,7 +7,11 @@
 
 Attributes::Attributes(const char **data) : data(data) {
     // 计算元素的长度
-    length = sizeof(data) / sizeof(char *);
+    int count = 0;
+    for (const char **offset = data; *offset != 0; offset += 2) {
+        count++;
+    }
+    length = count;
 }
 
 std::string Attributes::getKey(int index) const {
@@ -27,10 +31,10 @@ std::string Attributes::getValue(int index) const {
 }
 
 std::string Attributes::getValue(const std::string &key) const {
-    const char *value = nullptr;
-    for (int i = 0; i < length; ++i) {
-        value = *(data + i);
-        if (strcmp(value, key.c_str())) {
+    const char *value;
+    for (int i = 0, j = 0; i < length; ++i, j += 2) {
+        value = *(data + j);
+        if (strcmp(value, key.c_str()) == 0) {
             return getValue(i);
         }
     }

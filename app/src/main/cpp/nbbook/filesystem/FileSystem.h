@@ -7,10 +7,12 @@
 #define NBREADER_FILESYSTEM_H
 
 #include <string>
-#include "File.h"
 #include "FileStat.h"
 #include "FileDir.h"
+#include "File.h"
 #include <cstdio>
+
+class File;
 
 class FileSystem {
 public:
@@ -23,6 +25,14 @@ public:
 
     // 对其他 path 进行标准化
     virtual std::string normalizePath(const std::string &path) const = 0;
+
+    File::ArchiveType getForceArchiveFile(const std::string &path) {
+        auto findIt = mForceArchiveCache.find(path);
+        if (findIt != mForceArchiveCache.end()) {
+            return findIt->second;
+        }
+        return File::ArchiveType::NONE;
+    }
 
 protected:
     static FileSystem *sInstance;
@@ -55,9 +65,20 @@ protected:
 
     int findLastNameDelimiter(const std::string &path) const;
 
+private:
+
+    void addForceArchiveFile(const std::string &path, File::ArchiveType type) {
+        mForceArchiveCache.insert(std::make_pair(path, type));
+    }
+
+    // 强制转换为 archive 文件的缓存信息。
+    // TODO:没有想出更好的解决方案，本身需要记录文件地址强转为压缩包的信息。放到文件系统里面缓存还说的过去
+    std::map<std::string, File::ArchiveType> mForceArchiveCache;
+
     friend class File;
 
     friend class FileDir;
+
 };
 
 inline FileSystem &FileSystem::getInstance() {

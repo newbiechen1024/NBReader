@@ -7,7 +7,7 @@
 #define NBREADER_XMLFILTER_H
 
 #include <string>
-#include "NsSAXHandler.h"
+#include "BaseHandler.h"
 
 // 过滤带有 namespace 的 xml 标签
 class NsXMLFilter {
@@ -18,7 +18,7 @@ public:
      */
     NsXMLFilter(const std::string &nsUrl, const std::string &attrName);
 
-    virtual bool accept(const NsSAXHandler &handler, const char *patternName) const;
+    virtual bool accept(const BaseHandler &handler, const char *patternName) const;
 
     /**
      *
@@ -26,9 +26,9 @@ public:
      * @param checkName：待检测的名字
      * @return
      */
-    virtual bool accept(const NsSAXHandler &handler, const std::string &patternName) const;
+    virtual bool accept(const BaseHandler &handler, const std::string &patternName) const;
 
-    std::string pattern(const NsSAXHandler &handler, const Attributes &attrs) const;
+    std::string pattern(const BaseHandler &handler, const Attributes &attrs) const;
 
 
     const std::string &getAttributetName() {

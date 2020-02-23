@@ -78,22 +78,23 @@ class PageController(
         check(isConfigure) {
             "please setConfigure() before open book"
         }
+        LogHelper.i(TAG, "open: $bookType")
 
         // 根据类型获取插件
         mFormatPlugin = mBookPluginFactory.getPlugin(bookType)
-/*        // 设置参数
+        // 设置参数
         mFormatPlugin!!.setConfigure(mCachePath!!, mChapterPattern!!, mInitChapterTitle!!)
         // 打开书籍
-        mFormatPlugin!!.openBook(bookPath)*/
+        mFormatPlugin!!.openBook(bookPath)
 
-/*        // 获取章节信息
+        // 获取章节信息
         var resultChapters = mFormatPlugin!!.getChapters()
 
         if (resultChapters != null) {
             resultChapters!!.forEach {
-                LogHelper.i(TAG, "open: $it")
+                LogHelper.i(TAG, "resultChapters: $it")
             }
-        }*/
+        }
 
 /*        // TODO:TextModel 需要重构，下次再说
 

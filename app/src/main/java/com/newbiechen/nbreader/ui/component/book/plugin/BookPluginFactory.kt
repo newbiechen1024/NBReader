@@ -44,7 +44,6 @@ class BookPluginFactory {
         }
 
         return when (type) {
-            BookType.TXT -> NativeFormatPlugin(type)
             BookType.EPUB -> OEBNativePlugin(type)
             else -> NativeFormatPlugin(type)
         }

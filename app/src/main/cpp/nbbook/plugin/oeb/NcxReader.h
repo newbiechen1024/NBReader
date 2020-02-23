@@ -46,6 +46,10 @@ public:
 public:
     NcxReader();
 
+    const std::string getNcxDirPath() const {
+        return mNcxDirPath;
+    }
+
     /**
      * .ncx 解析后的 order 与对应的 NavPoint 标签节点信息。
      * order 表示优先级
@@ -66,7 +70,7 @@ public:
 private:
     std::map<int, NavPoint> myNavigationMap;
     std::vector<NavPoint> myPointStack;
-
+    std::string mNcxDirPath;
     enum {
         READ_NONE,
         READ_MAP,

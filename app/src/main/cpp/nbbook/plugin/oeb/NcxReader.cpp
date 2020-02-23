@@ -22,6 +22,7 @@
 #include "NcxReader.h"
 #include "../../util/MiscUtil.h"
 #include "../../tools/xml/SAXParserFactory.h"
+#include "../../util/Logger.h"
 
 static const std::string TAG_NAVMAP = "navMap";
 static const std::string TAG_NAVPOINT = "navPoint";
@@ -36,13 +37,14 @@ NcxReader::NcxReader() : myReadState(READ_NONE),
 
 void NcxReader::readFile(const File &ncxFile) {
     auto parser = SAXParserFactory::getParser();
+
+    mNcxDirPath = MiscUtil::htmlDirectoryPrefix(ncxFile.getPath());
     parser->parse(ncxFile, *this);
 }
 
 void
 NcxReader::startElement(std::string &localName, std::string &fullName, Attributes &attributes) {
     std::string tag = localName;
-
     switch (myReadState) {
         case READ_NONE:
             if (TAG_NAVMAP == tag) {

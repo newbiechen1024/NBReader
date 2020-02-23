@@ -8,9 +8,13 @@
 #include "../../tools/xml/SAXParserFactory.h"
 #include "ContainerReader.h"
 #include "../../util/StringUtil.h"
+#include "../../util/Logger.h"
+#include "../../filesystem/FileSystem.h"
 
 static const std::string SUFFIX_OPF = "opf";
+static const std::string EXTENSTION_OPF = ".opf";
 
+static const std::string TAG = "OebPlugin";
 
 // TODO:FBReader OEB 支持的功能，现在暂时不支持
 // readMetadata：作者信息之类的
@@ -22,6 +26,13 @@ OebPlugin::OebPlugin() {
 }
 
 OebPlugin::~OebPlugin() {
+}
+
+void OebPlugin::onInit() {
+    // 获取 opf 文件
+    File opfFile = findOpfFile(getBookFile());
+    // 解析 opf 文件
+    mOpfReader.readFile(opfFile);
 }
 
 File OebPlugin::findOpfFile(const File &oebFile) {
@@ -39,6 +50,7 @@ File OebPlugin::findOpfFile(const File &oebFile) {
     }
 
     const File containerInfoFile(zipDir->fileNameToPath("META-INF/container.xml"));
+
     if (containerInfoFile.exists()) {
         ContainerReader reader;
         reader.readFile(containerInfoFile);
@@ -53,7 +65,7 @@ File OebPlugin::findOpfFile(const File &oebFile) {
     std::vector<std::string> fileNames;
     zipDir->readFileNames(fileNames);
     for (auto it = fileNames.begin(); it != fileNames.end(); ++it) {
-        if (StringUtil::endsWith(*it, ".opf")) {
+        if (StringUtil::endsWith(*it, EXTENSTION_OPF)) {
             return File(zipDir->fileNameToPath(*it));
         }
     }
@@ -79,23 +91,24 @@ bool OebPlugin::readLanguageInternal(std::string &outLanguage) {
 
 bool OebPlugin::readChaptersInternal(std::string &chapterPattern,
                                      std::vector<TextChapter> &chapterList) {
-
-
+    std::string ncxPath =
+            mOpfReader.getOpfDirPath() + mOpfReader.getNcxFileName();
+    File ncxFile(ncxPath);
+    // 根据从 opf 中获取到的信息，获取 .ncx 文件
     NcxReader ncxReader;
-    // 获取书本文件，查找其中的 opf 文件
-    File opfFile = findOpfFile(getBookFile());
     // 读取文件解析，是否需要返回什么东西
-    ncxReader.readFile(opfFile);
+    ncxReader.readFile(ncxFile);
     // 获取 ncv 解析后的数据，导航定位
     auto navPointMap = ncxReader.navigationMap();
-    // 获取压缩包地址
-    std::string archivePkgPath = opfFile.getArchivePkgPath();
-
+    // 获取 ncx 目录地址
+    std::string ncxDirPath = ncxReader.getNcxDirPath();
+    // TODO:不处理副标题问题，直接上层解析。
     // 转换成 TextChapter
     for (auto it = navPointMap.begin(); it != navPointMap.end(); ++it) {
         auto point = (*it).second;
-        // TODO:这个 ":" 应该用一个专门的方法转换会更好吧，暂时先这样。
-        TextChapter chapter(archivePkgPath + ":" + point.ContentHRef, point.Text, 0, -1);
+        TextChapter chapter(ncxDirPath + point.ContentHRef,
+                            point.Text, 0, -1);
+        // 添加到章节目录中
         chapterList.push_back(chapter);
     }
 

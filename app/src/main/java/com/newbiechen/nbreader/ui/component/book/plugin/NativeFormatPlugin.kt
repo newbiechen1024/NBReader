@@ -18,7 +18,7 @@ open class NativeFormatPlugin(private val bookType: BookType) {
 
     init {
         // 在 native 层创建插件，获取插件描述符
-        mNativePluginDesc = createFormatPluginNative(bookType.name)
+        mNativePluginDesc = createFormatPluginNative(bookType.name.toLowerCase())
     }
 
     /**

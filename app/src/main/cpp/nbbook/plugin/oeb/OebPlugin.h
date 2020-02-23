@@ -8,22 +8,10 @@
 
 
 #include "../FormatPlugin.h"
+#include "OpfReader.h"
+#include <string>
 
 class OebPlugin : public FormatPlugin {
-public:
-    OebPlugin();
-
-    ~OebPlugin();
-
-    bool readEncodingInternal(std::string &outEncoding) override;
-
-    bool readLanguageInternal(std::string &outLanguage) override;
-
-    bool readChaptersInternal(std::string &chapterPattern,
-                              std::vector<TextChapter> &chapterList) override;
-
-    bool
-    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) override;
 
 private:
     /**
@@ -39,6 +27,28 @@ private:
      * @return
      */
     static File findEpubFile(const File &oebFile);
+
+public:
+    OebPlugin();
+
+    ~OebPlugin();
+
+protected:
+    void onInit() override;
+
+    bool readEncodingInternal(std::string &outEncoding) override;
+
+    bool readLanguageInternal(std::string &outLanguage) override;
+
+    bool readChaptersInternal(std::string &chapterPattern,
+                              std::vector<TextChapter> &chapterList) override;
+
+    bool
+    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) override;
+
+private:
+    OpfReader mOpfReader;
+
 };
 
 

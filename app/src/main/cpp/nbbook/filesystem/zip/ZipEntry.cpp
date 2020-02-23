@@ -7,6 +7,7 @@
 #include "ZipItemHeader.h"
 #include "../File.h"
 #include "../../util/AndroidUtil.h"
+#include "../../util/Logger.h"
 
 ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
     File zipFile = File(path);
@@ -18,7 +19,6 @@ ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
     if (!inputStream->open()) {
         return;
     }
-
     ZipItemHeader itemHeader;
     // 从 stream 中循环读取一个 ZipItemHeader
     while (ZipHeaderDetector::readItemHeader(*inputStream, itemHeader)) {
@@ -50,6 +50,7 @@ ZipEntry::ZipEntry(const std::string &path) : mPath(path) {
             infoPtr->uncompressedSize = itemHeader.uncompressedSize;
         }
     }
+
     // 关闭流
     inputStream->close();
 }
@@ -62,8 +63,10 @@ void ZipEntry::readItemNames(std::vector<std::string> &names) const {
 }
 
 ZipItemInfo ZipEntry::getItemInfo(const std::string &itemName) const {
+    size_t size = mItemMap.size();
+
     std::map<std::string, ZipItemInfo>::const_iterator it = mItemMap.find(itemName);
-    return (it != mItemMap.end()) ? it->second : ZipItemInfo();
+    return it != mItemMap.end() ? it->second : ZipItemInfo();
 }
 
 bool ZipEntry::isValid() const {

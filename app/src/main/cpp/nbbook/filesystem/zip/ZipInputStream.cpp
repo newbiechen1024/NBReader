@@ -34,6 +34,10 @@ bool ZipInputStream::open() {
         close();
         return false;
     }
+
+    // 将输入流指针跳转到要解压的数据位
+    mInputStream->seek(itemInfo.offset, true);
+
     if (itemInfo.compressionMethod == 0) {
         isDeflated = false;
     } else if (itemInfo.compressionMethod == 8) {

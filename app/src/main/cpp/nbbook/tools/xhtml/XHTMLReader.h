@@ -32,7 +32,7 @@
 #include "../../reader/text/tag/VideoTag.h"
 #include "XHTMLTag.h"
 #include "../xml/SAXParser.h"
-#include "../xml/NsSAXHandler.h"
+#include "../xml/BaseHandler.h"
 #include "../xml/XMLFilter.h"
 
 class BookEncoder;
@@ -72,7 +72,7 @@ protected:
     static void endParagraph(XHTMLReader &reader);
 };
 
-class XHTMLReader : public NsSAXHandler {
+class XHTMLReader : public BaseHandler {
 
 public:
     struct TagData {

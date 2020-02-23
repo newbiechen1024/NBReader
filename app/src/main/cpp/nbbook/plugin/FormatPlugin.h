@@ -60,6 +60,10 @@ public:
      */
     bool readChapterContent(TextChapter &txtChapter, char **outBuffer, size_t *outSize);
 
+protected:
+    // 初始化书籍完成回调
+    virtual void onInit();
+
     virtual bool readEncodingInternal(std::string &outEncoding) = 0;
 
     virtual bool readLanguageInternal(std::string &outLanguage) = 0;
@@ -72,6 +76,12 @@ public:
 
     // todo:读取源信息，暂不实现
     // virtual bool readMetaInfo() = 0;
+
+    // 读取作者
+    // virtual bool readAuthor() = 0;
+
+    // 读取封面
+    // virtual bool readCover() = 0;
 protected:
     // 探测语言
     bool detectLanguage(std::string &outLanguage);

@@ -13,12 +13,11 @@
 #include "io/FileOutputStream.h"
 #include "io/InputStream.h"
 #include "../tools/drm/FileEncryptionInfo.h"
-#include "FileSystem.h"
 
 class File {
-
 public:
     static const File NO_FILE;
+
 public:
     // 压缩类型
     enum ArchiveType {
@@ -29,9 +28,7 @@ public:
         ARCHIVE = 0xff00,
     };
 
-    const std::string SUFFIX_ZIP = ".zip";
-    const std::string SUFFIX_GZIP = ".gz";
-
+public:
     File();
 
     File(const std::string &path);
@@ -124,9 +121,7 @@ public:
      * 将 File 强制转化成压缩包类型
      * @param type
      */
-    void forceArchiveType(ArchiveType type) const {
-        mArchiveType = type;
-    }
+    void forceArchiveType(ArchiveType type) const;
 
     std::shared_ptr<FileDir> getDirectory() const;
 

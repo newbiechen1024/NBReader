@@ -44,6 +44,10 @@ void FormatPlugin::setBookResource(Book &book) {
     // TODO: configure 与 book resource 读取三级缓存的问题，需要考虑一下，不过现在不实现。
 
     // TODO：三级缓存信息存在过期可能，需要判断处理。
+
+
+    // 通知书籍初始化成功
+    onInit();
 }
 
 void FormatPlugin::setBookResource(const std::string &bookPath) {
@@ -77,6 +81,13 @@ void FormatPlugin::setBookResource(const std::string &bookPath) {
     mTitle = mFilePtr->getName();
 
     // TODO:从二级缓存中获取数据。
+
+    // 通知书籍初始化成功
+    onInit();
+}
+
+void FormatPlugin::onInit() {
+    // 不处理
 }
 
 bool FormatPlugin::readEncoding(std::string &outEncoding) {
