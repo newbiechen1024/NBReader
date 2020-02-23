@@ -1,6 +1,10 @@
 # NBReader
 
-参考 FBReader 的书籍阅读器。(当前只是半成品)
+参考 FBReader 的书籍阅读器。(当前只是半成品，仅支持 arm-v7a 架构)
+
+当前支持书籍格式：epub、txt
+
+文本编码格式：暂时只支持 utf-8，gbk 编码解析有点问题
 
 ## NBReader 大致框架
 

@@ -170,8 +170,8 @@ bool FormatPlugin::detectEncoding(std::string &outEncoding) {
         return false;
     }
 
-    // 选取 1 KB 的数据
-    const int BUFF_SIZE = 1024;
+    // 选取 3 KB 的数据 (发现选 1 KB 的数据容易出错)
+    const int BUFF_SIZE = 1024 * 3;
 
     char *buffer = new char[BUFF_SIZE]();
 
