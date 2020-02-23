@@ -1,7 +1,9 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.textstyle
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextSizeUnit
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
 import java.util.HashMap
 
 /**
@@ -54,16 +56,16 @@ class TextDecoratedStyleDescription(
 
     fun getFontSize(metrics: TextMetrics, defaultFontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_FONT_SIZE]) ?: return defaultFontSize
-        return TextStyleEntry.compute(
-            length, metrics, defaultFontSize, TextStyleEntry.Feature.LENGTH_FONT_SIZE
+        return TextStyleTag.compute(
+            length, metrics, defaultFontSize, TextFeature.LENGTH_FONT_SIZE
         )
     }
 
     fun getVerticalAlign(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_VERTICAL_ALIGN]) ?: return base
-        return TextStyleEntry.compute(
+        return TextStyleTag.compute(
             // TODO: add new length for vertical alignment
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_FONT_SIZE
+            length, metrics, fontSize, TextFeature.LENGTH_FONT_SIZE
         )
     }
 
@@ -74,15 +76,15 @@ class TextDecoratedStyleDescription(
 
     fun getLeftMargin(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_MARGIN_LEFT]) ?: return base
-        return base + TextStyleEntry.compute(
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_MARGIN_LEFT
+        return base + TextStyleTag.compute(
+            length, metrics, fontSize, TextFeature.LENGTH_MARGIN_LEFT
         )
     }
 
     fun getRightMargin(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_MARGIN_RIGHT]) ?: return base
-        return base + TextStyleEntry.compute(
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_MARGIN_RIGHT
+        return base + TextStyleTag.compute(
+            length, metrics, fontSize, TextFeature.LENGTH_MARGIN_RIGHT
         )
     }
 
@@ -96,22 +98,22 @@ class TextDecoratedStyleDescription(
 
     fun getFirstLineIndent(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_TEXT_INDENT]) ?: return base
-        return TextStyleEntry.compute(
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_FIRST_LINE_INDENT
+        return TextStyleTag.compute(
+            length, metrics, fontSize, TextFeature.LENGTH_FIRST_LINE_INDENT
         )
     }
 
     fun getSpaceBefore(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_MARGIN_TOP]) ?: return base
-        return TextStyleEntry.compute(
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_SPACE_BEFORE
+        return TextStyleTag.compute(
+            length, metrics, fontSize, TextFeature.LENGTH_SPACE_BEFORE
         )
     }
 
     fun getSpaceAfter(metrics: TextMetrics, base: Int, fontSize: Int): Int {
         val length = parseLength(valueMap[ATTR_MARGIN_BOTTOM]) ?: return base
-        return TextStyleEntry.compute(
-            length, metrics, fontSize, TextStyleEntry.Feature.LENGTH_SPACE_AFTER
+        return TextStyleTag.compute(
+            length, metrics, fontSize, TextFeature.LENGTH_SPACE_AFTER
         )
     }
 
@@ -179,57 +181,57 @@ class TextDecoratedStyleDescription(
     private val ourCache = HashMap<String, Any>()
     private val ourNullObject = Any()
 
-    private fun parseLength(value: String?): TextStyleEntry.Length? {
+    private fun parseLength(value: String?): TextStyleTag.Length? {
         if (value == null || value.isEmpty()) {
             return null
         }
 
         val cached = ourCache[value]
         if (cached != null) {
-            return if (cached === ourNullObject) null else cached as TextStyleEntry.Length?
+            return if (cached === ourNullObject) null else cached as TextStyleTag.Length?
         }
 
-        var length: TextStyleEntry.Length? = null
+        var length: TextStyleTag.Length? = null
         try {
             when {
-                value.endsWith("%") -> length = TextStyleEntry.Length(
+                value.endsWith("%") -> length = TextStyleTag.Length(
                     java.lang.Short.valueOf(value.substring(0, value.length - 1)),
-                    TextStyleEntry.SizeUnit.PERCENT
+                    TextSizeUnit.PERCENT
                 )
-                value.endsWith("rem") -> length = TextStyleEntry.Length(
+                value.endsWith("rem") -> length = TextStyleTag.Length(
                     (100 * java.lang.Double.valueOf(
                         value.substring(
                             0,
                             value.length - 2
                         )
                     )).toShort(),
-                    TextStyleEntry.SizeUnit.REM_100
+                    TextSizeUnit.REM_100
                 )
-                value.endsWith("em") -> length = TextStyleEntry.Length(
+                value.endsWith("em") -> length = TextStyleTag.Length(
                     (100 * java.lang.Double.valueOf(
                         value.substring(
                             0,
                             value.length - 2
                         )
                     )).toShort(),
-                    TextStyleEntry.SizeUnit.EM_100
+                    TextSizeUnit.EM_100
                 )
-                value.endsWith("ex") -> length = TextStyleEntry.Length(
+                value.endsWith("ex") -> length = TextStyleTag.Length(
                     (100 * java.lang.Double.valueOf(
                         value.substring(
                             0,
                             value.length - 2
                         )
                     )).toShort(),
-                    TextStyleEntry.SizeUnit.EX_100
+                    TextSizeUnit.EX_100
                 )
-                value.endsWith("px") -> length = TextStyleEntry.Length(
+                value.endsWith("px") -> length = TextStyleTag.Length(
                     java.lang.Short.valueOf(value.substring(0, value.length - 2)),
-                    TextStyleEntry.SizeUnit.PIXEL
+                    TextSizeUnit.PIXEL
                 )
-                value.endsWith("pt") -> length = TextStyleEntry.Length(
+                value.endsWith("pt") -> length = TextStyleTag.Length(
                     java.lang.Short.valueOf(value.substring(0, value.length - 2)),
-                    TextStyleEntry.SizeUnit.POINT
+                    TextSizeUnit.POINT
                 )
             }
         } catch (e: Exception) {

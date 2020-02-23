@@ -222,7 +222,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
  *
  * control tag 结构：占用 4 字节，格式为 | entry 类型 | 0 | 样式标签 | 是开放标签还是闭合标签 |
  *
- * 1. entry 类型：占用 1 字节
+ * 1. tag 类型：占用 1 字节
  * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过
  * 3. 样式标签：占用 1 字节 ==> 详见 TextParagraph::Type
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
@@ -236,14 +236,22 @@ void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
     *(mCurTagPtr + 3) = isStartTag ? 1 : 0;
 }
 
-
+/**
+ *
+ * @param length：竖直距离
+ *
+ * 1. tag 类型：占用 1 字节
+ * 2. 对齐填充：占用 1 字节
+ * 3. 竖直距离：占用 1 字节
+ * 4. 对齐填充：占用 1 字节
+ */
 void TextEncoder::addFixedHSpace(unsigned char length) {
-/*    myLastEntryStart = myAllocator->allocate(4);
-    *myLastEntryStart = ZLTextParagraphEntry::FIXED_HSPACE_ENTRY;
-    *(myLastEntryStart + 1) = 0;
-    *(myLastEntryStart + 2) = length;
-    *(myLastEntryStart + 3) = 0;
-    myParagraphs.back()->addEntry(myLastEntryStart);
+    mCurTagPtr = mBufferAllocatorPtr->allocate(4);
+    *mCurTagPtr = (char) TextTagType::FIXED_HSPACE;
+    *(mCurTagPtr + 1) = 0;
+    *(mCurTagPtr + 2) = length;
+    *(mCurTagPtr + 3) = 0;
+/*    myParagraphs.back()->addEntry(mCurTagPtr);
     ++myParagraphLengths.back();*/
 }
 
@@ -251,15 +259,30 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
     addStyleTag(tag, tag.fontFamilies(), depth);
 }
 
+
+/**
+ *
+ * @param TextStyleTag：样式信息
+ * @param fontFamilies：字体资源
+ * @param depth：样式的深度
+ *
+ * 1. style 类型：占 1 字节。 style 类型有 StyleCss 和 StyleOther 两种
+ * 2. depth 信息：占 1 字节。 style 深度。
+ * 3. featureMask 信息：占 4 字节。style 包含的样式标记。样式类型详见 TextFeature
+ * 4. 对于 TextFeature 标记的前 9 种类型，是否被标记，如果被标记，则填充样式数值信息：占 4 字节。
+ * 5. 对于 TextFeature 标记的后 3 种类型，是否被标记，如果被标记，则填充样式数值信息：占 2 字节。
+ */
 void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
                               unsigned char depth) {
+    // 基础标记长度
+    std::size_t len = 6; // entry type + feature mask
 
-    std::size_t len = 4; // entry type + feature mask
     for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
         if (tag.isFeatureSupported((TextFeature) i)) {
             len += 4; // each supported length
         }
     }
+
     if (tag.isFeatureSupported(TextFeature::ALIGNMENT_TYPE) ||
         tag.isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
         len += 2;
@@ -271,48 +294,57 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
         len += 2;
     }
 
-/*    myLastEntryStart = myAllocator->allocate(len);
-    char *address = myLastEntryStart;
 
-    *address++ = entry.entryKind();
+    mCurTagPtr = mBufferAllocatorPtr->allocate(len);
+    char *address = mCurTagPtr;
+
+    *address++ = (char) tag.entryKind();
+    *address++ = 0;
     *address++ = depth;
-    address = ZLCachedMemoryAllocator::writeUInt16(address, entry.myFeatureMask);
+    *address++ = 0;
 
-    for (int i = 0; i < ZLTextStyleEntry::NUMBER_OF_LENGTHS; ++i) {
-        if (entry.isFeatureSupported((ZLTextStyleEntry::Feature) i)) {
-            const ZLTextStyleEntry::LengthType &len = entry.myLengths[i];
-            address = ZLCachedMemoryAllocator::writeUInt16(address, len.Size);
-            *address++ = len.Unit;
+    address = TextBufferAllocator::writeUInt16(address, tag.myFeatureMask);
+
+    for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
+        if (tag.isFeatureSupported((TextFeature) i)) {
+            const TextStyleTag::LengthType &len = tag.myLengths[i];
+            address = TextBufferAllocator::writeUInt16(address, len.Size);
+            *address++ = (char) len.Unit;
             *address++ = 0;
         }
     }
-    if (entry.isFeatureSupported(ZLTextStyleEntry::ALIGNMENT_TYPE) ||
-        entry.isFeatureSupported(ZLTextStyleEntry::NON_LENGTH_VERTICAL_ALIGN)) {
-        *address++ = entry.myAlignmentType;
-        *address++ = entry.myVerticalAlignCode;
+
+    if (tag.isFeatureSupported(TextFeature::ALIGNMENT_TYPE) ||
+        tag.isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
+        *address++ = (char) tag.myAlignmentType;
+        *address++ = tag.myVerticalAlignCode;
     }
-    if (entry.isFeatureSupported(ZLTextStyleEntry::FONT_FAMILY)) {
-        address = ZLCachedMemoryAllocator::writeUInt16(address,
-                                                       myFontManager.familyListIndex(fontFamilies));
+
+    if (tag.isFeatureSupported(TextFeature::FONT_FAMILY)) {
+        // TODO:暂时不处理字体信息，设置使用的 family 在资源文件中的索引
+        address = TextBufferAllocator::writeUInt16(address,
+                /*myFontManager.familyListIndex(fontFamilies)*/0);
     }
-    if (entry.isFeatureSupported(ZLTextStyleEntry::FONT_STYLE_MODIFIER)) {
-        *address++ = entry.mySupportedFontModifier;
-        *address++ = entry.myFontModifier;
+
+    if (tag.isFeatureSupported(TextFeature::FONT_STYLE_MODIFIER)) {
+        *address++ = tag.mySupportedFontModifier;
+        *address++ = tag.myFontModifier;
     }
-    // --- writing entry
+/*    // --- writing entry
 
     myParagraphs.back()->addEntry(myLastEntryStart);
     ++myParagraphLengths.back();*/
 }
 
 void TextEncoder::addStyleCloseTag() {
-/*    myLastEntryStart = myAllocator->allocate(2);
-    char *address = myLastEntryStart;
+    mCurTagPtr = mBufferAllocatorPtr->allocate(2);
 
-    *address++ = ZLTextParagraphEntry::STYLE_CLOSE_ENTRY;
+    char *address = mCurTagPtr;
+
+    *address++ = (char) TextTagType::STYLE_CLOSE;
     *address++ = 0;
 
-    myParagraphs.back()->addEntry(myLastEntryStart);
+/*    myParagraphs.back()->addEntry(myLastEntryStart);
     ++myParagraphLengths.back();*/
 }
 
@@ -331,4 +363,12 @@ void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
     std::memcpy(myLastEntryStart + 6, &ucs2label.front(), len);
     myParagraphs.back()->addEntry(myLastEntryStart);
     ++myParagraphLengths.back();*/
+}
+
+void TextEncoder::addImageTag() {
+
+}
+
+void TextEncoder::addVideoTag() {
+
 }

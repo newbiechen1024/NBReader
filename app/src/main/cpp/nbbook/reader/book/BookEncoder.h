@@ -114,17 +114,17 @@ public:
      * 用于处理内部超链接定位
      * @param label
      */
-    void addInnerLabelResource(const std::string &label);
+    void addInnerLabelTag(const std::string &label);
 
-    void addInnerLabelResource(const std::string &label, int paragraphNumber);
+    void addInnerLabelTag(const std::string &label, int paragraphNumber);
 
     /**
-     * 添加字体资源
+     * 添加字体标签。
      * @param family
      * @param fontEntry
      * @return
      */
-    std::string addFontResource(const std::string &family, std::shared_ptr<FontEntry> fontEntry);
+    std::string addFontTag(const std::string &family, std::shared_ptr<FontEntry> fontEntry);
 
     /**
      * 添加超链接标签
@@ -150,10 +150,10 @@ public:
     addExtensionTag(const std::string &action, const std::map<std::string, std::string> &data);
 
     // TODO：扩展资源标签
-    void addExtensionResource();
+    void addExtResource();
 
     // TODO：书籍扩展资源标签
-    void addExtensionBookResource();
+    void addBookExtResource();
 
 private:
     void insertEndParagraph(TextParagraph::Type type);

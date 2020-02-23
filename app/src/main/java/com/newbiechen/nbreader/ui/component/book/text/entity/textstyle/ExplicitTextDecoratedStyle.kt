@@ -1,26 +1,27 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.textstyle
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.ALIGNMENT_TYPE
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.FONT_STYLE_MODIFIER
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_FIRST_LINE_INDENT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_FONT_SIZE
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_MARGIN_LEFT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_MARGIN_RIGHT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_PADDING_LEFT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_PADDING_RIGHT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_SPACE_AFTER
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_SPACE_BEFORE
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.LENGTH_VERTICAL_ALIGN
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.Feature.NON_LENGTH_VERTICAL_ALIGN
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_BOLD
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_INHERIT
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_ITALIC
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_LARGER
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_SMALLER
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_STRIKEDTHROUGH
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry.FontModifier.FONT_MODIFIER_UNDERLINED
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.ALIGNMENT_TYPE
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.FONT_STYLE_MODIFIER
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_FIRST_LINE_INDENT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_FONT_SIZE
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_MARGIN_LEFT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_MARGIN_RIGHT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_PADDING_LEFT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_PADDING_RIGHT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_SPACE_AFTER
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_SPACE_BEFORE
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.LENGTH_VERTICAL_ALIGN
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature.NON_LENGTH_VERTICAL_ALIGN
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_BOLD
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_INHERIT
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_ITALIC
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_LARGER
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_SMALLER
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_STRIKEDTHROUGH
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFontModifier.FONT_MODIFIER_UNDERLINED
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextSizeUnit
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
 
 /**
  *  author : newbiechen
@@ -30,7 +31,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntr
  *  解释：该样式标记是从标准的书籍(比如，Epub 中包含的 style.css 文件)中获取到的。
  */
 
-class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: TextStyleEntry) :
+class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleTag: TextStyleTag) :
     TextDecoratedStyle(parent) {
 
     private var mTreeParent: TextStyle? = null
@@ -44,7 +45,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
 
     private fun computeTreeParent(): TextStyle {
         // 如果当前样式的深度为 0
-        if (styleEntry.depth == 0.toShort()) {
+        if (styleTag.depth == 0.toByte()) {
             return parent.parent
         }
 
@@ -53,7 +54,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
 
         while (p != p.parent) {
             if (p is ExplicitTextDecoratedStyle) {
-                if (p.styleEntry.depth != styleEntry.depth) {
+                if (p.styleTag.depth != styleTag.depth) {
                     return p
                 }
             } else {
@@ -69,72 +70,72 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
 
     override fun getFontSizeInternal(metrics: TextMetrics): Int {
         val baseFontSize = getTreeParent().getFontSize(metrics)
-        if (styleEntry.isFeatureSupported(FONT_STYLE_MODIFIER)) {
-            if (styleEntry.getFontModifier(FONT_MODIFIER_INHERIT) == true) {
+        if (styleTag.isFeatureSupported(FONT_STYLE_MODIFIER)) {
+            if (styleTag.getFontModifier(FONT_MODIFIER_INHERIT) == true) {
                 return baseFontSize
             }
-            if (styleEntry.getFontModifier(FONT_MODIFIER_LARGER) == true) {
+            if (styleTag.getFontModifier(FONT_MODIFIER_LARGER) == true) {
                 return baseFontSize * 120 / 100
             }
-            if (styleEntry.getFontModifier(FONT_MODIFIER_SMALLER) == true) {
+            if (styleTag.getFontModifier(FONT_MODIFIER_SMALLER) == true) {
                 return baseFontSize * 100 / 120
             }
         }
-        return if (styleEntry.isFeatureSupported(LENGTH_FONT_SIZE)) {
-            styleEntry.getLength(LENGTH_FONT_SIZE, metrics, baseFontSize)
+        return if (styleTag.isFeatureSupported(LENGTH_FONT_SIZE)) {
+            styleTag.getLength(LENGTH_FONT_SIZE, metrics, baseFontSize)
         } else {
             parent.getFontSize(metrics)
         }
     }
 
     override fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_SPACE_BEFORE)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_SPACE_BEFORE)) {
             parent.getSpaceBefore(metrics)
-        } else styleEntry.getLength(LENGTH_SPACE_BEFORE, metrics, fontSize)
+        } else styleTag.getLength(LENGTH_SPACE_BEFORE, metrics, fontSize)
     }
 
     override fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_SPACE_AFTER)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_SPACE_AFTER)) {
             parent.getSpaceAfter(metrics)
-        } else styleEntry.getLength(LENGTH_SPACE_AFTER, metrics, fontSize)
+        } else styleTag.getLength(LENGTH_SPACE_AFTER, metrics, fontSize)
     }
 
     override fun isItalicInternal(): Boolean {
-        val result = styleEntry.getFontModifier(FONT_MODIFIER_ITALIC)
+        val result = styleTag.getFontModifier(FONT_MODIFIER_ITALIC)
         return result ?: parent.isItalic()
     }
 
     override fun isBoldInternal(): Boolean {
-        val result = styleEntry.getFontModifier(FONT_MODIFIER_BOLD)
+        val result = styleTag.getFontModifier(FONT_MODIFIER_BOLD)
         return result ?: parent.isBold()
     }
 
     override fun isUnderlineInternal(): Boolean {
-        val result = styleEntry.getFontModifier(FONT_MODIFIER_UNDERLINED)
+        val result = styleTag.getFontModifier(FONT_MODIFIER_UNDERLINED)
         return result ?: parent.isUnderline()
     }
 
     override fun isStrikeThroughInternal(): Boolean {
-        val result = styleEntry.getFontModifier(FONT_MODIFIER_STRIKEDTHROUGH)
+        val result = styleTag.getFontModifier(FONT_MODIFIER_STRIKEDTHROUGH)
         return result ?: parent.isStrikeThrough()
     }
 
     override fun getVerticalAlignInternal(metrics: TextMetrics, fontSize: Int): Int {
         return when {
-            styleEntry.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleEntry.getLength(
+            styleTag.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleTag.getLength(
                 LENGTH_VERTICAL_ALIGN,
                 metrics,
                 fontSize
             )
-            styleEntry.isFeatureSupported(NON_LENGTH_VERTICAL_ALIGN) -> when (styleEntry.getVerticalAlignCode()) {
+            styleTag.isFeatureSupported(NON_LENGTH_VERTICAL_ALIGN) -> when (styleTag.getVerticalAlignCode()) {
                 // sub
-                0.toByte() -> TextStyleEntry.compute(
-                    TextStyleEntry.Length((-50).toShort(), TextStyleEntry.SizeUnit.EM_100),
+                0.toByte() -> TextStyleTag.compute(
+                    TextStyleTag.Length((-50).toShort(), TextSizeUnit.EM_100),
                     metrics, fontSize, LENGTH_VERTICAL_ALIGN
                 )
                 // super
-                1.toByte() -> TextStyleEntry.compute(
-                    TextStyleEntry.Length(50.toShort(), TextStyleEntry.SizeUnit.EM_100),
+                1.toByte() -> TextStyleTag.compute(
+                    TextStyleTag.Length(50.toShort(), TextSizeUnit.EM_100),
                     metrics, fontSize, LENGTH_VERTICAL_ALIGN
                 )
 
@@ -146,10 +147,10 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
 
     override fun isVerticallyAlignedInternal(): Boolean {
         return when {
-            styleEntry.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleEntry.hasNonZeroLength(
+            styleTag.isFeatureSupported(LENGTH_VERTICAL_ALIGN) -> styleTag.hasNonZeroLength(
                 LENGTH_VERTICAL_ALIGN
             )
-            styleEntry.isFeatureSupported(NON_LENGTH_VERTICAL_ALIGN) -> when (styleEntry.getVerticalAlignCode()) {
+            styleTag.isFeatureSupported(NON_LENGTH_VERTICAL_ALIGN) -> when (styleTag.getVerticalAlignCode()) {
                 0.toByte(), 1.toByte() -> true
                 else -> false
             }
@@ -158,10 +159,10 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_MARGIN_LEFT)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_MARGIN_LEFT)) {
             parent.getLeftMargin(metrics)
         } else {
-            getTreeParent().getLeftMargin(metrics) + styleEntry.getLength(
+            getTreeParent().getLeftMargin(metrics) + styleTag.getLength(
                 LENGTH_MARGIN_LEFT,
                 metrics,
                 fontSize
@@ -170,10 +171,10 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_MARGIN_RIGHT)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_MARGIN_RIGHT)) {
             parent.getRightMargin(metrics)
         } else {
-            getTreeParent().getRightMargin(metrics) + styleEntry.getLength(
+            getTreeParent().getRightMargin(metrics) + styleTag.getLength(
                 LENGTH_MARGIN_RIGHT,
                 metrics,
                 fontSize
@@ -182,9 +183,9 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_PADDING_LEFT)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_PADDING_LEFT)) {
             parent.getLeftPadding(metrics)
-        } else getTreeParent().getLeftPadding(metrics) + styleEntry.getLength(
+        } else getTreeParent().getLeftPadding(metrics) + styleTag.getLength(
             LENGTH_PADDING_LEFT,
             metrics,
             fontSize
@@ -192,9 +193,9 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_PADDING_RIGHT)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_PADDING_RIGHT)) {
             parent.getRightPadding(metrics)
-        } else getTreeParent().getRightPadding(metrics) + styleEntry.getLength(
+        } else getTreeParent().getRightPadding(metrics) + styleTag.getLength(
             LENGTH_PADDING_RIGHT,
             metrics,
             fontSize
@@ -202,9 +203,9 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return if (!styleEntry.isFeatureSupported(LENGTH_FIRST_LINE_INDENT)) {
+        return if (!styleTag.isFeatureSupported(LENGTH_FIRST_LINE_INDENT)) {
             parent.getFirstLineIndent(metrics)
-        } else styleEntry.getLength(LENGTH_FIRST_LINE_INDENT, metrics, fontSize)
+        } else styleTag.getLength(LENGTH_FIRST_LINE_INDENT, metrics, fontSize)
     }
 
     override fun getLineSpacePercentInternal(): Int {
@@ -212,8 +213,8 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleEntry: Text
     }
 
     override fun getAlignment(): Byte {
-        return if (styleEntry.isFeatureSupported(ALIGNMENT_TYPE)) {
-            styleEntry.getAlignmentType()
+        return if (styleTag.isFeatureSupported(ALIGNMENT_TYPE)) {
+            styleTag.getAlignmentType()
         } else {
             parent.getAlignment()
         }

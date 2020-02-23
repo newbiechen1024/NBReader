@@ -117,5 +117,6 @@ bool OebPlugin::readChaptersInternal(std::string &chapterPattern,
 
 bool OebPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer,
                                            size_t *outSize) {
+    // 获取 xhtml 解析器
     return false;
 }

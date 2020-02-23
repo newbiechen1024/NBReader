@@ -6,7 +6,6 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.ByteToDataUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
-import java.lang.IndexOutOfBoundsException
 
 /**
  *  author : newbiechen
@@ -234,6 +233,16 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
                     // 处理段落标签
                     textTag = readParagraphTag()
                 }
+                TextTagType.STYLE_CSS,
+                TextTagType.STYLE_OTHER -> {
+                    textTag = readStyleTag(tagType)
+                }
+                TextTagType.STYLE_CLOSE -> {
+                    textTag = readStyleCloseTag()
+                }
+                TextTagType.FIXED_HSPACE -> {
+                    textTag = readFixedHSpaceTag()
+                }
             }
 
             textTags.add(textTag!!)
@@ -310,6 +319,82 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
         // 偏移操作
         mBufferOffset += 2
         return TextParagraphTag(paragraphType)
+    }
+
+    private fun readStyleTag(type: Byte): TextStyleTag {
+        // 获取深度
+        val depth = chapterContent[mBufferOffset]
+        var tempArr: ByteArray
+        mBufferOffset += 2
+
+        // 创建样式标签
+        val styleTag =
+            if (type == TextTagType.STYLE_CSS) TextCssStyleTag(depth) else TextOtherStyleTag()
+        // 读取 style 使用的样式信息标记
+        tempArr = chapterContent.copyOfRange(mBufferOffset, mBufferOffset + 2)
+        val featureMask = ByteToDataUtil.readShort(tempArr)
+        mBufferOffset += 2
+
+        // 处理长度相关的样式
+        for (i in 0 until TextFeature.NUMBER_OF_LENGTHS) {
+            if (TextStyleTag.isFeatureSupported(featureMask, i)) {
+                tempArr = chapterContent.copyOfRange(mBufferOffset, mBufferOffset + 2)
+                val size = ByteToDataUtil.readShort(tempArr)
+                mBufferOffset += 2
+
+                val unit = chapterContent[mBufferOffset]
+                mBufferOffset += 2
+
+                styleTag.setLength(i, size, unit)
+            }
+        }
+
+        // 处理其他功能的样式
+        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.ALIGNMENT_TYPE) ||
+            TextStyleTag.isFeatureSupported(featureMask, TextFeature.NON_LENGTH_VERTICAL_ALIGN)
+        ) {
+            val alignmentType = chapterContent[mBufferOffset++]
+            val verticalAlignCode = chapterContent[mBufferOffset++]
+
+            if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.ALIGNMENT_TYPE)) {
+                styleTag.setAlignmentType(alignmentType)
+            }
+            if (TextStyleTag.isFeatureSupported(
+                    featureMask,
+                    TextFeature.NON_LENGTH_VERTICAL_ALIGN
+                )
+            ) {
+                styleTag.setVerticalAlignCode(verticalAlignCode)
+            }
+        }
+
+        // TODO:字体相关暂时不处理
+
+        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.FONT_FAMILY)) {
+            /*styleTag.setFontFamilies(myFontManager, data.get(dataOffset++) as Short)*/
+            mBufferOffset += 2
+
+        }
+        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.FONT_STYLE_MODIFIER)) {
+            mBufferOffset += 2
+/*            val value = data.get(dataOffset++) as Short
+            styleTag.setFontModifiers(
+                (value and 0xFF) as Byte,
+                (value shr 8 and 0xFF) as Byte
+            )*/
+        }
+        return styleTag
+    }
+
+    private fun readStyleCloseTag(): TextTag {
+        return TextTag.StyleCloseTag
+    }
+
+
+    private fun readFixedHSpaceTag(): TextTag {
+        val fixedHSpaceLength = chapterContent[mBufferOffset]
+        mBufferOffset += 2
+        return TextFixedHSpaceTag(fixedHSpaceLength.toInt())
     }
 }
 

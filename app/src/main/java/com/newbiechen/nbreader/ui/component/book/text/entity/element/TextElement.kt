@@ -1,6 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.element
 
-import com.newbiechen.nbreader.ui.component.book.text.entity.entry.TextStyleEntry
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
 
 /**
  *  author : newbiechen
@@ -20,4 +20,4 @@ open class TextElement {
     }
 }
 
-data class TextStyleElement(val styleEntry: TextStyleEntry) : TextElement()
+data class TextStyleElement(val styleTag: TextStyleTag) : TextElement()

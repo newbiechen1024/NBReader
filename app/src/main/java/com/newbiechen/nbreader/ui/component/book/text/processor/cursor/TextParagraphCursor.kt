@@ -2,13 +2,8 @@ package com.newbiechen.nbreader.ui.component.book.text.processor.cursor
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
-import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextParagraphType
-import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextControlElement
-import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
-import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
-import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextContentTag
-import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextControlTag
-import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextTag
+import com.newbiechen.nbreader.ui.component.book.text.entity.element.*
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.LineBreaker
 import com.newbiechen.nbreader.uilts.LogHelper
@@ -227,10 +222,19 @@ private class ParagraphContentDecoder(
             textTag = tagIterator.next()
             when (textTag) {
                 is TextContentTag -> {
-                    processTextContentTag(textTag)
+                    processContentTag(textTag)
                 }
                 is TextControlTag -> {
-                    processTextControlTag(textTag)
+                    processControlTag(textTag)
+                }
+                is TextStyleTag -> {
+                    processStyleTag(textTag)
+                }
+                is TextStyleCloseTag -> {
+                    processStyleCloseTag(textTag)
+                }
+                is TextFixedHSpaceTag -> {
+                    processFixedHSpaceTag(textTag)
                 }
             }
         }
@@ -241,7 +245,7 @@ private class ParagraphContentDecoder(
         )
     }
 
-    private fun processTextContentTag(textTag: TextContentTag) {
+    private fun processContentTag(textTag: TextContentTag) {
         textTag.apply {
             if (content.isEmpty()) {
                 return
@@ -336,12 +340,28 @@ private class ParagraphContentDecoder(
     }
 
     // 创建一个 ControlElement
-    private fun processTextControlTag(textTag: TextControlTag) {
+    private fun processControlTag(textTag: TextControlTag) {
         mElementList!!.add(
             TextControlElement(
                 textTag.type,
                 textTag.isControlStart
             )
+        )
+    }
+
+    private fun processStyleTag(textTag: TextStyleTag) {
+        mElementList!!.add(TextStyleElement(textTag))
+    }
+
+    private fun processStyleCloseTag(textTag: TextStyleCloseTag) {
+        mElementList!!.add(
+            TextElement.StyleClose
+        )
+    }
+
+    private fun processFixedHSpaceTag(textFixedHSpaceTag: TextFixedHSpaceTag) {
+        mElementList!!.add(
+            TextFixedHSpaceElement.getElement(textFixedHSpaceTag.length)
         )
     }
 

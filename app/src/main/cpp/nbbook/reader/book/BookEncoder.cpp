@@ -187,18 +187,16 @@ void BookEncoder::addStyleCloseTag() {
 
 
 // TODO:要换个名字，这个不好听
-void BookEncoder::addInnerLabelResource(const std::string &label) {
-    // TODO:到底名字要不要叫 resource 呢？
-
+void BookEncoder::addInnerLabelTag(const std::string &label) {
     // 获取当前的段落索引数
 /*    int paragraphNumber = mTextEncoder.paragraphsNumber();
     if (hasParagraphOpen()) {
         --paragraphNumber;
     }
-    addInnerLabelResource(label, paragraphNumber);*/
+    addInnerLabelTag(label, paragraphNumber);*/
 }
 
-void BookEncoder::addInnerLabelResource(const std::string &label, int paragraphNumber) {
+void BookEncoder::addInnerLabelTag(const std::string &label, int paragraphNumber) {
     // TODO:看样子是要将资源返回，之后实现
 /*    myModel.myInternalHyperlinks.insert(std::make_pair(
             label, BookModel::Label(myCurrentTextModel, paragraphNumber)
@@ -249,19 +247,19 @@ void BookEncoder::addImageTag(const ImageTag &tag) {
     // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。
 }
 
-void BookEncoder::addExtensionResource() {
-    // TODO：扩展资源信息，暂时用不到。
-}
-
-void BookEncoder::addExtensionBookResource() {
-    // TODO: 扩展书籍资源，暂时用不到。
-}
-
 std::string
-BookEncoder::addFontResource(const std::string &family, std::shared_ptr<FontEntry> fontEntry) {
+BookEncoder::addFontTag(const std::string &family, std::shared_ptr<FontEntry> fontEntry) {
     // TODO:到底名字要不要叫 resource 呢？先不想了
 }
 
 void BookEncoder::insertPseudoEndOfSectionParagraph() {
     insertEndParagraph(TextParagraph::PSEUDO_END_OF_SECTION_PARAGRAPH);
+}
+
+void BookEncoder::addExtResource() {
+    // TODO：扩展资源信息，暂时用不到。
+}
+
+void BookEncoder::addBookExtResource() {
+    // TODO: 扩展书籍资源，暂时用不到。
 }

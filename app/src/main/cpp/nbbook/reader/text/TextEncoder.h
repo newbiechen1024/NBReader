@@ -72,6 +72,14 @@ public:
 
     void addHyperlinkControlTag(TextKind kind, const std::string &label);
 
+    // TODO:图片标签
+    void addImageTag();
+
+    // TODO:视频标签
+    void addVideoTag();
+
+
+
     // TODO：添加资源标签
     void addResouceTag();
 

@@ -7,7 +7,11 @@ package com.newbiechen.nbreader.ui.component.book.text.entity.tag
  */
 
 // 文本标签标记，只用于表示对象是 TextTag
-interface TextTag
+interface TextTag {
+    companion object {
+        val StyleCloseTag = TextStyleCloseTag()
+    }
+}
 
 
 /**
@@ -45,3 +49,17 @@ data class TextParagraphTag(val type: Byte) : TextTag {
         return "TextParagraphTag(type=$type)"
     }
 }
+
+/**
+ * 文本数值间距调整标签
+ */
+data class TextFixedHSpaceTag(val length: Int) : TextTag {
+    override fun toString(): String {
+        return "TextFixedHSpace(length=$length)"
+    }
+}
+
+/**
+ * 样式闭合标签
+ */
+class TextStyleCloseTag : TextTag

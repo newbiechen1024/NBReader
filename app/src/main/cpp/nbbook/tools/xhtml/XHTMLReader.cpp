@@ -575,7 +575,7 @@ void XHTMLTagHyperlinkAction::doAtStart(XHTMLReader &reader, Attributes &attribu
     }
     std::string name = attributes.getValue("name");
     if (name.empty()) {
-        getBookEncoder(reader).addInnerLabelResource(
+        getBookEncoder(reader).addInnerLabelTag(
                 reader.myReferenceAlias + "#" + MiscUtil::decodeHtmlURL(name)
         );
     }
@@ -747,7 +747,7 @@ void XHTMLReader::readFile(const File &file, const std::string &referenceName) {
     // 方法别名
     myReferenceAlias = fileAlias(referenceName);
     // 超链接标签
-    myModelReader.addInnerLabelResource(myReferenceAlias);
+    myModelReader.addInnerLabelTag(myReferenceAlias);
 
     const int index = referenceName.rfind('/', referenceName.length() - 1);
     myReferenceDirName = referenceName.substr(0, index + 1);
@@ -954,7 +954,7 @@ void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char dep
         Logger::i("FONT", "Requested font family: " + *it);
         std::shared_ptr<FontEntry> fontEntry = myFontMap->get(*it);
         if (!fontEntry) {
-            const std::string realFamily = myModelReader.addFontResource(*it, fontEntry);
+            const std::string realFamily = myModelReader.addFontTag(*it, fontEntry);
             if (realFamily != *it) {
                 Logger::i("FONT", "Entry for " + *it + " stored as " + realFamily);
                 doFixFamiliesList = true;
@@ -971,7 +971,7 @@ void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char dep
              it != families.end(); ++it) {
             std::shared_ptr<FontEntry> fontEntry = myFontMap->get(*it);
             if (!fontEntry) {
-                realFamilies.push_back(myModelReader.addFontResource(*it, fontEntry));
+                realFamilies.push_back(myModelReader.addFontTag(*it, fontEntry));
             } else {
                 realFamilies.push_back(*it);
             }
@@ -1106,7 +1106,7 @@ XHTMLReader::startElement(std::string &localName, std::string &fullName, Attribu
     static const std::string HASH = "#";
     const std::string id = attributes.getValue("id");
     if (!id.empty()) {
-        myModelReader.addInnerLabelResource(myReferenceAlias + HASH + id);
+        myModelReader.addInnerLabelTag(myReferenceAlias + HASH + id);
     }
 
     Boolean breakBefore = myStyleSheetTable.doBreakBefore(sTag, EMPTY);

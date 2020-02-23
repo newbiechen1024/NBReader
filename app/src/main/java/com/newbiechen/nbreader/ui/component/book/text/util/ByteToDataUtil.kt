@@ -12,6 +12,14 @@ import java.nio.ByteBuffer
 
 object ByteToDataUtil {
 
+    fun readShort(byteArr: ByteArray): Short {
+        val byteBuffer = ByteBuffer.allocate(2)
+            .put(byteArr)
+        byteBuffer.position(0)
+        return byteBuffer.short
+    }
+
+
     fun readUInt32(byteArr: ByteArray): Long {
         val byteBuffer = ByteBuffer.allocate(8)
             .put(byteArrayOf(0, 0, 0, 0))
