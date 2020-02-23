@@ -6,6 +6,8 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.ByteToDataUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.uilts.LogHelper
+import org.w3c.dom.Text
 
 /**
  *  author : newbiechen
@@ -243,7 +245,16 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
                 TextTagType.FIXED_HSPACE -> {
                     textTag = readFixedHSpaceTag()
                 }
+                TextTagType.IMAGE -> {
+                    // TODO:未实现占位
+                    textTag = readImageTag()
+                }
+                TextTagType.HYPERLINK_CONTROL -> {
+                    // TODO:未实现占位
+                    textTag = readHyperlinkControlTag()
+                }
             }
+            LogHelper.i(TAG, "decode: $tagType")
 
             textTags.add(textTag!!)
         }
@@ -390,11 +401,18 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
         return TextTag.StyleCloseTag
     }
 
-
     private fun readFixedHSpaceTag(): TextTag {
         val fixedHSpaceLength = chapterContent[mBufferOffset]
         mBufferOffset += 2
         return TextFixedHSpaceTag(fixedHSpaceLength.toInt())
+    }
+
+    private fun readImageTag(): TextTag {
+        return TextImageTag()
+    }
+
+    private fun readHyperlinkControlTag(): TextTag {
+        return TextHyperlinkControlTag()
     }
 }
 

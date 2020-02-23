@@ -13,8 +13,8 @@
 class TextBufferAllocator {
 public:
     static char *writeUInt16(char *ptr, uint16_t value) {
-        *ptr++ = 0xff & value;
         *ptr++ = (0xff00 & value) >> 8;
+        *ptr++ = 0xff & value;
         return ptr;
     }
 
@@ -35,15 +35,15 @@ public:
 
     static uint16_t readUInt16(const char *ptr) {
         const uint8_t *tmp = (const uint8_t *) ptr;
-        return *tmp + ((uint16_t) *(tmp + 1) << 8);
+        return ((uint16_t) *(tmp) << 8) + ((uint16_t) *(tmp + 1));
     }
 
     static uint32_t readUInt32(const char *ptr) {
         const uint8_t *tmp = (const uint8_t *) ptr;
-        return *tmp
-               + ((uint32_t) *(tmp + 1) << 8)
-               + ((uint32_t) *(tmp + 2) << 16)
-               + ((uint32_t) *(tmp + 3) << 24);
+        return ((uint32_t) *tmp << 24)
+               + ((uint32_t) *(tmp + 1) << 16)
+               + ((uint32_t) *(tmp + 2) << 8)
+               + ((uint32_t) *(tmp + 3));
     }
 
 public:

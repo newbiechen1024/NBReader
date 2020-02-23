@@ -244,7 +244,18 @@ void BookEncoder::addExtensionTag(const std::string &action,
 }
 
 void BookEncoder::addImageTag(const ImageTag &tag) {
-    // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。
+    isSectionContainsRegularContents = true;
+    if (hasParagraphOpen()) {
+        flushParagraphBuffer();
+        // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。(Image 暂时未实现)
+        mTextEncoder.addImageTag();
+    } else {
+        beginParagraph();
+        mTextEncoder.addControlTag(TextKind::IMAGE, true);
+        mTextEncoder.addImageTag();
+        mTextEncoder.addControlTag(TextKind::IMAGE, false);
+        endParagraph();
+    }
 }
 
 std::string

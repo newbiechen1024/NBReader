@@ -52,4 +52,5 @@ std::shared_ptr<TextStyleTag> TextStyleTag::inherited() const {
     clone->myFontModifier = myFontModifier;
     clone->myFontFamilies = myFontFamilies;
     clone->myVerticalAlignCode = myVerticalAlignCode;
+    return clone;
 }

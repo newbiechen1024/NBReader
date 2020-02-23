@@ -80,13 +80,15 @@ File OebPlugin::findEpubFile(const File &oebFile) {
 }
 
 bool OebPlugin::readEncodingInternal(std::string &outEncoding) {
-    // 读取编码信息
-    return false;
+    // TODO:读取编码信息(暂时采用默认值)
+    outEncoding = "utf-8";
+    return true;
 }
 
 bool OebPlugin::readLanguageInternal(std::string &outLanguage) {
-    // 读取语言信息
-    return false;
+    // TODO:读取语言信息(暂时采用默认值)
+    outLanguage = "zh";
+    return true;
 }
 
 bool OebPlugin::readChaptersInternal(std::string &chapterPattern,
@@ -117,6 +119,15 @@ bool OebPlugin::readChaptersInternal(std::string &chapterPattern,
 
 bool OebPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer,
                                            size_t *outSize) {
-    // 获取 xhtml 解析器
-    return false;
+    Logger::i(TAG, "readChapterContentInternal txtChapter" + txtChapter.toString());
+
+    size_t result = mOebReader.readContent(txtChapter, outBuffer);
+
+    // 是否解析失败
+    if (result < 0) {
+        return false;
+    }
+
+    (*outSize) = result;
+    return true;
 }

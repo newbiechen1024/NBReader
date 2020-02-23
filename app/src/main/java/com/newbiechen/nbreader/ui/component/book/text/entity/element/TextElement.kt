@@ -21,3 +21,9 @@ open class TextElement {
 }
 
 data class TextStyleElement(val styleTag: TextStyleTag) : TextElement()
+
+// TODO:占位标签
+class TextImageElement() : TextElement()
+
+// TODO:占位标签
+class TextHyperlinkControlElement() : TextElement()

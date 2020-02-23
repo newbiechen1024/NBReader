@@ -230,12 +230,11 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             override fun onLoadSuccess() {
                 // 关闭 loading Dialog
                 loadDialog!!.cancel()
-/*
                 // 显示章节信息
                 mCatalogAdapter.refreshItems(mBookController.getChapters())
 
                 // 刷新页面
-                mDataBinding.executePendingBindings()*/
+                mDataBinding.executePendingBindings()
             }
 
             override fun onLoadFailure(e: Throwable) {

@@ -60,6 +60,16 @@ data class TextFixedHSpaceTag(val length: Int) : TextTag {
 }
 
 /**
+ * 图片临时标签
+ */
+class TextImageTag() : TextTag
+
+/**
+ * 超链接临时标签
+ */
+class TextHyperlinkControlTag():TextTag
+
+/**
  * 样式闭合标签
  */
 class TextStyleCloseTag : TextTag

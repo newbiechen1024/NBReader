@@ -168,7 +168,7 @@ abstract class BaseTextProcessor(private val context: Context) {
     }
 
     private fun applyStyle(element: TextStyleElement) {
-        setTextStyle(ExplicitTextDecoratedStyle(mTextStyle!!, element.styleEntry))
+        setTextStyle(ExplicitTextDecoratedStyle(mTextStyle!!, element.styleTag))
     }
 
     private fun applyControl(control: TextControlElement) {

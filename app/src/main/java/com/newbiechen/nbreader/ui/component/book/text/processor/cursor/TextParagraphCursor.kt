@@ -236,6 +236,9 @@ private class ParagraphContentDecoder(
                 is TextFixedHSpaceTag -> {
                     processFixedHSpaceTag(textTag)
                 }
+                is TextImageTag -> {
+                    processImageTag(textTag)
+                }
             }
         }
 
@@ -339,6 +342,11 @@ private class ParagraphContentDecoder(
         }
     }
 
+    // 添加单词
+    private fun addWord(data: CharArray, offset: Int, len: Int) {
+        mElementList!!.add(TextWordElement(data, offset, len))
+    }
+
     // 创建一个 ControlElement
     private fun processControlTag(textTag: TextControlTag) {
         mElementList!!.add(
@@ -365,8 +373,10 @@ private class ParagraphContentDecoder(
         )
     }
 
-    // 添加单词
-    private fun addWord(data: CharArray, offset: Int, len: Int) {
-        mElementList!!.add(TextWordElement(data, offset, len))
+    private fun processImageTag(textTag: TextImageTag) {
+        // TODO：临时文本标记
+        val imageTempStr = "加载图片的地方"
+        val strArr = imageTempStr.toCharArray()
+        mElementList!!.add(TextWordElement(strArr, 0, strArr.size))
     }
 }

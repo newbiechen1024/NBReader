@@ -9,6 +9,7 @@
 
 #include "../FormatPlugin.h"
 #include "OpfReader.h"
+#include "OebReader.h"
 #include <string>
 
 class OebPlugin : public FormatPlugin {
@@ -48,6 +49,7 @@ protected:
 
 private:
     OpfReader mOpfReader;
+    OebReader mOebReader;
 
 };
 

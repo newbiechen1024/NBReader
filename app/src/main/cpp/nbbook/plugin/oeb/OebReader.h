@@ -13,8 +13,7 @@
 
 class OebReader {
 public:
-    OebReader() {
-    }
+    OebReader();
 
     ~OebReader() {
     }
@@ -27,7 +26,6 @@ private:
     BookEncoder mBookEncoder;
 
     XHTMLReader mXhtmlReader;
-
 };
 
 

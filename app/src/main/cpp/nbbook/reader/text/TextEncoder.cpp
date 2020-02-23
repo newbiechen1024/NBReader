@@ -296,6 +296,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
 
 
     mCurTagPtr = mBufferAllocatorPtr->allocate(len);
+
     char *address = mCurTagPtr;
 
     *address++ = (char) tag.entryKind();
@@ -328,7 +329,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
 
     if (tag.isFeatureSupported(TextFeature::FONT_STYLE_MODIFIER)) {
         *address++ = tag.mySupportedFontModifier;
-        *address++ = tag.myFontModifier;
+        *address = tag.myFontModifier;
     }
 /*    // --- writing entry
 
@@ -342,13 +343,21 @@ void TextEncoder::addStyleCloseTag() {
     char *address = mCurTagPtr;
 
     *address++ = (char) TextTagType::STYLE_CLOSE;
-    *address++ = 0;
+    *address = 0;
 
 /*    myParagraphs.back()->addEntry(myLastEntryStart);
     ++myParagraphLengths.back();*/
 }
 
 void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
+    // TODO：占位标记，暂未实现
+    mCurTagPtr = mBufferAllocatorPtr->allocate(2);
+
+    char *address = mCurTagPtr;
+
+    *address++ = (char) TextTagType::HYPERLINK_CONTROL;
+    *address = 0;
+
 /*    ZLUnicodeUtil::Ucs2String ucs2label;
     ZLUnicodeUtil::utf8ToUcs2(ucs2label, label);
 
@@ -366,7 +375,13 @@ void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
 }
 
 void TextEncoder::addImageTag() {
+    // TODO：占位标记，暂未实现
+    mCurTagPtr = mBufferAllocatorPtr->allocate(2);
 
+    char *address = mCurTagPtr;
+
+    *address++ = (char) TextTagType::IMAGE;
+    *address = 0;
 }
 
 void TextEncoder::addVideoTag() {

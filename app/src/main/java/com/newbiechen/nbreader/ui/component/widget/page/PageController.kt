@@ -87,16 +87,7 @@ class PageController(
         // 打开书籍
         mFormatPlugin!!.openBook(bookPath)
 
-        // 获取章节信息
-        var resultChapters = mFormatPlugin!!.getChapters()
-
-        if (resultChapters != null) {
-            resultChapters!!.forEach {
-                LogHelper.i(TAG, "resultChapters: $it")
-            }
-        }
-
-/*        // TODO:TextModel 需要重构，下次再说
+        // TODO:TextModel 需要重构，下次再说
 
         // 创建本地文本模块
         var textModel = TextModel(mFormatPlugin!!)
@@ -106,7 +97,7 @@ class PageController(
         pageContentController.initProcessor(textModel)
 
         // TODO：如果 FormatPlugin 先改变，会导致 拿到的数据错误的问题，该怎么解决。
-        // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。*/
+        // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。
     }
 
     /**

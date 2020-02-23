@@ -22,10 +22,10 @@ public:
     // 标题
     std::string title;
     // 对应源文件的起始位置
-    size_t startIndex;
+    int startIndex;
     // 对应源文件的终止位置(指向最后一个字符的下一个位置)
     // TODO：如果传入 -1 表示读取到 url 的最后一个字符(暂时这么设定，为解决 zip 拿不到解压文件的大小问题)
-    size_t endIndex;
+    int endIndex;
 
     std::string toString() {
         std::string str = "url:" + url + "  chapter:" + title

@@ -187,7 +187,7 @@ void XHTMLTagLinkAction::doAtStart(XHTMLReader &reader, Attributes &attributes) 
         reader.myFileParsers[cssFilePath] = parser;
         Logger::i("CSS", "creating stream");
         std::shared_ptr<InputStream> cssStream = cssFile.getInputStream(reader.myEncryptionMap);
-        if (!cssStream) {
+        if (cssStream != nullptr) {
             Logger::i("CSS", "parsing file");
             parser->parseStream(cssStream);
         }
@@ -897,7 +897,7 @@ XHTMLReader::matches(const std::shared_ptr<CSSSelector::Component> next, int dep
                 return false;
             }
         case CSSSelector::Predecessor:
-            if (!selector.Next && selector.Next->Delimiter == CSSSelector::Previous) {
+            if (selector.Next != nullptr && selector.Next->Delimiter == CSSSelector::Previous) {
                 while (true) {
                     // it is guaranteed that pos will be decreased on each step
                     pos = tagInfos(depth).find(selector, 1, pos);
@@ -953,7 +953,7 @@ void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char dep
     for (auto it = families.begin(); it != families.end(); ++it) {
         Logger::i("FONT", "Requested font family: " + *it);
         std::shared_ptr<FontEntry> fontEntry = myFontMap->get(*it);
-        if (!fontEntry) {
+        if (fontEntry != nullptr) {
             const std::string realFamily = myModelReader.addFontTag(*it, fontEntry);
             if (realFamily != *it) {
                 Logger::i("FONT", "Entry for " + *it + " stored as " + realFamily);
@@ -970,7 +970,7 @@ void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char dep
         for (std::vector<std::string>::const_iterator it = families.begin();
              it != families.end(); ++it) {
             std::shared_ptr<FontEntry> fontEntry = myFontMap->get(*it);
-            if (!fontEntry) {
+            if (fontEntry != nullptr) {
                 realFamilies.push_back(myModelReader.addFontTag(*it, fontEntry));
             } else {
                 realFamilies.push_back(*it);
@@ -1169,7 +1169,7 @@ void XHTMLReader::characterData(std::string &data) {
         case XHTML_READ_VIDEO:
             break;
         case XHTML_READ_STYLE:
-            if (!myTableParser) {
+            if (myTableParser != nullptr) {
                 myTableParser->parseString(text, textLen);
             }
             break;
@@ -1222,7 +1222,7 @@ void XHTMLReader::endElement(std::string &localName, std::string &fullName) {
     for (auto jt = entries.begin(); jt != entries.end(); ++jt) {
         std::shared_ptr<TextStyleTag> entry = *jt;
         std::shared_ptr<TextStyleTag> endEntry = entry->end();
-        if (!endEntry) {
+        if (endEntry != nullptr) {
             addTextStyleEntry(*endEntry, depth);
             ++entryCount;
         }
