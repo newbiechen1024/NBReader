@@ -4,6 +4,17 @@
 
 当前支持书籍格式：epub、txt
 
+## 演示
+
+获取书籍文件：
+
+![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E8%8E%B7%E5%8F%96%E6%9C%AC%E5%9C%B0%E4%B9%A6%E7%B1%8D.gif?raw=true)
+
+展示 epub 翻页：
+
+![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E4%B9%A6%E7%B1%8D%E7%BF%BB%E9%98%85_epub.gif?raw=true
+)
+
 ## 使用
 
 书籍显示类 PageView ：
@@ -54,7 +65,7 @@
      }
    ```
 
-页面控制加载类 PagController:
+页面控制加载类 PagController 提供的方法:
 
 ```
 class PageController {
@@ -160,17 +171,6 @@ class PageController {
     fun hasChapter(type: PageType): Boolean
 }
 ```
-
-## 演示
-
-获取书籍文件：
-
-![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E8%8E%B7%E5%8F%96%E6%9C%AC%E5%9C%B0%E4%B9%A6%E7%B1%8D.gif?raw=true)
-
-展示 epub 翻页：
-
-![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E4%B9%A6%E7%B1%8D%E7%BF%BB%E9%98%85_epub.gif?raw=true
-)
 
 ## NBReader 大致框架
 
