@@ -2,10 +2,12 @@ package com.newbiechen.nbreader.ui.component.widget.page.anim
 
 import android.graphics.*
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.view.View
 import java.lang.Math.toDegrees
 import kotlin.math.*
 import kotlin.properties.Delegates
+
 
 /**
  *  author : newbiechen
@@ -56,7 +58,8 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
     private var mIsRTandLB: Boolean = false // 是否属于右上左下
     private var mMaxLength: Float? = null
     private val mPaint: Paint = Paint()
-
+    // 适配 android 高版本无法使用 XOR 的问题
+    private val mXORPath: Path = Path()
 
     private lateinit var mBackShadowColors: IntArray// 背面颜色组
     private lateinit var mFrontShadowColors: IntArray// 前面颜色组
@@ -277,7 +280,7 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         canvas.save()
         try {
             canvas.clipPath(mPath0)
-            canvas.clipPath(mPath1, Region.Op.INTERSECT)
+            canvas.clipPath(mPath1)
         } catch (e: Exception) {
         }
 
@@ -350,8 +353,21 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mPath1.close()
         canvas.save()
         try {
-            canvas.clipPath(mPath0, Region.Op.XOR)
-            canvas.clipPath(mPath1, Region.Op.INTERSECT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mXORPath.reset()
+                mXORPath.moveTo(0f, 0f)
+                mXORPath.lineTo(canvas.width.toFloat(), 0f)
+                mXORPath.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+                mXORPath.lineTo(0f, canvas.height.toFloat())
+                mXORPath.close()
+
+                // 取 path 的补给，作为 canvas 的交集
+                mXORPath.op(mPath0, Path.Op.XOR)
+                canvas.clipPath(mXORPath)
+            } else {
+                canvas.clipPath(mPath0, Region.Op.XOR)
+            }
+            canvas.clipPath(mPath1)
         } catch (e: Exception) {
             // TODO: handle exception
         }
@@ -370,11 +386,11 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         }
 
         var rotateDegrees: Float = toDegrees(
-                atan2(
-                    mFloatTouchX - mBezierControl1.x,
-                    mBezierControl1.y - mFloatTouchY
-                ).toDouble()
-            ).toFloat()
+            atan2(
+                mFloatTouchX - mBezierControl1.x,
+                mBezierControl1.y - mFloatTouchY
+            ).toDouble()
+        ).toFloat()
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y)
         mCurrentPageShadow.setBounds(
             leftX,
@@ -392,8 +408,20 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mPath1.close()
         canvas.save()
         try {
-            canvas.clipPath(mPath0, Region.Op.XOR)
-            canvas.clipPath(mPath1, Region.Op.INTERSECT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                mXORPath.reset()
+                mXORPath.moveTo(0f, 0f)
+                mXORPath.lineTo(canvas.width.toFloat(), 0f)
+                mXORPath.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+                mXORPath.lineTo(0f, canvas.height.toFloat())
+                mXORPath.close()
+                // 取 path 的补给，作为 canvas 的交集
+                mXORPath.op(mPath0, Path.Op.XOR)
+                canvas.clipPath(mXORPath)
+            } else {
+                canvas.clipPath(mPath0, Region.Op.XOR)
+            }
+            canvas.clipPath(mPath1)
         } catch (e: Exception) {
         }
 
@@ -447,7 +475,7 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mPath1.lineTo(mCornerX.toFloat(), mCornerY.toFloat())
         mPath1.close()
 
-        mDegrees = Math.toDegrees(
+        mDegrees = toDegrees(
             atan2(
                 (mBezierControl1.x - mCornerX).toDouble(),
                 (mBezierControl2.y - mCornerY).toDouble()
@@ -468,7 +496,7 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         canvas.save()
         try {
             canvas.clipPath(mPath0)
-            canvas.clipPath(mPath1, Region.Op.INTERSECT)
+            canvas.clipPath(mPath1)
         } catch (e: Exception) {
         }
         canvas.drawBitmap(bitmap, 0f, 0f, null)
@@ -498,7 +526,20 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mPath0.close()
 
         canvas.save()
-        canvas.clipPath(path, Region.Op.XOR)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mXORPath.reset()
+            mXORPath.moveTo(0f, 0f)
+            mXORPath.lineTo(canvas.width.toFloat(), 0f)
+            mXORPath.lineTo(canvas.width.toFloat(), canvas.height.toFloat())
+            mXORPath.lineTo(0f, canvas.height.toFloat())
+            mXORPath.close()
+            mXORPath.op(path, Path.Op.XOR)
+
+            canvas.clipPath(mXORPath)
+        } else {
+            canvas.clipPath(path, Region.Op.XOR)
+        }
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         canvas.restore()
     }
