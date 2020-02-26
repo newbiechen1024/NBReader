@@ -21,7 +21,6 @@ Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginFactory_register
         JNIEnv *env,
         jobject instance,
         jobject manager) {
-    Logger::i("BookPluginFactory","registerAssetManagerNative");
     AssetManager *assetManagerPtr = &AndroidAssetManager::getInstance();
     AndroidAssetManager *androidAssetManager = static_cast<AndroidAssetManager *>(assetManagerPtr);
     // 注册 asset
@@ -36,7 +35,6 @@ JNIEXPORT jobjectArray JNICALL
 Java_com_newbiechen_nbreader_ui_component_book_plugin_BookPluginFactory_getSupportPluginTypesNative(
         JNIEnv *env,
         jobject instance) {
-    Logger::i("BookPluginFactory","getSupportPluginTypesNative");
     using namespace std;
     // 获取支持的插件类型
     vector<const string> pluginTypes;

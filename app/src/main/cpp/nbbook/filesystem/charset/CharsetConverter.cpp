@@ -16,6 +16,9 @@ CharsetConverter::CharsetConverter(const std::string &fromEncoding, const std::s
     std::string lowToEncoding = toEncoding;
     StringUtil::asciiToLowerInline(lowToEncoding);
 
+    mFromEncoding = lowFromEncoding;
+    mToEncoding = lowToEncoding;
+
     // 不处理 charset 不支持，或者写错的情况
     mIconvCd = iconv_open(lowToEncoding.c_str(), lowFromEncoding.c_str());
 

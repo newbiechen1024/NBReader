@@ -106,7 +106,7 @@ class SmartLookupViewModel @Inject constructor(
     }
 
     private fun createGroupByLetter(bookEntities: List<LocalBookWrapper>): List<Pair<String, List<LocalBookWrapper>>> {
-
+        // TODO：这个应该用 ArrayMap 处理，用什么 List + Pair，之后改。
         var curGroupType: String? = null
         var groupList: MutableList<Pair<String, List<LocalBookWrapper>>> = mutableListOf()
         var groupItem: Pair<String, List<LocalBookWrapper>>
