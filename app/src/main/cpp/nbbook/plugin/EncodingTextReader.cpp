@@ -4,6 +4,7 @@
 //
 
 #include "EncodingTextReader.h"
+#include "../util/Logger.h"
 #include <locale>
 
 EncodingTextReader::EncodingTextReader(const std::string &charset) : mConverter(charset, "utf-8") {
@@ -20,9 +21,7 @@ void EncodingTextReader::convert(std::string &dst, const char *srcStart, const c
     CharBuffer inBuffer((char *) srcStart, bufferSize, bufferSize);
     CharBuffer outBuffer(bufferSize);
 
-    // 进行循环调用
-    mConverter.convert(inBuffer, outBuffer);
-
+    // TODO：转码操作应该封装
     CharsetConverter::ResultCode resultCode;
 
     for (;;) {
@@ -39,9 +38,10 @@ void EncodingTextReader::convert(std::string &dst, const char *srcStart, const c
                 inBuffer = CharBuffer(newStart, newSize, newSize);
                 break;
             }
-            case CharsetConverter::SUCCESS:
+            case CharsetConverter::SUCCESS: {
                 dst.append(outBuffer.buffer(), outBuffer.position());
                 break;
+            }
             default:
                 // TODO:抛出异常
                 exit(-1);
