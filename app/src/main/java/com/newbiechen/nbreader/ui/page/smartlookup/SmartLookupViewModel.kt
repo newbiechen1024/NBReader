@@ -2,6 +2,7 @@ package com.newbiechen.nbreader.ui.page.smartlookup
 
 import android.text.TextUtils
 import android.util.LongSparseArray
+import android.util.Range
 import androidx.core.util.contains
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentActivity
@@ -14,6 +15,7 @@ import com.newbiechen.nbreader.uilts.mediastore.MediaStoreHelper
 import com.github.promeg.pinyinhelper.Pinyin
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -46,18 +48,20 @@ class SmartLookupViewModel @Inject constructor(
         MediaStoreHelper.cursorLocalBooks(activity) { cursorLocalBooks ->
             // 从数据库中获取缓存书籍
             addDisposable(
-                // 从数据库中获取所有书籍
+                // 从数据库中获取本地书籍
                 // TODO:还应该加一个判断必须是 localBook
                 bookRepository.getBooks(true)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
+
                         // 将 List 转换成 SparseArray，优化查找效率
                         val cacheBookMap = LongSparseArray<BookEntity>(it.size)
                         it.forEach { cacheLocalBook ->
                             cacheBookMap.put(cacheLocalBook.id.toLong(), cacheLocalBook)
                         }
 
+                        // 将书籍与所有文件匹配，标记是否添加过缓存。
                         val localBookWrappers: List<LocalBookWrapper> =
                             cursorLocalBooks.map { systemLocalBook ->
                                 // 判断 localBook 的 id 是否和缓存列表中的 id 一致
@@ -100,45 +104,47 @@ class SmartLookupViewModel @Inject constructor(
                     }
                 }
             }
-
             localBookWrapperGroups.set(groups)
         }
     }
 
+    /**
+     * 通过文件的的首字母进行分组
+     */
     private fun createGroupByLetter(bookEntities: List<LocalBookWrapper>): List<Pair<String, List<LocalBookWrapper>>> {
-        // TODO：这个应该用 ArrayMap 处理，用什么 List + Pair，之后改。
-        var curGroupType: String? = null
-        var groupList: MutableList<Pair<String, List<LocalBookWrapper>>> = mutableListOf()
-        var groupItem: Pair<String, List<LocalBookWrapper>>
-        var itemList: MutableList<LocalBookWrapper>? = null
-        bookEntities.forEach {
-            val localBook = it.localBookEntity
-            var type = Pinyin.toPinyin(localBook.name[0])
-            // 如果 type 为空则不处理
-            if (type.isEmpty()) {
-                return@forEach
-            }
-            // 获取拼音的第一个字符，并设置为大写
-            type = type[0].toString().toUpperCase()
+        // 实现 map 查找，然后转化成 List?，再排序
+        // 特殊字符区间
+        val letterRange = Range<Char>('A', 'Z')
+        var groupMap: MutableMap<Char, MutableList<LocalBookWrapper>> = mutableMapOf()
 
-            if (curGroupType == null || !TextUtils.equals(curGroupType, type)) {
-                curGroupType = type
-                // 创建 list
-                itemList = mutableListOf()
-                itemList!!.add(it)
-                // 创建 groupItem
-                groupItem = Pair(type, itemList!!)
-                // 添加到列表中
-                groupList.add(groupItem)
-            } else {
-                itemList!!.add(it)
+        bookEntities.forEach {
+            val pinyin = Pinyin.toPinyin(it.localBookEntity.name[0])
+            // 获取首字母
+            var letter = pinyin[0].toUpperCase()
+            // 如果 letter 在指定区间外，默认设置为 #
+            if (!letterRange.contains(letter)) {
+                letter = '#'
             }
+
+            // 如果队列中没有这种类型
+            if (groupMap[letter] == null) {
+                groupMap[letter] = mutableListOf()
+            }
+
+            // 添加到 map 的数组中
+            groupMap[letter]!!.add(it)
+        }
+
+        // 将 groupMap 中的数据，转化为 Pair
+        val groupList: List<Pair<String, List<LocalBookWrapper>>> = groupMap.map {
+            Pair<String, List<LocalBookWrapper>>(it.key.toString(), it.value)
+        }
+
+        // 进行排序操作
+        Collections.sort(groupList) { o1, o2 ->
+            if (o1.first > o2.first) 1 else 0
         }
 
         return groupList
-    }
-
-    private fun createGroupByDate() {
-
     }
 }

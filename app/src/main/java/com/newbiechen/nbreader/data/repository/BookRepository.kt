@@ -17,6 +17,7 @@ class BookRepository @Inject constructor(
 ) : IBookRepository {
 
     /**
+     * TODO:应该还要判断是否是本地书籍，需要改造 IBookRepository 结构，没必要使用这种方式继承
      * 获取书籍
      * @param isCache：是否是缓存的书籍
      */
