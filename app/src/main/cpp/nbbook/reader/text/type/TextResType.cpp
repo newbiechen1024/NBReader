@@ -3,4 +3,4 @@
 // description : 
 //
 
-#include "TextResKind.h"
+#include "TextResType.h"

@@ -165,10 +165,10 @@ private:
     // 将段落缓冲输出到 textModel 中
     void flushParagraphBuffer();
 
-    size_t addImageResource(const ImageTag &tag);
+    uint16_t addImageResource(const ImageTag &tag);
 
     // TODO:得持有一个 resource 映射表，要不然 id 就没意义了，先判断 path 是否已存在，如果已存在返回相同的 id。
-    size_t generateResourceId() {
+    uint16_t generateResourceId() {
         return mIdGenerator++;
     }
 
@@ -190,7 +190,7 @@ private:
     bool isEnterTitle;
     bool hasOpen;
     // id 生成器，用于生成资源 id
-    size_t mIdGenerator;
+    uint16_t mIdGenerator;
 };
 
 #endif //NBREADER_BOOKENCODER_H

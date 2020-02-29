@@ -28,7 +28,10 @@ public:
 
     static char *writeString(char *ptr, const UnicodeUtil::Ucs2String &str) {
         const size_t size = str.size();
-        writeUInt16(ptr, size);
+        // TODO:fbreader 在 java 层直接将 utf-16 解析成了 unicode，所以长度不变。
+        // TODO:由于我不是直接解析的，所以 size 需要乘以 2
+        // TODO:之后直接返回的 UTF-8，这个逻辑就要被废弃了。
+        writeUInt16(ptr, size * 2);
         memcpy(ptr + 2, &str.front(), size * 2);
         return ptr + size * 2 + 2;
     }

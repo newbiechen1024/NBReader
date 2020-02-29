@@ -4,7 +4,8 @@
 //
 
 #include "BookEncoder.h"
-#include "../text/tag/TextResKind.h"
+#include "../text/type/TextResType.h"
+#include "../../util/Logger.h"
 
 static const size_t BUFFER_SIZE = 4096;
 
@@ -276,7 +277,7 @@ void BookEncoder::addExtensionTag(const std::string &action,
 void BookEncoder::addImageTag(const ImageTag &tag) {
     isSectionContainsRegularContents = true;
     // 添加图片资源，返回 id 映射
-    int id = addImageResource(tag);
+    uint16_t id = addImageResource(tag);
 
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
@@ -297,27 +298,30 @@ void BookEncoder::addImageTag(const ImageTag &tag) {
  *
  * 1. 资源类型：占用 1 字节。 image
  * 2. 边缘对齐：占用 1 字节。
- * 3. 资源 id：占 4 字节
- * 4. 资源路径长：占 4 字节。
+ * 3. 资源 id：占 2 字节
+ * 4. 资源路径长：占 2 字节。
+ * 5. 资源路径：未知字节
  * @param tag
  * @return
  */
-size_t BookEncoder::addImageResource(const ImageTag &tag) {
-    // TODO:代码有问题先这样写。
-    size_t resId = generateResourceId();
+uint16_t BookEncoder::addImageResource(const ImageTag &tag) {
+    // TODO:代码有问题先这样写。(应该存储 path 和 id 的映射关系)
+    uint16_t resId = generateResourceId();
 
-    size_t resourceLen = 2 + 4;
+    size_t resourceLen = 4;
+    // 长度 + 文本长
     resourceLen += 2 + UnicodeUtil::utf8Length(tag.path) * 2;
 
     char *resPtr = mResAllocator->allocate(resourceLen);
 
-    *resPtr++ = (char) TextResKind::IMAGE;
+    *resPtr++ = (char) TextResType::IMAGE;
     *resPtr++ = 0;
-    resPtr = TextBufferAllocator::writeUInt32(resPtr, resId);
+    resPtr = TextBufferAllocator::writeUInt16(resPtr, resId);
 
     // 先转换成 utf-16
     UnicodeUtil::Ucs2String ucs2Path;
     UnicodeUtil::utf8ToUcs2(ucs2Path, tag.path);
+
     // 使用 allocator 进行存储文本
     TextBufferAllocator::writeString(resPtr, ucs2Path);
 

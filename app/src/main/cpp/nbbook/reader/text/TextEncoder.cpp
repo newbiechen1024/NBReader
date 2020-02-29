@@ -393,24 +393,25 @@ void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
 
 /**
  * 添加图片标签
- * 数据结构：占 6 字节。 | 标签类型 | 边缘对齐 | id
+ * 数据结构：占 4 字节。 | 标签类型 | 边缘对齐 | id
  * 1. tag 类型：占用 1 字节。
  * 2. 边缘对齐：占用 1 字节。
- * 3. 资源 id：占用 4 字节。
+ * 3. 资源 id：占用 2 字节。
  * @param uniqueId：图片指向的资源 id
  * @param tag：图片标签 ==> 这个暂时没啥用，先放着
  */
-void TextEncoder::addImageTag(size_t uniqueId, const ImageTag &tag) {
+void TextEncoder::addImageTag(uint16_t uniqueId, const ImageTag &tag) {
     // 检测添加 tag 的环境
     checkTagState();
 
-    mCurTagPtr = mBufferAllocatorPtr->allocate(6);
+    mCurTagPtr = mBufferAllocatorPtr->allocate(4);
 
     char *address = mCurTagPtr;
     *address++ = (char) TextTagType::IMAGE;
     *address++ = 0;
+
     // 添加 id 信息
-    TextBufferAllocator::writeUInt32(address, uniqueId);
+    TextBufferAllocator::writeUInt16(address, uniqueId);
 }
 
 void TextEncoder::addVideoTag() {

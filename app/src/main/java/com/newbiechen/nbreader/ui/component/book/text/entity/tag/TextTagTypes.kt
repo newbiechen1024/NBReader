@@ -3,7 +3,7 @@ package com.newbiechen.nbreader.ui.component.book.text.entity.tag
 /**
  *  author : newbiechen
  *  date : 2020-01-12 13:52
- *  description :文本标签具有的类型
+ *  description :文本标签具有的类型集合
  */
 
 /**
@@ -24,13 +24,6 @@ object TextTagType {
     const val VIDEO: Byte = 11     // 视频标签
     const val EXTENSION: Byte = 12 // 扩展标签
     const val PARAGRAPH: Byte = 13 // 段落标签
-}
-
-/**
- * TextControlTag 标签具有的子类型
- */
-object TextControlType {
-    const val REGULAR: Byte = 0
 }
 
 /**

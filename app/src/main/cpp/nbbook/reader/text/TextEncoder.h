@@ -79,7 +79,7 @@ public:
      * @param ids：图片 id
      */
 
-    void addImageTag(size_t uniqueId, const ImageTag &tag);
+    void addImageTag(uint16_t uniqueId, const ImageTag &tag);
 
     // TODO:视频标签
     void addVideoTag();

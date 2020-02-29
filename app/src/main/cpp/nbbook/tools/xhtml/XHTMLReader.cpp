@@ -412,9 +412,10 @@ void XHTMLTagImageAction::doAtStart(XHTMLReader &reader, Attributes &attributes)
         }
     }
     // TODO:添加图片标签，以及添加图片逻辑，这个需要考虑如何实现
-    const std::string imageName = imageFile.getName();
-    ImageTag imageTag(imageName, "", reader.myMarkNextImageAsCover, 0, 0, 0,
-                      reader.myEncryptionMap);
+/*    const std::string imageName = imageFile.getName();*/
+    ImageTag imageTag(imageFile.getPath(), "",
+                      reader.myMarkNextImageAsCover, 0, 0,
+                      0, reader.myEncryptionMap);
 
     getBookEncoder(reader).addImageTag(imageTag);
 

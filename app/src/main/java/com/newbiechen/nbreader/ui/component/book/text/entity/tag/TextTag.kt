@@ -62,7 +62,7 @@ data class TextFixedHSpaceTag(val length: Int) : TextTag {
 /**
  * 图片临时标签
  */
-data class TextImageTag(val id: Long) : TextTag
+data class TextImageTag(val id: Int) : TextTag
 
 /**
  * 超链接临时标签
