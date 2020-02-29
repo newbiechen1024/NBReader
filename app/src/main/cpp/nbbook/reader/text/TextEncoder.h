@@ -9,6 +9,7 @@
 #include "entity/TextParagraph.h"
 #include "tag/TextKind.h"
 #include "tag/TextStyleTag.h"
+#include "tag/ImageTag.h"
 #include <string>
 
 class TextEncoder {
@@ -72,13 +73,16 @@ public:
 
     void addHyperlinkControlTag(TextKind kind, const std::string &label);
 
-    // TODO:图片标签
-    void addImageTag();
+    /**
+     * 添加图片信息：会将 image 添加到 attr 头部，以及 index 加入到内容位置
+     * TODO：暂时不清楚这种方式好不好，先这么写了
+     * @param ids：图片 id
+     */
+
+    void addImageTag(size_t uniqueId, const ImageTag &tag);
 
     // TODO:视频标签
     void addVideoTag();
-
-
 
     // TODO：添加资源标签
     void addResouceTag();

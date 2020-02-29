@@ -10,8 +10,8 @@ TextChapter::TextChapter() : url(""), title("") {
     endIndex = 0;
 }
 
-TextChapter::TextChapter(const std::string &url, const std::string &title, size_t startIndex,
-                         size_t endIndex) : url(url), title(title),
+TextChapter::TextChapter(const std::string &url, const std::string &title, int startIndex,
+                         int endIndex) : url(url), title(title),
                                             startIndex(startIndex), endIndex(endIndex) {
 
 }

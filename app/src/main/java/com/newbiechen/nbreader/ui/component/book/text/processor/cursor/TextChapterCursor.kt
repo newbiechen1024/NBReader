@@ -7,7 +7,6 @@ import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.ByteToDataUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.LogHelper
-import org.w3c.dom.Text
 
 /**
  *  author : newbiechen
@@ -34,10 +33,14 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
     }
 
     init {
-        // TODO:关于获取不到数据的错误处理，之后再说
+
+        // TODO:关于获取不到 content 的错误处理，之后再说
+        // 文本内容信息
+        val textContent = textModel.getChapterContent(chapterIndex)!!
+
         // 创建解析器解析
         mTextTagList = ChapterContentDecoder(
-            textModel.getChapterContent(chapterIndex)!!
+            textContent.contentData
         ).decode()
 
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
@@ -408,7 +411,10 @@ private class ChapterContentDecoder(private val chapterContent: ByteArray) {
     }
 
     private fun readImageTag(): TextTag {
-        return TextImageTag()
+        // 读取 image 所属的 id
+        val idArr = chapterContent.copyOfRange(mBufferOffset, mBufferOffset + 4)
+        mBufferOffset += 4
+        return TextImageTag(ByteToDataUtil.readUInt32(idArr))
     }
 
     private fun readHyperlinkControlTag(): TextTag {

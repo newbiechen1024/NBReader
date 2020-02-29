@@ -1,6 +1,6 @@
 // author : newbiechen
 // date : 2020-02-20 21:38
-// description : 图片标签
+// description : 图片资源
 //
 
 #ifndef NBREADER_IMAGETAG_H
@@ -14,7 +14,7 @@
 class ImageTag : public TextTag {
 public:
     ImageTag(const std::string &path, const std::string &encoding, bool isCover, short vOffset,
-             size_t offset, size_t size, std::shared_ptr<EncryptionMap> encryptionInfo)
+              size_t offset, size_t size, std::shared_ptr<EncryptionMap> encryptionInfo)
             : path(path), encoding(encoding), encryptionInfo(encryptionInfo) {
         this->isCover = isCover;
         this->vOffset = vOffset;

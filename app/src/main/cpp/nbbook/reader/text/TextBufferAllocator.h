@@ -66,7 +66,7 @@ public:
      * @param buffer
      * @return
      */
-    size_t close(char **buffer);
+    size_t flush(char **buffer);
 
 public:
     // 获取缓冲区当前的偏移值

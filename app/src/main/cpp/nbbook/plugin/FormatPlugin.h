@@ -11,6 +11,7 @@
 #include "../reader/book/Book.h"
 #include "../reader/text/entity/TextChapter.h"
 #include "../filesystem/File.h"
+#include "../reader/text/entity/TextContent.h"
 
 class FormatPlugin {
 public:
@@ -58,7 +59,7 @@ public:
      * @param outSize：输出缓冲区的大小
      * @return
      */
-    bool readChapterContent(TextChapter &txtChapter, char **outBuffer, size_t *outSize);
+    bool readChapterContent(TextChapter &inChapter, TextContent &outContent);
 
 protected:
     // 初始化书籍完成回调
@@ -72,7 +73,7 @@ protected:
     readChaptersInternal(std::string &chapterPattern, std::vector<TextChapter> &chapterList) = 0;
 
     virtual bool
-    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) = 0;
+    readChapterContentInternal(TextChapter &inChapter, TextContent &outContent) = 0;
 
     // todo:读取源信息，暂不实现
     // virtual bool readMetaInfo() = 0;

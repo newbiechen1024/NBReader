@@ -24,6 +24,9 @@ public:
     static JavaClass Class_BookEntity;
     // 上层的章节信息 Bean
     static JavaClass Class_TextChapter;
+
+    static JavaClass Class_TextContent;
+
     static std::shared_ptr<StaticObjectMethod> StaticMethod_Locale_getDefault;
 
     static std::shared_ptr<StringMethod> Method_Locale_getLanguage;
@@ -42,6 +45,7 @@ public:
     static std::shared_ptr<IntMethod> Method_TextChapter_getStartIndex;
     static std::shared_ptr<IntMethod> Method_TextChapter_getEndIndex;
 
+    static std::shared_ptr<JavaConstructor> Constructor_TextContent;
     static std::shared_ptr<JavaConstructor> Constructor_TextChapter;
 public:
     static bool init(JavaVM *jvm);

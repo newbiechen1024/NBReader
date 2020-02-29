@@ -112,7 +112,6 @@ class SmartLookupViewModel @Inject constructor(
      * 通过文件的的首字母进行分组
      */
     private fun createGroupByLetter(bookEntities: List<LocalBookWrapper>): List<Pair<String, List<LocalBookWrapper>>> {
-        // 实现 map 查找，然后转化成 List?，再排序
         // 特殊字符区间
         val letterRange = Range<Char>('A', 'Z')
         var groupMap: MutableMap<Char, MutableList<LocalBookWrapper>> = mutableMapOf()

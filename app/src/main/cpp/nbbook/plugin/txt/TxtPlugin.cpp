@@ -49,11 +49,10 @@ TxtPlugin::readChaptersInternal(std::string &chapterPattern,
 }
 
 bool
-TxtPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) {
-
+TxtPlugin::readChapterContentInternal(TextChapter &inChapter, TextContent &outContent) {
     // TODO:对于文本独有的数据信息，如何进行缓存？就是解析 format 的情况，看下效率吧，如果效率特别高，不缓存也没问题(暂时不考虑)
 
-    File chapterFile(txtChapter.url);
+    File chapterFile(inChapter.url);
     // 如果参数信息未初始化
     if (!mFormat.hasInitialized()) {
         // 调用探测器进行探测
@@ -74,15 +73,6 @@ TxtPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer,
     if (mTxtReaderPtr == nullptr) {
         mTxtReaderPtr = new TxtReader(mFormat, bookEncoding);
     }
-
-    // 通过阅读器解析章节内容
-    size_t result = mTxtReaderPtr->readContent(txtChapter, outBuffer);
-
-    // 是否解析失败
-    if (result < 0) {
-        return false;
-    }
-
-    (*outSize) = result;
-    return true;
+    // 读取内容
+    return mTxtReaderPtr->readContent(inChapter, outContent);
 }

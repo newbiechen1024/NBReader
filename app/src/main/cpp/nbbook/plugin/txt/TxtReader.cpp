@@ -27,7 +27,7 @@ TxtReader::TxtReader(const PlainTextFormat &format, const std::string &charset)
 }
 
 // todo：不考虑多线程的问题
-size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
+bool TxtReader::readContent(TextChapter &chapter, TextContent &content) {
     size_t chapterSize = chapter.endIndex - chapter.startIndex;
 
     // 获取 chapter 数据
@@ -37,14 +37,14 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
 
     if (!file.exists()) {
         Logger::e(TAG, "readContent:file not exist " + chapter.url);
-        return -1;
+        return false;
     }
 
     std::shared_ptr<InputStream> inputStream = file.getInputStream();
 
     if (!inputStream->open()) {
         Logger::e(TAG, "readContent:open inputStream failure");
-        return -1;
+        return false;
     }
 
     // TODO:直接在这里对章节进行解码，不更方便？(再思考思考)
@@ -80,12 +80,14 @@ size_t TxtReader::readContent(TextChapter &chapter, char **outBuffer) {
 
     // 结束分析
     endAnalyze();
-
     // 释放缓存空间
     delete[] chapterBuffer;
 
+    // 获取文本内容
+    content = mBookEncoder.close();
+
     // 关闭书籍编码器
-    return mBookEncoder.close(outBuffer);
+    return content.isInitialized();
 }
 
 void TxtReader::beginAnalyze() {

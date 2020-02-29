@@ -99,16 +99,21 @@ aux_source_directory(${CODE_PATH}/filesystem/io FILE_SYSTEM_IO_SOURCE)
 aux_source_directory(${CODE_PATH}/filesystem/zip FILE_SYSTEM_ZIP_SOURCE)
 aux_source_directory(${CODE_PATH}/filesystem/buffer FILE_SYSTEM_BUFFER_SOURCE)
 aux_source_directory(${CODE_PATH}/filesystem/charset FILE_SYSTEM_CHARSET_SOURCE)
+aux_source_directory(${CODE_PATH}/filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
+
 aux_source_directory(${CODE_PATH}/plugin PLUGIN_SOURCE)
 aux_source_directory(${CODE_PATH}/plugin/txt TXT_PLUGIN_SOURCE)
 aux_source_directory(${CODE_PATH}/plugin/oeb OEB_PLUGIN_SOURCE)
+
 aux_source_directory(${CODE_PATH}/reader/text READER_TEXT_SOURCE)
-aux_source_directory(${CODE_PATH}/reader/text/tag READER_TEXT_TAG_SOURCE)
-aux_source_directory(${CODE_PATH}/reader/text/entity READER_TEXT_ENTITY_SOURCE)
-aux_source_directory(${CODE_PATH}/reader/text/type READER_TEXT_TYPE_SOURCE)
+aux_source_directory(${CODE_PATH}/reader/text/tag TAG_TEXT_READER_SOURCE)
+aux_source_directory(${CODE_PATH}/reader/text/entity ENTITY_TEXT_SREADER_OURCE)
+aux_source_directory(${CODE_PATH}/reader/text/type TYPE_TEXT_READER_SOURCE)
 aux_source_directory(${CODE_PATH}/reader/book BOOK_READER_SOURCE)
+
 aux_source_directory(${CODE_PATH}/android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
 aux_source_directory(${CODE_PATH}/android/application ANDROID_APPLICATION_SOURCE)
+
 aux_source_directory(${CODE_PATH}/tools/font TOOLS_FONT_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/encoding ENCODING_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/language LANGUAGE_TOOLS_SOURCE)
@@ -117,7 +122,6 @@ aux_source_directory(${CODE_PATH}/tools/xhtml XHTML_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/css CSS_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/drm DRM_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/constant CONSTANT_TOOLS_SOURCE)
-aux_source_directory(${CODE_PATH}/filesystem/asset FILE_SYSTEM_ASSET_SOURCE)
 
 
 add_library( # Sets the title of the library.
@@ -149,9 +153,10 @@ add_library( # Sets the title of the library.
         ${FILE_SYSTEM_CHARSET_SOURCE}
         ${FILE_SYSTEM_BUFFER_SOURCE}
         ${READER_TEXT_SOURCE}
-        ${READER_TEXT_TAG_SOURCE}
-        ${READER_TEXT_ENTITY_SOURCE}
-        ${READER_TEXT_TYPE_SOURCE})
+        ${TAG_TEXT_READER_SOURCE}
+        ${ENTITY_TEXT_SREADER_OURCE}
+        ${TYPE_TEXT_READER_SOURCE}
+        )
 
 target_link_libraries(
         nbbook

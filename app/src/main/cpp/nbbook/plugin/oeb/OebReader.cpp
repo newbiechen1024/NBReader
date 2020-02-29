@@ -10,9 +10,9 @@
 OebReader::OebReader() : mXhtmlReader(mBookEncoder, 0) {
 }
 
-size_t OebReader::readContent(TextChapter &chapter, char **outBuffer) {
+bool OebReader::readContent(TextChapter &inChapter, TextContent &outContent) {
     // 准备文件信息
-    File chapterFile(chapter.url);
+    File chapterFile(inChapter.url);
 
     std::string chapterPath = chapterFile.getPath();
     int referenceIndex = chapterPath.rfind(FileSystem::archiveSeparator);
@@ -30,6 +30,7 @@ size_t OebReader::readContent(TextChapter &chapter, char **outBuffer) {
     mXhtmlReader.readFile(chapterFile, referenceName);
     // 设置文本结束段落标记
     mBookEncoder.insertEndOfSectionParagraph();
+    outContent = mBookEncoder.close();
     // 将解析到的数据输出
-    return mBookEncoder.close(outBuffer);
+    return outContent.isInitialized();
 }

@@ -149,10 +149,10 @@ bool FormatPlugin::readChapters(std::vector<TextChapter> &chapterList) {
     return result;
 }
 
-bool FormatPlugin::readChapterContent(TextChapter &txtChapter, char **outBuffer, size_t *outSize) {
+bool FormatPlugin::readChapterContent(TextChapter &inChapter, TextContent &outContent) {
     // TODO：查找本地数据是否存在该章节的缓冲信息，如果存在则从本地数据读取
 
-    bool result = readChapterContentInternal(txtChapter, outBuffer, outSize);
+    bool result = readChapterContentInternal(inChapter, outContent);
 
     if (result) {
         // TODO:存储数据到本地

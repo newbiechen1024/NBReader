@@ -62,12 +62,12 @@ data class TextFixedHSpaceTag(val length: Int) : TextTag {
 /**
  * 图片临时标签
  */
-class TextImageTag() : TextTag
+data class TextImageTag(val id: Long) : TextTag
 
 /**
  * 超链接临时标签
  */
-class TextHyperlinkControlTag():TextTag
+class TextHyperlinkControlTag() : TextTag
 
 /**
  * 样式闭合标签

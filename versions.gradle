@@ -3,7 +3,7 @@ ext.deps = [:]
 // 版本号
 def versions = [:]
 versions.androidx = '1.1.0'
-versions.android = '3.5.3'
+versions.android = '3.6.0'
 versions.kotlin = '1.3.61'
 versions.constraintlayout = "1.1.3"
 versions.junit = '4.13'

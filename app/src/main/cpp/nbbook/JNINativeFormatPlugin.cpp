@@ -219,15 +219,16 @@ Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_getChap
 }
 
 extern "C"
-JNIEXPORT jbyteArray JNICALL
+JNIEXPORT jobject JNICALL
 Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readChapterContentNative(
         JNIEnv *env, jobject thiz, jint plugin_desc, jobject text_chapter) {
 
     std::string chapterUrl = AndroidUtil::Method_TextChapter_getUrl->callForCppString(text_chapter);
     std::string chapterTitle = AndroidUtil::Method_TextChapter_getTitle->callForCppString(
             text_chapter);
-    size_t chapterStartIndex = AndroidUtil::Method_TextChapter_getStartIndex->call(text_chapter);
-    size_t chapterEndIndex = AndroidUtil::Method_TextChapter_getEndIndex->call(text_chapter);
+
+    int chapterStartIndex = AndroidUtil::Method_TextChapter_getStartIndex->call(text_chapter);
+    int chapterEndIndex = AndroidUtil::Method_TextChapter_getEndIndex->call(text_chapter);
 
     TextChapter chapter(chapterUrl, chapterTitle, chapterStartIndex, chapterEndIndex);
 
@@ -238,22 +239,34 @@ Java_com_newbiechen_nbreader_ui_component_book_plugin_NativeFormatPlugin_readCha
         return 0;
     }
 
-    bool result;
-    char *buffer;
-    size_t bufferSize;
+    TextContent textContent;
 
-    result = pluginPtr->readChapterContent(chapter, &buffer, &bufferSize);
-
-    if (!result) {
+    // 如果读取章节信息失败
+    if (!pluginPtr->readChapterContent(chapter, textContent) && !textContent.isInitialized()) {
         return 0;
     }
 
-    jbyteArray jContentArr = env->NewByteArray(bufferSize);
+    jbyteArray jResourceArr = 0;
 
-    env->SetByteArrayRegion(jContentArr, 0, bufferSize, (jbyte *) buffer);
+    // 资源数据可能不存在
+    if (textContent.resourceSize != 0) {
+        jResourceArr = env->NewByteArray(textContent.resourceSize);
 
-    // 销毁 buffer
-    delete[] buffer;
+        env->SetByteArrayRegion(jResourceArr, 0, textContent.resourceSize,
+                                (jbyte *) textContent.resourcePtr);
+    }
 
-    return jContentArr;
+    // 创建内容数据
+    jbyteArray jContentArr = env->NewByteArray(textContent.contentSize);
+
+    env->SetByteArrayRegion(jContentArr, 0, textContent.contentSize,
+                            (jbyte *) textContent.contentPtr);
+
+    // 创建 content 对象
+    jobject jTextContent = AndroidUtil::Constructor_TextContent->call(jResourceArr, jContentArr);
+
+    // 释放内部资源
+    textContent.release();
+
+    return jTextContent;
 }

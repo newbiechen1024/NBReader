@@ -13,6 +13,7 @@
 #include "../../tools/font/FontMap.h"
 #include "../text/tag/VideoTag.h"
 #include "../text/tag/ImageTag.h"
+#include "../text/entity/TextContent.h"
 #include <string>
 #include <vector>
 #include <stack>
@@ -21,12 +22,15 @@ class BookEncoder {
 public:
     BookEncoder();
 
-    ~BookEncoder() {
+    ~BookEncoder();
+
+    bool isOpen() {
+        return hasOpen;
     }
 
     void open();
 
-    size_t close(char **outBuffer);
+    TextContent close();
 
     // 标签样式标记入栈
     void pushTextKind(TextKind kind);
@@ -161,9 +165,18 @@ private:
     // 将段落缓冲输出到 textModel 中
     void flushParagraphBuffer();
 
+    size_t addImageResource(const ImageTag &tag);
+
+    // TODO:得持有一个 resource 映射表，要不然 id 就没意义了，先判断 path 是否已存在，如果已存在返回相同的 id。
+    size_t generateResourceId() {
+        return mIdGenerator++;
+    }
+
 private:
     // 文本编码器
     TextEncoder mTextEncoder;
+    // 资源信息分配器
+    TextBufferAllocator *mResAllocator;
     // 文本样式栈
     std::vector<TextKind> mTextKindStack;
     // 段落文本列表
@@ -175,6 +188,9 @@ private:
     bool isSectionContainsRegularContents;
     // 当前是否正在输入标题
     bool isEnterTitle;
+    bool hasOpen;
+    // id 生成器，用于生成资源 id
+    size_t mIdGenerator;
 };
 
 #endif //NBREADER_BOOKENCODER_H

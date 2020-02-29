@@ -1,6 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.plugin
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
+import com.newbiechen.nbreader.ui.component.book.text.entity.TextContent
 import com.newbiechen.nbreader.ui.component.book.type.BookType
 import java.io.File
 
@@ -72,7 +73,7 @@ open class NativeFormatPlugin(private val bookType: BookType) {
         return getChaptersNative(mNativePluginDesc)
     }
 
-    fun getChapterContent(chapter: TextChapter): ByteArray? {
+    fun getChapterContent(chapter: TextChapter): TextContent? {
         return readChapterContentNative(mNativePluginDesc, chapter)
     }
 
@@ -126,7 +127,7 @@ open class NativeFormatPlugin(private val bookType: BookType) {
     private external fun readChapterContentNative(
         pluginDesc: Int,
         chapter: TextChapter
-    ): ByteArray?
+    ): TextContent?
 
     /**
      * 释放插件

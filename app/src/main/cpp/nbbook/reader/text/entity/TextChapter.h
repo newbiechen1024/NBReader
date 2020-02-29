@@ -15,7 +15,7 @@ public:
     TextChapter();
 
     TextChapter(const std::string &url, const std::string &title,
-                size_t startIndex, size_t endIndex);
+                int startIndex, int endIndex);
 
     // 路径信息
     std::string url;

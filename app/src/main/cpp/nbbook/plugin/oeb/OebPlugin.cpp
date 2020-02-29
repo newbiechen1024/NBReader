@@ -117,17 +117,7 @@ bool OebPlugin::readChaptersInternal(std::string &chapterPattern,
     return true;
 }
 
-bool OebPlugin::readChapterContentInternal(TextChapter &txtChapter, char **outBuffer,
-                                           size_t *outSize) {
-    Logger::i(TAG, "readChapterContentInternal txtChapter" + txtChapter.toString());
-
-    size_t result = mOebReader.readContent(txtChapter, outBuffer);
-
-    // 是否解析失败
-    if (result < 0) {
-        return false;
-    }
-
-    (*outSize) = result;
-    return true;
+bool OebPlugin::readChapterContentInternal(TextChapter &inChapter, TextContent &outContent) {
+    Logger::i(TAG, "readChapterContentInternal txtChapter" + inChapter.toString());
+    return mOebReader.readContent(inChapter, outContent);;
 }

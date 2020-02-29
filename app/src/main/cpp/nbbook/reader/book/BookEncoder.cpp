@@ -4,29 +4,59 @@
 //
 
 #include "BookEncoder.h"
+#include "../text/tag/TextResKind.h"
+
+static const size_t BUFFER_SIZE = 4096;
 
 BookEncoder::BookEncoder() {
     isParagraphOpen = false;
     isSectionContainsRegularContents = false;
     isTitleParagraphOpen = false;
     isEnterTitle = false;
+    hasOpen = false;
+    mIdGenerator = 0;
+}
+
+BookEncoder::~BookEncoder() {
+    if (mResAllocator != nullptr) {
+        delete mResAllocator;
+        mResAllocator = nullptr;
+    }
 }
 
 void BookEncoder::open() {
+    // 如果已经打开了，则不处理
+    if (isOpen()) {
+        return;
+    }
+    // 启动文件编码器
     mTextEncoder.open();
+    // 启动资源信息分配器
+    mResAllocator = new TextBufferAllocator(BUFFER_SIZE);
 }
 
-size_t BookEncoder::close(char **outBuffer) {
-    size_t outSize = mTextEncoder.close(outBuffer);
+TextContent BookEncoder::close() {
+    char *resourcePtr = nullptr;
+    char *contentPtr = nullptr;
+
+    size_t resourceSize = mResAllocator->flush(&resourcePtr);
+    size_t contentSize = mTextEncoder.close(&contentPtr);
 
     isParagraphOpen = false;
     isSectionContainsRegularContents = false;
     isTitleParagraphOpen = false;
+    hasOpen = false;
 
     mParagraphTextList.clear();
     mTextKindStack.clear();
 
-    return outSize;
+    // 释放
+    if (mResAllocator != nullptr) {
+        delete mResAllocator;
+        mResAllocator = nullptr;
+    }
+
+    return TextContent(resourcePtr, resourceSize, contentPtr, contentSize);
 }
 
 void BookEncoder::beginParagraph(TextParagraph::Type type) {
@@ -245,17 +275,53 @@ void BookEncoder::addExtensionTag(const std::string &action,
 
 void BookEncoder::addImageTag(const ImageTag &tag) {
     isSectionContainsRegularContents = true;
+    // 添加图片资源，返回 id 映射
+    int id = addImageResource(tag);
+
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        // TODO:图片有可能需要转为资源信息，通过 id 进行映射。这个以后再说。(Image 暂时未实现)
-        mTextEncoder.addImageTag();
+        // 添加图片标签
+        mTextEncoder.addImageTag(id, tag);
     } else {
         beginParagraph();
+        // 添加图片标签控制位
         mTextEncoder.addControlTag(TextKind::IMAGE, true);
-        mTextEncoder.addImageTag();
+        mTextEncoder.addImageTag(id, tag);
         mTextEncoder.addControlTag(TextKind::IMAGE, false);
         endParagraph();
     }
+}
+
+/**
+ * 图片资源标签
+ *
+ * 1. 资源类型：占用 1 字节。 image
+ * 2. 边缘对齐：占用 1 字节。
+ * 3. 资源 id：占 4 字节
+ * 4. 资源路径长：占 4 字节。
+ * @param tag
+ * @return
+ */
+size_t BookEncoder::addImageResource(const ImageTag &tag) {
+    // TODO:代码有问题先这样写。
+    size_t resId = generateResourceId();
+
+    size_t resourceLen = 2 + 4;
+    resourceLen += 2 + UnicodeUtil::utf8Length(tag.path) * 2;
+
+    char *resPtr = mResAllocator->allocate(resourceLen);
+
+    *resPtr++ = (char) TextResKind::IMAGE;
+    *resPtr++ = 0;
+    resPtr = TextBufferAllocator::writeUInt32(resPtr, resId);
+
+    // 先转换成 utf-16
+    UnicodeUtil::Ucs2String ucs2Path;
+    UnicodeUtil::utf8ToUcs2(ucs2Path, tag.path);
+    // 使用 allocator 进行存储文本
+    TextBufferAllocator::writeString(resPtr, ucs2Path);
+
+    return resId;
 }
 
 std::string

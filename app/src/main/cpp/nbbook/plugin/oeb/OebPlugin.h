@@ -45,7 +45,7 @@ protected:
                               std::vector<TextChapter> &chapterList) override;
 
     bool
-    readChapterContentInternal(TextChapter &txtChapter, char **outBuffer, size_t *outSize) override;
+    readChapterContentInternal(TextChapter &inChapter, TextContent &outContent) override;
 
 private:
     OpfReader mOpfReader;

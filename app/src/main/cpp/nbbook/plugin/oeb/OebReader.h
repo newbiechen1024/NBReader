@@ -19,7 +19,7 @@ public:
     }
 
     // 读取章节信息
-    size_t readContent(TextChapter &chapter, char **outBuffer);
+    bool readContent(TextChapter &inChapter, TextContent &outContent);
 
 private:
     // 书籍编码器

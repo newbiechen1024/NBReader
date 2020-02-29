@@ -48,7 +48,7 @@ size_t TextEncoder::close(char **outBuffer) {
     flush();
 
     // 将 allocator 中的数据输出
-    size_t result = mBufferAllocatorPtr->close(outBuffer);
+    size_t result = mBufferAllocatorPtr->flush(outBuffer);
 
     // 释放无用资源操作
     release();
@@ -228,6 +228,8 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
  * 4. 标签类型：占用 1 字节 ==> 0 或者是
  */
 void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
+    // 检测添加 tag 的环境
+    checkTagState();
 
     mCurTagPtr = mBufferAllocatorPtr->allocate(4);
     *mCurTagPtr = (char) TextTagType::CONTROL;
@@ -246,6 +248,9 @@ void TextEncoder::addControlTag(TextKind kind, bool isStartTag) {
  * 4. 对齐填充：占用 1 字节
  */
 void TextEncoder::addFixedHSpace(unsigned char length) {
+    // 检测添加 tag 的环境
+    checkTagState();
+
     mCurTagPtr = mBufferAllocatorPtr->allocate(4);
     *mCurTagPtr = (char) TextTagType::FIXED_HSPACE;
     *(mCurTagPtr + 1) = 0;
@@ -274,6 +279,10 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
  */
 void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
                               unsigned char depth) {
+
+    // 检测添加 tag 的环境
+    checkTagState();
+
     // 基础标记长度
     std::size_t len = 6; // entry type + feature mask
 
@@ -338,6 +347,9 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
 }
 
 void TextEncoder::addStyleCloseTag() {
+    // 检测添加 tag 的环境
+    checkTagState();
+
     mCurTagPtr = mBufferAllocatorPtr->allocate(2);
 
     char *address = mCurTagPtr;
@@ -350,6 +362,10 @@ void TextEncoder::addStyleCloseTag() {
 }
 
 void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label) {
+
+    // 检测添加 tag 的环境
+    checkTagState();
+
     // TODO：占位标记，暂未实现
     mCurTagPtr = mBufferAllocatorPtr->allocate(2);
 
@@ -374,16 +390,29 @@ void TextEncoder::addHyperlinkControlTag(TextKind kind, const std::string &label
     ++myParagraphLengths.back();*/
 }
 
-void TextEncoder::addImageTag() {
-    // TODO：占位标记，暂未实现
-    mCurTagPtr = mBufferAllocatorPtr->allocate(2);
+
+/**
+ * 添加图片标签
+ * 数据结构：占 6 字节。 | 标签类型 | 边缘对齐 | id
+ * 1. tag 类型：占用 1 字节。
+ * 2. 边缘对齐：占用 1 字节。
+ * 3. 资源 id：占用 4 字节。
+ * @param uniqueId：图片指向的资源 id
+ * @param tag：图片标签 ==> 这个暂时没啥用，先放着
+ */
+void TextEncoder::addImageTag(size_t uniqueId, const ImageTag &tag) {
+    // 检测添加 tag 的环境
+    checkTagState();
+
+    mCurTagPtr = mBufferAllocatorPtr->allocate(6);
 
     char *address = mCurTagPtr;
-
     *address++ = (char) TextTagType::IMAGE;
-    *address = 0;
+    *address++ = 0;
+    // 添加 id 信息
+    TextBufferAllocator::writeUInt32(address, uniqueId);
 }
 
 void TextEncoder::addVideoTag() {
-
+    // 暂时不处理
 }

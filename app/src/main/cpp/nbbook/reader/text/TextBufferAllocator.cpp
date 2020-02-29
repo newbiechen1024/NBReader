@@ -33,10 +33,15 @@ size_t TextBufferAllocator::getBufferOffset() {
 
 
 // TODO:使用 close 是否正确？
-size_t TextBufferAllocator::close(char **buffer) {
+size_t TextBufferAllocator::flush(char **buffer) {
     size_t bufferSize = getBufferOffset();
-    char *outBuffer = new char[bufferSize];
 
+    // 缓冲区大小为 0 则不处理。
+    if (bufferSize == 0) {
+        return 0;
+    }
+
+    char *outBuffer = new char[bufferSize];
     char *curBuffer = outBuffer;
 
     // 循环复制缓冲块的中的内容
@@ -46,7 +51,6 @@ size_t TextBufferAllocator::close(char **buffer) {
     }
 
     (*buffer) = outBuffer;
-
     return bufferSize;
 }
 

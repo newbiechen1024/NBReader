@@ -3,6 +3,7 @@ package com.newbiechen.nbreader.ui.component.book.text.processor
 import android.util.LruCache
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
+import com.newbiechen.nbreader.ui.component.book.text.entity.TextContent
 import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextChapterCursor
 import java.lang.IndexOutOfBoundsException
 
@@ -42,10 +43,10 @@ class TextModel(private val plugin: NativeFormatPlugin) {
 
     /**
      * 获取章节的内容
+     * // TODO：返回的还包含资源信息
      */
-    fun getChapterContent(index: Int): ByteArray? {
+    fun getChapterContent(index: Int): TextContent? {
         // 解析所有资源信息？
-
         // 应该获取的是
         return plugin.getChapterContent(getChapter(index))
     }

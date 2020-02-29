@@ -25,6 +25,10 @@ JavaClass AndroidUtil::Class_TextChapter(
         PKG_NAME + "ui/component/book/text/entity/TextChapter"
 );
 
+JavaClass AndroidUtil::Class_TextContent(
+        PKG_NAME + "ui/component/book/text/entity/TextContent"
+);
+
 std::shared_ptr<StaticObjectMethod> AndroidUtil::StaticMethod_Locale_getDefault;
 
 std::shared_ptr<StringMethod> AndroidUtil::Method_Locale_getLanguage;
@@ -40,11 +44,11 @@ std::shared_ptr<StringMethod> AndroidUtil::Method_Book_getLang;
 
 // TextChapter
 std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextChapter;
+std::shared_ptr<JavaConstructor> AndroidUtil::Constructor_TextContent;
 std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getUrl;
 std::shared_ptr<StringMethod> AndroidUtil::Method_TextChapter_getTitle;
 std::shared_ptr<IntMethod> AndroidUtil::Method_TextChapter_getStartIndex;
 std::shared_ptr<IntMethod> AndroidUtil::Method_TextChapter_getEndIndex;
-
 
 JNIEnv *AndroidUtil::getEnv() {
     JNIEnv *env;
@@ -75,13 +79,17 @@ bool AndroidUtil::init(JavaVM *jvm) {
     Method_TextChapter_getTitle = std::make_shared<StringMethod>(Class_TextChapter, "getTitle",
                                                                  "()");
     Method_TextChapter_getStartIndex = std::make_shared<IntMethod>(Class_TextChapter,
-                                                                    "getStartIndex", "()");
+                                                                   "getStartIndex", "()");
     Method_TextChapter_getEndIndex = std::make_shared<IntMethod>(Class_TextChapter, "getEndIndex",
-                                                                  "()");
+                                                                 "()");
 
     // 参数：string、string、int、int
     Constructor_TextChapter = std::make_shared<JavaConstructor>(Class_TextChapter,
                                                                 "(Ljava/lang/String;Ljava/lang/String;II)V");
+
+    // 参数：Byte[] Byte[]
+    Constructor_TextContent = std::make_shared<JavaConstructor>(Class_TextContent,
+                                                                "([B[B)V");
     return true;
 }
 
