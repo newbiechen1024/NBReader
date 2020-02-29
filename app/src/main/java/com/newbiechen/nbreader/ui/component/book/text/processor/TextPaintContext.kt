@@ -1,9 +1,12 @@
 package com.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.CornerPathEffect
 import android.graphics.EmbossMaskFilter
 import android.graphics.Paint
+import android.util.Size
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
 import com.newbiechen.nbreader.uilts.DensityUtil
 
 /**
@@ -136,6 +139,7 @@ class TextPaintContext {
     }
 
     private var mStringHeight: Int? = null
+
     /**
      * 获取文本的高度
      */
@@ -144,6 +148,20 @@ class TextPaintContext {
             mStringHeight = (textPaint.textSize + 0.5f).toInt()
         }
         return mStringHeight!!
+    }
+
+    /**
+     * 支持对图盘缩放
+     */
+    fun getImageSize(image: TextImage, maxSize: Size/*, scaling: ScalingType?*/): Size? {
+        // TODO:支持对图片的显示大小压缩，暂时不处理。
+
+        val bitmap: Bitmap = image.getBitmap()!!
+
+        return if (bitmap != null && !bitmap.isRecycled) Size(
+            bitmap.width,
+            bitmap.height
+        ) else null
     }
 
     private var mDescent = -1

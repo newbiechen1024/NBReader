@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.element
 
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
 
 /**
@@ -22,8 +23,7 @@ open class TextElement {
 
 data class TextStyleElement(val styleTag: TextStyleTag) : TextElement()
 
-// TODO:占位标签
-class TextImageElement() : TextElement()
+data class TextImageElement(val image: TextImage) : TextElement()
 
 // TODO:占位标签
 class TextHyperlinkControlElement() : TextElement()

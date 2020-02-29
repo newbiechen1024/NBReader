@@ -1,6 +1,8 @@
 package com.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.graphics.*
+import android.util.Size
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
 
 /**
  *  author : newbiechen
@@ -14,6 +16,9 @@ class TextCanvas(private val canvas: Canvas) {
         private const val TAG = "TextCanvas"
     }
 
+    /**
+     * 绘制颜色
+     */
     fun drawColor(color: Int, mode: PorterDuff.Mode? = null) {
         if (mode != null) {
             canvas.drawColor(color, mode)
@@ -108,7 +113,9 @@ class TextCanvas(private val canvas: Canvas) {
         canvas.drawPath(path, paintContext.outlinePaint)
     }
 
-    // 绘制多边形线条
+    /**
+     * 绘制多边形线条
+     */
     // 使用 path + linePaint
     fun drawPolygonalLine(xs: IntArray, ys: IntArray, paintContext: TextPaintContext) {
         val path = Path()
@@ -120,10 +127,45 @@ class TextCanvas(private val canvas: Canvas) {
         canvas.drawPath(path, paintContext.linePaint)
     }
 
-/*    fun drawImage(){
+    /**
+     * 绘制图片
+     */
+    fun drawImage(
+        x: Int,
+        y: Int,
+        image: TextImage,
+        maxSize: Size,
+/*        scaling: ScalingType?,
+        adjustingMode: ColorAdjustingMode?*/
+        paintContext: TextPaintContext
+    ) {
+        // TODO:暂时不处理压缩和缩放
+        // 从 ZLImageData 中获取图片
+        val bitmap: Bitmap = image.getBitmap()!!
 
-    }*/
+        // 设置图片与背景的混合模式
+        if (bitmap != null && !bitmap.isRecycled) {
+            // TODO:暂时不处理混合模式
+/*            when (adjustingMode) {
+                LIGHTEN_TO_BACKGROUND -> myFillPaint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.LIGHTEN))
+                DARKEN_TO_BACKGROUND -> myFillPaint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.DARKEN))
+                NONE -> {
+                }
+            }*/
+            // 直接绘制图片
+            canvas.drawBitmap(
+                bitmap,
+                x.toFloat(),
+                y - bitmap.height.toFloat(),
+                paintContext.fillPaint
+            )
+            paintContext.fillPaint.xfermode = null
+        }
+    }
 
+    /**
+     * 填充矩形
+     */
     fun fillRectangle(x0: Int, y0: Int, x1: Int, y1: Int, paintContext: TextPaintContext) {
         var x0 = x0
         var y0 = y0

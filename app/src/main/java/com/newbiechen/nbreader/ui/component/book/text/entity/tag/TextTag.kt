@@ -1,5 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.tag
 
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
+
 /**
  *  author : newbiechen
  *  date : 2020-01-12 13:51
@@ -62,7 +64,7 @@ data class TextFixedHSpaceTag(val length: Int) : TextTag {
 /**
  * 图片临时标签
  */
-data class TextImageTag(val id: Int) : TextTag
+data class TextImageTag(val textImage: TextImage) : TextTag
 
 /**
  * 超链接临时标签

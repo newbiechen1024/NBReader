@@ -3,12 +3,12 @@ package com.newbiechen.nbreader.ui.component.book.text.processor
 import android.content.Context
 import android.graphics.Canvas
 import android.util.Size
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.*
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.CustomTextDecoratedStyle
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.ExplicitTextDecoratedStyle
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
-import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
 import com.newbiechen.nbreader.ui.component.book.text.util.TextDimenUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
@@ -218,6 +218,17 @@ abstract class BaseTextProcessor(private val context: Context) {
             element is TextWordElement -> getWordWidth(element, charIndex)
             element === TextElement.NBSpace -> mPaintContext.getSpaceWidth()
             element === TextElement.Indent -> mTextStyle!!.getFirstLineIndent(getMetrics())
+            element is TextImageElement -> {
+                // 获取图片的尺寸
+                val size: Size? = mPaintContext.getImageSize(
+                    element.image,
+                    // 传入当前可显示区域
+                    getTextAreaSize()
+                    // 传入缩放类型
+/*                getScalingType(imageElement)*/
+                )
+                return size?.width ?: 0
+            }
             else -> 0
         }
     }
@@ -232,6 +243,17 @@ abstract class BaseTextProcessor(private val context: Context) {
             element is TextFixedHSpaceElement
         ) {
             return getWordHeight()
+        } else if (element is TextImageElement) {
+            val size: Size? = mPaintContext.getImageSize(
+                element.image,
+                // 传入当前可显示区域
+                getTextAreaSize()
+                // 传入缩放类型
+/*                getScalingType(imageElement)*/
+            )
+            // 设置图片的高度
+            return (size?.height ?: 0) + (mPaintContext.getStringHeight() *
+                    (mTextStyle!!.getLineSpacePercent() - 100) / 100).coerceAtLeast(3)
         }
         return 0
     }

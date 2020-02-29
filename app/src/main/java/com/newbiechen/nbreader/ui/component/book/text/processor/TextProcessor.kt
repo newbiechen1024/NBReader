@@ -1,12 +1,12 @@
 package com.newbiechen.nbreader.ui.component.book.text.processor
 
 import android.content.Context
-import android.util.Range
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextLine
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
+import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextImageElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
 import com.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHyphenInfo
@@ -979,6 +979,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         while (wordIndex < endElementIndex && areaIndex < toAreaIndex) {
             val element = paragraph.getElement(wordIndex)
             val area = pageAreas[areaIndex]
+
             if (element === area.element) {
                 ++areaIndex
                 // 如果当前样式存在改变
@@ -987,28 +988,41 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 }
 
                 val areaX = area.startX
-                val areaY =
-                    area.endY - getElementDescent(element) - getTextStyle().getVerticalAlign(
-                        getMetrics()
-                    )
-                if (element is TextWordElement) {
-                    drawWord(
-                        canvas,
-                        areaX,
-                        areaY,
-                        element,
-                        charIndex,
-                        -1,
-                        false,
-                        mTextConfig.textColor
-                    )
-                } else if (element === TextElement.HSpace || element === TextElement.NBSpace) {
-                    val cw = mPaintContext.getSpaceWidth()
-                    var len = 0
-                    while (len < area.endX - area.startX) {
-                        canvas.drawString(areaX + len, areaY, SPACE, 0, 1, mPaintContext)
-                        len += cw
+                val areaY = area.endY - getElementDescent(element) - getTextStyle()
+                    .getVerticalAlign(getMetrics())
+
+
+                when (element) {
+                    is TextWordElement -> {
+                        drawWord(
+                            canvas,
+                            areaX,
+                            areaY,
+                            element,
+                            charIndex,
+                            -1,
+                            false,
+                            mTextConfig.textColor
+                        )
                     }
+                    is TextImageElement -> {
+                        canvas.drawImage(
+                            areaX, areaY,
+                            element.image,
+                            getTextAreaSize()/*,
+                            getScalingType(imageElement),
+                            getAdjustingModeForImages()*/
+                        )
+                    }
+                    TextElement.HSpace, TextElement.NBSpace -> {
+                        val cw = mPaintContext.getSpaceWidth()
+                        var len = 0
+                        while (len < area.endX - area.startX) {
+                            canvas.drawString(areaX + len, areaY, SPACE, 0, 1, mPaintContext)
+                            len += cw
+                        }
+                    }
+
                 }
             }
             ++wordIndex

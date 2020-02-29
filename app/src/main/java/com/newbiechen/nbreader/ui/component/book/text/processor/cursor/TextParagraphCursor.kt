@@ -374,9 +374,7 @@ private class ParagraphContentDecoder(
     }
 
     private fun processImageTag(textTag: TextImageTag) {
-        // TODO：临时文本标记
-        val imageTempStr = "加载图片的地方"
-        val strArr = imageTempStr.toCharArray()
-        mElementList!!.add(TextWordElement(strArr, 0, strArr.size))
+        // 添加图片元素
+        mElementList!!.add(TextImageElement(textTag.textImage))
     }
 }

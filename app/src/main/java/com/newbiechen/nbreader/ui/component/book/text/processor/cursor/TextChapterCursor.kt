@@ -46,7 +46,7 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 
         // 创建解析器解析
         mTextTagList = TextContentDecoder(
-            textContent.contentData
+            mTextResource, textContent.contentData
         ).decode()
 
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
@@ -204,7 +204,10 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 /**
  * 文本内容解析器
  */
-private class TextContentDecoder(private val contentData: ByteArray) {
+private class TextContentDecoder(
+    private val textResource: TextResource,
+    private val contentData: ByteArray
+) {
 
     // 缓存区的偏移
     private var mBufferOffset = 0
@@ -419,8 +422,12 @@ private class TextContentDecoder(private val contentData: ByteArray) {
     private fun readImageTag(): TextTag {
         // 读取 image 所属的 id
         val idArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
+        val id = ByteToBasicUtil.toUInt16(idArr)
         mBufferOffset += 2
-        return TextImageTag(ByteToBasicUtil.toUInt16(idArr))
+        // 根据 id 获取 image
+        val textImage = textResource.getImage(id)
+        return TextImageTag(textImage)
+
     }
 
     private fun readHyperlinkControlTag(): TextTag {

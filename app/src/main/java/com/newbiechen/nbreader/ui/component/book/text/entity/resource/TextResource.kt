@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.resource
 
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
 import com.newbiechen.nbreader.uilts.ByteToBasicUtil
 import com.newbiechen.nbreader.uilts.LogHelper
 
@@ -28,7 +29,7 @@ class TextResource(private val resourceData: ByteArray?) {
         }
     }
 
-    fun getImage(resourceId: Int) {
+    fun getImage(resourceId: Int): TextImage {
         // 查找
     }
 
@@ -66,22 +67,21 @@ private class TextResourceDecoder(private val resourceData: ByteArray) {
 
         val bufferLen = resourceData.size
 
-        LogHelper.i(TAG, "decode: size = ${resourceData.size}")
 
         while (mBufferOffset < bufferLen) {
             // 获取当前索引下的标签类型
-            val tagType = readAttrType()
+            val attrType = readAttrType()
 
             // 生成对应的 TextTag
             var textAttr: TextAttribute? = null
 
-            when (tagType) {
+            when (attrType) {
                 TextResType.IMAGE -> {
                     textAttr = readImageAttr()
                 }
             }
 
-            LogHelper.i(TAG, "decode: $tagType")
+            LogHelper.i(TAG, "decode: $attrType")
             textTags.add(textAttr!!)
         }
 

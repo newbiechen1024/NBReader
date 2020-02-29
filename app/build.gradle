@@ -126,6 +126,8 @@ dependencies {
     implementation 'com.yanzhenjie.permission:x:2.0.1'
     // 汉字转拼音
     implementation 'com.github.promeg:tinypinyin:2.0.3'
+    // zip 处理库
+    implementation 'net.lingala.zip4j:zip4j:2.3.2'
 
     // 测试
     testImplementation deps.testing.junit
