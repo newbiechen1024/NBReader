@@ -12,8 +12,7 @@
 
 展示 epub 翻页：
 
-![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E4%B9%A6%E7%B1%8D%E7%BF%BB%E9%98%85_epub.gif?raw=true
-)
+![](https://github.com/newbiechen1024/NBReader/blob/master/doc/image/%E4%B9%A6%E7%B1%8D%E7%BF%BB%E9%98%85_epub.gif?raw=true)
 
 ## 使用
 
@@ -200,7 +199,8 @@ Java 层框架：
 4. Room：数据库
 5. OkHttp：网络库
 6. Glide：图片加载库
-7. AndPermission:权限库
-8. Tinypinyin：汉字转拼音库
-9. LRecyclerView：RecyclerView 封装库
+7. [AndPermission](https://github.com/yanzhenjie/AndPermission):权限库
+8. [Tinypinyin](https://github.com/promeG/TinyPinyin)：汉字转拼音库
+9. [LRecyclerView](https://github.com/jdsjlzx/LRecyclerView)：RecyclerView 封装库
 10. Retrofit：网络请求封装库
+11. [zip4j](https://github.com/srikanth-lingala/zip4j):zip 文件处理库
