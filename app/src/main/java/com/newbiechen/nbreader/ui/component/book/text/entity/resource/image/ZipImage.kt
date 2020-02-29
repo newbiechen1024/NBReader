@@ -1,14 +1,11 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.resource.image
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Size
 import com.newbiechen.nbreader.ui.component.book.text.util.TextBitmapUtil
 import com.newbiechen.nbreader.ui.component.book.text.util.TextConstants
-import com.newbiechen.nbreader.uilts.LogHelper
 import net.lingala.zip4j.ZipFile
-import java.io.IOException
-import kotlin.math.max
+import java.io.ByteArrayInputStream
 
 /**
  *  author : newbiechen
@@ -17,7 +14,7 @@ import kotlin.math.max
  */
 
 class ZipImage(private val path: String) : TextImage {
-    private var mBitmapData: ByteArray? = null
+    private var mBitmapBuffer: ByteArray? = null
     private var mBitmap: Bitmap? = null
     private var mImageSize: Size? = null
 
@@ -31,6 +28,35 @@ class ZipImage(private val path: String) : TextImage {
 
     // TODO:未进行错误处理
     override fun getImage(maxSize: Size?): Bitmap? {
+        // 缓存原图信息
+        if (mBitmapBuffer == null) {
+            val pathArr = path.split(TextConstants.zipSeparator)
+            val rootPath = pathArr[0]
+            val subPath = pathArr[1]
+            // 获取压缩文件
+            val zipFile = ZipFile(rootPath)
+            val imageHeader = zipFile.getFileHeader(subPath)
+            // 获取文件流
+            val imageInputStream = zipFile.getInputStream(imageHeader)
+
+            // 创建缓冲区
+            mBitmapBuffer = ByteArray(imageHeader.uncompressedSize.toInt())
+
+            var bufferOffset = 0
+
+            // zip 的读取流和普通的流不一样，所以需要用这种方式读取图片数据
+            do {
+                bufferOffset += imageInputStream.read(
+                    mBitmapBuffer,
+                    bufferOffset,
+                    mBitmapBuffer!!.size - bufferOffset
+                )
+            } while (bufferOffset != 0 && bufferOffset < mBitmapBuffer!!.size)
+
+            // 关闭数据流
+            imageInputStream.close()
+        }
+
         // 是否图片尺寸被修改了
         val isSizeChanged = if (mImageSize == null) {
             maxSize != null
@@ -38,21 +64,9 @@ class ZipImage(private val path: String) : TextImage {
             mImageSize!! != maxSize
         }
 
+
         // 获取图片
         if (mBitmap == null || isSizeChanged) {
-            val pathArr = path.split(TextConstants.zipSeparator)
-            val rootPath = pathArr[0]
-            val subPath = pathArr[1]
-
-            // TODO: zip 信息是否最好也缓存？
-
-            // 获取压缩文件
-            val zipFile = ZipFile(rootPath)
-            val imageHeader = zipFile.getFileHeader(subPath)
-
-            // 获取文件流
-            val imageInputStream = zipFile.getInputStream(imageHeader)
-
             // 计算最大像素值
             val maxNumOfPixels = if (maxSize != null) {
                 maxSize.width * maxSize.height
@@ -60,16 +74,16 @@ class ZipImage(private val path: String) : TextImage {
                 -1
             }
 
-            // TODO:验证数据流，是否能够获取图片 (可以)
-            // TODO:就是说得有原图 ByteData  数据，和解压后的两张图。
-            mBitmap = BitmapFactory.decodeStream(imageInputStream)
+            val imageIs = ByteArrayInputStream(mBitmapBuffer)
+
+            // 获取图片
+            mBitmap = TextBitmapUtil.getImage(imageIs, maxNumOfPixels)
 
             // 当前图片使用的尺寸
             mImageSize = maxSize
 
-/*            // 获取图片
-            mBitmap = TextBitmapUtil.getImage(imageInputStream, maxNumOfPixels)*/
-            imageInputStream.close()
+            // 关闭数据流
+            imageIs.close()
         }
 
         return mBitmap!!

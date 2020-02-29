@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Size
-import com.newbiechen.nbreader.uilts.LogHelper
 import java.io.InputStream
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -20,7 +19,7 @@ object TextBitmapUtil {
     private const val TAG = "TextBitmapUtil"
     /**
      * 获取指定资源经过压缩的源图bitmap
-     *
+     * @param stream：图片输入流，必须是支持 mark() 以及 reset() 的 Stream
      * @param maxNumOfPixels 返回的结果bitmap的最大像素数, -1时忽略
      * @param maxSize       返回的结果bitmap的宽/高最大值, -1时忽略
      */
@@ -34,13 +33,10 @@ object TextBitmapUtil {
         val options = BitmapFactory.Options()
         val imageSize: Size = getImageSize(stream)
 
-        LogHelper.i(TAG, "getImage: size = $imageSize")
         // 获取缩放比
         options.inSampleSize = computeSampleSize(imageSize, -1, maxNumOfPixels)
 
         var bitmap: Bitmap = BitmapFactory.decodeStream(stream, null, options) ?: return null
-
-        LogHelper.i(TAG, "getImage: bitmap success")
 
         // 处理最大宽高
         if (maxWidth > 0 || maxHeight > 0) {
@@ -76,12 +72,13 @@ object TextBitmapUtil {
      * 获取指定流的图片大小
      */
     fun getImageSize(stream: InputStream): Size {
+        // 标记起始读取位置
+        stream.mark(0)
         val options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ALPHA_8
         options.inJustDecodeBounds = true
         BitmapFactory.decodeStream(stream, null, options)
-        // 跳回到起始位置
-        stream.skip(0)
+        // 跳回到标记位置
         stream.reset()
         return Size(options.outWidth, options.outHeight)
     }

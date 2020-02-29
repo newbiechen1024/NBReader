@@ -152,7 +152,6 @@ class TextCanvas(private val paintContext: TextPaintContext, private val canvas:
                 }
             }*/
 
-            LogHelper.i(TAG, "drawImage: x = ${x.toFloat()}, y = ${y - bitmap.height.toFloat()}")
             // 直接绘制图片
             canvas.drawBitmap(
                 bitmap, x.toFloat(), y - bitmap.height.toFloat(),
