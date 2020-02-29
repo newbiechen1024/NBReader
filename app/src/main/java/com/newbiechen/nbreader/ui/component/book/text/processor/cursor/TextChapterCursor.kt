@@ -5,7 +5,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.TextResource
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
-import com.newbiechen.nbreader.uilts.ByteToBasicUtil
+import com.newbiechen.nbreader.ui.component.book.text.util.TextByteToBasicUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.LogHelper
 
@@ -300,7 +300,7 @@ private class TextContentDecoder(
         mBufferOffset += 4
 
         // 文本字节长度
-        var textLength = ByteToBasicUtil.toUInt32(textLengthArr)
+        var textLength = TextByteToBasicUtil.toUInt32(textLengthArr)
 
         // 文本内容
         val textContent =
@@ -324,7 +324,7 @@ private class TextContentDecoder(
         // 获取 control 类型，并进行偏移
         val controlType = contentData[mBufferOffset++]
         // 判断是起始标签，还是结尾标签
-        var isControlStart = ByteToBasicUtil.toBoolean(contentData[mBufferOffset++])
+        var isControlStart = TextByteToBasicUtil.toBoolean(contentData[mBufferOffset++])
 
         return TextControlTag(controlType, isControlStart)
     }
@@ -355,14 +355,14 @@ private class TextContentDecoder(
             if (type == TextTagType.STYLE_CSS) TextCssStyleTag(depth) else TextOtherStyleTag()
         // 读取 style 使用的样式信息标记
         tempArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-        val featureMask = ByteToBasicUtil.toShort(tempArr)
+        val featureMask = TextByteToBasicUtil.toShort(tempArr)
         mBufferOffset += 2
 
         // 处理长度相关的样式
         for (i in 0 until TextFeature.NUMBER_OF_LENGTHS) {
             if (TextStyleTag.isFeatureSupported(featureMask, i)) {
                 tempArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-                val size = ByteToBasicUtil.toShort(tempArr)
+                val size = TextByteToBasicUtil.toShort(tempArr)
                 mBufferOffset += 2
 
                 val unit = contentData[mBufferOffset]
@@ -422,12 +422,13 @@ private class TextContentDecoder(
     private fun readImageTag(): TextTag {
         // 读取 image 所属的 id
         val idArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-        val id = ByteToBasicUtil.toUInt16(idArr)
+        val id = TextByteToBasicUtil.toUInt16(idArr)
         mBufferOffset += 2
         // 根据 id 获取 image
         val textImage = textResource.getImage(id)
-        return TextImageTag(textImage)
 
+        // TODO:假设一定能够获取到的数据
+        return TextImageTag(textImage!!)
     }
 
     private fun readHyperlinkControlTag(): TextTag {

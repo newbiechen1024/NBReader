@@ -1,7 +1,8 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.resource
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
-import com.newbiechen.nbreader.uilts.ByteToBasicUtil
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImageFactory
+import com.newbiechen.nbreader.ui.component.book.text.util.TextByteToBasicUtil
 import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
@@ -10,27 +11,31 @@ import com.newbiechen.nbreader.uilts.LogHelper
  *  description :文本资源信息
  */
 
-class TextResource(private val resourceData: ByteArray?) {
+class TextResource(resourceData: ByteArray?) {
+
     companion object {
         private const val TAG = "TextResource"
-    }
-    // TODO:转化成 map 会不会更好？，但是每个参数的 id 都是不一样的。还是说 id 都用文本表示？(暂时先不管了)
 
+        // 防止存在资源与 id 冲突的情况
+        fun getKey(type: Byte, id: String): String {
+            return "$type@$id"
+        }
+    }
+
+    // TODO:存在与其他资源重名的情况，该如何处理
     // 章节中包含的所有标签
-    private var mTextAttrList: List<TextAttribute> = if (resourceData == null) {
-        emptyList()
+    private var mResourceMap: Map<String, Any?> = if (resourceData == null) {
+        emptyMap()
     } else {
         TextResourceDecoder(resourceData).decode()
     }
 
-    init {
-        mTextAttrList.forEach {
-            LogHelper.i(TAG, "init: $it")
-        }
+    private fun getValue(type: Byte, id: String): Any? {
+        return mResourceMap[getKey(type, id)]
     }
 
-    fun getImage(resourceId: Int): TextImage {
-        // 查找
+    fun getImage(resourceId: Int): TextImage? {
+        return getValue(TextResType.IMAGE, resourceId.toString()) as TextImage
     }
 
     fun getFont(resourceId: Int) {
@@ -41,7 +46,6 @@ class TextResource(private val resourceData: ByteArray?) {
     fun getParagraphIndexById() {
 
     }
-
     // 文本资源解析器
 }
 
@@ -59,33 +63,33 @@ private class TextResourceDecoder(private val resourceData: ByteArray) {
     /**
      * 进行解析操作
      */
-    fun decode(): ArrayList<TextAttribute> {
+    fun decode(): Map<String, Any?> {
         // 重置
         mBufferOffset = 0
 
-        val textTags = ArrayList<TextAttribute>()
-
+        val textAttrMap = mutableMapOf<String, Any?>()
         val bufferLen = resourceData.size
-
 
         while (mBufferOffset < bufferLen) {
             // 获取当前索引下的标签类型
             val attrType = readAttrType()
 
             // 生成对应的 TextTag
-            var textAttr: TextAttribute? = null
+            var resourceInfo: Pair<String, Any?>? = null
 
             when (attrType) {
                 TextResType.IMAGE -> {
-                    textAttr = readImageAttr()
+                    resourceInfo = readImageAttr()
                 }
             }
 
             LogHelper.i(TAG, "decode: $attrType")
-            textTags.add(textAttr!!)
-        }
 
-        return textTags
+            val key = TextResource.getKey(attrType, resourceInfo!!.first)
+
+            textAttrMap[key] = resourceInfo!!.second
+        }
+        return textAttrMap
     }
 
     // 读取标签类型
@@ -97,22 +101,22 @@ private class TextResourceDecoder(private val resourceData: ByteArray) {
         return tagType
     }
 
-    private fun readImageAttr(): TextAttribute {
+    private fun readImageAttr(): Pair<String, Any?> {
         // 读取 image 所属的 id
         var tempArr = resourceData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-        val id = ByteToBasicUtil.toUInt16(tempArr)
+        val id = TextByteToBasicUtil.toUInt16(tempArr)
         mBufferOffset += 2
 
         // 获取路径
         tempArr = resourceData.copyOfRange(mBufferOffset, mBufferOffset + 2)
         // 文本字节长度
-        val textLength = ByteToBasicUtil.toUInt16(tempArr)
+        val textLength = TextByteToBasicUtil.toUInt16(tempArr)
         mBufferOffset += 2
 
         // 路径信息
         val path = String(resourceData, mBufferOffset, textLength, Charsets.UTF_16LE)
         mBufferOffset += textLength
 
-        return TextImageAttr(id, path)
+        return Pair(id.toString(), TextImageFactory.getTextImage(path))
     }
 }

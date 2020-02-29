@@ -67,7 +67,7 @@ abstract class BaseTextProcessor(private val context: Context) {
      *  绘制传入的页面
      */
     fun draw(canvas: Canvas, pageType: PageType) {
-        drawInternal(TextCanvas(canvas), pageType)
+        drawInternal(TextCanvas(mPaintContext, canvas), pageType)
     }
 
     protected fun pageInvalidate() {
@@ -366,7 +366,7 @@ abstract class BaseTextProcessor(private val context: Context) {
         // 设置文字显示的颜色
         mPaintContext.setTextColor(color)
         // 进行绘制
-        canvas.drawString(x, y, str, offset, length, mPaintContext)
+        canvas.drawString(x, y, str, offset, length)
 
         // TODO:没有处理存在 Mark 的情况
     }

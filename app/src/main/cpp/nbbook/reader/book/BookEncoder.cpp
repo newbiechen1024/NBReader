@@ -6,6 +6,7 @@
 #include "BookEncoder.h"
 #include "../text/type/TextResType.h"
 #include "../../util/Logger.h"
+#include "../../util/StringUtil.h"
 
 static const size_t BUFFER_SIZE = 4096;
 
@@ -305,8 +306,23 @@ void BookEncoder::addImageTag(const ImageTag &tag) {
  * @return
  */
 uint16_t BookEncoder::addImageResource(const ImageTag &tag) {
-    // TODO:代码有问题先这样写。(应该存储 path 和 id 的映射关系)
-    uint16_t resId = generateResourceId();
+
+    std::string path = tag.path;
+
+    auto itr = mResourceMap.find(path);
+
+    uint16_t resId = 0;
+
+    // 如果路径以存在在列表中
+    if (itr != mResourceMap.end()) {
+        resId = std::stoi(itr->second);
+    } else {
+        resId = generateResourceId();
+
+        // 添加到映射表中
+        std::string key = std::to_string(resId);
+        mResourceMap[key] = path;
+    }
 
     size_t resourceLen = 4;
     // 长度 + 文本长

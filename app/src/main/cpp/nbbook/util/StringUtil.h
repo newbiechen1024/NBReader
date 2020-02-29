@@ -23,7 +23,6 @@ public:
 
     static std::string numberToString(unsigned int n);
 
-
     static void asciiToLowerInline(std::string &asciiString);
 
     static void stripWhiteSpaces(std::string &str);

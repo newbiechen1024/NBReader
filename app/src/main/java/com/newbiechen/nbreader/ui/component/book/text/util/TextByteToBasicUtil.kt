@@ -1,4 +1,4 @@
-package com.newbiechen.nbreader.uilts
+package com.newbiechen.nbreader.ui.component.book.text.util
 
 import okhttp3.internal.and
 import java.nio.ByteBuffer
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
  *  description :将 byte 数据转换成基础类型数据
  */
 
-object ByteToBasicUtil {
+object TextByteToBasicUtil {
     fun toShort(byteArr: ByteArray): Short {
         val byteBuffer = ByteBuffer.allocate(2)
             .put(byteArr)

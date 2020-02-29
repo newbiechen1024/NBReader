@@ -167,7 +167,6 @@ private:
 
     uint16_t addImageResource(const ImageTag &tag);
 
-    // TODO:得持有一个 resource 映射表，要不然 id 就没意义了，先判断 path 是否已存在，如果已存在返回相同的 id。
     uint16_t generateResourceId() {
         return mIdGenerator++;
     }
@@ -181,6 +180,8 @@ private:
     std::vector<TextKind> mTextKindStack;
     // 段落文本列表
     std::vector<std::string> mParagraphTextList;
+    // 资源映射表
+    std::map<std::string, std::string> mResourceMap;
     // 是否已经存在打开的段落
     bool isParagraphOpen;
     bool isTitleParagraphOpen;

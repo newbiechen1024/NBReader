@@ -1,6 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.resource.image
 
 import android.graphics.Bitmap
+import android.util.Size
 
 /**
  *  author : newbiechen
@@ -10,7 +11,20 @@ import android.graphics.Bitmap
 
 // TODO:图片来源 zip、file、network
 // TODO:如何做图片缓存的问题
+// TODO:支持设置占位图片
 interface TextImage {
+    /**
+     * 图片源路径
+     */
     fun getPath(): String
-    fun getBitmap(): Bitmap?
+
+    /**
+     * 图片的最大尺寸
+     */
+    fun getImage(maxSize: Size?): Bitmap?
+
+    /**
+     * 请求图片的大小
+     */
+    fun requestImageSize(maxSize: Size?): Size?
 }

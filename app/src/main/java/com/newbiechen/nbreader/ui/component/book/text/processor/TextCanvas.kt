@@ -3,6 +3,7 @@ package com.newbiechen.nbreader.ui.component.book.text.processor
 import android.graphics.*
 import android.util.Size
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
+import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -10,7 +11,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.Text
  *  description :文本绘制画布
  */
 
-class TextCanvas(private val canvas: Canvas) {
+class TextCanvas(private val paintContext: TextPaintContext, private val canvas: Canvas) {
 
     companion object {
         private const val TAG = "TextCanvas"
@@ -30,7 +31,7 @@ class TextCanvas(private val canvas: Canvas) {
     /**
      * 绘制线条
      */
-    fun drawLine(x0: Int, y0: Int, x1: Int, y1: Int, paintContext: TextPaintContext) {
+    fun drawLine(x0: Int, y0: Int, x1: Int, y1: Int) {
         val paint = paintContext.linePaint
         paint.isAntiAlias = false
         canvas.drawLine(x0.toFloat(), y0.toFloat(), x1.toFloat(), y1.toFloat(), paint)
@@ -47,8 +48,7 @@ class TextCanvas(private val canvas: Canvas) {
         y: Int,
         string: CharArray,
         offset: Int,
-        length: Int,
-        paintContext: TextPaintContext
+        length: Int
     ) {
         var containsSoftHyphen = false
         for (i in offset until offset + length) {
@@ -80,7 +80,7 @@ class TextCanvas(private val canvas: Canvas) {
         }
     }
 
-    fun drawOutline(xs: IntArray, ys: IntArray, paintContext: TextPaintContext) {
+    fun drawOutline(xs: IntArray, ys: IntArray) {
         val last = xs.size - 1
         var xStart = (xs[0] + xs[last]) / 2
         var yStart = (ys[0] + ys[last]) / 2
@@ -117,7 +117,7 @@ class TextCanvas(private val canvas: Canvas) {
      * 绘制多边形线条
      */
     // 使用 path + linePaint
-    fun drawPolygonalLine(xs: IntArray, ys: IntArray, paintContext: TextPaintContext) {
+    fun drawPolygonalLine(xs: IntArray, ys: IntArray) {
         val path = Path()
         val last = xs.size - 1
         path.moveTo(xs[last].toFloat(), ys[last].toFloat())
@@ -134,14 +134,13 @@ class TextCanvas(private val canvas: Canvas) {
         x: Int,
         y: Int,
         image: TextImage,
-        maxSize: Size,
+        maxSize: Size
 /*        scaling: ScalingType?,
         adjustingMode: ColorAdjustingMode?*/
-        paintContext: TextPaintContext
     ) {
-        // TODO:暂时不处理压缩和缩放
-        // 从 ZLImageData 中获取图片
-        val bitmap: Bitmap = image.getBitmap()!!
+
+        // TODO:暂时不处理缩放
+        val bitmap: Bitmap? = image.getImage(maxSize)
 
         // 设置图片与背景的混合模式
         if (bitmap != null && !bitmap.isRecycled) {
@@ -152,13 +151,14 @@ class TextCanvas(private val canvas: Canvas) {
                 NONE -> {
                 }
             }*/
+
+            LogHelper.i(TAG, "drawImage: x = ${x.toFloat()}, y = ${y - bitmap.height.toFloat()}")
             // 直接绘制图片
             canvas.drawBitmap(
-                bitmap,
-                x.toFloat(),
-                y - bitmap.height.toFloat(),
+                bitmap, x.toFloat(), y - bitmap.height.toFloat(),
                 paintContext.fillPaint
             )
+            // 设置混合模式
             paintContext.fillPaint.xfermode = null
         }
     }
@@ -192,11 +192,11 @@ class TextCanvas(private val canvas: Canvas) {
         )
     }
 
-    fun fillCircle(x: Int, y: Int, radius: Int, paintContext: TextPaintContext) {
+    fun fillCircle(x: Int, y: Int, radius: Int) {
         canvas.drawCircle(x.toFloat(), y.toFloat(), radius.toFloat(), paintContext.fillPaint)
     }
 
-    fun fillPolygon(xs: IntArray, ys: IntArray, paintContext: TextPaintContext) {
+    fun fillPolygon(xs: IntArray, ys: IntArray) {
         val path = Path()
         val last = xs.size - 1
         path.moveTo(xs[last].toFloat(), ys[last].toFloat())

@@ -151,17 +151,11 @@ class TextPaintContext {
     }
 
     /**
-     * 支持对图盘缩放
+     * 计算图片的尺寸
      */
     fun getImageSize(image: TextImage, maxSize: Size/*, scaling: ScalingType?*/): Size? {
-        // TODO:支持对图片的显示大小压缩，暂时不处理。
-
-        val bitmap: Bitmap = image.getBitmap()!!
-
-        return if (bitmap != null && !bitmap.isRecycled) Size(
-            bitmap.width,
-            bitmap.height
-        ) else null
+        // TODO：支持对图片的缩放，暂时不处理
+        return image.requestImageSize(maxSize)
     }
 
     private var mDescent = -1

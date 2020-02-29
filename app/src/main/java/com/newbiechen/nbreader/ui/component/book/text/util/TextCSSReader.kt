@@ -45,7 +45,7 @@ class TextCSSReader {
                 if (line == null) {
                     break
                 }
-                for (token in MiscUtil.smartSplit(line)) {
+                for (token in TextMiscUtil.smartSplit(line)) {
                     processToken(token)
                 }
             } while (line != null)

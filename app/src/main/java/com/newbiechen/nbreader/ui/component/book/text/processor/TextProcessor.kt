@@ -5,6 +5,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextLine
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
+import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextControlElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextImageElement
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement
@@ -564,6 +565,9 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
             } else if (element is TextWordElement) {
                 wordOccurred = true
                 isVisible = true
+            } else if (element is TextImageElement) {
+                wordOccurred = true
+                isVisible = true
             } else if (isStyleElement(element)) {
                 applyStyleElement(element)
             }
@@ -591,7 +595,9 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 // 如果存在下列情况，进行强制换行
                 allowBreak = previousElement !== TextElement.NBSpace &&
                         element !== TextElement.NBSpace &&
-                        (element !is TextWordElement || previousElement is TextWordElement)
+                        (element !is TextWordElement || previousElement is TextWordElement) &&
+                        element !is TextImageElement &&
+                        element !is TextControlElement
             }
 
             // 允许换行的情况，将计算的结果赋值给 TextLineInfo
@@ -699,7 +705,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                         hyphenIndex = right
                     }
 
-                    // 重置 TextLineo 的样式
+                    // 重置 TextLine 的样式
                     if (hyphenIndex > curCharIndex) {
                         curLineInfo.isVisible = true
                         curLineInfo.width = newWidth + subWordWidth
@@ -843,6 +849,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 // 获取 Element
                 val element = paragraph.getElement(wordIndex)
                 val width = getElementWidth(element!!, charIndex)
+
                 // 如果是空格元素
                 if (element === TextElement.HSpace) {
                     if (isWordOccurred && spaceCount > 0) {
@@ -874,10 +881,10 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                         isWordOccurred = false
                         --spaceCount
                     }
-                } else if (element is TextWordElement) {
+                } else if (element is TextWordElement || element is TextImageElement) {
                     val height = getElementHeight(element)
                     val descent = getElementDescent(element)
-                    val length = element.length
+                    val length = if (element is TextWordElement) element.length else 0
                     if (spaceElement != null) {
                         page.textElementAreaVector.add(spaceElement!!)
                         spaceElement = null
@@ -1018,7 +1025,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                         val cw = mPaintContext.getSpaceWidth()
                         var len = 0
                         while (len < area.endX - area.startX) {
-                            canvas.drawString(areaX + len, areaY, SPACE, 0, 1, mPaintContext)
+                            canvas.drawString(areaX + len, areaY, SPACE, 0, 1)
                             len += cw
                         }
                     }

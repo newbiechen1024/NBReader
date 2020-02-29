@@ -9,7 +9,7 @@ import java.util.regex.Pattern
  *  description :
  */
 
-object MiscUtil {
+object TextMiscUtil {
     fun isEmptyString(s: String?): Boolean {
         return s == null || "" == s
     }
