@@ -1,0 +1,57 @@
+// author : newbiechen
+// date : 2020/3/1 7:37 PM
+// description : 
+//
+
+#ifndef NBREADER_PARCEL_H
+#define NBREADER_PARCEL_H
+
+#include <cstdint>
+#include <string>
+#include "../../reader/text/TextBufferAllocator.h"
+
+class Parcel {
+public:
+    Parcel(TextBufferAllocator *allocator);
+
+    ~Parcel() {
+    }
+
+    /**
+     * 写入 int_16 数据
+     * @param value
+     */
+    void writeInt16(int16_t value);
+
+    void writeInt32(int32_t value);
+
+    void writeString16(const std::string &value);
+
+    void writeString32(const std::string &value);
+
+    void writeString16Array(const std::vector<std::string> &valueArr);
+
+    void writeString32Array(const std::vector<std::string> &valueArr);
+
+private:
+
+    // 请求分配缓冲
+    char *requestBuffer(size_t len);
+
+    void writeStringInternal(const std::string &value);
+
+private:
+    // 缓冲分配器
+    TextBufferAllocator *mAllocator;
+};
+
+
+class Parcelable {
+public:
+    virtual ~Parcelable() {
+    }
+
+    virtual void writeToParcel(Parcel &parcel);
+};
+
+#endif //NBREADER_PARCEL_H

@@ -121,6 +121,7 @@ aux_source_directory(${CODE_PATH}/tools/xml XML_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/xhtml XHTML_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/css CSS_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/drm DRM_TOOLS_SOURCE)
+aux_source_directory(${CODE_PATH}/tools/parcel PARCEL_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/constant CONSTANT_TOOLS_SOURCE)
 
 
@@ -150,6 +151,7 @@ add_library( # Sets the title of the library.
         ${ENCODING_TOOLS_SOURCE}
         ${LANGUAGE_TOOLS_SOURCE}
         ${CONSTANT_TOOLS_SOURCE}
+        ${PARCEL_TOOLS_SOURCE}
         ${FILE_SYSTEM_CHARSET_SOURCE}
         ${FILE_SYSTEM_BUFFER_SOURCE}
         ${READER_TEXT_SOURCE}
