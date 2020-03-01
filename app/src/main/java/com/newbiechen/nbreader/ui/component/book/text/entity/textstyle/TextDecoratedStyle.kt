@@ -93,7 +93,7 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
     protected abstract fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int
 
     override fun getSpaceAfter(metrics: TextMetrics): Int {
-        if (!metrics.equals(mMetrics)) {
+        if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mSpaceAfter
@@ -138,7 +138,7 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
     protected abstract fun isStrikeThroughInternal(): Boolean
 
     override fun getVerticalAlign(metrics: TextMetrics): Int {
-        if (!metrics.equals(mMetrics)) {
+        if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mVerticalAlign
@@ -148,7 +148,7 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
 
     override fun isVerticallyAligned(): Boolean {
         if (isVerticallyAligned == null) {
-            isVerticallyAligned = parent!!.isVerticallyAligned() || isVerticallyAlignedInternal()
+            isVerticallyAligned = parent.isVerticallyAligned() || isVerticallyAlignedInternal()
         }
         return isVerticallyAligned!!
     }

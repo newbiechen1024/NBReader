@@ -318,10 +318,9 @@ uint16_t BookEncoder::addImageResource(const ImageTag &tag) {
         resId = std::stoi(itr->second);
     } else {
         resId = generateResourceId();
-
         // 添加到映射表中
-        std::string key = std::to_string(resId);
-        mResourceMap[key] = path;
+        std::string id = std::to_string(resId);
+        mResourceMap[path] = id;
     }
 
     size_t resourceLen = 4;

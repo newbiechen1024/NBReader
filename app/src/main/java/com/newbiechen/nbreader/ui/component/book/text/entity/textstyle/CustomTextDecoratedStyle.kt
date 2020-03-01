@@ -12,7 +12,10 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  *  2. 获取该标记位后去匹配自定义的 style.css 文件
  */
 
-class CustomTextDecoratedStyle(parent: TextStyle, private val description: TextDecoratedStyleDescription) :
+class CustomTextDecoratedStyle(
+    parent: TextStyle,
+    private val description: TextDecoratedStyleDescription
+) :
     TextDecoratedStyle(parent) {
 
     override fun getFontSizeInternal(metrics: TextMetrics): Int {
@@ -21,7 +24,6 @@ class CustomTextDecoratedStyle(parent: TextStyle, private val description: TextD
 
     override fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int {
         return description.getSpaceBefore(metrics, parent.getSpaceBefore(metrics), fontSize)
-
     }
 
     override fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int {
@@ -50,28 +52,22 @@ class CustomTextDecoratedStyle(parent: TextStyle, private val description: TextD
 
     override fun isVerticallyAlignedInternal(): Boolean {
         return description.hasNonZeroVerticalAlign()
-
     }
 
     override fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
         return description.getLeftMargin(metrics, parent.getLeftMargin(metrics), fontSize)
-
     }
 
     override fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
         return description.getRightMargin(metrics, parent.getRightMargin(metrics), fontSize)
-
     }
 
     override fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
         return description.getLeftPadding(metrics, parent.getLeftPadding(metrics), fontSize)
-
-
     }
 
     override fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
         return description.getRightPadding(metrics, parent.getRightPadding(metrics), fontSize)
-
     }
 
     override fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int {

@@ -1150,7 +1150,7 @@ XHTMLReader::startElement(std::string &localName, std::string &fullName, Attribu
      * 根据标签名，获取对应的 style
      */
     const std::string style = attributes.getValue("style");
-
+    // 对 style 数据进行解析
     if (!style.empty()) {
         applySingleEntry(myStyleParser->parseSingleEntry(style.c_str()));
 
