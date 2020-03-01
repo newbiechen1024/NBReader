@@ -84,7 +84,7 @@ static bool parseLength(const std::string &toParse, short &size, TextSizeUnit &u
     return false;
 }
 
-static bool trySetLength(TextStyleTag &entry, TextFeature featureId,
+static bool trySetLength(StyleTag &entry, TextFeature featureId,
                          const std::string &value) {
     short size;
     TextSizeUnit unit;
@@ -95,7 +95,7 @@ static bool trySetLength(TextStyleTag &entry, TextFeature featureId,
     return false;
 }
 
-void StyleSheetTable::setLength(TextStyleTag &entry, TextFeature featureId,
+void StyleSheetTable::setLength(StyleTag &entry, TextFeature featureId,
                                 const AttributeMap &map, const std::string &attributeName) {
     StyleSheetTable::AttributeMap::const_iterator it = map.find(attributeName);
     if (it != map.end()) {
@@ -144,23 +144,23 @@ Boolean StyleSheetTable::doBreakAfter(const std::string &tag, const std::string 
     return Boolean::UNDEFINED;
 }
 
-std::shared_ptr<TextStyleTag>
+std::shared_ptr<StyleTag>
 StyleSheetTable::control(const std::string &tag, const std::string &aClass) const {
-    std::map<CSSSelector, std::shared_ptr<TextStyleTag> >::const_iterator
+    std::map<CSSSelector, std::shared_ptr<StyleTag> >::const_iterator
             it =
             myControlMap.find(CSSSelector(tag, aClass));
     return it != myControlMap.end() ? it->second : 0;
 }
 
-std::vector<std::pair<CSSSelector, std::shared_ptr<TextStyleTag>>>
+std::vector<std::pair<CSSSelector, std::shared_ptr<StyleTag>>>
 StyleSheetTable::allControls(const std::string &tag, const std::string &aClass) const {
     const CSSSelector key(tag, aClass);
-    std::vector<std::pair<CSSSelector, std::shared_ptr<TextStyleTag> > > pairs;
+    std::vector<std::pair<CSSSelector, std::shared_ptr<StyleTag> > > pairs;
 
-    std::map<CSSSelector, std::shared_ptr<TextStyleTag> >::const_iterator
+    std::map<CSSSelector, std::shared_ptr<StyleTag> >::const_iterator
             it =
             myControlMap.lower_bound(key);
-    for (std::map<CSSSelector, std::shared_ptr<TextStyleTag> >::const_iterator jt = it;
+    for (std::map<CSSSelector, std::shared_ptr<StyleTag> >::const_iterator jt = it;
          jt != myControlMap.end() && key.weakEquals(jt->first);
          ++jt) {
         pairs.push_back(*jt);
@@ -177,10 +177,10 @@ const std::string &StyleSheetTable::value(const AttributeMap &map, const std::st
     return emptyString;
 }
 
-std::shared_ptr<TextStyleTag> StyleSheetTable::createOrUpdateControl(const AttributeMap &styles,
-                                                                     std::shared_ptr<TextStyleTag> entry) {
+std::shared_ptr<StyleTag> StyleSheetTable::createOrUpdateControl(const AttributeMap &styles,
+                                                                 std::shared_ptr<StyleTag> entry) {
     if (entry == nullptr) {
-        entry = std::make_shared<TextStyleTag>(TextTagType::STYLE_CSS);
+        entry = std::make_shared<StyleTag>(TextTagType::STYLE_CSS);
     }
 
     const std::string &alignment = value(styles, "text-align");

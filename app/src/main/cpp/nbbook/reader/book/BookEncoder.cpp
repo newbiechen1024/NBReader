@@ -212,20 +212,24 @@ void BookEncoder::addFixedHSpaceTag(unsigned char length) {
     }
 }
 
-void BookEncoder::addStyleTag(const TextStyleTag &tag,
+void BookEncoder::addStyleTag(const StyleTag &tag,
                               const std::vector<std::string> &fontFamilies, unsigned char depth) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
         // TODO:暂时不处理 fontFamilies 和 depth
         // mTextEncoder.addStyleTag(tag, fontFamilies, depth);
+        tag.setDepth(depth);
         mTextEncoder.addTextTag(tag);
     }
 }
 
-void BookEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
+void BookEncoder::addStyleTag(const StyleTag &tag, unsigned char depth) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
         // mTextEncoder.addStyleTag(tag, depth);
+        // TODO:由于 tag 没有 depth，强制用了个这么个方法，之后理解了再修改。
+        tag.setDepth(depth);
+
         mTextEncoder.addTextTag(tag);
     }
 }

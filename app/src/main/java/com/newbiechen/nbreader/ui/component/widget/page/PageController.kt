@@ -92,7 +92,6 @@ class PageController(
         // 创建本地文本模块
         var textModel = TextModel(mFormatPlugin!!)
 
-
         // 初始化页面内容控制器
 /*        // TODO：需要传入的是 ChapterModel
         pageContentController.initProcessor(textModel)

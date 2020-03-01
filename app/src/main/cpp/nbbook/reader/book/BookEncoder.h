@@ -9,7 +9,7 @@
 #include "../text/tag/TextKind.h"
 #include "../text/entity/TextParagraph.h"
 #include "../text/TextEncoder.h"
-#include "../text/tag/TextStyleTag.h"
+#include "../text/tag/StyleTag.h"
 #include "../../tools/font/FontMap.h"
 #include "../text/tag/VideoTag.h"
 #include "../text/tag/ImageTag.h"
@@ -104,9 +104,9 @@ public:
      * @param tag
      * @param depth
      */
-    void addStyleTag(const TextStyleTag &tag, unsigned char depth);
+    void addStyleTag(const StyleTag &tag, unsigned char depth);
 
-    void addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
+    void addStyleTag(const StyleTag &tag, const std::vector<std::string> &fontFamilies,
                      unsigned char depth);
 
     /**

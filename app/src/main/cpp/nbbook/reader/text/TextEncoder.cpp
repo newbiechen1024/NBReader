@@ -215,7 +215,7 @@ void TextEncoder::addFixedHSpace(unsigned char length) {
 
 }
 
-void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
+void TextEncoder::addStyleTag(const StyleTag &tag, unsigned char depth) {
     addStyleTag(tag, tag.fontFamilies(), depth);
 }
 
@@ -234,7 +234,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
  * 5. 对于 TextFeature 标记的后 3 种类型，是否被标记，如果被标记，则填充样式数值信息：占 2 字节。
  *//*
 
-void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
+void TextEncoder::addStyleTag(const StyleTag &tag, const std::vector<std::string> &fontFamilies,
                               unsigned char depth) {
 
     // 检测添加 tag 的环境
@@ -274,7 +274,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
 
     for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
         if (tag.isFeatureSupported((TextFeature) i)) {
-            const TextStyleTag::LengthType &len = tag.myLengths[i];
+            const StyleTag::LengthType &len = tag.myLengths[i];
             address = ParcelBuffer::writeUInt16(address, len.Size);
             *address++ = (char) len.Unit;
             *address++ = 0;

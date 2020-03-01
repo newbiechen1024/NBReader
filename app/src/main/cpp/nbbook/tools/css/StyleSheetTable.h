@@ -26,20 +26,20 @@
 
 #include "CSSSelector.h"
 #include "../../util/Boolean.h"
-#include "../../reader/text/tag/TextStyleTag.h"
+#include "../../reader/text/tag/StyleTag.h"
 
 class StyleSheetTable {
 
 public:
     typedef std::map<std::string, std::string> AttributeMap;
 
-    static std::shared_ptr<TextStyleTag>
-    createOrUpdateControl(const AttributeMap &map, std::shared_ptr<TextStyleTag> entry = 0);
+    static std::shared_ptr<StyleTag>
+    createOrUpdateControl(const AttributeMap &map, std::shared_ptr<StyleTag> entry = 0);
 
 private:
     void addMap(std::shared_ptr<CSSSelector> selector, const AttributeMap &map);
 
-    static void setLength(TextStyleTag &entry, TextFeature featureId,
+    static void setLength(StyleTag &entry, TextFeature featureId,
                           const AttributeMap &map, const std::string &attributeName);
 
     static const std::string &value(const AttributeMap &map, const std::string &name);
@@ -51,16 +51,16 @@ public:
 
     Boolean doBreakAfter(const std::string &tag, const std::string &aClass) const;
 
-    std::shared_ptr<TextStyleTag>
+    std::shared_ptr<StyleTag>
     control(const std::string &tag, const std::string &aClass) const;
 
-    std::vector<std::pair<CSSSelector, std::shared_ptr<TextStyleTag>>>
+    std::vector<std::pair<CSSSelector, std::shared_ptr<StyleTag>>>
     allControls(const std::string &tag, const std::string &aClass) const;
 
     void clear();
 
 private:
-    std::map<CSSSelector, std::shared_ptr<TextStyleTag> > myControlMap;
+    std::map<CSSSelector, std::shared_ptr<StyleTag> > myControlMap;
     std::map<CSSSelector, bool> myPageBreakBeforeMap;
     std::map<CSSSelector, bool> myPageBreakAfterMap;
 

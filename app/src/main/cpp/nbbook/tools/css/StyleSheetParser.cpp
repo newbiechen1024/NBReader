@@ -239,10 +239,10 @@ StyleSheetSingleStyleParser::StyleSheetSingleStyleParser(const std::string &path
         : StyleSheetParser(pathPrefix) {
 }
 
-std::shared_ptr<TextStyleTag> StyleSheetSingleStyleParser::parseSingleEntry(const char *text) {
+std::shared_ptr<StyleTag> StyleSheetSingleStyleParser::parseSingleEntry(const char *text) {
     myReadState = WAITING_FOR_ATTRIBUTE;
     parse(text, std::strlen(text), true);
-    std::shared_ptr<TextStyleTag> control = StyleSheetTable::createOrUpdateControl(myMap);
+    std::shared_ptr<StyleTag> control = StyleSheetTable::createOrUpdateControl(myMap);
     reset();
     return control;
 }

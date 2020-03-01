@@ -3,10 +3,10 @@
 // description : 
 //
 
-#include "TextStyleTag.h"
+#include "StyleTag.h"
 
-std::shared_ptr<TextStyleTag> TextStyleTag::start() const {
-    std::shared_ptr<TextStyleTag> clone(new TextStyleTag(myEntryKind));
+std::shared_ptr<StyleTag> StyleTag::start() const {
+    std::shared_ptr<StyleTag> clone(new StyleTag(myEntryKind));
     clone->myFeatureMask =
             myFeatureMask & ~(1 << CommonUtil::to_underlying(TextFeature::LENGTH_SPACE_AFTER));
     for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
@@ -20,21 +20,21 @@ std::shared_ptr<TextStyleTag> TextStyleTag::start() const {
     return clone;
 }
 
-std::shared_ptr<TextStyleTag> TextStyleTag::end() const {
+std::shared_ptr<StyleTag> StyleTag::end() const {
     auto lengthSpaceAfter = CommonUtil::to_underlying(TextFeature::LENGTH_SPACE_AFTER);
     if ((myFeatureMask & (1 << lengthSpaceAfter)) == 0) {
         return 0;
     }
 
-    std::shared_ptr<TextStyleTag> clone(new TextStyleTag(myEntryKind));
+    std::shared_ptr<StyleTag> clone(new StyleTag(myEntryKind));
     clone->myFeatureMask = 1 << lengthSpaceAfter;
     clone->myLengths[lengthSpaceAfter] = myLengths[lengthSpaceAfter];
 
     return clone;
 }
 
-std::shared_ptr<TextStyleTag> TextStyleTag::inherited() const {
-    std::shared_ptr<TextStyleTag> clone(new TextStyleTag(myEntryKind));
+std::shared_ptr<StyleTag> StyleTag::inherited() const {
+    std::shared_ptr<StyleTag> clone(new StyleTag(myEntryKind));
     static const unsigned short skip =
             //(1 << LENGTH_MARGIN_LEFT) |
             //(1 << LENGTH_MARGIN_RIGHT) |
@@ -55,7 +55,7 @@ std::shared_ptr<TextStyleTag> TextStyleTag::inherited() const {
     return clone;
 }
 
-void TextStyleTag::writeToParcelInternal(Parcel &parcel) const {
+void StyleTag::writeToParcelInternal(Parcel &parcel) const {
     // 设置style 的深度
     parcel.writeInt8(mDepth);
     // 具有的功能类型
@@ -63,7 +63,7 @@ void TextStyleTag::writeToParcelInternal(Parcel &parcel) const {
 
     for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
         if (isFeatureSupported((TextFeature) i)) {
-            const TextStyleTag::LengthType &len = myLengths[i];
+            const StyleTag::LengthType &len = myLengths[i];
             parcel.writeInt16(len.Size);
             parcel.writeInt8((char) len.Unit);
         }

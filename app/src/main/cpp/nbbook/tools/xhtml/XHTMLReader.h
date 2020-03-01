@@ -77,7 +77,7 @@ class XHTMLReader : public BaseHandler {
 public:
     struct TagData {
         std::vector<TextKind> TextKinds;
-        std::vector<std::shared_ptr<TextStyleTag> > StyleEntries;
+        std::vector<std::shared_ptr<StyleTag> > StyleEntries;
         Boolean PageBreakAfter;
         TextDisplayCode DisplayCode;
         XHTMLTagList Children;
@@ -139,11 +139,11 @@ private:
     bool
     matches(const std::shared_ptr<CSSSelector::Component> next, int depth = 0, int pos = -1) const;
 
-    void applySingleEntry(std::shared_ptr<TextStyleTag> entry);
+    void applySingleEntry(std::shared_ptr<StyleTag> entry);
 
     void applyTagStyles(const std::string &tag, const std::string &aClass);
 
-    void addTextStyleEntry(const TextStyleTag &entry, unsigned char depth);
+    void addTextStyleEntry(const StyleTag &entry, unsigned char depth);
 
     void pushTextKind(TextKind kind);
 

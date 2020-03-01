@@ -919,7 +919,7 @@ XHTMLReader::matches(const std::shared_ptr<CSSSelector::Component> next, int dep
     }
 }
 
-void XHTMLReader::applySingleEntry(std::shared_ptr<TextStyleTag> entry) {
+void XHTMLReader::applySingleEntry(std::shared_ptr<StyleTag> entry) {
     if (entry == nullptr) {
         return;
     }
@@ -933,7 +933,7 @@ void XHTMLReader::applySingleEntry(std::shared_ptr<TextStyleTag> entry) {
 }
 
 void XHTMLReader::applyTagStyles(const std::string &tag, const std::string &aClass) {
-    std::vector<std::pair<CSSSelector, std::shared_ptr<TextStyleTag> > > controls =
+    std::vector<std::pair<CSSSelector, std::shared_ptr<StyleTag> > > controls =
             myStyleSheetTable.allControls(tag, aClass);
     for (auto it = controls.begin(); it != controls.end(); ++it) {
         if (matches(it->first.Next)) {
@@ -942,7 +942,7 @@ void XHTMLReader::applyTagStyles(const std::string &tag, const std::string &aCla
     }
 }
 
-void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char depth) {
+void XHTMLReader::addTextStyleEntry(const StyleTag &entry, unsigned char depth) {
     if (!entry.isFeatureSupported(TextFeature::FONT_FAMILY)) {
         myModelReader.addStyleTag(entry, depth);
         return;
@@ -989,12 +989,12 @@ void XHTMLReader::beginParagraph(bool restarted) {
             myModelReader.addControlTag(*jt, true);
         }
 
-        const std::vector<std::shared_ptr<TextStyleTag> > &entries = (*it)->StyleEntries;
+        const std::vector<std::shared_ptr<StyleTag> > &entries = (*it)->StyleEntries;
         bool inheritedOnly = !restarted || it + 1 != myTagDataStack.end();
         const unsigned char depth = it - myTagDataStack.begin() + 1;
         for (auto jt = entries.begin(); jt != entries.end(); ++jt) {
-            std::shared_ptr<TextStyleTag> entry = inheritedOnly ? (*jt)->inherited()
-                                                                : (*jt)->start();
+            std::shared_ptr<StyleTag> entry = inheritedOnly ? (*jt)->inherited()
+                                                            : (*jt)->start();
             addTextStyleEntry(*entry, depth);
         }
     }
@@ -1009,7 +1009,7 @@ void XHTMLReader::restartParagraph(bool addEmptyLine) {
         myModelReader.addFixedHSpaceTag(1);
     }
     const unsigned char depth = myTagDataStack.size();
-    TextStyleTag spaceAfterBlocker(TextTagType::STYLE_OTHER);
+    StyleTag spaceAfterBlocker(TextTagType::STYLE_OTHER);
     spaceAfterBlocker.setLength(
             TextFeature::LENGTH_SPACE_AFTER,
             0,
@@ -1018,7 +1018,7 @@ void XHTMLReader::restartParagraph(bool addEmptyLine) {
     addTextStyleEntry(spaceAfterBlocker, depth);
     endParagraph();
     beginParagraph(true);
-    TextStyleTag spaceBeforeBlocker(TextTagType::STYLE_OTHER);
+    StyleTag spaceBeforeBlocker(TextTagType::STYLE_OTHER);
     spaceBeforeBlocker.setLength(
             TextFeature::LENGTH_SPACE_BEFORE,
             0,
@@ -1214,12 +1214,12 @@ void XHTMLReader::endElement(std::string &localName, std::string &fullName) {
     }
 
     const TagData &tagData = *myTagDataStack.back();
-    const std::vector<std::shared_ptr<TextStyleTag> > &entries = tagData.StyleEntries;
+    const std::vector<std::shared_ptr<StyleTag> > &entries = tagData.StyleEntries;
     size_t entryCount = entries.size();
     const unsigned char depth = myTagDataStack.size();
     for (auto jt = entries.begin(); jt != entries.end(); ++jt) {
-        std::shared_ptr<TextStyleTag> entry = *jt;
-        std::shared_ptr<TextStyleTag> endEntry = entry->end();
+        std::shared_ptr<StyleTag> entry = *jt;
+        std::shared_ptr<StyleTag> endEntry = entry->end();
         if (endEntry != nullptr) {
             addTextStyleEntry(*endEntry, depth);
             ++entryCount;

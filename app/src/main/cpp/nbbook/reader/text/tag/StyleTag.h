@@ -3,8 +3,8 @@
 // description : 层叠样式标签
 //
 
-#ifndef NBREADER_TEXTSTYLETAG_H
-#define NBREADER_TEXTSTYLETAG_H
+#ifndef NBREADER_STYLETAG_H
+#define NBREADER_STYLETAG_H
 
 
 #include "TextTag.h"
@@ -16,7 +16,7 @@
 #include "../type/TextTagType.h"
 #include "../../../util/CommonUtil.h"
 
-class TextStyleTag : public TextTag {
+class StyleTag : public TextTag {
 
 public:
     struct Metrics {
@@ -35,10 +35,10 @@ private:
     };
 
 public:
-    TextStyleTag(TextTagType styleType);
+    StyleTag(TextTagType styleType);
 
-    //TextStyleTag(unsigned char entryKind, char *address);
-    ~TextStyleTag();
+    //StyleTag(unsigned char entryKind, char *address);
+    ~StyleTag();
 
     TextTagType entryKind() const;
 
@@ -69,15 +69,15 @@ public:
 
     void setDisplayCode(TextDisplayCode code);
 
-    void setDepth(unsigned depth) {
+    void setDepth(unsigned depth) const {
         mDepth = depth;
     }
 
-    std::shared_ptr<TextStyleTag> start() const;
+    std::shared_ptr<StyleTag> start() const;
 
-    std::shared_ptr<TextStyleTag> end() const;
+    std::shared_ptr<StyleTag> end() const;
 
-    std::shared_ptr<TextStyleTag> inherited() const;
+    std::shared_ptr<StyleTag> inherited() const;
 
 
 protected:
@@ -95,37 +95,37 @@ private:
     unsigned char myVerticalAlignCode;
     TextDisplayCode myDisplayCode;
     // TODO:深度是我自己加的不知道有没有问题，可能存在 Style 被多次利用，且深度不同的可能。(暂时先这样，等以后理解了再说)
-    unsigned char mDepth;
+    mutable unsigned char mDepth;
 };
 
-inline TextStyleTag::TextStyleTag(TextTagType styleType) : TextTag(styleType),
-                                                           myEntryKind(styleType),
-                                                           myFeatureMask(0),
-                                                           myAlignmentType(
-                                                                   TextAlignmentType::ALIGN_UNDEFINED),
-                                                           mySupportedFontModifier(0),
-                                                           myFontModifier(0),
-                                                           myDisplayCode(
-                                                                   TextDisplayCode::DC_NOT_DEFINED) {}
+inline StyleTag::StyleTag(TextTagType styleType) : TextTag(styleType),
+                                                   myEntryKind(styleType),
+                                                   myFeatureMask(0),
+                                                   mySupportedFontModifier(0),
+                                                   myFontModifier(0),
+                                                   myAlignmentType(
+                                                           TextAlignmentType::ALIGN_UNDEFINED),
+                                                   myDisplayCode(TextDisplayCode::DC_NOT_DEFINED),
+                                                   mDepth(0) {}
 
-inline TextStyleTag::~TextStyleTag() {}
+inline StyleTag::~StyleTag() {}
 
-inline TextTagType TextStyleTag::entryKind() const { return myEntryKind; }
+inline TextTagType StyleTag::entryKind() const { return myEntryKind; }
 
-inline TextStyleTag::Metrics::Metrics(int fontSize, int fontXHeight, int fullWidth,
-                                      int fullHeight) : FontSize(fontSize),
-                                                        FontXHeight(fontXHeight),
-                                                        FullWidth(fullWidth),
-                                                        FullHeight(fullHeight) {}
+inline StyleTag::Metrics::Metrics(int fontSize, int fontXHeight, int fullWidth,
+                                  int fullHeight) : FontSize(fontSize),
+                                                    FontXHeight(fontXHeight),
+                                                    FullWidth(fullWidth),
+                                                    FullHeight(fullHeight) {}
 
-inline bool TextStyleTag::isEmpty() const { return myFeatureMask == 0; }
+inline bool StyleTag::isEmpty() const { return myFeatureMask == 0; }
 
-inline bool TextStyleTag::isFeatureSupported(TextFeature featureId) const {
+inline bool StyleTag::isFeatureSupported(TextFeature featureId) const {
     return (myFeatureMask & (1 << CommonUtil::to_underlying(featureId))) != 0;
 }
 
 inline void
-TextStyleTag::setLength(TextFeature featureId, short length, TextSizeUnit unit) {
+StyleTag::setLength(TextFeature featureId, short length, TextSizeUnit unit) {
     auto featureResult = CommonUtil::to_underlying(featureId);
 
     myFeatureMask |= 1 << featureResult;
@@ -133,14 +133,14 @@ TextStyleTag::setLength(TextFeature featureId, short length, TextSizeUnit unit) 
     myLengths[featureResult].Unit = unit;
 }
 
-inline TextAlignmentType TextStyleTag::alignmentType() const { return myAlignmentType; }
+inline TextAlignmentType StyleTag::alignmentType() const { return myAlignmentType; }
 
-inline void TextStyleTag::setAlignmentType(TextAlignmentType alignmentType) {
+inline void StyleTag::setAlignmentType(TextAlignmentType alignmentType) {
     myFeatureMask |= 1 << CommonUtil::to_underlying(TextFeature::ALIGNMENT_TYPE);
     myAlignmentType = alignmentType;
 }
 
-inline Boolean TextStyleTag::fontModifier(TextFontModifier modifier) const {
+inline Boolean StyleTag::fontModifier(TextFontModifier modifier) const {
     auto modifierResult = CommonUtil::to_underlying(modifier);
 
     if ((mySupportedFontModifier & modifierResult) == 0) {
@@ -150,7 +150,7 @@ inline Boolean TextStyleTag::fontModifier(TextFontModifier modifier) const {
     return (myFontModifier & modifierResult) == 0 ? Boolean::FALSE : Boolean::TRUE;
 }
 
-inline void TextStyleTag::setFontModifier(TextFontModifier modifier, bool on) {
+inline void StyleTag::setFontModifier(TextFontModifier modifier, bool on) {
     auto modifierResult = CommonUtil::to_underlying(modifier);
     myFeatureMask |= 1 << CommonUtil::to_underlying(TextFeature::FONT_STYLE_MODIFIER);
     mySupportedFontModifier |= modifierResult;
@@ -162,26 +162,26 @@ inline void TextStyleTag::setFontModifier(TextFontModifier modifier, bool on) {
 }
 
 inline const std::vector<std::string> &
-TextStyleTag::fontFamilies() const { return myFontFamilies; }
+StyleTag::fontFamilies() const { return myFontFamilies; }
 
-inline void TextStyleTag::setFontFamilies(const std::vector<std::string> &fontFamilies) {
+inline void StyleTag::setFontFamilies(const std::vector<std::string> &fontFamilies) {
     if (!fontFamilies.empty()) {
         myFeatureMask |= 1 << CommonUtil::to_underlying(TextFeature::FONT_FAMILY);
         myFontFamilies = fontFamilies;
     }
 }
 
-inline unsigned char TextStyleTag::verticalAlignCode() const { return myVerticalAlignCode; }
+inline unsigned char StyleTag::verticalAlignCode() const { return myVerticalAlignCode; }
 
-inline void TextStyleTag::setVerticalAlignCode(unsigned char code) {
+inline void StyleTag::setVerticalAlignCode(unsigned char code) {
     myFeatureMask |= 1 << CommonUtil::to_underlying(TextFeature::NON_LENGTH_VERTICAL_ALIGN);
     myVerticalAlignCode = code;
 }
 
 inline TextDisplayCode
-TextStyleTag::displayCode() const { return myDisplayCode; }
+StyleTag::displayCode() const { return myDisplayCode; }
 
-inline void TextStyleTag::setDisplayCode(TextDisplayCode code) {
+inline void StyleTag::setDisplayCode(TextDisplayCode code) {
     if (code != TextDisplayCode::DC_NOT_DEFINED) {
         myFeatureMask |= 1 << CommonUtil::to_underlying(TextFeature::DISPLAY);
         myDisplayCode = code;
@@ -189,4 +189,4 @@ inline void TextStyleTag::setDisplayCode(TextDisplayCode code) {
 }
 
 
-#endif //NBREADER_TEXTSTYLETAG_H
+#endif //NBREADER_STYLETAG_H

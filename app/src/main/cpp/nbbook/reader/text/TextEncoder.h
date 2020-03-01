@@ -8,7 +8,7 @@
 #include "../../tools/parcel/ParcelBuffer.h"
 #include "entity/TextParagraph.h"
 #include "tag/TextKind.h"
-#include "tag/TextStyleTag.h"
+#include "tag/StyleTag.h"
 #include "tag/ImageTag.h"
 #include "tag/ContentTag.h"
 #include <string>

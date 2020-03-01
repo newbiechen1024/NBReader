@@ -88,7 +88,7 @@ class StyleSheetSingleStyleParser : public StyleSheetParser {
 public:
     StyleSheetSingleStyleParser(const std::string &pathPrefix);
 
-    std::shared_ptr<TextStyleTag> parseSingleEntry(const char *text);
+    std::shared_ptr<StyleTag> parseSingleEntry(const char *text);
 };
 
 class StyleSheetMultiStyleParser : public StyleSheetParser {
