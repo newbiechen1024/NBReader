@@ -19,7 +19,7 @@ object TextImageFactory {
         // 检测路径是否存在 :，表示 zip
         // TODO:现在暂时只有 zip 的情况
         return if (path.contains(TextConstants.zipSeparator)) {
-            ZipImage(path)
+            TextZipImage(path)
         } else {
             null
         }

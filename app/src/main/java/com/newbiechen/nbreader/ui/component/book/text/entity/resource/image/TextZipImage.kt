@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream
  *  description :zip 图片
  */
 
-class ZipImage(private val path: String) : TextImage {
+class TextZipImage(private val path: String) : TextImage {
     private var mBitmapBuffer: ByteArray? = null
     private var mBitmap: Bitmap? = null
     private var mImageSize: Size? = null
