@@ -10,6 +10,7 @@
 #include <string>
 #include "TextTag.h"
 #include "../../../tools/drm/FileEncryptionInfo.h"
+#include "../resource/ImageResource.h"
 
 class ImageTag : public TextTag {
 public:
@@ -17,24 +18,15 @@ public:
              size_t offset, size_t size, std::shared_ptr<EncryptionMap> encryptionInfo);
 
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 public:
+    // 图片资源信息
+    ImageResource imageResource;
 
-    // 图片地址
-    const std::string path;
-    // 图片的编码方式
-    const std::string encoding;
-    // 是否是丰满
+    const std::string resId;
+    // 是否是封面
     bool isCover;
-    // 偏移(暂时不知道这个东西有什么作用)
-    short vOffset;
-    // 文件偏移
-    size_t offset;
-    // 图片大小
-    size_t size;
-    // 图片加密信息
-    std::shared_ptr<EncryptionMap> encryptionInfo;
 };
 
 

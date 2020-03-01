@@ -109,12 +109,14 @@ aux_source_directory(${CODE_PATH}/reader/text READER_TEXT_SOURCE)
 aux_source_directory(${CODE_PATH}/reader/text/tag TAG_TEXT_READER_SOURCE)
 aux_source_directory(${CODE_PATH}/reader/text/entity ENTITY_TEXT_SREADER_OURCE)
 aux_source_directory(${CODE_PATH}/reader/text/type TYPE_TEXT_READER_SOURCE)
+aux_source_directory(${CODE_PATH}/reader/text/resource RESOURCE_TEXT_READER_SOURCE)
+
 aux_source_directory(${CODE_PATH}/reader/book BOOK_READER_SOURCE)
 
 aux_source_directory(${CODE_PATH}/android/filesystem ANDROID_FILE_SYSTEM_SOURCE)
 aux_source_directory(${CODE_PATH}/android/application ANDROID_APPLICATION_SOURCE)
 
-aux_source_directory(${CODE_PATH}/tools/font TOOLS_FONT_SOURCE)
+aux_source_directory(${CODE_PATH}/tools/font FONT_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/encoding ENCODING_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/language LANGUAGE_TOOLS_SOURCE)
 aux_source_directory(${CODE_PATH}/tools/xml XML_TOOLS_SOURCE)
@@ -131,19 +133,28 @@ add_library( # Sets the title of the library.
         SHARED
         # Provides a relative path to your source file(s).
         ${ROOT_SOURCE}
+
         ${FILE_SYSTEM_SOURCE}
         ${FILE_SYSTEM_ZIP_SOURCE}
         ${FILE_SYSTEM_IO_SOURCE}
         ${FILE_SYSTEM_ASSET_SOURCE}
+        ${FILE_SYSTEM_CHARSET_SOURCE}
+        ${FILE_SYSTEM_BUFFER_SOURCE}
+
         ${ANDROID_FILE_SYSTEM_SOURCE}
         ${ANDROID_APPLICATION_SOURCE}
+
         ${UTIL_SOURCE}
         ${UTIL_REGEX_SOURCE}
+
         ${PLUGIN_SOURCE}
+
+        ${BOOK_READER_SOURCE}
+
         ${TXT_PLUGIN_SOURCE}
         ${OEB_PLUGIN_SOURCE}
-        ${BOOK_READER_SOURCE}
-        ${TOOLS_FONT_SOURCE}
+
+        ${FONT_TOOLS_SOURCE}
         ${XML_TOOLS_SOURCE}
         ${XHTML_TOOLS_SOURCE}
         ${CSS_TOOLS_SOURCE}
@@ -152,12 +163,12 @@ add_library( # Sets the title of the library.
         ${LANGUAGE_TOOLS_SOURCE}
         ${CONSTANT_TOOLS_SOURCE}
         ${PARCEL_TOOLS_SOURCE}
-        ${FILE_SYSTEM_CHARSET_SOURCE}
-        ${FILE_SYSTEM_BUFFER_SOURCE}
+
         ${READER_TEXT_SOURCE}
         ${TAG_TEXT_READER_SOURCE}
         ${ENTITY_TEXT_SREADER_OURCE}
         ${TYPE_TEXT_READER_SOURCE}
+        ${RESOURCE_TEXT_READER_SOURCE}
         )
 
 target_link_libraries(

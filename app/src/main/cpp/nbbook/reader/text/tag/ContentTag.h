@@ -11,9 +11,17 @@
 
 class ContentTag : public TextTag {
 public:
+
     ContentTag(const std::string &text);
 
     ContentTag(const std::vector<std::string> &texts);
+
+    void append(const std::string &text);
+
+    void append(const std::vector<std::string> &texts);
+
+protected:
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     std::vector<std::string> mContentList;

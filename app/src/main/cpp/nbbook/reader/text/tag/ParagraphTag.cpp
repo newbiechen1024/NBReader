@@ -9,7 +9,7 @@ ParagraphTag::ParagraphTag(TextParagraph::Type type) : TextTag(TextTagType::PARA
     this->type = type;
 }
 
-void ParagraphTag::writeToParcelInternal(Parcel &parcel) {
+void ParagraphTag::writeToParcelInternal(Parcel &parcel) const {
     auto paragraphType = CommonUtil::to_underlying(type);
     parcel.writeInt8(paragraphType);
 }

@@ -30,6 +30,6 @@ const std::map<std::string, std::string> &VideoTag::sources() const {
     return mySources;
 }
 
-void VideoTag::writeToParcelInternal(Parcel &parcel) {
+void VideoTag::writeToParcelInternal(Parcel &parcel) const {
     // TODO:未实现
 }

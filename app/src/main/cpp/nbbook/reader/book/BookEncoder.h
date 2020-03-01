@@ -14,6 +14,7 @@
 #include "../text/tag/VideoTag.h"
 #include "../text/tag/ImageTag.h"
 #include "../text/entity/TextContent.h"
+#include "../text/resource/ImageResource.h"
 #include <string>
 #include <vector>
 #include <stack>
@@ -144,7 +145,7 @@ public:
     void addVideoTag(const VideoTag &tag);
 
     /**
-     * 添加图片标签
+     * 添加图片资源
      * @param tag
      */
     void addImageTag(const ImageTag &tag);
@@ -153,29 +154,24 @@ public:
     void
     addExtensionTag(const std::string &action, const std::map<std::string, std::string> &data);
 
-    // TODO：扩展资源标签
-    void addExtResource();
-
-    // TODO：书籍扩展资源标签
-    void addBookExtResource();
-
 private:
     void insertEndParagraph(TextParagraph::Type type);
 
     // 将段落缓冲输出到 textModel 中
     void flushParagraphBuffer();
 
-    uint16_t addImageResource(const ImageTag &tag);
-
     uint16_t generateResourceId() {
         return mIdGenerator++;
     }
+
+    void release();
 
 private:
     // 文本编码器
     TextEncoder mTextEncoder;
     // 资源信息分配器
-    ParcelBuffer *mResAllocator;
+    ParcelBuffer *mParcelBuffer;
+    Parcel *mResParcel;
     // 文本样式栈
     std::vector<TextKind> mTextKindStack;
     // 段落文本列表

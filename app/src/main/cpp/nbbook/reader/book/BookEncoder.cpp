@@ -7,6 +7,9 @@
 #include "../text/type/TextResType.h"
 #include "../../util/Logger.h"
 #include "../../util/StringUtil.h"
+#include "../text/tag/ControlTag.h"
+#include "../text/tag/FixedHSpaceTag.h"
+#include "../text/tag/StyleCloseTag.h"
 
 static const size_t BUFFER_SIZE = 4096;
 
@@ -17,14 +20,15 @@ BookEncoder::BookEncoder() {
     isEnterTitle = false;
     hasOpen = false;
     mIdGenerator = 0;
+
+    mParcelBuffer = nullptr;
+    mResParcel = nullptr;
 }
 
 BookEncoder::~BookEncoder() {
-    if (mResAllocator != nullptr) {
-        delete mResAllocator;
-        mResAllocator = nullptr;
-    }
+    release();
 }
+
 
 void BookEncoder::open() {
     // 如果已经打开了，则不处理
@@ -34,14 +38,15 @@ void BookEncoder::open() {
     // 启动文件编码器
     mTextEncoder.open();
     // 启动资源信息分配器
-    mResAllocator = new ParcelBuffer(BUFFER_SIZE);
+    mParcelBuffer = new ParcelBuffer(BUFFER_SIZE);
+    mResParcel = new Parcel(mParcelBuffer);
 }
 
 TextContent BookEncoder::close() {
     char *resourcePtr = nullptr;
     char *contentPtr = nullptr;
 
-    size_t resourceSize = mResAllocator->flush(&resourcePtr);
+    size_t resourceSize = mParcelBuffer->flush(&resourcePtr);
     size_t contentSize = mTextEncoder.close(&contentPtr);
 
     isParagraphOpen = false;
@@ -53,12 +58,21 @@ TextContent BookEncoder::close() {
     mTextKindStack.clear();
 
     // 释放
-    if (mResAllocator != nullptr) {
-        delete mResAllocator;
-        mResAllocator = nullptr;
-    }
+    release();
 
     return TextContent(resourcePtr, resourceSize, contentPtr, contentSize);
+}
+
+void BookEncoder::release() {
+    if (mResParcel != nullptr) {
+        delete mResParcel;
+        mResParcel = nullptr;
+    }
+
+    if (mParcelBuffer != nullptr) {
+        delete mParcelBuffer;
+        mParcelBuffer = nullptr;
+    }
 }
 
 void BookEncoder::beginParagraph(TextParagraph::Type type) {
@@ -66,11 +80,12 @@ void BookEncoder::beginParagraph(TextParagraph::Type type) {
     endParagraph();
 
     // 创建段落
-    mTextEncoder.createParagraph(type);
+    mTextEncoder.beginParagraph(type);
 
     // 将所有的 style 作为标记添加到新创建的段落中
-    for (TextKind &textStyle : mTextKindStack) {
-        mTextEncoder.addControlTag(textStyle, true);
+    for (TextKind &textKind : mTextKindStack) {
+        ControlTag tag(textKind, true);
+        mTextEncoder.addTextTag(tag);
     }
 
     // 标记当前段落正在处理
@@ -103,7 +118,7 @@ void BookEncoder::endParagraph() {
 
 void BookEncoder::flushParagraphBuffer() {
     // 将当前获取到的文本添加到 TextModel 中
-    mTextEncoder.addTextTag(mParagraphTextList);
+    mTextEncoder.addText(mParagraphTextList);
     mParagraphTextList.clear();
 }
 
@@ -170,7 +185,7 @@ void BookEncoder::insertEndParagraph(TextParagraph::Type type) {
             endParagraph();
 
             // 通知  TextModel 创建新段落
-            mTextEncoder.createParagraph(type);
+            mTextEncoder.beginParagraph(type);
             isSectionContainsRegularContents = false;
         }
     }
@@ -179,7 +194,8 @@ void BookEncoder::insertEndParagraph(TextParagraph::Type type) {
 void BookEncoder::addControlTag(TextKind kind, bool isStart) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        mTextEncoder.addControlTag(kind, isStart);
+        ControlTag tag(kind, isStart);
+        mTextEncoder.addTextTag(tag);
     }
 
     // 超链接处理
@@ -191,7 +207,8 @@ void BookEncoder::addControlTag(TextKind kind, bool isStart) {
 void BookEncoder::addFixedHSpaceTag(unsigned char length) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        mTextEncoder.addFixedHSpace(length);
+        FixedHSpaceTag tag(length);
+        mTextEncoder.addTextTag(tag);
     }
 }
 
@@ -199,21 +216,25 @@ void BookEncoder::addStyleTag(const TextStyleTag &tag,
                               const std::vector<std::string> &fontFamilies, unsigned char depth) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        mTextEncoder.addStyleTag(tag, fontFamilies, depth);
+        // TODO:暂时不处理 fontFamilies 和 depth
+        // mTextEncoder.addStyleTag(tag, fontFamilies, depth);
+        mTextEncoder.addTextTag(tag);
     }
 }
 
 void BookEncoder::addStyleTag(const TextStyleTag &tag, unsigned char depth) {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        mTextEncoder.addStyleTag(tag, depth);
+        // mTextEncoder.addStyleTag(tag, depth);
+        mTextEncoder.addTextTag(tag);
     }
 }
 
 void BookEncoder::addStyleCloseTag() {
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
-        mTextEncoder.addStyleCloseTag();
+        StyleCloseTag tag;
+        mTextEncoder.addTextTag(tag);
     }
 }
 
@@ -277,70 +298,28 @@ void BookEncoder::addExtensionTag(const std::string &action,
 
 void BookEncoder::addImageTag(const ImageTag &tag) {
     isSectionContainsRegularContents = true;
-    // 添加图片资源，返回 id 映射
-    uint16_t id = addImageResource(tag);
+
+    // 写入图片资源信息
+    ImageResource resource = tag.imageResource;
+    resource.writeToParcel(*mResParcel);
 
     if (hasParagraphOpen()) {
         flushParagraphBuffer();
         // 添加图片标签
-        mTextEncoder.addImageTag(id, tag);
+        mTextEncoder.addTextTag(tag);
     } else {
         beginParagraph();
+        ControlTag beforeTag(TextKind::IMAGE, true);
+        ControlTag afterTag(TextKind::IMAGE, false);
+
         // 添加图片标签控制位
-        mTextEncoder.addControlTag(TextKind::IMAGE, true);
-        mTextEncoder.addImageTag(id, tag);
-        mTextEncoder.addControlTag(TextKind::IMAGE, false);
+        mTextEncoder.addTextTag(beforeTag);
+        mTextEncoder.addTextTag(tag);
+        mTextEncoder.addTextTag(afterTag);
+
+        // 结束段落
         endParagraph();
     }
-}
-
-/**
- * 图片资源标签
- *
- * 1. 资源类型：占用 1 字节。 image
- * 2. 边缘对齐：占用 1 字节。
- * 3. 资源 id：占 2 字节
- * 4. 资源路径长：占 2 字节。
- * 5. 资源路径：未知字节
- * @param tag
- * @return
- */
-uint16_t BookEncoder::addImageResource(const ImageTag &tag) {
-
-    std::string path = tag.path;
-
-    auto itr = mResourceMap.find(path);
-
-    uint16_t resId = 0;
-
-    // 如果路径以存在在列表中
-    if (itr != mResourceMap.end()) {
-        resId = std::stoi(itr->second);
-    } else {
-        resId = generateResourceId();
-        // 添加到映射表中
-        std::string id = std::to_string(resId);
-        mResourceMap[path] = id;
-    }
-
-    size_t resourceLen = 4;
-    // 长度 + 文本长
-    resourceLen += 2 + UnicodeUtil::utf8Length(tag.path) * 2;
-
-    char *resPtr = mResAllocator->allocate(resourceLen);
-
-    *resPtr++ = (char) TextResType::IMAGE;
-    *resPtr++ = 0;
-    resPtr = ParcelBuffer::writeUInt16(resPtr, resId);
-
-    // 先转换成 utf-16
-    UnicodeUtil::Ucs2String ucs2Path;
-    UnicodeUtil::utf8ToUcs2(ucs2Path, tag.path);
-
-    // 使用 allocator 进行存储文本
-    ParcelBuffer::writeString(resPtr, ucs2Path);
-
-    return resId;
 }
 
 std::string
@@ -350,12 +329,4 @@ BookEncoder::addFontTag(const std::string &family, std::shared_ptr<FontEntry> fo
 
 void BookEncoder::insertPseudoEndOfSectionParagraph() {
     insertEndParagraph(TextParagraph::PSEUDO_END_OF_SECTION_PARAGRAPH);
-}
-
-void BookEncoder::addExtResource() {
-    // TODO：扩展资源信息，暂时用不到。
-}
-
-void BookEncoder::addBookExtResource() {
-    // TODO: 扩展书籍资源，暂时用不到。
 }

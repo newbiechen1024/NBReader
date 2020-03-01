@@ -55,6 +55,39 @@ std::shared_ptr<TextStyleTag> TextStyleTag::inherited() const {
     return clone;
 }
 
-void TextStyleTag::writeToParcelInternal(Parcel &parcel) {
-    // TODO：待写入数据类型
+void TextStyleTag::writeToParcelInternal(Parcel &parcel) const {
+    // 设置style 的深度
+    parcel.writeInt8(mDepth);
+    // 具有的功能类型
+    parcel.writeInt16(myFeatureMask);
+
+    for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
+        if (isFeatureSupported((TextFeature) i)) {
+            const TextStyleTag::LengthType &len = myLengths[i];
+            parcel.writeInt16(len.Size);
+            parcel.writeInt8((char) len.Unit);
+        }
+    }
+
+    if (isFeatureSupported(TextFeature::ALIGNMENT_TYPE) ||
+        isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
+        parcel.writeInt8((char) myAlignmentType);
+        parcel.writeInt8((char) myVerticalAlignCode);
+    }
+
+
+    // TODO:暂时不处理字体信息，设置使用的 family 在资源文件中的索引
+
+/*    if (tag.isFeatureSupported(TextFeature::FONT_FAMILY)) {
+
+        address = ParcelBuffer::writeUInt16(address,
+
+                                            myFontManager.familyListIndex(fontFamilies)
+        0);
+    }
+
+    if (tag.isFeatureSupported(TextFeature::FONT_STYLE_MODIFIER)) {
+        *address++ = tag.mySupportedFontModifier;
+        *address = tag.myFontModifier;
+    }*/
 }

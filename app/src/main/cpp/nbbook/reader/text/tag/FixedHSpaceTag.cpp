@@ -9,7 +9,7 @@ FixedHSpaceTag::FixedHSpaceTag(unsigned char length) : TextTag(TextTagType::FIXE
     this->length = length;
 }
 
-void FixedHSpaceTag::writeToParcelInternal(Parcel &parcel) {
+void FixedHSpaceTag::writeToParcelInternal(Parcel &parcel) const {
     parcel.writeInt8(length);
 }
 

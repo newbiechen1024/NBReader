@@ -8,6 +8,6 @@
 StyleCloseTag::StyleCloseTag() : TextTag(TextTagType::STYLE_CLOSE) {
 }
 
-void StyleCloseTag::writeToParcelInternal(Parcel &parcel) {
+void StyleCloseTag::writeToParcelInternal(Parcel &parcel) const {
     // 不实现
 }

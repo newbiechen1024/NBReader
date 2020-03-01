@@ -4,20 +4,23 @@
 //
 
 #include "ImageTag.h"
+#include "../../../filesystem/File.h"
 
-// TODO:ImageTag 应该分成 resource 和 tag
+// TODO:resId 暂时以 image name 为名。(没想好 id 怎么搞呢)
 
 ImageTag::ImageTag(const std::string &path, const std::string &encoding,
                    bool isCover, short vOffset, size_t offset, size_t size,
                    std::shared_ptr<EncryptionMap> encryptionInfo) : TextTag(TextTagType::IMAGE),
-                                                                    path(path), encoding(encoding),
-                                                                    encryptionInfo(encryptionInfo) {
+                                                                    resId(File(path).getFullName()),
+                                                                    imageResource(resId, path,
+                                                                                  encoding,
+                                                                                  vOffset,
+                                                                                  offset, size,
+                                                                                  encryptionInfo) {
     this->isCover = isCover;
-    this->vOffset = vOffset;
-    this->offset = offset;
-    this->size = size;
 }
 
-void ImageTag::writeToParcelInternal(Parcel &parcel) {
-
+void ImageTag::writeToParcelInternal(Parcel &parcel) const {
+    parcel.writeString16(resId);
+    parcel.writeBool(isCover);
 }

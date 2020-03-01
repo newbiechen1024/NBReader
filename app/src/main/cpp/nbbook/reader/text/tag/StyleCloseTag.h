@@ -9,12 +9,12 @@
 
 #include "TextTag.h"
 
-class StyleCloseTag: public TextTag {
+class StyleCloseTag : public TextTag {
 public:
     StyleCloseTag();
 
 protected:
-    virtual void writeToParcelInternal(Parcel &parcel);
+    void writeToParcelInternal(Parcel &parcel) const override;
 };
 
 

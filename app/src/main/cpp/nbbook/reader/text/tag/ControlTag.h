@@ -15,7 +15,7 @@ public:
     ControlTag(TextKind kind, bool isStartTag);
 
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     TextKind kind;

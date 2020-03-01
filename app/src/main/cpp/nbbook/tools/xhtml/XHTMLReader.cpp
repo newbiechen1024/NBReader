@@ -30,6 +30,7 @@
 #include "../../filesystem/FileSystem.h"
 #include "../../util/FilePathUtil.h"
 #include "../constant/XMLNamespace.h"
+#include "../../reader/text/resource/ImageResource.h"
 
 static const std::string ANY = "*";
 static const std::string EMPTY = "";
@@ -413,8 +414,8 @@ void XHTMLTagImageAction::doAtStart(XHTMLReader &reader, Attributes &attributes)
     }
     // TODO:添加图片标签，以及添加图片逻辑，这个需要考虑如何实现
 /*    const std::string imageName = imageFile.getName();*/
-    ImageTag imageTag(imageFile.getPath(), "",
-                      reader.myMarkNextImageAsCover, 0, 0,
+    ImageTag imageTag(imageFile.getPath(),
+                      "", reader.myMarkNextImageAsCover, 0, 0,
                       0, reader.myEncryptionMap);
 
     getBookEncoder(reader).addImageTag(imageTag);
@@ -934,8 +935,7 @@ void XHTMLReader::applySingleEntry(std::shared_ptr<TextStyleTag> entry) {
 void XHTMLReader::applyTagStyles(const std::string &tag, const std::string &aClass) {
     std::vector<std::pair<CSSSelector, std::shared_ptr<TextStyleTag> > > controls =
             myStyleSheetTable.allControls(tag, aClass);
-    for (auto it = controls.begin(); it != controls.end();
-         ++it) {
+    for (auto it = controls.begin(); it != controls.end(); ++it) {
         if (matches(it->first.Next)) {
             applySingleEntry(it->second);
         }
@@ -968,8 +968,7 @@ void XHTMLReader::addTextStyleEntry(const TextStyleTag &entry, unsigned char dep
         myModelReader.addStyleTag(entry, depth);
     } else {
         std::vector<std::string> realFamilies;
-        for (std::vector<std::string>::const_iterator it = families.begin();
-             it != families.end(); ++it) {
+        for (auto it = families.begin(); it != families.end(); ++it) {
             std::shared_ptr<FontEntry> fontEntry = myFontMap->get(*it);
             if (fontEntry != nullptr) {
                 realFamilies.push_back(myModelReader.addFontTag(*it, fontEntry));
@@ -993,9 +992,7 @@ void XHTMLReader::beginParagraph(bool restarted) {
         const std::vector<std::shared_ptr<TextStyleTag> > &entries = (*it)->StyleEntries;
         bool inheritedOnly = !restarted || it + 1 != myTagDataStack.end();
         const unsigned char depth = it - myTagDataStack.begin() + 1;
-        for (std::vector<std::shared_ptr<TextStyleTag> >::const_iterator jt = entries.begin();
-             jt != entries.end();
-             ++jt) {
+        for (auto jt = entries.begin(); jt != entries.end(); ++jt) {
             std::shared_ptr<TextStyleTag> entry = inheritedOnly ? (*jt)->inherited()
                                                                 : (*jt)->start();
             addTextStyleEntry(*entry, depth);
@@ -1089,7 +1086,7 @@ XHTMLReader::startElement(std::string &localName, std::string &fullName, Attribu
 
     if (!aClasses.empty()) {
         const std::vector<std::string> split = StringUtil::split(aClasses, " ", true);
-        for (std::vector<std::string>::const_iterator it = split.begin(); it != split.end(); ++it) {
+        for (auto it = split.begin(); it != split.end(); ++it) {
             classesList.push_back(*it);
         }
     }

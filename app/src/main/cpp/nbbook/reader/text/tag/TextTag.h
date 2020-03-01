@@ -13,7 +13,7 @@
 
 class TextTag : public Parcelable {
 protected:
-    virtual void writeToParcelInternal(Parcel &parcel) = 0;
+    virtual void writeToParcelInternal(Parcel &parcel) const = 0;
 
 public:
     TextTag(TextTagType type) {
@@ -27,7 +27,7 @@ public:
     virtual ~TextTag() {
     }
 
-    void writeToParcel(Parcel &parcel) override {
+    void writeToParcel(Parcel &parcel) const override {
         parcel.writeInt8(CommonUtil::to_underlying(mType));
         writeToParcelInternal(parcel);
     }

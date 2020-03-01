@@ -55,7 +55,7 @@ public:
     virtual ~Parcelable() {
     }
 
-    virtual void writeToParcel(Parcel &parcel) = 0;
+    virtual void writeToParcel(Parcel &parcel) const = 0;
 };
 
 #endif //NBREADER_PARCEL_H

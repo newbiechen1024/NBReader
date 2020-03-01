@@ -9,12 +9,12 @@
 
 #include "TextTag.h"
 
-class FixedHSpaceTag: public TextTag {
+class FixedHSpaceTag : public TextTag {
 public:
     FixedHSpaceTag(unsigned char length);
 
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     unsigned char length;

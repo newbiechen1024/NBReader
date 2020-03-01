@@ -35,7 +35,7 @@ public:
     const std::map<std::string, std::string> &sources() const;
 
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     std::map<std::string, std::string> mySources;

@@ -10,6 +10,7 @@
 #include "tag/TextKind.h"
 #include "tag/TextStyleTag.h"
 #include "tag/ImageTag.h"
+#include "tag/ContentTag.h"
 #include <string>
 
 class TextEncoder {
@@ -48,44 +49,18 @@ public:
      * 根据段落类型创建段落
      * @param paragraphType：段落类型
      */
-    void createParagraph(TextParagraph::Type paragraphType);
+    void beginParagraph(TextParagraph::Type paragraphType);
 
     /**
-     * 添加文本标签信息
+     * 添加文本信息
      */
-    void addTextTag(const std::vector<std::string> &text);
+    void addText(const std::vector<std::string> &text);
 
     /**
-     * 添加控制位标签信息
-     * @param style:   NBReader 具有的文本样式类型
-     * @param isStartTag：是否是起始标签
+     * 添加文本标签
+     * @param tag
      */
-    void addControlTag(TextKind kind, bool isStartTag);
-
-    void addFixedHSpace(unsigned char length);
-
-    void addStyleTag(const TextStyleTag &tag, unsigned char depth);
-
-    void addStyleTag(const TextStyleTag &tag, const std::vector<std::string> &fontFamilies,
-                     unsigned char depth);
-
-    void addStyleCloseTag();
-
-    void addHyperlinkControlTag(TextKind kind, const std::string &label);
-
-    /**
-     * 添加图片信息：会将 image 添加到 attr 头部，以及 index 加入到内容位置
-     * TODO：暂时不清楚这种方式好不好，先这么写了
-     * @param ids：图片 id
-     */
-
-    void addImageTag(uint16_t uniqueId, const ImageTag &tag);
-
-    // TODO:视频标签
-    void addVideoTag();
-
-    // TODO：添加资源标签
-    void addResouceTag();
+    void addTextTag(const TextTag &tag);
 
     size_t getCurParagraphCount() {
         return mCurParagraphCount;
@@ -96,20 +71,25 @@ private:
 
     void checkTagState();
 
-    void flush();
+    // 更新文本信息
+    void updateText();
+
+    // 结束段落
+    void endParagraph();
 
     void release();
 
 private:
-    // TODO:需要带有资源缓冲区
-
-    size_t mCurParagraphCount;
     // 文本数据存储缓冲
-    ParcelBuffer *mBufferAllocatorPtr;
+    ParcelBuffer *mParcelBuffer;
+    // 数据包对象
+    Parcel *mParcel;
     // 当前创建的文本段落指针
     TextParagraph *mCurParagraphPtr;
     // 当前标签指针
-    char *mCurTagPtr;
+    ContentTag *mContentTagPtr;
+    // 当前段落总数
+    size_t mCurParagraphCount;
     // 编码器是否打开
     bool mIsOpen;
 };

@@ -69,14 +69,19 @@ public:
 
     void setDisplayCode(TextDisplayCode code);
 
+    void setDepth(unsigned depth) {
+        mDepth = depth;
+    }
+
     std::shared_ptr<TextStyleTag> start() const;
 
     std::shared_ptr<TextStyleTag> end() const;
 
     std::shared_ptr<TextStyleTag> inherited() const;
 
+
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     const TextTagType myEntryKind;
@@ -89,8 +94,8 @@ private:
     std::vector<std::string> myFontFamilies;
     unsigned char myVerticalAlignCode;
     TextDisplayCode myDisplayCode;
-
-    friend class TextEncoder;
+    // TODO:深度是我自己加的不知道有没有问题，可能存在 Style 被多次利用，且深度不同的可能。(暂时先这样，等以后理解了再说)
+    unsigned char mDepth;
 };
 
 inline TextStyleTag::TextStyleTag(TextTagType styleType) : TextTag(styleType),

@@ -15,7 +15,7 @@ public:
     ParagraphTag(TextParagraph::Type type);
 
 protected:
-    void writeToParcelInternal(Parcel &parcel) override;
+    void writeToParcelInternal(Parcel &parcel) const override;
 
 private:
     TextParagraph::Type type;

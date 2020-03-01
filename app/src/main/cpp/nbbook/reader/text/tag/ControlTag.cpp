@@ -10,7 +10,7 @@ ControlTag::ControlTag(TextKind kind, bool isStartTag) : TextTag(TextTagType::CO
     this->isStartTag = isStartTag;
 }
 
-void ControlTag::writeToParcelInternal(Parcel &parcel) {
+void ControlTag::writeToParcelInternal(Parcel &parcel) const {
     auto value = CommonUtil::to_underlying(kind);
     parcel.writeInt8(value);
     parcel.writeBool(isStartTag);
