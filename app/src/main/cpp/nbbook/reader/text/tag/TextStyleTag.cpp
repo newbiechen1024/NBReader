@@ -54,3 +54,7 @@ std::shared_ptr<TextStyleTag> TextStyleTag::inherited() const {
     clone->myVerticalAlignCode = myVerticalAlignCode;
     return clone;
 }
+
+void TextStyleTag::writeToParcelInternal(Parcel &parcel) {
+    // TODO：待写入数据类型
+}

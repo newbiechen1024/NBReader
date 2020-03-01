@@ -75,6 +75,9 @@ public:
 
     std::shared_ptr<TextStyleTag> inherited() const;
 
+protected:
+    void writeToParcelInternal(Parcel &parcel) override;
+
 private:
     const TextTagType myEntryKind;
     unsigned short myFeatureMask;
@@ -90,7 +93,8 @@ private:
     friend class TextEncoder;
 };
 
-inline TextStyleTag::TextStyleTag(TextTagType styleType) : myEntryKind(styleType),
+inline TextStyleTag::TextStyleTag(TextTagType styleType) : TextTag(styleType),
+                                                           myEntryKind(styleType),
                                                            myFeatureMask(0),
                                                            myAlignmentType(
                                                                    TextAlignmentType::ALIGN_UNDEFINED),

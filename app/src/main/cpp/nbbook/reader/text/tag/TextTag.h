@@ -7,19 +7,33 @@
 #define NBREADER_TEXTTAG_H
 
 
-class TextTag {
+#include "../../../tools/parcel/Parcel.h"
+#include "../type/TextTagType.h"
+#include "../../../util/CommonUtil.h"
+
+class TextTag : public Parcelable {
 protected:
-    TextTag() {
-    }
+    virtual void writeToParcelInternal(Parcel &parcel) = 0;
 
 public:
+    TextTag(TextTagType type) {
+        mType = type;
+    }
+
+    TextTagType getType() {
+        return mType;
+    }
+
     virtual ~TextTag() {
     }
 
-private: // 禁止复制
-    TextTag(const TextTag &entry);
+    void writeToParcel(Parcel &parcel) override {
+        parcel.writeInt8(CommonUtil::to_underlying(mType));
+        writeToParcelInternal(parcel);
+    }
 
-    const TextTag &operator=(const TextTag &entry);
+private:
+    TextTagType mType;
 };
 
 #endif //NBREADER_TEXTTAG_H

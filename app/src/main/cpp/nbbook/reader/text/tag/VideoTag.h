@@ -28,9 +28,14 @@
 class VideoTag : public TextTag {
 
 public:
+    VideoTag();
+
     void addSource(const std::string &type, const std::string &path);
 
     const std::map<std::string, std::string> &sources() const;
+
+protected:
+    void writeToParcelInternal(Parcel &parcel) override;
 
 private:
     std::map<std::string, std::string> mySources;

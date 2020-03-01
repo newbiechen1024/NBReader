@@ -19,10 +19,17 @@
 
 #include "VideoTag.h"
 
+VideoTag::VideoTag() : TextTag(TextTagType::VIDEO) {
+}
+
 void VideoTag::addSource(const std::string &type, const std::string &path) {
     mySources.insert(std::make_pair(type, path));
 }
 
 const std::map<std::string, std::string> &VideoTag::sources() const {
     return mySources;
+}
+
+void VideoTag::writeToParcelInternal(Parcel &parcel) {
+    // TODO:未实现
 }

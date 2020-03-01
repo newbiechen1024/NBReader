@@ -8,6 +8,15 @@
 Parcel::Parcel(ParcelBuffer *buffer) : mBuffer(buffer) {
 }
 
+void Parcel::writeBool(bool value) {
+    writeInt8(value ? 1 : 0);
+}
+
+void Parcel::writeInt8(int8_t value) {
+    char *ptr = requestBuffer(1);
+    *ptr = value;
+}
+
 void Parcel::writeInt16(int16_t value) {
     char *ptr = requestBuffer(2);
     *ptr++ = (0xff00 & value) >> 8;

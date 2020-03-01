@@ -17,6 +17,10 @@ public:
     ~Parcel() {
     }
 
+    void writeBool(bool value);
+
+    void writeInt8(int8_t value);
+
     /**
      * 写入 int_16 数据
      * @param value
@@ -51,7 +55,7 @@ public:
     virtual ~Parcelable() {
     }
 
-    virtual void writeToParcel(Parcel &parcel);
+    virtual void writeToParcel(Parcel &parcel) = 0;
 };
 
 #endif //NBREADER_PARCEL_H
