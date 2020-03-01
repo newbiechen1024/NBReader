@@ -32,7 +32,7 @@ void TextEncoder::open() {
     }
 
     // 如果缓冲区不存在已存在则没有必要重打开
-    mBufferAllocatorPtr = new TextBufferAllocator(BUFFER_SIZE);
+    mBufferAllocatorPtr = new ParcelBuffer(BUFFER_SIZE);
     mIsOpen = true;
 }
 
@@ -163,7 +163,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
     // 是否是追加数据
     if (mCurTagPtr != nullptr && *mCurTagPtr == (char) TextTagType::TEXT) {
         // 如果当前 Entry 是 TEXT_ENTRY 类型，则通过指针获取当前 entry 持有的文本中长度
-        const size_t oldWordCount = TextBufferAllocator::readUInt32(mCurTagPtr + 2);
+        const size_t oldWordCount = ParcelBuffer::readUInt32(mCurTagPtr + 2);
 
         // 新的段落长度
         const size_t newWordCount = oldWordCount + wordCount;
@@ -172,7 +172,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
         // 2 * newTextLength ==> utf-16 中一个字占用 2 个字节。所以空间为 2 * 字数
         mCurTagPtr = mBufferAllocatorPtr->reallocateLast(mCurTagPtr, 2 * newWordCount + 6);
         // 将重新计算的长度写入 entry 中
-        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, 2 * newWordCount);
+        ParcelBuffer::writeUInt32(mCurTagPtr + 2, 2 * newWordCount);
 
         // TODO:这里和 FBReader有出入，我认为应该 *2,不知道对不对
         // 偏移 6 字节，以及上一段数据的位置
@@ -197,7 +197,7 @@ void TextEncoder::addTextTag(const std::vector<std::string> &text) {
         // 用 0 为分割标记
         *(mCurTagPtr + 1) = 0;
         // 将总长度写入到 entry 中
-        TextBufferAllocator::writeUInt32(mCurTagPtr + 2, 2 * wordCount);
+        ParcelBuffer::writeUInt32(mCurTagPtr + 2, 2 * wordCount);
         // 偏移 6 字节，指向 TextTag 的文本内容赋值位置
 
         size_t offset = 6;
@@ -313,12 +313,12 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
     *address++ = depth;
     *address++ = 0;
 
-    address = TextBufferAllocator::writeUInt16(address, tag.myFeatureMask);
+    address = ParcelBuffer::writeUInt16(address, tag.myFeatureMask);
 
     for (int i = 0; i < CommonUtil::to_underlying(TextFeature::NUMBER_OF_LENGTHS); ++i) {
         if (tag.isFeatureSupported((TextFeature) i)) {
             const TextStyleTag::LengthType &len = tag.myLengths[i];
-            address = TextBufferAllocator::writeUInt16(address, len.Size);
+            address = ParcelBuffer::writeUInt16(address, len.Size);
             *address++ = (char) len.Unit;
             *address++ = 0;
         }
@@ -332,7 +332,7 @@ void TextEncoder::addStyleTag(const TextStyleTag &tag, const std::vector<std::st
 
     if (tag.isFeatureSupported(TextFeature::FONT_FAMILY)) {
         // TODO:暂时不处理字体信息，设置使用的 family 在资源文件中的索引
-        address = TextBufferAllocator::writeUInt16(address,
+        address = ParcelBuffer::writeUInt16(address,
                 /*myFontManager.familyListIndex(fontFamilies)*/0);
     }
 
@@ -411,7 +411,7 @@ void TextEncoder::addImageTag(uint16_t uniqueId, const ImageTag &tag) {
     *address++ = 0;
 
     // 添加 id 信息
-    TextBufferAllocator::writeUInt16(address, uniqueId);
+    ParcelBuffer::writeUInt16(address, uniqueId);
 }
 
 void TextEncoder::addVideoTag() {

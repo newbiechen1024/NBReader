@@ -5,7 +5,7 @@
 
 #include "Parcel.h"
 
-Parcel::Parcel(TextBufferAllocator *allocator) : mAllocator(allocator) {
+Parcel::Parcel(ParcelBuffer *buffer) : mBuffer(buffer) {
 }
 
 void Parcel::writeInt16(int16_t value) {
@@ -67,5 +67,5 @@ void Parcel::writeString32Array(const std::vector<std::string> &valueArr) {
 }
 
 char *Parcel::requestBuffer(size_t len) {
-    return mAllocator->allocate(len);
+    return mBuffer->allocate(len);
 }

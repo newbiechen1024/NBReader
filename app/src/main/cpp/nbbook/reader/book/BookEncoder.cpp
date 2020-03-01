@@ -34,7 +34,7 @@ void BookEncoder::open() {
     // 启动文件编码器
     mTextEncoder.open();
     // 启动资源信息分配器
-    mResAllocator = new TextBufferAllocator(BUFFER_SIZE);
+    mResAllocator = new ParcelBuffer(BUFFER_SIZE);
 }
 
 TextContent BookEncoder::close() {
@@ -331,14 +331,14 @@ uint16_t BookEncoder::addImageResource(const ImageTag &tag) {
 
     *resPtr++ = (char) TextResType::IMAGE;
     *resPtr++ = 0;
-    resPtr = TextBufferAllocator::writeUInt16(resPtr, resId);
+    resPtr = ParcelBuffer::writeUInt16(resPtr, resId);
 
     // 先转换成 utf-16
     UnicodeUtil::Ucs2String ucs2Path;
     UnicodeUtil::utf8ToUcs2(ucs2Path, tag.path);
 
     // 使用 allocator 进行存储文本
-    TextBufferAllocator::writeString(resPtr, ucs2Path);
+    ParcelBuffer::writeString(resPtr, ucs2Path);
 
     return resId;
 }

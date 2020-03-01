@@ -175,7 +175,7 @@ private:
     // 文本编码器
     TextEncoder mTextEncoder;
     // 资源信息分配器
-    TextBufferAllocator *mResAllocator;
+    ParcelBuffer *mResAllocator;
     // 文本样式栈
     std::vector<TextKind> mTextKindStack;
     // 段落文本列表

@@ -3,14 +3,14 @@
 // description : 文本缓冲区分配器
 //
 
-#ifndef NBREADER_TEXTBUFFERALLOCATOR_H
-#define NBREADER_TEXTBUFFERALLOCATOR_H
+#ifndef NBREADER_PARCELBUFFER_H
+#define NBREADER_PARCELBUFFER_H
 
 #include <string>
 #include "../../util/UnicodeUtil.h"
 #include "../../filesystem/buffer/CharBuffer.h"
 
-class TextBufferAllocator {
+class ParcelBuffer {
 public:
     static char *writeUInt16(char *ptr, uint16_t value) {
         *ptr++ = (0xff00 & value) >> 8;
@@ -50,9 +50,9 @@ public:
     }
 
 public:
-    TextBufferAllocator(const size_t defaultBufferSize);
+    ParcelBuffer(const size_t defaultBufferSize);
 
-    ~TextBufferAllocator();
+    ~ParcelBuffer();
 
     char *allocate(size_t size);
 
@@ -92,10 +92,10 @@ private:
     size_t mCurBlockSize;
 
 private: // disable copying
-    TextBufferAllocator(const TextBufferAllocator &);
+    ParcelBuffer(const ParcelBuffer &);
 
-    const TextBufferAllocator &operator=(const TextBufferAllocator &);
+    const ParcelBuffer &operator=(const ParcelBuffer &);
 };
 
 
-#endif //NBREADER_TEXTBUFFERALLOCATOR_H
+#endif //NBREADER_PARCELBUFFER_H

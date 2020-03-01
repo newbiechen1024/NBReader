@@ -8,11 +8,11 @@
 
 #include <cstdint>
 #include <string>
-#include "../../reader/text/TextBufferAllocator.h"
+#include "ParcelBuffer.h"
 
 class Parcel {
 public:
-    Parcel(TextBufferAllocator *allocator);
+    Parcel(ParcelBuffer *buffer);
 
     ~Parcel() {
     }
@@ -42,7 +42,7 @@ private:
 
 private:
     // 缓冲分配器
-    TextBufferAllocator *mAllocator;
+    ParcelBuffer *mBuffer;
 };
 
 

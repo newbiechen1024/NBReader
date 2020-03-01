@@ -3,17 +3,17 @@
 // description : 
 // todo：需要考虑缓冲区太大该怎么办？比如几十 M 的情况下，肯定会出问题。
 
-#include "TextBufferAllocator.h"
+#include "ParcelBuffer.h"
 
 
-TextBufferAllocator::TextBufferAllocator(const size_t defaultBufferSize) : mDefaultBufferSize(
+ParcelBuffer::ParcelBuffer(const size_t defaultBufferSize) : mDefaultBufferSize(
         defaultBufferSize) {
     mCurBlockSize = 0;
     mCurBlockOffset = 0;
     mBufferOffset = 0;
 }
 
-TextBufferAllocator::~TextBufferAllocator() {
+ParcelBuffer::~ParcelBuffer() {
     // 删除缓冲块的缓冲数据
     if (!mBufferBlockList.empty()) {
         for (auto block : mBufferBlockList) {
@@ -22,7 +22,7 @@ TextBufferAllocator::~TextBufferAllocator() {
     }
 }
 
-size_t TextBufferAllocator::getBufferOffset() {
+size_t ParcelBuffer::getBufferOffset() {
     size_t result = 0;
 
     for (auto block:mBufferBlockList) {
@@ -33,7 +33,7 @@ size_t TextBufferAllocator::getBufferOffset() {
 
 
 // TODO:使用 close 是否正确？
-size_t TextBufferAllocator::flush(char **buffer) {
+size_t ParcelBuffer::flush(char **buffer) {
     size_t bufferSize = getBufferOffset();
 
     // 缓冲区大小为 0 则不处理。
@@ -54,7 +54,7 @@ size_t TextBufferAllocator::flush(char **buffer) {
     return bufferSize;
 }
 
-char *TextBufferAllocator::allocate(size_t size) {
+char *ParcelBuffer::allocate(size_t size) {
     if (mBufferBlockList.empty()) {
         mCurBlockSize = std::max(mDefaultBufferSize, size);
         mBufferBlockList.push_back(new CharBuffer(mCurBlockSize));
@@ -76,7 +76,7 @@ char *TextBufferAllocator::allocate(size_t size) {
     return ptr;
 }
 
-char *TextBufferAllocator::reallocateLast(char *ptr, size_t newSize) {
+char *ParcelBuffer::reallocateLast(char *ptr, size_t newSize) {
     // 作用：如果之前请求分配的区域不够的话，需要重新申请分配内存的意思。 ==> 传入的 ptr 必须是最新 allocate 返回的值。
 
     CharBuffer *curBlock = mBufferBlockList.back();

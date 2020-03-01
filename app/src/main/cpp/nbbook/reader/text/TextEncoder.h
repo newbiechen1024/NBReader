@@ -5,7 +5,7 @@
 #ifndef NBREADER_TEXTENCODER_H
 #define NBREADER_TEXTENCODER_H
 
-#include "TextBufferAllocator.h"
+#include "../../tools/parcel/ParcelBuffer.h"
 #include "entity/TextParagraph.h"
 #include "tag/TextKind.h"
 #include "tag/TextStyleTag.h"
@@ -105,7 +105,7 @@ private:
 
     size_t mCurParagraphCount;
     // 文本数据存储缓冲
-    TextBufferAllocator *mBufferAllocatorPtr;
+    ParcelBuffer *mBufferAllocatorPtr;
     // 当前创建的文本段落指针
     TextParagraph *mCurParagraphPtr;
     // 当前标签指针
