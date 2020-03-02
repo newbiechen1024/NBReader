@@ -25,7 +25,7 @@ void ContentTag::writeToParcelInternal(Parcel &parcel) const {
     std::string resultText;
 
     // 将数据中的数据，写入到统一文本中
-    for (auto itr = mContentList.begin(); itr < mContentList.end(); ++itr) {
+    for (auto itr = mContentList.begin(); itr != mContentList.end(); ++itr) {
         resultText.append(*itr);
     }
 

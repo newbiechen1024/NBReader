@@ -176,8 +176,6 @@ private:
     std::vector<TextKind> mTextKindStack;
     // 段落文本列表
     std::vector<std::string> mParagraphTextList;
-    // 资源映射表
-    std::map<std::string, std::string> mResourceMap;
     // 是否已经存在打开的段落
     bool isParagraphOpen;
     bool isTitleParagraphOpen;

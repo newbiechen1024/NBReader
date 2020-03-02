@@ -3,6 +3,7 @@ package com.newbiechen.nbreader.ui.component.book.text.processor.cursor
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.*
+import com.newbiechen.nbreader.ui.component.book.text.entity.resource.TextResource
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.LineBreaker
@@ -42,6 +43,7 @@ class TextParagraphCursor : TextPosition {
 
         // 将段落的 tag 元素解析成 element 元素
         mElementList = ParagraphContentDecoder(
+            mChapterCursor.getResource(),
             mParagraph,
             chapterCursor.getParagraphContent(index),
             mTextModel.getLanguage()
@@ -171,6 +173,7 @@ class TextParagraphCursor : TextPosition {
  * 段落内容解析器
  */
 private class ParagraphContentDecoder(
+    private val resource: TextResource,
     private val paragraph: TextParagraph,
     private val paragraphContent: TextTagIterator,
     private val language: String
@@ -369,12 +372,14 @@ private class ParagraphContentDecoder(
 
     private fun processFixedHSpaceTag(textFixedHSpaceTag: TextFixedHSpaceTag) {
         mElementList!!.add(
-            TextFixedHSpaceElement.getElement(textFixedHSpaceTag.length)
+            TextFixedHSpaceElement.getElement(textFixedHSpaceTag.length.toInt())
         )
     }
 
     private fun processImageTag(textTag: TextImageTag) {
+        // TODO:假设 id 一定能拿到数据
+        val textImage = resource.getImage(textTag.id)!!
         // 添加图片元素
-        mElementList!!.add(TextImageElement(textTag.textImage))
+        mElementList!!.add(TextImageElement(textImage))
     }
 }

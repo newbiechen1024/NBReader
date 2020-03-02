@@ -45,7 +45,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleTag: TextSt
 
     private fun computeTreeParent(): TextStyle {
         // 如果当前样式的深度为 0
-        if (styleTag.depth == 0.toByte()) {
+        if (styleTag.getDepth() == 0.toByte()) {
             return parent.parent
         }
 
@@ -54,7 +54,7 @@ class ExplicitTextDecoratedStyle(parent: TextStyle, private val styleTag: TextSt
 
         while (p != p.parent) {
             if (p is ExplicitTextDecoratedStyle) {
-                if (p.styleTag.depth != styleTag.depth) {
+                if (p.styleTag.getDepth() != styleTag.getDepth()) {
                     return p
                 }
             } else {

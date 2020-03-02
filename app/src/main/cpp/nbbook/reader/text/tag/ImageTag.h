@@ -14,7 +14,9 @@
 
 class ImageTag : public TextTag {
 public:
-    ImageTag(const std::string &path, const std::string &encoding, bool isCover, short vOffset,
+    ImageTag(const std::string &resourceId,
+             const std::string &path, const std::string &encoding,
+             bool isCover, short vOffset,
              size_t offset, size_t size, std::shared_ptr<EncryptionMap> encryptionInfo);
 
 protected:

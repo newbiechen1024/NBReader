@@ -69,12 +69,13 @@ void StyleTag::writeToParcelInternal(Parcel &parcel) const {
         }
     }
 
-    if (isFeatureSupported(TextFeature::ALIGNMENT_TYPE) ||
-        isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
+    if (isFeatureSupported(TextFeature::ALIGNMENT_TYPE)) {
         parcel.writeInt8((char) myAlignmentType);
-        parcel.writeInt8((char) myVerticalAlignCode);
     }
 
+    if (isFeatureSupported(TextFeature::NON_LENGTH_VERTICAL_ALIGN)) {
+        parcel.writeInt8((char) myVerticalAlignCode);
+    }
 
     // TODO:暂时不处理字体信息，设置使用的 family 在资源文件中的索引
 

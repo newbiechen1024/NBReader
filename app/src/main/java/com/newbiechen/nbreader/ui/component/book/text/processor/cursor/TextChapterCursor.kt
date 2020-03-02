@@ -4,8 +4,8 @@ import android.util.LruCache
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.TextResource
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
+import com.newbiechen.nbreader.ui.component.book.text.parcel.TextParcel
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
-import com.newbiechen.nbreader.ui.component.book.text.util.TextByteToBasicUtil
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.LogHelper
 
@@ -45,9 +45,7 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
         mTextResource = TextResource(textContent.resourceData)
 
         // 创建解析器解析
-        mTextTagList = TextContentDecoder(
-            mTextResource, textContent.contentData
-        ).decode()
+        mTextTagList = TextContentDecoder(textContent.contentData).decode()
 
         // TODO:原理是 paragraph tag 一定是在段落的末尾的。之后会修改 native 将 paragraph 放在起始位置
         // 解析成功后，取出 ParagraphTag 转换成 TextParagraph
@@ -74,6 +72,8 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
             )
         }
     }
+
+    fun getResource() = mTextResource
 
     /**
      * 获取章节索引
@@ -177,7 +177,6 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 
     fun getChapterModel() = textModel
 
-
     inner class TextTagIteratorImpl(
         paragraphIndex: Int
     ) : TextTagIterator {
@@ -204,33 +203,22 @@ class TextChapterCursor(private val textModel: TextModel, private val chapterInd
 /**
  * 文本内容解析器
  */
-private class TextContentDecoder(
-    private val textResource: TextResource,
-    private val contentData: ByteArray
-) {
-
+private class TextContentDecoder(contentData: ByteArray) {
     // 缓存区的偏移
-    private var mBufferOffset = 0
+    private var mBufferLength = contentData.size
+    private var mParcel: TextParcel = TextParcel(contentData)
 
     companion object {
-        private const val TAG = "ChapterContentDecoder"
+        private const val TAG = "TextContentDecoder"
     }
 
-    /**
-     * 进行解析操作
-     */
     fun decode(): ArrayList<TextTag> {
-        // 重置
-        mBufferOffset = 0
-
         val textTags = ArrayList<TextTag>()
 
-        val bufferLen = contentData.size
-
-        while (mBufferOffset < bufferLen) {
+        while (mParcel.offset() < mBufferLength) {
 
             // 获取当前索引下的标签类型
-            val tagType = readTagType()
+            val tagType = mParcel.readByte()
 
             // 生成对应的 TextTag
             var textTag: TextTag? = null
@@ -239,7 +227,6 @@ private class TextContentDecoder(
                 TextTagType.TEXT -> {
                     textTag = readContentTag()
                 }
-
                 TextTagType.CONTROL -> {
                     textTag = readControlTag()
                 }
@@ -274,139 +261,25 @@ private class TextContentDecoder(
         return textTags
     }
 
-    // 读取标签类型
-    private fun readTagType(): Byte {
-        // 从缓冲区中获取 tag 的类型
-        var tagType = contentData[mBufferOffset]
-        // tag 类型后，是填充对齐类型占 1 字节，所以需要偏移 2 字节。
-        mBufferOffset += 2
-        return tagType
-    }
-
-    /**
-     *  如果标签类型是文本类型
-     * TEXT_TAG：占用 (6 + 文本字节数) 格式为 | tag 类型 | 未知类型 | 文本字节长度 | 文本内容
-     *
-     * 1. tag 类型：占用 1 字节。(native 中 char 类型)
-     * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过 (native 中 char 类型)
-     * 3. 文本字节长度：占用 4 字节。(native 中 uint 类型)
-     * 4. 文本内容：具体文本内容。(当前采用 utf-16 编码)
-     */
     private fun readContentTag(): TextContentTag {
-        // 获取文本长度字节数组
-        val textLengthArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 4)
-
-        // 进行偏移操作
-        mBufferOffset += 4
-
-        // 文本字节长度
-        var textLength = TextByteToBasicUtil.toUInt32(textLengthArr)
-
-        // 文本内容
-        val textContent =
-            String(contentData, mBufferOffset, textLength.toInt(), Charsets.UTF_16LE)
-
-        // 读取文本数据，并对 block 进行偏移
-        mBufferOffset += textLength.toInt()
-
-        return TextContentTag(textContent)
+        return TextContentTag(mParcel)
     }
 
-    /**
-     * control tag 结构：占用 4 字节，格式为 | tag 类型 | 0 | 控制标签 | 是开放标签还是闭合标签 |
-     *
-     * 1. tag 类型：占用 1 字节
-     * 2. 未知类型：占用 1 字节 ==> 基本上为 0 好像没用过
-     * 3. 控制位类型：占用 1 字节 ==> 详见 TextParagraph::Type
-     * 4. 标签类型：占用 1 字节 ==> 0 或者是 1
-     */
     private fun readControlTag(): TextControlTag {
-        // 获取 control 类型，并进行偏移
-        val controlType = contentData[mBufferOffset++]
-        // 判断是起始标签，还是结尾标签
-        var isControlStart = TextByteToBasicUtil.toBoolean(contentData[mBufferOffset++])
-
-        return TextControlTag(controlType, isControlStart)
+        return TextControlTag(mParcel)
     }
 
-    /**
-     * paragraph tag 结构：占用 4 字节，格式为 | tag 类型 | 0 | 段落标签 | 0
-     * 1. tag 类型：占用 1 字节。
-     * 2. 未知类型：占用 1 字节。 ==> 基本上为 0 好像没用过
-     * 3. 段落类型：占用 1 字节。 ==> 详见 TextParagraph::Type
-     * 4. 填充对齐：占用 1 字节。
-     */
     private fun readParagraphTag(): TextParagraphTag {
-        // 获取 control 类型，并进行偏移
-        val paragraphType = contentData[mBufferOffset]
-        // 偏移操作
-        mBufferOffset += 2
-        return TextParagraphTag(paragraphType)
+        return TextParagraphTag(mParcel)
     }
 
     private fun readStyleTag(type: Byte): TextStyleTag {
-        // 获取深度
-        val depth = contentData[mBufferOffset]
-        var tempArr: ByteArray
-        mBufferOffset += 2
-
         // 创建样式标签
-        val styleTag =
-            if (type == TextTagType.STYLE_CSS) TextCssStyleTag(depth) else TextOtherStyleTag()
-        // 读取 style 使用的样式信息标记
-        tempArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-        val featureMask = TextByteToBasicUtil.toShort(tempArr)
-        mBufferOffset += 2
-
-        // 处理长度相关的样式
-        for (i in 0 until TextFeature.NUMBER_OF_LENGTHS) {
-            if (TextStyleTag.isFeatureSupported(featureMask, i)) {
-                tempArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-                val size = TextByteToBasicUtil.toShort(tempArr)
-                mBufferOffset += 2
-
-                val unit = contentData[mBufferOffset]
-                mBufferOffset += 2
-
-                styleTag.setLength(i, size, unit)
-            }
+        return if (type == TextTagType.STYLE_CSS) {
+            TextCssStyleTag(mParcel)
+        } else {
+            TextOtherStyleTag(mParcel)
         }
-
-        // 处理其他功能的样式
-        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.ALIGNMENT_TYPE) ||
-            TextStyleTag.isFeatureSupported(featureMask, TextFeature.NON_LENGTH_VERTICAL_ALIGN)
-        ) {
-            val alignmentType = contentData[mBufferOffset++]
-            val verticalAlignCode = contentData[mBufferOffset++]
-
-            if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.ALIGNMENT_TYPE)) {
-                styleTag.setAlignmentType(alignmentType)
-            }
-            if (TextStyleTag.isFeatureSupported(
-                    featureMask,
-                    TextFeature.NON_LENGTH_VERTICAL_ALIGN
-                )
-            ) {
-                styleTag.setVerticalAlignCode(verticalAlignCode)
-            }
-        }
-
-        // TODO:字体相关暂时不处理
-
-        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.FONT_FAMILY)) {
-            /*styleTag.setFontFamilies(myFontManager, data.get(dataOffset++) as Short)*/
-            mBufferOffset += 2
-
-        }
-        if (TextStyleTag.isFeatureSupported(featureMask, TextFeature.FONT_STYLE_MODIFIER)) {
-            mBufferOffset += 2
-/*            val value = data.get(dataOffset++) as Short
-            styleTag.setFontModifiers(
-                (value and 0xFF) as Byte,
-                (value shr 8 and 0xFF) as Byte
-            )*/
-        }
-        return styleTag
     }
 
     private fun readStyleCloseTag(): TextTag {
@@ -414,25 +287,14 @@ private class TextContentDecoder(
     }
 
     private fun readFixedHSpaceTag(): TextTag {
-        val fixedHSpaceLength = contentData[mBufferOffset]
-        mBufferOffset += 2
-        return TextFixedHSpaceTag(fixedHSpaceLength.toInt())
+        return TextFixedHSpaceTag(mParcel)
     }
 
     private fun readImageTag(): TextTag {
-        // 读取 image 所属的 id
-        val idArr = contentData.copyOfRange(mBufferOffset, mBufferOffset + 2)
-        val id = TextByteToBasicUtil.toUInt16(idArr)
-        mBufferOffset += 2
-        // 根据 id 获取 image
-        val textImage = textResource.getImage(id)
-
-        // TODO:假设一定能够获取到的数据
-        return TextImageTag(textImage!!)
+        return TextImageTag(mParcel)
     }
 
     private fun readHyperlinkControlTag(): TextTag {
         return TextHyperlinkControlTag()
     }
 }
-

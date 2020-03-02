@@ -10,7 +10,7 @@
 enum class TextTagType : char {
     TEXT = 1, // 文本标签
     IMAGE = 2, // 图片标签
-    CONTROL = 3, // 控制标签 (交由上层处理的控制标签，由自己操控)
+    CONTROL = 3, // 控制标签
     HYPERLINK_CONTROL = 4, // 超链接控制标签
     STYLE_CSS = 5,
     STYLE_OTHER = 6,

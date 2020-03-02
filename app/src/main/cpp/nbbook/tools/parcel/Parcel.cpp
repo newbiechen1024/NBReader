@@ -4,6 +4,7 @@
 //
 
 #include "Parcel.h"
+#include "../../util/Logger.h"
 
 Parcel::Parcel(ParcelBuffer *buffer) : mBuffer(buffer) {
 }
@@ -32,9 +33,6 @@ void Parcel::writeInt32(int32_t value) {
 }
 
 void Parcel::writeString16(const std::string &value) {
-    if (value.empty()) {
-        return;
-    }
     const size_t size = value.size();
     // 写入 String 长度
     writeInt16(size);
@@ -43,9 +41,6 @@ void Parcel::writeString16(const std::string &value) {
 }
 
 void Parcel::writeString32(const std::string &value) {
-    if (value.empty()) {
-        return;
-    }
     const size_t size = value.size();
     // 写入 String 长度
     writeInt32(size);
@@ -54,6 +49,10 @@ void Parcel::writeString32(const std::string &value) {
 }
 
 void Parcel::writeStringInternal(const std::string &value) {
+    if (value.empty()) {
+        return;
+    }
+
     size_t size = value.size();
     char *ptr = requestBuffer(size);
     memcpy(ptr, &value.front(), size);

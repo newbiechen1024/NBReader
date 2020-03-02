@@ -4,6 +4,7 @@
 //
 
 #include "ImageResource.h"
+#include "../../../util/Logger.h"
 
 ImageResource::ImageResource(const std::string &resId, const std::string &path,
                              const std::string &encoding, short vOffset,
