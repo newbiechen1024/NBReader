@@ -21,7 +21,7 @@ abstract class TabView(context: Context, attrs: AttributeSet? = null, defStyleAt
 
     init {
         // 添加 image View
-        var layoutParams: FrameLayout.LayoutParams =
+        val layoutParams: LayoutParams =
             LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
         layoutParams.gravity = Gravity.CENTER

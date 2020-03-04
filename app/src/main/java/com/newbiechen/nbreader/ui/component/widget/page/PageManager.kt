@@ -3,7 +3,7 @@ package com.newbiechen.nbreader.ui.component.widget.page
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.newbiechen.nbreader.ui.component.widget.page.anim.IPageAnimCallback
-import com.newbiechen.nbreader.ui.component.widget.page.anim.PageAnimListener
+import com.newbiechen.nbreader.ui.component.widget.page.anim.IPageAnimListener
 import java.lang.RuntimeException
 
 /**
@@ -12,7 +12,7 @@ import java.lang.RuntimeException
  *  description :页面控制器
  */
 
-class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback, PageAnimListener {
+class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback, IPageAnimListener {
     companion object {
         // 页面数量
         private const val BITMAP_SIZE = 2

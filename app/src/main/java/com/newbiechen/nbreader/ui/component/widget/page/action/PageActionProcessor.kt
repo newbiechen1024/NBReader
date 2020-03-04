@@ -1,7 +1,7 @@
 package com.newbiechen.nbreader.ui.component.widget.page.action
 
 import android.view.MotionEvent
-import com.newbiechen.nbreader.ui.component.widget.page.PageTextView
+import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
 
 /**
  *  author : newbiechen
@@ -11,14 +11,14 @@ import com.newbiechen.nbreader.ui.component.widget.page.PageTextView
 
 typealias PageActionListener = (action: PageAction) -> Unit
 
-class PageActionProcessor(private val pageTextView: PageTextView) {
+class PageActionProcessor(private val textPageView: TextPageView) {
 
     companion object {
         private const val TAG = "PageController"
     }
 
     private var mTouchEventProcessor =
-        TouchEventProcessor(pageTextView.context, OnTouchEventCallback())
+        TouchEventProcessor(textPageView.context, OnTouchEventCallback())
 
     private var mActionListener: PageActionListener? = null
 

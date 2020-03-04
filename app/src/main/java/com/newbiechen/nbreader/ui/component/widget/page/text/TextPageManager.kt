@@ -1,7 +1,8 @@
-package com.newbiechen.nbreader.ui.component.widget.page
+package com.newbiechen.nbreader.ui.component.widget.page.text
 
 import android.graphics.Canvas
 import android.graphics.Picture
+import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import java.lang.RuntimeException
 
 /**
@@ -27,9 +28,11 @@ class TextPageManager(private var pageListener: OnPageListener) {
     // Picture 的内存占用小于 Bitmap ARGB_8888，差距明显
     // 所以采用 Picture 存储信息
     private var mPictures = arrayOfNulls<Picture>(PICTURE_SIZE)
-    private var mPictureTypes = arrayOfNulls<PageType>(PICTURE_SIZE)
+    private var mPictureTypes = arrayOfNulls<PageType>(
+        PICTURE_SIZE
+    )
 
-    fun setPageSize(w: Int, h: Int) {
+    fun onPageSizeChanged(w: Int, h: Int) {
         if (pageWidth != w || pageHeight != h) {
             pageWidth = w
             pageHeight = h

@@ -9,7 +9,7 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import com.newbiechen.nbreader.R
 import kotlin.math.min
 
@@ -19,8 +19,12 @@ import kotlin.math.min
  *  description: 可自定折叠后的 ellipse 文本
  */
 
-class FoldableTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
-    TextView(context, attrs, defStyleAttr), View.OnClickListener {
+class FoldableTextView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) :
+    AppCompatTextView(context, attrs, defStyleAttr), View.OnClickListener {
 
     companion object {
         private const val TAG = "FoldableTextView"
@@ -83,7 +87,8 @@ class FoldableTextView @JvmOverloads constructor(context: Context, attrs: Attrib
             translateText(layout, text, type)
         } else {
             // 添加 layout 监听，等待 setText 处理完成
-            viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
                     translateText(layout, text, type)
@@ -101,21 +106,28 @@ class FoldableTextView @JvmOverloads constructor(context: Context, attrs: Attrib
         // 获取最大行数位置的 end pos
         var end = layout.getLineVisibleEnd(mFoldLines - 1)
         // 计算 mFoldEllipse 占用该行多少字
-        end -= paint.breakText(text, start, end, false, paint.measureText(mFoldEllipse.toString()), null)
+        end -= paint.breakText(
+            text,
+            start,
+            end,
+            false,
+            paint.measureText(mFoldEllipse.toString()),
+            null
+        )
         val resultText = text.toString().subSequence(0, end)
 
         // 判断 text 或者 foldEllipse 有一方是 Spanned
-        var resultStr: CharSequence?
-        if (text is Spanned || mFoldEllipse is Spanned) {
+        val resultStr: CharSequence
+        resultStr = if (text is Spanned || mFoldEllipse is Spanned) {
             val stringBuilder = SpannableStringBuilder()
             stringBuilder.append(resultText)
             stringBuilder.append(mFoldEllipse)
-            resultStr = stringBuilder
+            stringBuilder
         } else {
             val stringBuilder = StringBuilder()
             stringBuilder.append(resultText)
             stringBuilder.append(mFoldEllipse)
-            resultStr = stringBuilder
+            stringBuilder
         }
         // 将重置的文本，交给 text重新计算
         super.setText(resultStr, type)

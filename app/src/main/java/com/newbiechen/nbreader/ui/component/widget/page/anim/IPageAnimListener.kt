@@ -6,7 +6,7 @@ package com.newbiechen.nbreader.ui.component.widget.page.anim
  *  description :页面动画通知
  */
 
-interface PageAnimListener {
+interface IPageAnimListener {
     fun onAnimationStart()
     fun onAnimationEnd()
 }

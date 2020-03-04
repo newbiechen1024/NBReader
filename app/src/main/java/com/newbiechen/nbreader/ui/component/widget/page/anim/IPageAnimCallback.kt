@@ -26,6 +26,7 @@ interface IPageAnimCallback {
     fun getPage(type: PageType): Bitmap
 
     /**
+     * TODO:参数改成 PageType...
      * 请求翻页
      */
     fun turnPage(isNext: Boolean)

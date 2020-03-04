@@ -245,7 +245,6 @@ private class TextContentDecoder(contentData: ByteArray) {
                     textTag = readFixedHSpaceTag()
                 }
                 TextTagType.IMAGE -> {
-                    // TODO:未实现占位
                     textTag = readImageTag()
                 }
                 TextTagType.HYPERLINK_CONTROL -> {

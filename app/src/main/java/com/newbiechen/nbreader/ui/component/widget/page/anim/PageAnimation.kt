@@ -48,7 +48,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     val isRunning: Boolean
         get() = mStatus != Status.NONE && mDirection != Direction.NONE
 
-    private var mAnimListener: PageAnimListener? = null
+    private var mAnimListener: IPageAnimListener? = null
 
     private val mPageManager = pageManager
 
@@ -59,7 +59,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
 
     protected abstract fun drawMove(canvas: Canvas)
 
-    fun setAnimationListener(pageAnimListener: PageAnimListener) {
+    fun setAnimationListener(pageAnimListener: IPageAnimListener) {
         mAnimListener = pageAnimListener
     }
 
@@ -307,7 +307,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     }
 
     // 动画状态
-    enum class Status {
+    protected enum class Status {
         NONE, // 无状态
         ManualPress, // 手动按下
         ManualMove, // 手动移动

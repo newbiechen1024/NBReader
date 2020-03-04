@@ -16,6 +16,7 @@ import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageManager.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.*
+import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
 import com.newbiechen.nbreader.uilts.LogHelper
 import java.lang.Exception
 import kotlin.math.abs
@@ -54,11 +55,10 @@ class PageView @JvmOverloads constructor(
     private var mTextConfig: TextConfig = mTextProcessor.getTextConfig()
 
     // 当前动画类型
-    private var mPageAnimType = PageAnimType.SIMULATION
+    private var mPageAnimType: PageAnimType? = null
 
     // 当前翻页动画
-    private var mPageAnim: PageAnimation = SimulationPageAnimation(this, mPageManager)
-        .apply { setAnimationListener(mPageManager) }
+    private var mPageAnim: PageAnimation? = null
 
     // 页面行为事件监听器
     private var mPageActionListener: PageActionListener? = null
@@ -76,13 +76,17 @@ class PageView @JvmOverloads constructor(
     private lateinit var mFlHeader: FrameLayout
     private lateinit var mFlContent: FrameLayout
     private lateinit var mFlFooter: FrameLayout
+
     // 页面内容文本
-    private lateinit var mPtvContent: PageTextView
+    private lateinit var mPtvContent: TextPageView
 
     init {
         // 设置排列方式
         orientation = VERTICAL
+        // 初始化子 View
         initView()
+        // 设置默认颜色，触发 ViewGroup 的 onDraw()
+        setBackgroundColor(context.resources.getColor(R.color.colorPrimary))
     }
 
     private fun initView() {
@@ -96,10 +100,13 @@ class PageView @JvmOverloads constructor(
 
         // 初始化页面文本视图
         initPageTextView()
+
+        // 设置默认动画
+        setPageAnim(PageAnimType.SCROLL)
     }
 
     private fun initPageTextView() {
-        mPtvContent = PageTextView(context)
+        mPtvContent = TextPageView(context)
         mPtvContent.setTextProcessor(mTextProcessor)
         mPtvContent.setPageActionListener(this::onPageAction)
 
@@ -189,14 +196,24 @@ class PageView @JvmOverloads constructor(
                 PageAnimType.COVER -> CoverPageAnimation(this, mPageManager)
                 PageAnimType.SLIDE -> SlidePageAnimation(this, mPageManager)
                 PageAnimType.SIMULATION -> SimulationPageAnimation(this, mPageManager)
+                PageAnimType.SCROLL -> null
             }
 
-            mPageAnim.setAnimationListener(mPageManager)
+            if (mPageAnim != null) {
+                mPageAnim!!.setAnimationListener(mPageManager)
+                // 重置宽高
+                mPageAnim!!.setup(width, height)
+            }
 
-            // 重置宽高
-            mPageAnim.setup(width, height)
+
+            // 设置 TextPageView 的页面模式
+            if (type == PageAnimType.SCROLL) {
+                mPtvContent.setPageMode(TextPageView.PageMode.SCROLL)
+            } else {
+                mPtvContent.setPageMode(TextPageView.PageMode.NONE)
+            }
+
             mPageAnimType = type
-
             invalidate()
         }
     }
@@ -275,17 +292,17 @@ class PageView @JvmOverloads constructor(
         when (action) {
             is PressAction -> {
                 action.apply {
-                    mPageAnim.pressPage(x, y)
+                    mPageAnim?.pressPage(x, y)
                 }
             }
             is MoveAction -> {
                 action.apply {
-                    mPageAnim.movePage(x, y)
+                    mPageAnim?.movePage(x, y)
                 }
             }
             is ReleaseAction -> {
                 action.apply {
-                    mPageAnim.releasePage(x, y)
+                    mPageAnim?.releasePage(x, y)
                 }
             }
             is TapAction -> {
@@ -337,7 +354,7 @@ class PageView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         // 设置页面动画大小
-        mPageAnim.setup(w, h)
+        mPageAnim?.setup(w, h)
 
         // 设置菜单选中区域
         mMenuRect.set(
@@ -392,19 +409,35 @@ class PageView @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
-        // 直接绘制动画，不进行分发操作。
-        mPageAnim.draw(canvas!!)
+        if (mPageAnim == null) {
+            super.dispatchDraw(canvas)
+        } else {
+            // 直接绘制动画，不进行分发操作。
+            mPageAnim!!.draw(canvas!!)
+        }
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+
+        // TODO:这个操作感觉怪怪的，有没有更好的方案
+        if (mPageAnim == null) {
+            LogHelper.i(TAG, "onDraw: mPageAnim")
+            // 直接绘制背景
+            drawBackground(canvas!!)
+        }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         // 如果页面退出，则取消动画
-        mPageAnim.abortAnim()
+        mPageAnim?.abortAnim()
     }
 
     override fun computeScroll() {
         // 处理翻页动画，滑动事件
-        mPageAnim.computeScroll()
+        mPageAnim?.computeScroll()
     }
 
     override fun hasPage(type: PageType): Boolean {
@@ -414,6 +447,8 @@ class PageView @JvmOverloads constructor(
     private var mCurDrawType: PageType? = null
 
     override fun drawPage(canvas: Canvas, type: PageType) {
+
+        // TODO:这个可以放在 onDraw 中处理吧？
         // 绘制背景信息
         drawBackground(canvas)
 
@@ -436,7 +471,9 @@ class PageView @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
-    // 绘制背景页面
+    /**
+     * 绘制背景页面
+     */
     private fun drawBackground(canvas: Canvas) {
 /*        if (!TextUtils.isEmpty(mTextConfig.wallpaperPath)) {
             drawWallpaper(canvas, mTextConfig.wallpaperPath)
