@@ -5,6 +5,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.uilts.LogHelper
 import kotlin.collections.ArrayList
 import kotlin.math.min
 
@@ -456,7 +457,7 @@ class TextPageController(
         var isTurnChapter = false
 
         // 获取翻页的页面
-        val pageWrapper = when (type) {
+        val newPageWrapper = when (type) {
             PageType.PREVIOUS -> {
                 prevPageWrapper()
             }
@@ -468,43 +469,43 @@ class TextPageController(
             }
         }
 
-        if (pageWrapper != null) {
+        // 检测是否获取到了新页面
+        if (newPageWrapper != null) {
+            // 获取到新页面，当前页就是旧页面了
+            val oldPageWrapper = mCurPageWrapper!!
+
+            // 如果获取到了新页面，检测两个页面的章节索引是否相同。
+            // 如果不同则说明两个页面不是同一个章节，就需要进行翻章节操作。
+            if (oldPageWrapper.chapterWrapper.chapterIndex != newPageWrapper.chapterWrapper.chapterIndex) {
+                // 优化 TextPage 内存，删除旧 Chapter 包含的 TxtPage 缓存。
+                val oldPages = oldPageWrapper!!.chapterWrapper.pages
+                val oldPageIndex = oldPageWrapper!!.pageIndex
+
+                // 清除缓存
+                oldPages.forEachIndexed { index, textPage ->
+                    // 缓存 2 页的 TextPage 数据
+                    // 如果是 prev page，则缓存 page 和 page -1
+                    // 如果是 next page，则缓存 page 和 page + 1
+                    if (index < oldPageIndex - 1 || index > oldPageIndex + 1) {
+                        textPage.reset()
+                    }
+                }
+
+                // 通知需要翻章节
+                isTurnChapter = true
+            }
+
             // 设置页面为当前页面
-            mCurPageWrapper = pageWrapper
-            // 检测是否应该翻章处理
-            when (type) {
-                PageType.PREVIOUS -> {
-                    if (pageWrapper.pageIndex == getPageCount(type) - 1) {
-                        isTurnChapter = true
-                    }
-                }
-                PageType.NEXT -> {
-                    if (pageWrapper.pageIndex == 0) {
-                        isTurnChapter = true
-                    }
-                }
-            }
-
-            // 优化 TextPage 内存，防止 TextPage 中 textLine 和 textElement 数据一直被缓存
-            val curPages = mCurPageWrapper!!.chapterWrapper.pages
-            val pageIndex = mCurPageWrapper!!.pageIndex
-
-            curPages.forEachIndexed { index, textPage ->
-                // 只缓存 3 个 Page 的数据
-                if (index < pageIndex - 1 || index > pageIndex + 1) {
-                    textPage.reset()
-                }
-            }
+            mCurPageWrapper = newPageWrapper
         }
 
         // 进行翻章节操作
         if (isTurnChapter) {
-            // TODO:暂时拿不到总进度
-            mTextPageListener?.onPageChanged(mCurPageWrapper!!.pageIndex, getCurrentPageCount(), 0f)
             turnChapter(type)
         }
 
-        // TODO:通知章节回调、或者页面回调
+        // 通知翻页操作
+        mTextPageListener?.onPageChanged(mCurPageWrapper!!.pageIndex, getCurrentPageCount(), 0f)
     }
 
     private fun turnChapter(type: PageType) {
