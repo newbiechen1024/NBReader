@@ -3,6 +3,7 @@ package com.newbiechen.nbreader.ui.component.widget.page.text
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
@@ -12,6 +13,7 @@ import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.ScrollPageAnimation
+import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -45,7 +47,7 @@ class TextPageView @JvmOverloads constructor(
     // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细考虑怎么写)
     private var mPageActionProcessor = TextActionProcessor(this)
         .also {
-            it.setPageActionListener(this::onDispatchAction)
+            it.setPageActionListener(this::onPageAction)
         }
 
     private var mPageActionListener: TextActionListener? = null
@@ -246,9 +248,99 @@ class TextPageView @JvmOverloads constructor(
     /**
      * 接收事件分发的处理
      */
-    private fun onDispatchAction(action: PageAction) {
-        // TODO:暂时不知道 TextPageView 是否要消耗这些事件，就先这么写
-        mPageActionListener?.invoke(action)
+    private fun onPageAction(action: PageAction) {
+        // 页面行为处理
+        val result = when (action) {
+            is MotionAction -> {
+                // 专门处理点击事件
+                onPageMotionEvent(action)
+            }
+            else -> {
+                onPageActionEvent(action)
+            }
+        }
+
+        // 如果不消耗该事件，则直接返回
+        if (!result) {
+            mPageActionListener?.invoke(action)
+        }
+    }
+
+    /**
+     * 是否消耗页面行为事件
+     */
+    private fun onPageActionEvent(action: PageAction): Boolean {
+        return false
+    }
+
+    // 是否消耗按下事件
+    private var isConsumerTouch: Boolean = false
+
+    // 是否消耗了点击事件
+    private var isConsumerAction: Boolean = false
+
+    /**
+     * 处理页面运动事件的逻辑
+     */
+    private fun onPageMotionEvent(action: MotionAction): Boolean {
+        when (action.type) {
+            MotionType.PRESS -> {
+                // 处理常规点击事件的逻辑
+                isConsumerTouch = onPageTouchEvent(action)
+                isConsumerAction = isConsumerTouch
+            }
+            MotionType.MOVE, MotionType.RELEASE, MotionType.CANCEL -> {
+                // 如果 TouchEvent 消耗了 press，则之后的  MOVE、RELEASE、CANCEL 都默认消耗
+                // 如果 TouchEvent 没有消耗 press，则之后的  MOVE、RELEASE、CANCEL 都不会消耗
+                // 如果 TouchEvent 消耗了 press，但是 MOVE 返 false，则之后不会调用 TouchEvent，但是后续事件默认消耗
+                if (isConsumerTouch) {
+                    isConsumerTouch = onPageTouchEvent(action)
+                }
+            }
+            else -> {
+                // 处理手势逻辑
+                isConsumerAction = onPageGestureEvent(action)
+            }
+        }
+
+        // 是否消耗事件
+        return isConsumerAction
+    }
+
+    /**
+     * 处理页面点击事件的逻辑：包含如下事件
+     * PRESS、MOVE、RELEASE、CANCEL
+     *
+     */
+    private fun onPageTouchEvent(action: MotionAction): Boolean {
+        if (mScrollPageAnimation == null) {
+            return false
+        }
+
+        when (action.type) {
+            MotionType.PRESS -> {
+                mScrollPageAnimation!!.pressPage(action.event)
+            }
+            MotionType.MOVE -> {
+                mScrollPageAnimation!!.movePage(action.event)
+            }
+            MotionType.RELEASE -> {
+                mScrollPageAnimation!!.releasePage(action.event)
+            }
+            MotionType.CANCEL -> {
+                mScrollPageAnimation!!.cancelPage()
+            }
+        }
+
+        LogHelper.i(TAG, "onPageTouchEvent: $action")
+        return true
+    }
+
+    /**
+     * 处理页面手势事件的逻辑
+     */
+    private fun onPageGestureEvent(action: MotionAction): Boolean {
+        return false
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -264,13 +356,8 @@ class TextPageView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        // TODO:测试，暂时这么实现。点击事件需要修改
-        if (mScrollPageAnimation == null) {
-            // 将点击事件全部交给 pageAction 进行处理
-            mPageActionProcessor.onTouchEvent(event!!)
-        } else {
-            mScrollPageAnimation!!.onTouchEvent(event!!)
-        }
+        // 将点击事件全部交给 pageAction 进行处理
+        mPageActionProcessor.onTouchEvent(event!!)
         return true
     }
 

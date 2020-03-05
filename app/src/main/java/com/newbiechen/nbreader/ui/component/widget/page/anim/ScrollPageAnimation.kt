@@ -25,7 +25,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         private const val TAG = "ScrollPageAnimation"
 
         // 滑动追踪的时间
-        private const val VELOCITY_DURATION = 1500
+        private const val VELOCITY_DURATION = 1000
     }
 
     val isRunning: Boolean
@@ -60,11 +60,8 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     private var mViewWidth = 0
     private var mViewHeight = 0
 
-    private var isMove = false
-
     private var mStatus = Status.None
 
-    private val MIN_SCROLL_SLOP = ViewConfiguration.get(mView.context).scaledTouchSlop
 
     /**
      * 设置宽高
@@ -83,13 +80,14 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         // 通知取消动画
         abortAnim()
 
-        // TODO:暂时销毁所有 itemLayout，
+        // TODO:暂时销毁所有 itemLayout
         // TODO:实际应该只需要调整一下 active layout 的 bottom 的高度就行了，销毁 mScrap
+        mScrapLayouts.clear()
+        mActiveLayouts.clear()
 
         // 进行重新布局
         layout()
     }
-    // TODO:这个改成 press、move、release
 
     // 触碰页面
     fun pressPage(event: MotionEvent) {
@@ -109,10 +107,8 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         }
 
         mVelocity!!.addMovement(event)
-
         // 设置为按下状态
         mStatus = Status.ManualPress
-        isMove = false
     }
 
     private fun setStartPoint(x: Int, y: Int) {
@@ -136,21 +132,14 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         // 上一触碰点
         setTouchPoint(x, y)
 
-        // 判断是否大于最小滑动值。
-        if (!isMove) {
-            isMove = abs(mStartX - x) > MIN_SCROLL_SLOP || abs(mStartY - y) > MIN_SCROLL_SLOP
-        }
-
-        if (isMove) {
-            // TODO：是否支持设置滑动上限？
-            // 计算当前速度
-            mVelocity!!.computeCurrentVelocity(VELOCITY_DURATION)
-            // 进行刷新
-            mView.postInvalidate()
-        }
-
         // 设置状态
         mStatus = Status.ManualMove
+
+        mVelocity!!.addMovement(event)
+        // 计算当前速度
+        mVelocity!!.computeCurrentVelocity(VELOCITY_DURATION)
+        // 进行刷新
+        mView.postInvalidate()
     }
 
     private fun setTouchPoint(x: Int, y: Int) {
@@ -169,8 +158,14 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
 
         setTouchPoint(event.x.toInt(), event.y.toInt())
 
+        // 删除检测器
+        mVelocity!!.addMovement(event)
+
         // 开启动画
         startAnim()
+
+        mVelocity!!.recycle()
+        mVelocity = null
     }
 
     fun cancelPage() {
@@ -181,61 +176,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         }
 
         finishAnim()
-    }
-
-    /**
-     *  点击事件
-     *  TODO:这个需要删掉，改用 press 的逻辑
-     */
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x.toInt()
-        val y = event.y.toInt()
-
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                isMove = false
-                // 设置起始点
-                setStartPoint(x, y)
-                // 停止动画
-                abortAnim()
-            }
-            MotionEvent.ACTION_MOVE -> {
-
-                // 设置触碰点
-                setTouchPoint(x, y)
-
-                // 判断是否大于最小滑动值。
-                val slop = ViewConfiguration.get(mView.context).scaledTouchSlop
-                if (!isMove) {
-                    isMove = abs(mStartX - event.x) > slop || abs(mStartY - event.y) > slop
-                }
-
-                if (isMove) {
-                    // 计算当前速度
-                    mVelocity!!.computeCurrentVelocity(VELOCITY_DURATION)
-                    // 进行刷新
-                    mView.postInvalidate()
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                // 设置触碰点
-                setTouchPoint(x, y)
-
-                // 开启动画
-                startAnim()
-
-                // 删除检测器
-                mVelocity!!.recycle()
-                mVelocity = null
-            }
-            MotionEvent.ACTION_CANCEL -> {
-                // if velocityTracker won't be used should be recycled
-                mVelocity!!.recycle()
-                mVelocity = null
-                finishAnim()
-            }
-        }
-        return true
     }
 
     // 获取竖直滑动的距离
@@ -550,6 +490,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 启动动画
      */
     fun startAnim() {
+        LogHelper.i(TAG, "startAnim: ${mVelocity!!.yVelocity.toInt()}")
         mScroller.fling(
             0, mTouchY, 0, mVelocity!!.yVelocity.toInt()
             , 0, 0, Int.MAX_VALUE * -1, Int.MAX_VALUE
@@ -593,7 +534,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 mView.postInvalidate()
             }
         }
-
     }
 
     // 页面布局

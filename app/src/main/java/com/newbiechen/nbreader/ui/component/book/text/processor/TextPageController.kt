@@ -606,7 +606,11 @@ interface TextPageListener {
 data class PagePosition(
     val chapterIndex: Int,
     val pageIndex: Int
-)
+) {
+    override fun toString(): String {
+        return "PagePosition(chapterIndex=$chapterIndex, pageIndex=$pageIndex)"
+    }
+}
 
 /**
  * 页面进度
@@ -615,4 +619,8 @@ data class PageProgress(
     val pageIndex: Int,
     val pageCount: Int,
     val totalProgress: Float
-)
+) {
+    override fun toString(): String {
+        return "PageProgress(pageIndex=$pageIndex, pageCount=$pageCount, totalProgress=$totalProgress)"
+    }
+}

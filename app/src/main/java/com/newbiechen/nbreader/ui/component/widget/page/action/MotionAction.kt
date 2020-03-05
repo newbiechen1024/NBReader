@@ -37,4 +37,8 @@ data class MotionAction(
         // 需要回收 event
         event.recycle()
     }
+
+    override fun toString(): String {
+        return "MotionAction(type=$type, x=${event.x.toInt()}, y=${event.y.toInt()})"
+    }
 }

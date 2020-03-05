@@ -44,11 +44,13 @@ class TextGestureDetector(
     private var mPressedX = 0
     private var mPressedY = 0
 
+    private var isMove = false
+
     private var mHandler: Handler = Handler()
 
     private var mPressEvent: MotionEvent? = null
 
-    private var mContext = context.applicationContext
+    private val MIN_SLOP = ViewConfiguration.get(context).scaledTouchSlop
 
     fun onTouchEvent(event: MotionEvent) {
         val x = event.x.toInt()
@@ -56,7 +58,7 @@ class TextGestureDetector(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 mPressEvent = event
-
+                isMove = false
                 // 是否是延迟单击事件
                 if (isPendingSingleTap) {
                     // 取消延迟单击事件
@@ -86,8 +88,10 @@ class TextGestureDetector(
             }
             MotionEvent.ACTION_MOVE -> {
                 // 最小滑动距离
-                val minSlop = ViewConfiguration.get(mContext).scaledTouchSlop
-                val isMove = abs(mPressedX - x) > minSlop || abs(mPressedY - y) > mPressedY
+                if (!isMove) {
+                    isMove = abs(mPressedX - x) > MIN_SLOP || abs(mPressedY - y) > MIN_SLOP
+                }
+
                 // 如果移动，直接取消双击事件
                 if (isMove) {
                     isPendingDoubleTap = false

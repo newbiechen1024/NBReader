@@ -102,7 +102,7 @@ class PageView @JvmOverloads constructor(
         initPageTextView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SIMULATION)
+        setPageAnim(PageAnimType.SCROLL)
     }
 
     private fun initPageTextView() {
