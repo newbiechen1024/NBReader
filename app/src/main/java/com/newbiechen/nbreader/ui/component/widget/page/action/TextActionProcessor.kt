@@ -30,7 +30,12 @@ class TextActionProcessor(private val textPageView: TextPageView) {
         mTouchEventProcessor.onTouchEvent(event)
     }
 
+    private fun dispatchAction(action: PageAction) {
+        mActionListener?.invoke(action)
+    }
+
     private inner class OnGestureCallback : TextGestureDetector.OnTextGestureListener {
+        // TODO:需要创建一个 RecyclerBin 解决 MotionAction 被频繁创建的问题？(之后优化)
         override fun onPress(event: MotionEvent) {
             dispatchAction(
                 MotionAction(MotionType.PRESS, event)
@@ -77,11 +82,6 @@ class TextActionProcessor(private val textPageView: TextPageView) {
             dispatchAction(
                 MotionAction(MotionType.CANCEL, event)
             )
-        }
-
-        internal fun dispatchAction(action: PageAction) {
-            // TODO:需不需要创建一个回收池，用于处理一次完整的点击事件？
-            mActionListener?.invoke(action)
         }
     }
 }

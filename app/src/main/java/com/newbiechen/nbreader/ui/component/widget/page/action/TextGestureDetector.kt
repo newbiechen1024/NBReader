@@ -46,7 +46,6 @@ class TextGestureDetector(
 
     private var mHandler: Handler = Handler()
 
-    // TODO: PressEvent 存在 event 无法被完全 recycler 的问题，需要从代码层解决。
     private var mPressEvent: MotionEvent? = null
 
     private var mContext = context.applicationContext
@@ -56,10 +55,12 @@ class TextGestureDetector(
         val y = event.y.toInt()
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                mPressEvent = event
+
                 // 是否是延迟单击事件
                 if (isPendingSingleTap) {
                     // 取消延迟单击事件
-                    mHandler.removeCallbacks(singleTapRunnable)
+                    removeMotionRunnable(singleTapRunnable)
                     isPendingSingleTap = false
                     isPendingPress = false
 
@@ -67,10 +68,12 @@ class TextGestureDetector(
                     isPendingDoubleTap = true
                 } else {
                     // 则设置延迟长按事件
-                    mHandler.postDelayed(
+                    postMotionRunnable(
                         longPressRunnable,
+                        mPressEvent!!,
                         2 * ViewConfiguration.getLongPressTimeout().toLong()
                     )
+
                     isPendingLongPress = true
                     // 添加延时按下标记
                     isPendingPress = true
@@ -80,11 +83,6 @@ class TextGestureDetector(
 
                 mPressedX = x
                 mPressedY = y
-
-                // 回收点击事件
-                recyclePressEvent()
-
-                mPressEvent = MotionEvent.obtain(event)
             }
             MotionEvent.ACTION_MOVE -> {
                 // 最小滑动距离
@@ -106,14 +104,14 @@ class TextGestureDetector(
                             // 是否触发了单击事件
                             if (isPendingSingleTap) {
                                 // 取消单击事件
-                                mHandler.removeCallbacks(singleTapRunnable)
+                                removeMotionRunnable(singleTapRunnable)
                                 isPendingSingleTap = false
                             }
 
                             // 是否触发了长按事件
                             if (isPendingLongPress) {
                                 // 取消长按事件
-                                mHandler.removeCallbacks(longPressRunnable)
+                                removeMotionRunnable(longPressRunnable)
                                 isPendingLongPress = false
                             }
 
@@ -139,7 +137,7 @@ class TextGestureDetector(
                 } else {
                     // 如果长按事件未执行，则取消
                     if (isPendingLongPress) {
-                        mHandler.removeCallbacks(longPressRunnable)
+                        removeMotionRunnable(longPressRunnable)
                         isPendingLongPress = false
                     }
 
@@ -147,8 +145,9 @@ class TextGestureDetector(
                     if (isPendingPress) {
                         // 是否支持双击
                         if (isEnableDoubleTap) {
-                            mHandler.postDelayed(
+                            postMotionRunnable(
                                 singleTapRunnable,
+                                mPressEvent!!,
                                 ViewConfiguration.getDoubleTapTimeout().toLong()
                             )
                             isPendingSingleTap = true
@@ -159,6 +158,8 @@ class TextGestureDetector(
                         textGestureListener.onRelease(event)
                     }
                 }
+
+                mPressEvent = null
             }
             MotionEvent.ACTION_CANCEL -> {
                 isPendingPress = false
@@ -167,36 +168,80 @@ class TextGestureDetector(
                 isPendingLongPress = false
                 isPerformLongPress = false
 
-                mHandler.removeCallbacks(singleTapRunnable)
-                mHandler.removeCallbacks(longPressRunnable)
-
+                removeMotionRunnable(singleTapRunnable)
+                removeMotionRunnable(longPressRunnable)
                 // 发送取消事件
                 textGestureListener.onCancelTap(event)
             }
         }
     }
 
-    private fun recyclePressEvent() {
-        if (mPressEvent != null) {
-            mPressEvent!!.recycle()
-            mPressEvent = null
-        }
+    private fun postMotionRunnable(
+        runnable: MotionRunnable,
+        event: MotionEvent,
+        delayMillis: Long
+    ) {
+        // 初始化
+        runnable.init(event)
+        // 投递
+        mHandler.postDelayed(
+            runnable,
+            delayMillis
+        )
+    }
+
+    private fun removeMotionRunnable(runnable: MotionRunnable) {
+        mHandler.removeCallbacks(runnable)
+        runnable.release()
     }
 
     /**
      * 单击事件
      */
-    private var singleTapRunnable = Runnable {
-        textGestureListener.onSingleTap(mPressEvent!!)
-        isPendingPress = false
+    private var singleTapRunnable = object : MotionRunnable() {
+        override fun runEvent(event: MotionEvent) {
+            textGestureListener.onSingleTap(event)
+            isPendingPress = false
+        }
     }
 
     /**
      * 长按事件
      */
-    private var longPressRunnable = Runnable {
-        textGestureListener.onLongPress(mPressEvent!!)
-        isPerformLongPress = true
+    private var longPressRunnable = object : MotionRunnable() {
+        override fun runEvent(event: MotionEvent) {
+            textGestureListener.onSingleTap(event)
+            isPendingPress = false
+        }
+    }
+
+    private abstract inner class MotionRunnable : Runnable {
+        private var pressEvent: MotionEvent? = null
+
+        fun init(event: MotionEvent) {
+            if (pressEvent != null) {
+                pressEvent!!.recycle()
+            }
+            // 将 event 进行复制
+            pressEvent = MotionEvent.obtain(event)
+        }
+
+        fun release() {
+            // 释放 event
+            pressEvent?.recycle()
+            pressEvent = null
+        }
+
+        override fun run() {
+            if (pressEvent == null) {
+                return
+            }
+
+            runEvent(pressEvent!!)
+            release()
+        }
+
+        abstract fun runEvent(event: MotionEvent)
     }
 
     interface OnTextGestureListener {
