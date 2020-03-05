@@ -2,6 +2,7 @@ package com.newbiechen.nbreader.ui.component.widget.page.action
 
 import android.view.MotionEvent
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
+import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -14,11 +15,11 @@ typealias PageActionListener = (action: PageAction) -> Unit
 class PageActionProcessor(private val textPageView: TextPageView) {
 
     companion object {
-        private const val TAG = "PageController"
+        private const val TAG = "PageActionProcessor"
     }
 
     private var mTouchEventProcessor =
-        TouchEventProcessor(textPageView.context, OnTouchEventCallback())
+        TextGestureDetector(textPageView.context, OnGestureCallback())
 
     private var mActionListener: PageActionListener? = null
 
@@ -30,46 +31,47 @@ class PageActionProcessor(private val textPageView: TextPageView) {
         mTouchEventProcessor.onTouchEvent(event)
     }
 
-    private inner class OnTouchEventCallback : TouchEventProcessor.OnTouchEventListener {
-        override fun onPress(x: Int, y: Int) {
+    private inner class OnGestureCallback : TextGestureDetector.OnTextGestureListener {
+        override fun onPress(event: MotionEvent) {
             dispatchAction(
-                PressAction(x, y)
+                PressAction(event)
             )
         }
 
-        override fun onMove(x: Int, y: Int) {
+        override fun onMove(event: MotionEvent) {
             dispatchAction(
-                MoveAction(x, y)
+                MoveAction(event)
             )
         }
 
-        override fun onRelease(x: Int, y: Int) {
+        override fun onRelease(event: MotionEvent) {
             dispatchAction(
-                ReleaseAction(x, y)
+                ReleaseAction(event)
             )
         }
 
-        override fun onLongPress(x: Int, y: Int) {
+        override fun onLongPress(event: MotionEvent) {
         }
 
-        override fun onMoveAfterLongPress(x: Int, y: Int) {
+        override fun onMoveAfterLongPress(event: MotionEvent) {
         }
 
-        override fun onReleaseAfterLongPress(x: Int, y: Int) {
+        override fun onReleaseAfterLongPress(event: MotionEvent) {
         }
 
-        override fun onSingleTap(x: Int, y: Int) {
+        override fun onSingleTap(event: MotionEvent) {
             dispatchAction(
-                TapAction(x, y)
+                TapAction(event)
             )
         }
 
-        override fun onDoubleTap(x: Int, y: Int) {
-
+        override fun onDoubleTap(event: MotionEvent) {
         }
 
         override fun onCancelTap() {
-            // TODO:处理 cancel 的情况
+            dispatchAction(
+                CancelAction()
+            )
         }
 
         internal fun dispatchAction(action: PageAction) {

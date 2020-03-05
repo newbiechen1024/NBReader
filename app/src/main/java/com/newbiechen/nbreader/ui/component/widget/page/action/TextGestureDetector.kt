@@ -4,26 +4,40 @@ import android.content.Context
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import com.newbiechen.nbreader.uilts.LogHelper
 import kotlin.math.abs
 
 /**
  *  author : newbiechen
  *  date : 2019-08-30 17:50
- *  description : 点击事件处理器
+ *  description : 文本手势探测
+ *
  */
 
-class TouchEventProcessor(context: Context, private var touchEventListener: OnTouchEventListener) {
+class TextGestureDetector(
+    context: Context,
+    private var textGestureListener: OnTextGestureListener
+) {
+
+    companion object {
+        private const val TAG = "TextGestureDetector"
+    }
 
     // 是否允许双击
     var isEnableDoubleTap = false
+
     // 延迟按下标记
     private var isPendingPress = false
+
     // 延迟双击标记
     private var isPendingDoubleTap = false
+
     // 是否延迟长按
     private var isPendingLongPress = false
+
     // 延迟单击标记
     private var isPendingSingleTap = false
+
     // 是否触发长按事件
     private var isPerformLongPress = false
 
@@ -31,6 +45,9 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
     private var mPressedY = 0
 
     private var mHandler: Handler = Handler()
+
+    // TODO: PressEvent 存在 event 无法被完全 recycler 的问题，需要从代码层解决。
+    private var mPressEvent: MotionEvent? = null
 
     private var mContext = context.applicationContext
 
@@ -64,6 +81,11 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
 
                 mPressedX = x
                 mPressedY = y
+
+                // 回收点击事件
+                recyclePressEvent()
+
+                mPressEvent = MotionEvent.obtain(event)
             }
             MotionEvent.ACTION_MOVE -> {
                 // 最小滑动距离
@@ -76,7 +98,7 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
 
                 // 如果在移动之前触发过长按事件
                 if (isPerformLongPress) {
-                    touchEventListener.onMoveAfterLongPress(x, y)
+                    textGestureListener.onMoveAfterLongPress(event)
                 } else {
                     // 是否触发延迟按下事件
                     if (isPendingPress) {
@@ -97,7 +119,7 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
                             }
 
                             // 触发按下事件
-                            touchEventListener.onPress(mPressedX, mPressedY)
+                            textGestureListener.onPress(mPressEvent!!)
                             // 取消延迟按下
                             isPendingPress = false
                         }
@@ -105,16 +127,16 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
 
                     // 如果已经处理按下事件，则处理移动事件
                     if (!isPendingPress) {
-                        touchEventListener.onMove(x, y)
+                        textGestureListener.onMove(event)
                     }
                 }
             }
             MotionEvent.ACTION_UP -> {
                 // 是否是延迟双击事件
                 if (isPendingDoubleTap) {
-                    touchEventListener.onDoubleTap(x, y)
+                    textGestureListener.onDoubleTap(event)
                 } else if (isPerformLongPress) { // 是否已经执行长按事件
-                    touchEventListener.onReleaseAfterLongPress(x, y)
+                    textGestureListener.onReleaseAfterLongPress(event)
                 } else {
                     // 如果长按事件未执行，则取消
                     if (isPendingLongPress) {
@@ -132,13 +154,12 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
                             )
                             isPendingSingleTap = true
                         } else {
-                            touchEventListener.onSingleTap(x, y)
+                            textGestureListener.onSingleTap(mPressEvent!!)
                         }
                     } else {
-                        touchEventListener.onRelease(x, y)
+                        textGestureListener.onRelease(event)
                     }
                 }
-
             }
             MotionEvent.ACTION_CANCEL -> {
                 isPendingPress = false
@@ -150,8 +171,15 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
                 mHandler.removeCallbacks(singleTapRunnable)
                 mHandler.removeCallbacks(longPressRunnable)
                 // 发送取消事件
-                touchEventListener.onCancelTap()
+                textGestureListener.onCancelTap()
             }
+        }
+    }
+
+    private fun recyclePressEvent() {
+        if (mPressEvent != null) {
+            mPressEvent!!.recycle()
+            mPressEvent = null
         }
     }
 
@@ -159,7 +187,7 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
      * 单击事件
      */
     private var singleTapRunnable = Runnable {
-        touchEventListener.onSingleTap(mPressedX, mPressedY)
+        textGestureListener.onSingleTap(mPressEvent!!)
         isPendingPress = false
     }
 
@@ -167,50 +195,50 @@ class TouchEventProcessor(context: Context, private var touchEventListener: OnTo
      * 长按事件
      */
     private var longPressRunnable = Runnable {
-        touchEventListener.onLongPress(mPressedX, mPressedY)
+        textGestureListener.onLongPress(mPressEvent!!)
         isPerformLongPress = true
     }
 
-    interface OnTouchEventListener {
+    interface OnTextGestureListener {
         /**
          * 手指按下事件
          */
-        fun onPress(x: Int, y: Int)
+        fun onPress(event: MotionEvent)
 
         /**
          * 手指移动事件
          */
-        fun onMove(x: Int, y: Int)
+        fun onMove(event: MotionEvent)
 
         /**
          * 手指释放事件：表示在 DOWN 过程中调用了 MOVE 时，UP 会调用该方法。
          */
-        fun onRelease(x: Int, y: Int)
+        fun onRelease(event: MotionEvent)
 
         /**
          * 手指长按事件
          */
-        fun onLongPress(x: Int, y: Int)
+        fun onLongPress(event: MotionEvent)
 
         /**
          * 手指长按后移动事件
          */
-        fun onMoveAfterLongPress(x: Int, y: Int)
+        fun onMoveAfterLongPress(event: MotionEvent)
 
         /**
          * 手指长按后释放事件
          */
-        fun onReleaseAfterLongPress(x: Int, y: Int)
+        fun onReleaseAfterLongPress(event: MotionEvent)
 
         /**
          * 手指一次点击事件：表示只执行了 DOWN + UP 会调用该方法
          */
-        fun onSingleTap(x: Int, y: Int)
+        fun onSingleTap(event: MotionEvent)
 
         /**
          * 手指双击事件
          */
-        fun onDoubleTap(x: Int, y: Int)
+        fun onDoubleTap(event: MotionEvent)
 
         /**
          * 手指取消事件

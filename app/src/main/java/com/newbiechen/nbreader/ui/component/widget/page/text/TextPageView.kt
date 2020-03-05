@@ -248,7 +248,7 @@ class TextPageView @JvmOverloads constructor(
      * 接收事件分发的处理
      */
     private fun onDispatchAction(action: PageAction) {
-        // TODO:暂时不知道 PageTextView 是否要消耗这些事件，就先这么写
+        // TODO:暂时不知道 TextPageView 是否要消耗这些事件，就先这么写
         mPageActionListener?.invoke(action)
     }
 

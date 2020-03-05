@@ -102,13 +102,13 @@ class PageView @JvmOverloads constructor(
         initPageTextView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SCROLL)
+        setPageAnim(PageAnimType.SIMULATION)
     }
 
     private fun initPageTextView() {
         mPtvContent = TextPageView(context)
         mPtvContent.setTextProcessor(mTextProcessor)
-        mPtvContent.setPageActionListener(this::onPageAction)
+        mPtvContent.setPageActionListener(this::onPageActionEvent)
 
         val contentParams =
             FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -235,11 +235,11 @@ class PageView @JvmOverloads constructor(
         when (type) {
             PageType.PREVIOUS -> {
                 mCurDrawType = null
-                onPageAction(ReleaseAction(0, height / 2))
+                releasePage(0, height / 2)
             }
             PageType.NEXT -> {
                 mCurDrawType = null
-                onPageAction(ReleaseAction(width, height / 2))
+                releasePage(width, height / 2)
             }
             else -> {
             }
@@ -287,28 +287,28 @@ class PageView @JvmOverloads constructor(
     /**
      * 监听 PageTextView 返回的点击事件
      */
-    private fun onPageAction(action: PageAction) {
+    private fun onPageActionEvent(action: PageAction) {
         // 消耗发出的行为事件
         when (action) {
             is PressAction -> {
                 action.apply {
-                    mPageAnim?.pressPage(x, y)
+                    mPageAnim?.pressPage(event.x.toInt(), event.y.toInt())
                 }
             }
             is MoveAction -> {
                 action.apply {
-                    mPageAnim?.movePage(x, y)
+                    mPageAnim?.movePage(event.x.toInt(), event.y.toInt())
                 }
             }
             is ReleaseAction -> {
                 action.apply {
-                    mPageAnim?.releasePage(x, y)
+                    releasePage(event.x.toInt(), event.y.toInt())
                 }
             }
             is TapAction -> {
                 action.apply {
                     // 如果点击区域在菜单范围内，则发送点击菜单行为事件
-                    if (mMenuRect.contains(x.toFloat(), y.toFloat())) {
+                    if (mMenuRect.contains(event.x, event.y)) {
                         mPageActionListener?.invoke(TapMenuAction())
                     }
                 }
@@ -317,6 +317,10 @@ class PageView @JvmOverloads constructor(
                 mPageActionListener?.invoke(action)
             }
         }
+    }
+
+    private fun releasePage(x: Int, y: Int) {
+        mPageAnim?.releasePage(x, y)
     }
 
     override fun addView(child: View?) {
@@ -378,7 +382,7 @@ class PageView @JvmOverloads constructor(
         // 点击事件处理
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                onPageAction(PressAction(x, y))
+                onPageActionEvent(PressAction(event))
                 mPressedX = x
                 mPressedY = y
                 isMove = false
@@ -393,14 +397,14 @@ class PageView @JvmOverloads constructor(
 
                 // 如果移动，直接取消双击事件
                 if (isMove) {
-                    onPageAction(MoveAction(x, y))
+                    onPageActionEvent(MoveAction(event))
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (!isMove) {
-                    onPageAction(TapAction(x, y))
+                    onPageActionEvent(TapAction(event))
                 } else {
-                    onPageAction(ReleaseAction(x, y))
+                    onPageActionEvent(ReleaseAction(event))
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.widget.page.action
 
+import android.view.MotionEvent
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 
 /**
@@ -11,35 +12,42 @@ import com.newbiechen.nbreader.ui.component.widget.page.PageType
 // 页面行为标记
 interface PageAction
 
-// 下压页面事件
+// TODO:将点击事件设为枚举，并实现从缓冲池中获取,仿照 MotionEvent
+enum class TouchActionType{
+    PRESS,
+    MOVE,
+    RELEASE,
+    SINGLE_TAP,
+    CANCEL
+}
+
+// 按下事件
 data class PressAction(
-    val x: Int,
-    val y: Int
+    val event: MotionEvent
 ) : PageAction
 
-// 移动页面事件
+// 移动事件
 data class MoveAction(
-    val x: Int,
-    val y: Int
+    val event: MotionEvent
 ) : PageAction
 
-// 释放页面事件
+// 释放事件
 data class ReleaseAction(
-    val x: Int,
-    val y: Int
+    val event: MotionEvent
 ) : PageAction
 
-// 单击页面事件
+// 单击事件
 data class TapAction(
-    val x: Int,
-    val y: Int
+    val event: MotionEvent
 ) : PageAction
+
+// 取消点击事件
+class CancelAction : PageAction
 
 // 翻页事件
 data class TurnPageAction(
     val pageType: PageType
 ) : PageAction
-
 
 // 点击页面菜单事件
 class TapMenuAction : PageAction
