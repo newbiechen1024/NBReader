@@ -2,7 +2,6 @@ package com.newbiechen.nbreader.ui.component.widget.page.action
 
 import android.view.MotionEvent
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
-import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -10,9 +9,9 @@ import com.newbiechen.nbreader.uilts.LogHelper
  *  description :将点击事件转换成页面的行为事件
  */
 
-typealias PageActionListener = (action: PageAction) -> Unit
+typealias TextActionListener = (action: PageAction) -> Unit
 
-class PageActionProcessor(private val textPageView: TextPageView) {
+class TextActionProcessor(private val textPageView: TextPageView) {
 
     companion object {
         private const val TAG = "PageActionProcessor"
@@ -21,9 +20,9 @@ class PageActionProcessor(private val textPageView: TextPageView) {
     private var mTouchEventProcessor =
         TextGestureDetector(textPageView.context, OnGestureCallback())
 
-    private var mActionListener: PageActionListener? = null
+    private var mActionListener: TextActionListener? = null
 
-    fun setPageActionListener(actionListener: PageActionListener) {
+    fun setPageActionListener(actionListener: TextActionListener) {
         mActionListener = actionListener
     }
 
@@ -34,23 +33,26 @@ class PageActionProcessor(private val textPageView: TextPageView) {
     private inner class OnGestureCallback : TextGestureDetector.OnTextGestureListener {
         override fun onPress(event: MotionEvent) {
             dispatchAction(
-                PressAction(event)
+                MotionAction(MotionType.PRESS, event)
             )
         }
 
         override fun onMove(event: MotionEvent) {
             dispatchAction(
-                MoveAction(event)
+                MotionAction(MotionType.MOVE, event)
             )
         }
 
         override fun onRelease(event: MotionEvent) {
             dispatchAction(
-                ReleaseAction(event)
+                MotionAction(MotionType.RELEASE, event)
             )
         }
 
         override fun onLongPress(event: MotionEvent) {
+            dispatchAction(
+                MotionAction(MotionType.LONG_PRESS, event)
+            )
         }
 
         override fun onMoveAfterLongPress(event: MotionEvent) {
@@ -61,20 +63,24 @@ class PageActionProcessor(private val textPageView: TextPageView) {
 
         override fun onSingleTap(event: MotionEvent) {
             dispatchAction(
-                TapAction(event)
+                MotionAction(MotionType.SINGLE_TAP, event)
             )
         }
 
         override fun onDoubleTap(event: MotionEvent) {
+            dispatchAction(
+                MotionAction(MotionType.DOUBLE_TAP, event)
+            )
         }
 
-        override fun onCancelTap() {
+        override fun onCancelTap(event: MotionEvent) {
             dispatchAction(
-                CancelAction()
+                MotionAction(MotionType.CANCEL, event)
             )
         }
 
         internal fun dispatchAction(action: PageAction) {
+            // TODO:需不需要创建一个回收池，用于处理一次完整的点击事件？
             mActionListener?.invoke(action)
         }
     }

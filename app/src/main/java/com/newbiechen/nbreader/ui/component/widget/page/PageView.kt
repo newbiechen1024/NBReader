@@ -61,7 +61,7 @@ class PageView @JvmOverloads constructor(
     private var mPageAnim: PageAnimation? = null
 
     // 页面行为事件监听器
-    private var mPageActionListener: PageActionListener? = null
+    private var mPageActionListener: TextActionListener? = null
 
     private var mPreparePageListener: OnPreparePageListener? = null
 
@@ -108,7 +108,7 @@ class PageView @JvmOverloads constructor(
     private fun initPageTextView() {
         mPtvContent = TextPageView(context)
         mPtvContent.setTextProcessor(mTextProcessor)
-        mPtvContent.setPageActionListener(this::onPageActionEvent)
+        mPtvContent.setPageActionListener(this::onPageAction)
 
         val contentParams =
             FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -156,7 +156,7 @@ class PageView @JvmOverloads constructor(
     /**
      * 设置事件监听
      */
-    fun setActionListener(pageActionListener: PageActionListener) {
+    fun setActionListener(pageActionListener: TextActionListener) {
         mPageActionListener = pageActionListener
     }
 
@@ -287,34 +287,45 @@ class PageView @JvmOverloads constructor(
     /**
      * 监听 PageTextView 返回的点击事件
      */
-    private fun onPageActionEvent(action: PageAction) {
-        // 消耗发出的行为事件
+    private fun onPageAction(action: PageAction) {
         when (action) {
-            is PressAction -> {
+            is MotionAction -> {
+                onPageMotionEvent(action)
+            }
+            else -> {
+                mPageActionListener?.invoke(action)
+            }
+        }
+    }
+
+    /**
+     * 页面移动事件处理
+     */
+    private fun onPageMotionEvent(action: MotionAction) {
+        // 消耗发出的行为事件
+        when (action.type) {
+            MotionType.PRESS -> {
                 action.apply {
                     mPageAnim?.pressPage(event.x.toInt(), event.y.toInt())
                 }
             }
-            is MoveAction -> {
+            MotionType.MOVE -> {
                 action.apply {
                     mPageAnim?.movePage(event.x.toInt(), event.y.toInt())
                 }
             }
-            is ReleaseAction -> {
+            MotionType.RELEASE -> {
                 action.apply {
                     releasePage(event.x.toInt(), event.y.toInt())
                 }
             }
-            is TapAction -> {
+            MotionType.SINGLE_TAP -> {
                 action.apply {
                     // 如果点击区域在菜单范围内，则发送点击菜单行为事件
                     if (mMenuRect.contains(event.x, event.y)) {
                         mPageActionListener?.invoke(TapMenuAction())
                     }
                 }
-            }
-            else -> {
-                mPageActionListener?.invoke(action)
             }
         }
     }
@@ -382,7 +393,7 @@ class PageView @JvmOverloads constructor(
         // 点击事件处理
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                onPageActionEvent(PressAction(event))
+                onPageMotionEvent(MotionAction(MotionType.PRESS, event))
                 mPressedX = x
                 mPressedY = y
                 isMove = false
@@ -397,14 +408,14 @@ class PageView @JvmOverloads constructor(
 
                 // 如果移动，直接取消双击事件
                 if (isMove) {
-                    onPageActionEvent(MoveAction(event))
+                    onPageMotionEvent(MotionAction(MotionType.MOVE, event))
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (!isMove) {
-                    onPageActionEvent(TapAction(event))
+                    onPageMotionEvent(MotionAction(MotionType.SINGLE_TAP, event))
                 } else {
-                    onPageActionEvent(ReleaseAction(event))
+                    onPageMotionEvent(MotionAction(MotionType.RELEASE, event))
                 }
             }
         }
@@ -423,7 +434,6 @@ class PageView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
 
         // TODO:这个操作感觉怪怪的，有没有更好的方案
         if (mPageAnim == null) {

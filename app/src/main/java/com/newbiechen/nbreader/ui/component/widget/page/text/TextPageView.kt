@@ -12,7 +12,6 @@ import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.ScrollPageAnimation
-import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -44,12 +43,12 @@ class TextPageView @JvmOverloads constructor(
     private var mTextProcessor: TextProcessor? = null
 
     // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细考虑怎么写)
-    private var mPageActionProcessor = PageActionProcessor(this)
+    private var mPageActionProcessor = TextActionProcessor(this)
         .also {
             it.setPageActionListener(this::onDispatchAction)
         }
 
-    private var mPageActionListener: PageActionListener? = null
+    private var mPageActionListener: TextActionListener? = null
 
     // 滑动动画
     private var mScrollPageAnimation: ScrollPageAnimation? = null
@@ -114,7 +113,7 @@ class TextPageView @JvmOverloads constructor(
     /**
      * 设置行为监听器
      */
-    fun setPageActionListener(pageActionListener: PageActionListener) {
+    fun setPageActionListener(pageActionListener: TextActionListener) {
         mPageActionListener = pageActionListener
     }
 

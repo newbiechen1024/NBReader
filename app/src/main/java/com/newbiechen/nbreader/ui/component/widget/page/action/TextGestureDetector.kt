@@ -54,7 +54,6 @@ class TextGestureDetector(
     fun onTouchEvent(event: MotionEvent) {
         val x = event.x.toInt()
         val y = event.y.toInt()
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 // 是否是延迟单击事件
@@ -170,8 +169,9 @@ class TextGestureDetector(
 
                 mHandler.removeCallbacks(singleTapRunnable)
                 mHandler.removeCallbacks(longPressRunnable)
+
                 // 发送取消事件
-                textGestureListener.onCancelTap()
+                textGestureListener.onCancelTap(event)
             }
         }
     }
@@ -243,6 +243,6 @@ class TextGestureDetector(
         /**
          * 手指取消事件
          */
-        fun onCancelTap()
+        fun onCancelTap(event: MotionEvent)
     }
 }
