@@ -490,7 +490,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 启动动画
      */
     fun startAnim() {
-        LogHelper.i(TAG, "startAnim: ${mVelocity!!.yVelocity.toInt()}")
         mScroller.fling(
             0, mTouchY, 0, mVelocity!!.yVelocity.toInt()
             , 0, 0, Int.MAX_VALUE * -1, Int.MAX_VALUE

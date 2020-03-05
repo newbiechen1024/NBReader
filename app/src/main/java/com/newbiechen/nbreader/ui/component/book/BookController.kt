@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import com.newbiechen.nbreader.data.entity.BookEntity
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.FileUtil
@@ -116,6 +118,17 @@ class BookController constructor(
         return pageController.getChapters().mapIndexed { index, textChapter ->
             Chapter(index, textChapter.title)
         }
+    }
+
+    /**
+     * 获取当前的定位
+     */
+    fun getCurPosition(): PagePosition? {
+        return pageController.getCurPosition()
+    }
+
+    fun getCurProgress(): PageProgress? {
+        return pageController.getCurProgress()
     }
 
     fun close() {

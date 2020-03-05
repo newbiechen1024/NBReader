@@ -7,26 +7,26 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.databinding.ActivityReadBinding
-import com.newbiechen.nbreader.databinding.LayoutPageFooterBinding
-import com.newbiechen.nbreader.databinding.LayoutPageHeaderBinding
 import com.newbiechen.nbreader.ui.component.adapter.ReadCatalogAdapter
 import com.newbiechen.nbreader.ui.component.book.BookController
 import com.newbiechen.nbreader.ui.component.book.OnLoadListener
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.decoration.DividerDecoration
 import com.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.newbiechen.nbreader.ui.component.extension.openDrawer
-import com.newbiechen.nbreader.ui.component.widget.page.PageView
 import com.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
+import com.newbiechen.nbreader.ui.component.widget.page.action.TurnPageAction
 import com.newbiechen.nbreader.uilts.SystemBarUtil
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
-import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -54,6 +54,10 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     private lateinit var mBookController: BookController
 
     private lateinit var mCatalogAdapter: ReadCatalogAdapter
+
+    private lateinit var mTvPageTitle: TextView
+
+    private lateinit var mTvPageTip: TextView
 
     override fun initContentView(): Int = R.layout.activity_read
 
@@ -145,43 +149,28 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
     private fun initPageView() {
         val pageView = mDataBinding.pvBook
 
-        val headerBinding = LayoutPageHeaderBinding.inflate(
-            LayoutInflater.from(this), pageView, false
-        )
-
-        val footerBinding = LayoutPageFooterBinding.inflate(
-            LayoutInflater.from(this), pageView, false
-        )
-
+        val pageHeaderView =
+            LayoutInflater.from(this).inflate(R.layout.layout_page_header, pageView, false)
+        mTvPageTitle = pageHeaderView.findViewById(R.id.tv_title)
+        val pageFooterView =
+            LayoutInflater.from(this).inflate(R.layout.layout_page_footer, pageView, false)
+        mTvPageTip = pageFooterView.findViewById(R.id.tv_page_tip)
         pageView.apply {
             // 设置顶部和底部
-            setHeaderView(headerBinding.root)
-            setFooterView(footerBinding.root)
-
+            setHeaderView(pageHeaderView)
+            setFooterView(pageFooterView)
             // 设置行为监听
             setActionListener(this@ReadActivity::onPageAction)
 
             // 页面准备监听
             setOnPreparePageListener { pagePosition, pageProgress ->
-                // TODO:异步加载书籍，会导致异步获取到了章节，但是还没有嫁给 catalogAdapter 就回调了。
+                // TODO:异步加载书籍，会导致异步获取到了章节，但是还没有发送给 catalogAdapter 就回调了。
                 if (mCatalogAdapter.getItem(pagePosition.chapterIndex) == null) {
                     return@setOnPreparePageListener
                 }
 
-                // 设置顶部信息
-                headerBinding.title = resources.getString(
-                    R.string.read_chapter_title,
-                    mCatalogAdapter.getItem(pagePosition.chapterIndex)!!.title
-                )
-
-                // 设置底部信息
-                footerBinding.pageTip = resources.getString(
-                    R.string.read_page_tip, pageProgress.pageIndex + 1, pageProgress.pageCount
-                )
-
-                // 请求刷新
-                headerBinding.invalidateAll()
-                footerBinding.invalidateAll()
+                // TODO:使用 DataBinding 会导致数据更新不及时的问题，所以 headerView 和 footerView 禁止使用
+                onPagePositionChange(pagePosition, pageProgress)
             }
 
             // 将页面控制器，封装为书籍控制器
@@ -189,6 +178,18 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         }
     }
 
+    private fun onPagePositionChange(pagePosition: PagePosition, pageProgress: PageProgress) {
+        // 设置顶部信息
+        mTvPageTitle.text = resources.getString(
+            R.string.read_chapter_title,
+            mCatalogAdapter.getItem(pagePosition.chapterIndex)!!.title
+        )
+
+        // 设置底部信息
+        mTvPageTip.text = resources.getString(
+            R.string.read_page_tip, pageProgress.pageIndex + 1, pageProgress.pageCount
+        )
+    }
 
     private fun showSystemBar() {
         //显示
@@ -232,6 +233,14 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                 loadDialog!!.cancel()
                 // 显示章节信息
                 mCatalogAdapter.refreshItems(mBookController.getChapters())
+
+                // 更新 page 信息
+                val pageProgress = mBookController.getCurProgress()
+                val pagePosition = mBookController.getCurPosition()
+
+                if (pageProgress != null && pagePosition != null) {
+                    onPagePositionChange(pagePosition, pageProgress)
+                }
 
                 // 刷新页面
                 mDataBinding.executePendingBindings()
@@ -308,6 +317,10 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
         when (action) {
             is TapMenuAction -> {
                 toggleMenu()
+            }
+            is TurnPageAction -> {
+                // TODO:翻页回调，暂时先这么写(感觉外部继承回调更好，之后优化)
+                onPagePositionChange(action.pagePosition, action.pageProgress)
             }
         }
     }

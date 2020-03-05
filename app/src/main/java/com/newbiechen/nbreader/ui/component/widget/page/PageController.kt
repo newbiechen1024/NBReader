@@ -4,6 +4,8 @@ import com.newbiechen.nbreader.ui.component.book.plugin.BookGroup
 import com.newbiechen.nbreader.ui.component.book.plugin.BookPluginFactory
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.book.type.BookType
@@ -181,8 +183,12 @@ class PageController(
     /**
      * 获取当前的定位
      */
-    fun getCurPosition() {
+    fun getCurPosition():PagePosition? {
+        return pageContentController.getPagePosition(PageType.CURRENT)
+    }
 
+    fun getCurProgress():PageProgress? {
+        return pageContentController.getPageProgress(PageType.CURRENT)
     }
 
     /**

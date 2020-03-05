@@ -1,45 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="20dp"
+    android:paddingLeft="@dimen/page_padding_width"
+    android:paddingRight="@dimen/page_padding_width">
     
-    <data>
-        
-        <variable
-            name="pageTip"
-            type="String" />
-    </data>
+    <TextView
+        android:id="@+id/tv_page_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textSize="@dimen/text_size_more_small"
+        tools:text="10/20" />
     
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:paddingLeft="@dimen/page_padding_width"
-        android:paddingRight="@dimen/page_padding_width">
-        
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="@{pageTip}"
-            android:textSize="@dimen/text_size_more_small"
-            tools:text="10/20"/>
-        
-        <com.newbiechen.nbreader.ui.component.widget.BatteryView
-            android:id="@+id/bv_progress"
-            android:layout_width="18dp"
-            android:layout_height="10dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
-        
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/bv_progress"
-            android:text="14:35"
-            android:textSize="@dimen/text_size_more_small" />
-    </RelativeLayout>
-</layout>
+    <com.newbiechen.nbreader.ui.component.widget.BatteryView
+        android:id="@+id/bv_progress"
+        android:layout_width="18dp"
+        android:layout_height="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+    
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/bv_progress"
+        android:text="14:35"
+        android:textSize="@dimen/text_size_more_small" />
+</RelativeLayout>

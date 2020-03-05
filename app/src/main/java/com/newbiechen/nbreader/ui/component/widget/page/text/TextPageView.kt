@@ -316,8 +316,6 @@ class TextPageView @JvmOverloads constructor(
                 mScrollPageAnimation!!.cancelPage()
             }
         }
-
-        LogHelper.i(TAG, "onPageTouchEvent: $action")
         return true
     }
 
@@ -390,7 +388,13 @@ class TextPageView @JvmOverloads constructor(
             }*/
 
             // 发送翻页事件
-            mPageActionListener?.invoke(TurnPageAction(pageType))
+            mPageActionListener?.invoke(
+                TurnPageAction(
+                    pageType,
+                    getPagePosition(PageType.CURRENT)!!,
+                    getPageProgress(PageType.CURRENT)!!
+                )
+            )
         }
 
         override fun hasPage(type: PageType): Boolean {
@@ -399,7 +403,7 @@ class TextPageView @JvmOverloads constructor(
 
         override fun drawPage(canvas: Canvas, type: PageType) {
             // 绘制文本内容
-            mTextProcessor?.draw(canvas, type)
+            mTextProcessor.draw(canvas, type)
 
             // TODO：通知页面更新回调？
 

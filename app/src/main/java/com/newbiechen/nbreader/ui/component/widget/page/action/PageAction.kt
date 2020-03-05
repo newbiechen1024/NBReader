@@ -1,5 +1,7 @@
 package com.newbiechen.nbreader.ui.component.widget.page.action
 
+import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 
 /**
@@ -13,7 +15,10 @@ interface PageAction
 
 // 翻页事件
 data class TurnPageAction(
-    val pageType: PageType
+    val pageType: PageType,
+    // 当前页的状态(暂时放这里，没想好怎么获取)
+    val pagePosition: PagePosition,
+    val pageProgress: PageProgress
 ) : PageAction
 
 // 点击页面菜单事件
