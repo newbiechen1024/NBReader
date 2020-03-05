@@ -235,7 +235,6 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
 
                 // 刷新页面
                 mDataBinding.executePendingBindings()
-                LogHelper.i(TAG,"onLoadSuccess: onScroll")
             }
 
             override fun onLoadFailure(e: Throwable) {

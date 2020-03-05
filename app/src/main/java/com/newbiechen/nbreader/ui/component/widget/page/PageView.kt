@@ -12,7 +12,6 @@ import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageManager.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.*
@@ -45,14 +44,11 @@ class PageView @JvmOverloads constructor(
     // 页面管理器
     private var mPageManager: PageManager = PageManager(this)
 
-    // 文本处理器
-    private var mTextProcessor: TextProcessor = TextProcessor(context)
-
     // 页面控制器
-    private var mPageController: PageController = PageController(this, mTextProcessor)
+    private lateinit var mPageController: PageController
 
     // todo：文本配置信息(暂时先放这里，等弄到动态修改文本配置项时再处理，感觉 TextConfig 不应该直接从 TextProcessor 中获取)
-    private var mTextConfig: TextConfig = mTextProcessor.getTextConfig()
+    private lateinit var mTextConfig: TextConfig
 
     // 当前动画类型
     private var mPageAnimType: PageAnimType? = null
@@ -99,15 +95,15 @@ class PageView @JvmOverloads constructor(
         mFlFooter = findViewById(R.id.page_fl_footer)
 
         // 初始化页面文本视图
-        initPageTextView()
+        initTextPageView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SCROLL)
+        setPageAnim(PageAnimType.SIMULATION)
     }
 
-    private fun initPageTextView() {
+    private fun initTextPageView() {
         mPtvContent = TextPageView(context)
-        mPtvContent.setTextProcessor(mTextProcessor)
+
         mPtvContent.setPageActionListener(this::onPageAction)
 
         val contentParams =
@@ -115,6 +111,11 @@ class PageView @JvmOverloads constructor(
 
         // 将页面内容展示添加到容器中
         mFlContent.addView(mPtvContent, contentParams)
+
+        // 初始化控制器
+        mPageController = PageController(this, mPtvContent.getTextProcessor())
+        // 获取配置信息
+        mTextConfig = mPtvContent.getTextConfig()
     }
 
     /**

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
@@ -37,12 +38,13 @@ class TextPageView @JvmOverloads constructor(
         SCROLL
     }
 
-    private val mTextPageManager =
-        TextPageManager(
-            PageTextCallback()
-        )
+    // 页面管理器
+    private val mTextPageManager = TextPageManager(PageTextCallback())
 
-    private var mTextProcessor: TextProcessor? = null
+    // 文本处理器
+    private val mTextProcessor: TextProcessor = TextProcessor(context).also {
+        it.setPageInvalidateListener(this::onPageInvalidate)
+    }
 
     // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细考虑怎么写)
     private var mPageActionProcessor = TextActionProcessor(this)
@@ -59,21 +61,6 @@ class TextPageView @JvmOverloads constructor(
     private var mCurPageType: PageType = PageType.CURRENT
 
     private var isPrepareSize = false
-
-    /**
-     * 设置文本处理器
-     */
-    fun setTextProcessor(textProcessor: TextProcessor) {
-        mTextProcessor = textProcessor
-
-        // 监听 TextProcessor 页面的改变
-        mTextProcessor!!.setPageInvalidateListener(this::onPageInvalidate)
-
-        // 更新文本处理器的绘制视口
-        if (isPrepareSize) {
-            mTextProcessor!!.setViewPort(mTextPageManager.pageWidth, mTextPageManager.pageHeight)
-        }
-    }
 
     fun setPageMode(mode: PageMode) {
         // 进行配置
@@ -141,33 +128,35 @@ class TextPageView @JvmOverloads constructor(
     }
 
     fun hasChapter(type: PageType): Boolean {
-        return mTextProcessor?.hasChapter(type) ?: false
+        return mTextProcessor.hasChapter(type)
     }
 
     fun hasChapter(index: Int): Boolean {
-        check(mTextProcessor != null) {
-            "Please setTextProcessor"
-        }
-        return mTextProcessor!!.hasChapter(index)
+        return mTextProcessor.hasChapter(index)
     }
 
     fun getCurChapterIndex(): Int {
-        check(mTextProcessor != null) {
-            "Please setTextProcessor"
-        }
-        return mTextProcessor!!.getCurChapterIndex()
+        return mTextProcessor.getCurChapterIndex()
     }
 
     fun getPagePosition(pageType: PageType): PagePosition? {
-        return mTextProcessor?.getPagePosition(pageType)
+        return mTextProcessor.getPagePosition(pageType)
     }
 
     fun getPageProgress(type: PageType): PageProgress? {
-        return mTextProcessor?.getPageProgress(type) ?: null
+        return mTextProcessor.getPageProgress(type)
     }
 
     fun getPageCount(pageType: PageType): Int {
-        return mTextProcessor?.getPageCount(pageType) ?: 0
+        return mTextProcessor.getPageCount(pageType)
+    }
+
+    fun getTextConfig(): TextConfig {
+        return mTextProcessor.getTextConfig()
+    }
+
+    fun getTextProcessor(): TextProcessor {
+        return mTextProcessor
     }
 
     fun skipChapter(type: PageType) {
@@ -202,22 +191,18 @@ class TextPageView @JvmOverloads constructor(
 
     fun skipPage(chapterIndex: Int, pageIndex: Int) {
         // TODO:需要检测 position 是否正确
-        if (mTextProcessor != null) {
-            // 跳转页面
-            mTextProcessor!!.skipPage(PagePosition(chapterIndex, pageIndex))
-            // 通知重绘
-            onPageInvalidate()
-        }
+        // 跳转页面
+        mTextProcessor.skipPage(PagePosition(chapterIndex, pageIndex))
+        // 通知重绘
+        onPageInvalidate()
     }
 
     fun skipPage(position: TextPosition) {
         // TODO:需要检测 position 是否正确
-        if (mTextProcessor != null) {
-            // 跳转页面
-            mTextProcessor!!.skipPage(position)
-            // 通知重绘
-            onPageInvalidate()
-        }
+        // 跳转页面
+        mTextProcessor.skipPage(position)
+        // 通知重绘
+        onPageInvalidate()
     }
 
     /**
@@ -386,11 +371,11 @@ class TextPageView @JvmOverloads constructor(
     private inner class PageTextCallback :
         TextPageManager.OnPageListener {
         override fun onPageSizeChanged(width: Int, height: Int) {
-            mTextProcessor?.setViewPort(width, height)
+            mTextProcessor.setViewPort(width, height)
         }
 
         override fun onTurnPage(pageType: PageType) {
-            mTextProcessor?.turnPage(pageType)
+            mTextProcessor.turnPage(pageType)
 
             // TODO：页面预加载逻辑(暂时先不处理)
 
@@ -409,12 +394,14 @@ class TextPageView @JvmOverloads constructor(
         }
 
         override fun hasPage(type: PageType): Boolean {
-            return mTextProcessor?.hasPage(type) ?: false
+            return mTextProcessor.hasPage(type)
         }
 
         override fun drawPage(canvas: Canvas, type: PageType) {
             // 绘制文本内容
             mTextProcessor?.draw(canvas, type)
+
+            // TODO：通知页面更新回调？
 
             // TODO:页面预加载逻辑(暂时先不处理)
 /*            // 如果绘制的是当前页，预加载下一页
