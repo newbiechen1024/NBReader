@@ -25,12 +25,11 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         private const val TAG = "ScrollPageAnimation"
 
         // 滑动追踪的时间
-        // TODO:可以外置，设置灵敏度？
         private const val VELOCITY_DURATION = 1500
     }
 
-    var isRunning = false
-        private set
+    val isRunning: Boolean
+        get() = mStatus != Status.None
 
     private val mView = view
     private val mPageManager = pageManager
@@ -63,6 +62,10 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
 
     private var isMove = false
 
+    private var mStatus = Status.None
+
+    private val MIN_SCROLL_SLOP = ViewConfiguration.get(mView.context).scaledTouchSlop
+
     /**
      * 设置宽高
      */
@@ -80,32 +83,117 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         // 通知取消动画
         abortAnim()
 
+        // TODO:暂时销毁所有 itemLayout，
+        // TODO:实际应该只需要调整一下 active layout 的 bottom 的高度就行了，销毁 mScrap
+
         // 进行重新布局
         layout()
     }
     // TODO:这个改成 press、move、release
 
-    /**
-     *  点击事件
-     */
-    fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x.toInt()
-        val y = event.y.toInt()
+    // 触碰页面
+    fun pressPage(event: MotionEvent) {
+        // 如果当前正在执行动画，先取消动画
+        when (mStatus) {
+            Status.Fling -> abortAnim()
+            else -> {
+                // 不处理
+            }
+        }
+
+        setStartPoint(event.x.toInt(), event.y.toInt())
 
         // 初始化速度追踪器
         if (mVelocity == null) {
             mVelocity = VelocityTracker.obtain()
         }
 
-        // TODO:加入点击状态，PRESS、MOVE、FLING
-
         mVelocity!!.addMovement(event)
+
+        // 设置为按下状态
+        mStatus = Status.ManualPress
+        isMove = false
+    }
+
+    private fun setStartPoint(x: Int, y: Int) {
+        // 设置起始点
+        mStartX = x
+        mStartY = y
+        // 设置触碰点
+        mTouchX = x
+        mTouchY = y
+    }
+
+    // 滑动页面
+    fun movePage(event: MotionEvent) {
+        when (mStatus) {
+            Status.None, Status.Fling -> pressPage(event)
+        }
+
+        val x = event.x.toInt()
+        val y = event.y.toInt()
+
+        // 上一触碰点
+        setTouchPoint(x, y)
+
+        // 判断是否大于最小滑动值。
+        if (!isMove) {
+            isMove = abs(mStartX - x) > MIN_SCROLL_SLOP || abs(mStartY - y) > MIN_SCROLL_SLOP
+        }
+
+        if (isMove) {
+            // TODO：是否支持设置滑动上限？
+            // 计算当前速度
+            mVelocity!!.computeCurrentVelocity(VELOCITY_DURATION)
+            // 进行刷新
+            mView.postInvalidate()
+        }
+
+        // 设置状态
+        mStatus = Status.ManualMove
+    }
+
+    private fun setTouchPoint(x: Int, y: Int) {
+        mLastX = mTouchX
+        mLastY = mTouchY
+
+        mTouchX = x
+        mTouchY = y
+    }
+
+    // 释放页面
+    fun releasePage(event: MotionEvent) {
+        when (mStatus) {
+            Status.None, Status.Fling -> pressPage(event)
+        }
+
+        setTouchPoint(event.x.toInt(), event.y.toInt())
+
+        // 开启动画
+        startAnim()
+    }
+
+    fun cancelPage() {
+        if (mVelocity != null) {
+            // 删除检测器
+            mVelocity!!.recycle()
+            mVelocity = null
+        }
+
+        finishAnim()
+    }
+
+    /**
+     *  点击事件
+     *  TODO:这个需要删掉，改用 press 的逻辑
+     */
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = event.x.toInt()
+        val y = event.y.toInt()
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                isRunning = false
                 isMove = false
-
                 // 设置起始点
                 setStartPoint(x, y)
                 // 停止动画
@@ -125,7 +213,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 if (isMove) {
                     // 计算当前速度
                     mVelocity!!.computeCurrentVelocity(VELOCITY_DURATION)
-                    isRunning = true
                     // 进行刷新
                     mView.postInvalidate()
                 }
@@ -151,33 +238,15 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         return true
     }
 
-    private fun setStartPoint(x: Int, y: Int) {
-        // 设置起始点
-        mStartX = x
-        mStartY = y
-        // 设置触碰点
-        mTouchX = x
-        mTouchY = y
-    }
-
-    private fun setTouchPoint(x: Int, y: Int) {
-        mLastX = mTouchX
-        mLastY = mTouchY
-
-        mTouchX = x
-        mTouchY = y
-    }
-
     // 获取竖直滑动的距离
     private fun getScrollY(): Int {
-        return mTouchY - mLastY
+        return if (isRunning) mTouchY - mLastY else 0
     }
 
     /**
      * 进行布局操作
      */
     private fun layout() {
-        // TODO：如何知道是滑动状态,可能存在之前的 touch，没有被销毁的情况。
         val scrollY = getScrollY()
         // 进行填充布局操作
         if (scrollY > 0) {
@@ -215,42 +284,45 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             }
         }
 
+        // 更新页面布局信息
         if (hasTurnPage) {
             // 进行翻页操作
             turnPageLayout(PageType.NEXT)
         }
 
-        // 检测当前页是否存在，如果不存在则添加当前页。
+        // 检测当前页是否存在，如果不存在则添加一个当前页。
         if (getCurrentPageLayout() == null && mPageManager.hasPage(PageType.CURRENT)) {
             val newPageLayout = getScrapLayout()
             newPageLayout.type = PageType.CURRENT
             mActiveLayouts.add(newPageLayout)
         }
 
-        // 空白的区域
-        val spaceArea = if (mActiveLayouts.isEmpty()) {
-            // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
-            // mViewHeight + scrollY
-            mViewHeight
-        } else {
-            if (mActiveLayouts.last().bottom < mViewHeight) {
+        // 获取填充区域
+        val fillArea = when {
+            mActiveLayouts.isEmpty() -> {
+                // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
+                // mViewHeight + scrollY
+                mViewHeight
+            }
+            mActiveLayouts.last().bottom < mViewHeight -> {
                 // 如果顶部被删除，那么剩下的只有一个 active Layout。
                 // 那么 viewHeight - bottom 就是剩余空间
                 mViewHeight - mActiveLayouts[0].bottom
-            } else {
+            }
+            else -> {
                 0
             }
         }
 
         // 检测是否存在空白区域
-        if (spaceArea > 0) {
+        if (fillArea > 0) {
             // 检测是否存在下一页
             if (mPageManager.hasPage(PageType.NEXT)) {
                 // 假设，一个 layout 就能够填充满 spaceArea
                 val activeLayout = getScrapLayout()
                 activeLayout.type = PageType.NEXT
                 // 滑动到指定位置
-                activeLayout.scrollY(mViewHeight - spaceArea)
+                activeLayout.scrollY(mViewHeight - fillArea)
                 // 添加到 active 中
                 mActiveLayouts.add(activeLayout)
             } else {
@@ -277,8 +349,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      */
     private fun fillUp(scrollY: Int) {
         // TODO：逻辑太难看了，需要重构..
-        LogHelper.i(TAG, "fillUp: $scrollY")
-
         val activeItr = mActiveLayouts.iterator()
         var pageLayout: PageLayout
         var hasTurnPage = false
@@ -323,25 +393,26 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             mActiveLayouts.add(0, newPageLayout)
         }
 
-
         // 区域检测有问题
         // 空白的区域
-        val spaceArea = if (mActiveLayouts.isEmpty()) {
-            // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
-            // mViewHeight + scrollY
-            mViewHeight
-        } else {
-            // TODO:first 也有问题了
-            if (mActiveLayouts.first().top > 0) {
+        val fillArea = when {
+            mActiveLayouts.isEmpty() -> {
+                // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
+                // mViewHeight + scrollY
+                mViewHeight
+            }
+            // TODO:应该创建一个 get() 拿到 top，尽量不要直接调用 mActiveLayouts
+            mActiveLayouts.first().top > 0 -> {
                 // 如果顶部被删除，那么剩下的只有一个 active Layout。
                 // 那么 activeLayout.top 就是顶部的剩余空间了
                 mActiveLayouts[0].top
-            } else {
+            }
+            else -> {
                 0
             }
         }
 
-        if (spaceArea > 0) {
+        if (fillArea > 0) {
             // 检测是否存在上一页
             if (mPageManager.hasPage(PageType.PREVIOUS)) {
                 // 假设，一个 layout 就能够填充满 spaceArea
@@ -351,7 +422,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 val newPageLayout = getScrapLayout()
                 newPageLayout.type = PageType.PREVIOUS
                 // 滑动到指定位置
-                newPageLayout.scrollY(spaceArea - mViewHeight)
+                newPageLayout.scrollY(fillArea - mViewHeight)
                 // 填充顶部区域，添加到头部
                 // 添加到 active 中
                 mActiveLayouts.add(0, newPageLayout)
@@ -376,10 +447,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 // 无法继续滑动了，取消动画
                 abortAnim()
             }
-        }
-
-        mActiveLayouts.forEach {
-            LogHelper.i(TAG, "fillUp: item = $it")
         }
     }
 
@@ -453,7 +520,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 绘制静态图像
      */
     private fun drawStatic(canvas: Canvas) {
-        // 如果数据为空，则会发起布局请求
+        // 如果布局为空，则会直接发起请求操作
         if (mActiveLayouts.isEmpty()) {
             layout()
         }
@@ -483,12 +550,11 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 启动动画
      */
     fun startAnim() {
-        isRunning = true
-
         mScroller.fling(
             0, mTouchY, 0, mVelocity!!.yVelocity.toInt()
             , 0, 0, Int.MAX_VALUE * -1, Int.MAX_VALUE
         )
+        mStatus = Status.Fling
     }
 
     /**
@@ -498,7 +564,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         if (!mScroller.isFinished) {
             mScroller.abortAnimation()
         }
-
         // 滑动结束
         finishAnim()
     }
@@ -507,18 +572,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 滑动结束
      */
     private fun finishAnim() {
-        // 重置一切信息
-        isRunning = false
-
-        // TODO:点击刷新问题，之后处理
-/*        mStartX = 0
-        mStartY = 0
-        mTouchX = 0
-        mTouchY = 0
-        mLastX = 0
-        mLastY = 0*/
-
-        // 进行刷新
+        mStatus = Status.None
         mView.postInvalidate()
     }
 
@@ -539,6 +593,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 mView.postInvalidate()
             }
         }
+
     }
 
     // 页面布局

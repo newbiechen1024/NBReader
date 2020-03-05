@@ -300,7 +300,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     }
 
     // 页面动画方向
-    enum class Direction {
+    protected enum class Direction {
         NONE,
         PREVIOUS, // 上一页
         NEXT, // 下一页
