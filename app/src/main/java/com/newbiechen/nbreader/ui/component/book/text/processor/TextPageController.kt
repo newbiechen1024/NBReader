@@ -15,7 +15,6 @@ import kotlin.math.min
  *  description :文本页面控制器
  *
  *  TODO：需要支持章节预加载
- *  TODO：向前翻页逻辑有问题
  */
 
 // 查找页面的结尾光标

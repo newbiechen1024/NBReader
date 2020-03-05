@@ -21,8 +21,6 @@ import com.newbiechen.nbreader.uilts.LogHelper
  *  author : newbiechen
  *  date : 2019-10-20 18:50
  *  description :文本处理器，处理与绘制页面
- *
- *  TODO:向前翻两页，再向后翻一页，页面会出问题
  */
 
 class TextProcessor(context: Context) : BaseTextProcessor(context) {

@@ -31,6 +31,7 @@ class PageController(
     private var mCachePath: String? = null
     private var mInitChapterTitle: String? = null
     private var mChapterPattern: String? = null
+
     // 是否参数配置
     private var isConfigure = false
 
@@ -183,11 +184,11 @@ class PageController(
     /**
      * 获取当前的定位
      */
-    fun getCurPosition():PagePosition? {
+    fun getCurPosition(): PagePosition? {
         return pageContentController.getPagePosition(PageType.CURRENT)
     }
 
-    fun getCurProgress():PageProgress? {
+    fun getCurProgress(): PageProgress? {
         return pageContentController.getPageProgress(PageType.CURRENT)
     }
 
@@ -210,17 +211,7 @@ class PageController(
      */
     fun hasPage(type: PageType): Boolean {
         // 从内容控制器中判断，是否存在页面
-        return when (type) {
-            PageType.PREVIOUS -> {
-                pageContentController.hasPage(PageType.PREVIOUS)
-            }
-            PageType.NEXT -> {
-                pageContentController.hasPage(PageType.NEXT)
-            }
-            PageType.CURRENT -> {
-                pageContentController.hasPage(PageType.CURRENT)
-            }
-        }
+        return pageContentController.hasPage(type)
     }
 
     /**
