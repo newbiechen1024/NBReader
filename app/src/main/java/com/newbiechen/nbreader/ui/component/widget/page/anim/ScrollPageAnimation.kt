@@ -4,21 +4,18 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
-import android.view.ViewConfiguration
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageManager
 import com.newbiechen.nbreader.uilts.LogHelper
-import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.abs
+import kotlin.math.min
 
 /**
  *  author : newbiechen
  *  date : 2020/3/3 10:48 PM
  *  description :滚动动画
- * TODO：整套逻辑太复杂了，需要优化
  */
 class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     companion object {
@@ -40,9 +37,11 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     // 速度检测器
     private var mVelocity: VelocityTracker? = null
 
-    // 元素列表 (直接使用 curLayout 和 nextLayout，然后有个 ActiveLayout)
-    private val mActiveLayouts: ArrayList<PageLayout> = ArrayList(2)
-    private val mScrapLayouts: ArrayDeque<PageLayout> = ArrayDeque(2)
+    // 创建两个页面布局
+    private val mPageLayoutArray = Array(2) {
+        PageLayout()
+    }
+
 
     // 起始点
     private var mStartX: Int = 0
@@ -62,7 +61,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
 
     private var mStatus = Status.None
 
-
     /**
      * 设置宽高
      */
@@ -80,10 +78,10 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         // 通知取消动画
         abortAnim()
 
-        // TODO:暂时销毁所有 itemLayout
-        // TODO:实际应该只需要调整一下 active layout 的 bottom 的高度就行了，销毁 mScrap
-        mScrapLayouts.clear()
-        mActiveLayouts.clear()
+        // 重置页面高度
+        mPageLayoutArray.forEach {
+            it.setHeight(h)
+        }
 
         // 进行重新布局
         layout()
@@ -200,23 +198,21 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 向上滑动，填充底部空白区域
      */
     private fun fillDown(scrollY: Int) {
-        val activeItr = mActiveLayouts.iterator()
         var pageLayout: PageLayout
         // 是否进行翻页操作
         var hasTurnPage = false
 
-        // 为每个 active layout 加上滑动距离。
-        while (activeItr.hasNext()) {
-            pageLayout = activeItr.next()
-            // 滑动 layout
+        mPageLayoutArray.forEach {
+            if (it.type == null) {
+                return@forEach
+            }
             // 如果 scrollY >= viewHeight 整个逻辑就会出问题。(默认这种情况会不发生)
-            pageLayout.scrollY(scrollY)
-            // 检测存在越界的情况 (bottom <= 0)，就移除该 item
-            if (pageLayout.bottom <= 0) {
-                // 从Active中移除
-                activeItr.remove()
-                // 添加到废弃的View中
-                mScrapLayouts.add(pageLayout)
+            // 布局进行偏移操作
+            it.offset(scrollY)
+
+            // 检测当前 layout 是否超出显示区域
+            if (it.bottom <= 0) {
+                it.reset()
                 // 如果顶部被删除，则需要 turnPage(true)，通知翻页，说明上一页没了，则下一页就是当前页了
                 mPageManager.turnPage(true)
                 // 表示进行翻页操作
@@ -230,28 +226,19 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             turnPageLayout(PageType.NEXT)
         }
 
-        // 检测当前页是否存在，如果不存在则添加一个当前页。
-        if (getCurrentPageLayout() == null && mPageManager.hasPage(PageType.CURRENT)) {
-            val newPageLayout = getScrapLayout()
+        // 检测当前页是否存在，如果不存在则添加一个当前页布局。
+        if (getPageLayout(PageType.CURRENT) == null && mPageManager.hasPage(PageType.CURRENT)) {
+            val newPageLayout = getScrapPageLayout()!!
             newPageLayout.type = PageType.CURRENT
-            mActiveLayouts.add(newPageLayout)
         }
 
+        val pageBottom = getPageBottom()
+
         // 获取填充区域
-        val fillArea = when {
-            mActiveLayouts.isEmpty() -> {
-                // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
-                // mViewHeight + scrollY
-                mViewHeight
-            }
-            mActiveLayouts.last().bottom < mViewHeight -> {
-                // 如果顶部被删除，那么剩下的只有一个 active Layout。
-                // 那么 viewHeight - bottom 就是剩余空间
-                mViewHeight - mActiveLayouts[0].bottom
-            }
-            else -> {
-                0
-            }
+        val fillArea = if (pageBottom == null) {
+            mViewHeight
+        } else {
+            0.coerceAtLeast(mViewHeight - pageBottom)
         }
 
         // 检测是否存在空白区域
@@ -259,24 +246,18 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             // 检测是否存在下一页
             if (mPageManager.hasPage(PageType.NEXT)) {
                 // 假设，一个 layout 就能够填充满 spaceArea
-                val activeLayout = getScrapLayout()
+                val activeLayout = getScrapPageLayout()!!
                 activeLayout.type = PageType.NEXT
                 // 滑动到指定位置
-                activeLayout.scrollY(mViewHeight - fillArea)
-                // 添加到 active 中
-                mActiveLayouts.add(activeLayout)
+                activeLayout.offset(mViewHeight - fillArea)
             } else {
-                // 如果不存在，需要将
-                if (mActiveLayouts.isNotEmpty()) {
-                    // 将所有存活的 layout 全部废弃
-                    addScrapLayout(mActiveLayouts)
+                // 如果存在，则设置为屏幕位置
+                if (hasActivePageLayout()) {
+                    clearPageLayout()
                     // 清空列表
-                    mActiveLayouts.clear()
                     // 获取一个能用的 active
-                    pageLayout = getScrapLayout()
+                    pageLayout = getScrapPageLayout()!!
                     pageLayout.type = PageType.CURRENT
-                    // 加入到存活列表中
-                    mActiveLayouts.add(pageLayout)
                 }
                 // 无法继续滑动了，取消动画
                 abortAnim()
@@ -288,24 +269,21 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      * 向下滑动，填充顶部空白区域
      */
     private fun fillUp(scrollY: Int) {
-        // TODO：逻辑太难看了，需要重构..
-        val activeItr = mActiveLayouts.iterator()
         var pageLayout: PageLayout
         var hasTurnPage = false
 
         // 为每个 layout 加上滑动距离，并检测存在越界的情况 (top >= viewHeight)，如果越界就移除该 item
-        // 如果顶部被删除，则需要 turnPage() PREV，翻页。
-        while (activeItr.hasNext()) {
-            pageLayout = activeItr.next()
-            // 滑动 layout
-            pageLayout.scrollY(scrollY)
-            // 检测是否越界了
-            if (pageLayout.top >= mViewHeight) {
-                // 从Active中移除
-                activeItr.remove()
-                // 添加到废弃的View中
-                addScrapLayout(pageLayout)
+        mPageLayoutArray.forEach {
+            if (it.type == null) {
+                return@forEach
+            }
 
+            // 布局进行偏移操作
+            it.offset(scrollY)
+
+            // 检测当前 layout 是否超出显示区域
+            if (it.top >= mViewHeight) {
+                it.reset()
                 // 只有在如下情况，cur page 才能自动转换为 nextPage
                 if (mPageManager.hasPage(PageType.PREVIOUS)) {
                     // 通知换页，说明下一页被删除了，则向前翻页。则上一页就变成当前页，当前页变成了下一页。
@@ -315,74 +293,53 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             }
         }
 
+        // 请求翻页操作
         if (hasTurnPage) {
             // 进行翻页操作
             turnPageLayout(PageType.PREVIOUS)
         }
 
         // 检测当前页是否存在，如果不存在则添加当前页。
-        if (getCurrentPageLayout() == null && mPageManager.hasPage(PageType.CURRENT)) {
-            val nextPageLayout = getNextPageLayout()
-            val newPageLayout = getScrapLayout()
-            newPageLayout.type = PageType.CURRENT
+        if (getPageLayout(PageType.CURRENT) == null && mPageManager.hasPage(PageType.CURRENT)) {
+            val pageTop = getPageTop()
 
-            if (nextPageLayout != null) {
-                newPageLayout.scrollY(nextPageLayout.top - mViewHeight)
-            }
-            // TODO:0 是因为，保证只有 2 个情况这样写的。。。其实想了想不写也行
-            mActiveLayouts.add(0, newPageLayout)
-        }
+            val newPageLayout = getScrapPageLayout()
 
-        // 区域检测有问题
-        // 空白的区域
-        val fillArea = when {
-            mActiveLayouts.isEmpty() -> {
-                // TODO:如果列表不存在可以用的 item，则此次滑动认为无效
-                // mViewHeight + scrollY
-                mViewHeight
-            }
-            // TODO:应该创建一个 get() 拿到 top，尽量不要直接调用 mActiveLayouts
-            mActiveLayouts.first().top > 0 -> {
-                // 如果顶部被删除，那么剩下的只有一个 active Layout。
-                // 那么 activeLayout.top 就是顶部的剩余空间了
-                mActiveLayouts[0].top
-            }
-            else -> {
-                0
+            newPageLayout!!.type = PageType.CURRENT
+
+            if (pageTop != null) {
+                newPageLayout.offset(pageTop - mViewHeight)
             }
         }
 
+        val pageTop = getPageTop()
+
+        // 填充区域
+        val fillArea = if (pageTop == null) {
+            mViewHeight
+        } else {
+            0.coerceAtLeast(pageTop)
+        }
         if (fillArea > 0) {
             // 检测是否存在上一页
             if (mPageManager.hasPage(PageType.PREVIOUS)) {
                 // 假设，一个 layout 就能够填充满 spaceArea
                 // 如果存在空白区域，则进行填充
-
-                LogHelper.i(TAG, "fillUp: spaceArea")
-                val newPageLayout = getScrapLayout()
+                val newPageLayout = getScrapPageLayout()!!
                 newPageLayout.type = PageType.PREVIOUS
                 // 滑动到指定位置
-                newPageLayout.scrollY(fillArea - mViewHeight)
-                // 填充顶部区域，添加到头部
-                // 添加到 active 中
-                mActiveLayouts.add(0, newPageLayout)
+                newPageLayout.offset(fillArea - mViewHeight)
 
                 // 通知换页，说明下一页被删除了，则向前翻页。则上一页就变成当前页，当前页变成了下一页。
                 mPageManager.turnPage(false)
                 turnPageLayout(PageType.PREVIOUS)
             } else {
-
-                // 如果不存在，需要将
-                if (mActiveLayouts.isNotEmpty()) {
-                    // 将所有存活的 layout 全部废弃
-                    addScrapLayout(mActiveLayouts)
+                if (hasActivePageLayout()) {
+                    clearPageLayout()
                     // 清空列表
-                    mActiveLayouts.clear()
                     // 获取一个能用的 active
-                    pageLayout = getScrapLayout()
+                    pageLayout = getScrapPageLayout()!!
                     pageLayout.type = PageType.CURRENT
-                    // 加入到存活列表中
-                    mActiveLayouts.add(pageLayout)
                 }
                 // 无法继续滑动了，取消动画
                 abortAnim()
@@ -390,8 +347,81 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         }
     }
 
+    private fun getPageTop(): Int? {
+        var resultTop: Int? = null
+
+        mPageLayoutArray.forEach {
+            if (it.type == null) {
+                return@forEach
+            }
+            if (resultTop == null) {
+                resultTop = it.top
+            } else {
+                if (it.top < resultTop!!) {
+                    resultTop = it.top
+                }
+            }
+        }
+        return resultTop
+    }
+
+    private fun getPageBottom(): Int? {
+        var resultBottom: Int? = null
+        mPageLayoutArray.forEach {
+            if (it.type == null) {
+                return@forEach
+            }
+
+            if (resultBottom == null) {
+                resultBottom = it.bottom
+            } else {
+                if (it.bottom > resultBottom!!) {
+                    resultBottom = it.bottom
+                }
+            }
+        }
+        return resultBottom
+    }
+
+
+    /**
+     * 根据页面类型获取布局
+     */
+    private fun getPageLayout(type: PageType): PageLayout? {
+        return mPageLayoutArray.firstOrNull {
+            it.type == type
+        }
+    }
+
+    /**
+     * 获取被废弃的 layout
+     */
+    private fun getScrapPageLayout(): PageLayout? {
+        return mPageLayoutArray.firstOrNull {
+            it.type == null
+        }
+    }
+
+    private fun hasActivePageLayout(): Boolean {
+        for (pageLayout in mPageLayoutArray) {
+            if (pageLayout.type != null) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun clearPageLayout() {
+        for (pageLayout in mPageLayoutArray) {
+            pageLayout.reset()
+        }
+    }
+
+    /**
+     * 对 Page 进行翻页操作
+     */
     private fun turnPageLayout(type: PageType) {
-        mActiveLayouts.forEach {
+        mPageLayoutArray.forEach {
             when (type) {
                 PageType.PREVIOUS -> {
                     it.type = it.type?.getNext()
@@ -400,37 +430,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                     it.type = it.type?.getPrevious()
                 }
             }
-        }
-    }
-
-    private fun getCurrentPageLayout(): PageLayout? {
-        return mActiveLayouts.firstOrNull {
-            it.type == PageType.CURRENT
-        }
-    }
-
-    private fun getNextPageLayout(): PageLayout? {
-        return mActiveLayouts.firstOrNull {
-            it.type == PageType.NEXT
-        }
-    }
-
-    private fun addScrapLayout(pageLayout: PageLayout) {
-        mScrapLayouts.add(pageLayout)
-    }
-
-    private fun addScrapLayout(pageLayouts: ArrayList<PageLayout>) {
-        mScrapLayouts.addAll(pageLayouts)
-    }
-
-    private fun getScrapLayout(): PageLayout {
-        return if (mScrapLayouts.isNotEmpty()) {
-            mScrapLayouts.removeFirst().apply {
-                // 返回之前，重置状态
-                reset()
-            }
-        } else {
-            PageLayout(mViewHeight)
         }
     }
 
@@ -461,7 +460,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
      */
     private fun drawStatic(canvas: Canvas) {
         // 如果布局为空，则会直接发起请求操作
-        if (mActiveLayouts.isEmpty()) {
+        if (!hasActivePageLayout()) {
             layout()
         }
 
@@ -469,8 +468,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         //裁剪显示区域
         canvas.clipRect(0, 0, mViewWidth, mViewHeight)
 
-        // TODO：有没有更好看的方案，要 save 两层太蛋疼了
-        mActiveLayouts.forEach { pageLayout ->
+        mPageLayoutArray.forEach { pageLayout ->
             canvas.save()
             canvas.translate(0f, pageLayout.top.toFloat())
 
@@ -536,22 +534,33 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     }
 
     // 页面布局
-    private class PageLayout(val height: Int) {
+    private class PageLayout {
         // Page Top 距离 ViewPort Top 的位置
         var top = 0
             private set
 
         // Page Bottom 距离 ViewPort Top 的位置
-        var bottom = height
+        var bottom = 0
             private set
 
         // 当前布局针对的页面类型
         var type: PageType? = null
 
+        var height = 0
+            private set
+
         /**
-         * 竖直滑动距离
+         * 设置高度
          */
-        fun scrollY(y: Int) {
+        fun setHeight(height: Int) {
+            this.height = height
+            reset()
+        }
+
+        /**
+         * 偏移操作
+         */
+        fun offset(y: Int) {
             top += y
             bottom += y
         }
