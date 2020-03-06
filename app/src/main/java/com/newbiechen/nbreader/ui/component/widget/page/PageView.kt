@@ -31,15 +31,30 @@ typealias OnPreparePageListener = (pagePosition: PagePosition, pageProgress: Pag
 
 class PageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), OnPageListener {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     companion object {
         private const val TAG = "PageView"
         private const val MAX_CHILD_VIEW = 3
     }
 
+    private val mPageListener = object : OnPageListener {
+        override fun hasPage(type: PageType): Boolean {
+            return mPtvContent.hasPage(type)
+        }
+
+        override fun drawPage(canvas: Canvas, type: PageType) {
+            onDrawPage(canvas, type)
+        }
+
+        override fun onTurnPage(pageType: PageType) {
+            // 请求文本翻页
+            mPtvContent.turnPage(pageType)
+        }
+    }
+
     // 页面管理器
-    private var mPageManager: PageManager = PageManager(this)
+    private var mPageManager: PageManager = PageManager(mPageListener)
 
     // 页面控制器
     private lateinit var mPageController: PageController
@@ -99,7 +114,7 @@ class PageView @JvmOverloads constructor(
         initTextPageView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SIMULATION)
+        setPageAnim(PageAnimType.SLIDE)
     }
 
     private fun initTextPageView() {
@@ -304,32 +319,30 @@ class PageView @JvmOverloads constructor(
      * 页面移动事件处理
      */
     private fun onPageMotionEvent(action: MotionAction) {
-        // 消耗发出的行为事件
-        when (action.type) {
-            MotionType.PRESS -> {
-                action.apply {
+        action.apply {
+            // 消耗发出的行为事件
+            when (type) {
+                MotionType.PRESS -> {
                     mPageAnim?.pressPage(event.x.toInt(), event.y.toInt())
                 }
-            }
-            MotionType.MOVE -> {
-                action.apply {
+                MotionType.MOVE -> {
                     mPageAnim?.movePage(event.x.toInt(), event.y.toInt())
                 }
-            }
-            MotionType.RELEASE -> {
-                action.apply {
+                MotionType.RELEASE -> {
                     releasePage(event.x.toInt(), event.y.toInt())
                 }
-            }
-            MotionType.SINGLE_TAP -> {
-                action.apply {
+                MotionType.SINGLE_TAP -> {
                     // 如果点击区域在菜单范围内，则发送点击菜单行为事件
                     if (mMenuRect.contains(event.x, event.y)) {
                         mPageActionListener?.invoke(TapMenuAction())
+                    } else {
+                        // 通知点击翻页
+                        releasePage(event.x.toInt(), event.y.toInt())
                     }
                 }
             }
         }
+
     }
 
     private fun releasePage(x: Int, y: Int) {
@@ -453,13 +466,9 @@ class PageView @JvmOverloads constructor(
         mPageAnim?.computeScroll()
     }
 
-    override fun hasPage(type: PageType): Boolean {
-        return mPtvContent.hasPage(type)
-    }
-
     private var mCurDrawType: PageType? = null
 
-    override fun drawPage(canvas: Canvas, type: PageType) {
+    private fun onDrawPage(canvas: Canvas, type: PageType) {
         // 绘制背景信息
         drawBackground(canvas)
 
@@ -519,10 +528,5 @@ class PageView @JvmOverloads constructor(
             // 直接绘制图片
             canvas.drawBitmap(mWallpaperBitmap!!, null, mBackgroundRect, null)
         }
-    }
-
-    override fun onTurnPage(pageType: PageType) {
-        // 请求文本翻页
-        mPtvContent.turnPage(pageType)
     }
 }
