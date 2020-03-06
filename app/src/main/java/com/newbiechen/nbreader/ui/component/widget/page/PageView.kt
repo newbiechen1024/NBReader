@@ -17,6 +17,7 @@ import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.*
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
 import com.newbiechen.nbreader.uilts.LogHelper
+import java.io.InputStream
 import java.lang.Exception
 import kotlin.math.abs
 
@@ -35,10 +36,6 @@ class PageView @JvmOverloads constructor(
     companion object {
         private const val TAG = "PageView"
         private const val MAX_CHILD_VIEW = 3
-
-        // 壁纸
-        private var sWallpaperPath: String? = null
-        private var sWallpaperBitmap: Bitmap? = null
     }
 
     // 页面管理器
@@ -76,6 +73,10 @@ class PageView @JvmOverloads constructor(
     // 页面内容文本
     private lateinit var mPtvContent: TextPageView
 
+    // 壁纸
+    private var mWallpaperPath: String? = null
+    private var mWallpaperBitmap: Bitmap? = null
+
     init {
         // 设置排列方式
         orientation = VERTICAL
@@ -98,7 +99,7 @@ class PageView @JvmOverloads constructor(
         initTextPageView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SCROLL)
+        setPageAnim(PageAnimType.SIMULATION)
     }
 
     private fun initTextPageView() {
@@ -435,11 +436,8 @@ class PageView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        // TODO:这个操作感觉怪怪的，有没有更好的方案
-        if (mPageAnim == null) {
-            LogHelper.i(TAG, "onDraw: mPageAnim")
-            // 直接绘制背景
+        // 只有滚动需要绘制背景
+        if (mPageAnimType == PageAnimType.SCROLL) {
             drawBackground(canvas!!)
         }
     }
@@ -462,8 +460,6 @@ class PageView @JvmOverloads constructor(
     private var mCurDrawType: PageType? = null
 
     override fun drawPage(canvas: Canvas, type: PageType) {
-
-        // TODO:这个可以放在 onDraw 中处理吧？
         // 绘制背景信息
         drawBackground(canvas)
 
@@ -505,19 +501,23 @@ class PageView @JvmOverloads constructor(
      * TODO:暂时默认认为 wallpaper 都是从 asset 中获取的
      */
     private fun drawWallpaper(canvas: Canvas, wallpaperPath: String) {
-        if (wallpaperPath != sWallpaperPath) {
+        if (wallpaperPath != mWallpaperPath) {
+            var fileInputStream: InputStream? = null
             try {
-                val fileInputStream = context.assets.open(wallpaperPath)
+                fileInputStream = context.assets.open(wallpaperPath)
                 // 获取图片资源
-                sWallpaperBitmap = BitmapFactory.decodeStream(fileInputStream)
+                mWallpaperBitmap = BitmapFactory.decodeStream(fileInputStream)
+                mWallpaperPath = wallpaperPath
             } catch (e: Exception) {
                 LogHelper.e(TAG, e.toString())
+            } finally {
+                fileInputStream?.close()
             }
         }
 
-        if (sWallpaperBitmap != null) {
+        if (mWallpaperBitmap != null) {
             // 直接绘制图片
-            canvas.drawBitmap(sWallpaperBitmap!!, null, mBackgroundRect, null)
+            canvas.drawBitmap(mWallpaperBitmap!!, null, mBackgroundRect, null)
         }
     }
 
