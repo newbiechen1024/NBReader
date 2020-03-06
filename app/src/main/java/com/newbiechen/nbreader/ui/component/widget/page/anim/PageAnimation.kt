@@ -22,16 +22,21 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
 
     // 指定动画的视图
     protected val mView = view
+
     // 页面管理器
     // 动画滑动器
     protected val mScroller = Scroller(view.context, LinearInterpolator())
+
     // 动画方向
     protected open var mDirection = Direction.NONE
+
     // 动画状态
     protected var mStatus = Status.NONE
+
     //起始点
     protected var mStartX: Int = 0
     protected var mStartY: Int = 0
+
     //触碰点
     protected open var mTouchX: Int = 0
     protected open var mTouchY: Int = 0
@@ -182,7 +187,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     // 释放页面
     fun releasePage(x: Int, y: Int) {
         when (mStatus) {
-            Status.NONE, Status.AutoForward, Status.AutoBackward -> pressPage(x, y)
+            Status.NONE, Status.AutoForward, Status.AutoBackward -> movePage(x, y)
         }
 
         setTouchPoint(x, y)
@@ -270,7 +275,6 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
             setTouchPoint(mScroller.currX, mScroller.currY)
 
             mView.postInvalidate()
-
             // 如果滑动结束
             if (mScroller.isFinished) {
                 // 通知动画完成

@@ -114,7 +114,7 @@ class PageView @JvmOverloads constructor(
         initTextPageView()
 
         // 设置默认动画
-        setPageAnim(PageAnimType.SLIDE)
+        setPageAnim(PageAnimType.SIMULATION)
     }
 
     private fun initTextPageView() {
