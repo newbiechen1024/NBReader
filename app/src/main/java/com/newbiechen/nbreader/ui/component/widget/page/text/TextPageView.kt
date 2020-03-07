@@ -23,6 +23,8 @@ import com.newbiechen.nbreader.ui.component.widget.page.anim.TextPageAnimation
  *  description :页面文本内容 View
  */
 
+typealias TextActionListener = (action: PageAction) -> Unit
+
 class TextPageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -34,24 +36,22 @@ class TextPageView @JvmOverloads constructor(
     }
 
     // 页面管理器
-    private val mTextPageManager = TextPageManager(PageTextCallback())
+    private val mTextPageManager = TextPageManager(TextPageCallback())
 
     // 文本处理器
     private val mTextProcessor: TextProcessor = TextProcessor(context).also {
         it.setPageInvalidateListener(this::onPageInvalidate)
     }
 
-    // TODO:页面行为处理器，(传入 textView 有歧义，等之后处理 Page 的点击事件再详细考虑怎么写)
-    private var mPageActionProcessor = TextActionProcessor(this)
-        .also {
-            it.setPageActionListener(this::onPageAction)
-        }
+    // 文本手势探测器
+    private var mTextGestureDetector = TextGestureDetector(context, TextGestureCallback())
 
     private var mPageActionListener: TextActionListener? = null
 
-    // 默认使用滑动动画
+    // View 使用的翻页动画，默认使用滑动动画
     private var mPageAnimation: TextPageAnimation = ScrollPageAnimation(this, mTextPageManager)
 
+    // 当前翻页类型
     private var mPageAnimType: TextAnimType = TextAnimType.SCROLL
 
     private var isPrepareSize = false
@@ -186,6 +186,20 @@ class TextPageView @JvmOverloads constructor(
         postInvalidate()
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+        mPageAnimation.setViewPort(w, h)
+
+        isPrepareSize = true
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        // 将点击事件全部交给 pageAction 进行处理
+        mTextGestureDetector.onTouchEvent(event!!)
+        return true
+    }
+
     /**
      * 接收事件分发的处理
      */
@@ -264,20 +278,6 @@ class TextPageView @JvmOverloads constructor(
         return false
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-
-        mPageAnimation!!.setViewPort(w, h)
-
-        isPrepareSize = true
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        // 将点击事件全部交给 pageAction 进行处理
-        mPageActionProcessor.onTouchEvent(event!!)
-        return true
-    }
-
     override fun onDraw(canvas: Canvas?) {
         mPageAnimation.draw(canvas!!)
     }
@@ -293,7 +293,8 @@ class TextPageView @JvmOverloads constructor(
         mPageAnimation.computeScroll()
     }
 
-    private inner class PageTextCallback :
+    // 页面改变回调
+    private inner class TextPageCallback :
         TextPageManager.OnPageListener {
         override fun onPageSizeChanged(width: Int, height: Int) {
             mTextProcessor.setViewPort(width, height)
@@ -341,6 +342,58 @@ class TextPageView @JvmOverloads constructor(
                     mTextProcessor.preparePage(PageType.NEXT)
                 }
             }*/
+        }
+    }
+
+    // 事件点击回调
+    private inner class TextGestureCallback : TextGestureDetector.OnTextGestureListener {
+        // TODO:需要创建一个 RecyclerBin 解决 MotionAction 被频繁创建的问题？(之后优化)，应该用 MotionAction.obtain() 获取缓存 MotionAction
+        override fun onPress(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.PRESS, event)
+            )
+        }
+
+        override fun onMove(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.MOVE, event)
+            )
+        }
+
+        override fun onRelease(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.RELEASE, event)
+            )
+        }
+
+        override fun onLongPress(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.LONG_PRESS, event)
+            )
+        }
+
+        override fun onMoveAfterLongPress(event: MotionEvent) {
+        }
+
+        override fun onReleaseAfterLongPress(event: MotionEvent) {
+        }
+
+        override fun onSingleTap(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.SINGLE_TAP, event)
+            )
+        }
+
+        override fun onDoubleTap(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.DOUBLE_TAP, event)
+            )
+        }
+
+        override fun onCancelTap(event: MotionEvent) {
+            onPageAction(
+                MotionAction(MotionType.CANCEL, event)
+            )
         }
     }
 }
