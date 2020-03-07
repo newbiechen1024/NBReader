@@ -73,7 +73,6 @@ class TextPageView @JvmOverloads constructor(
             }
             TextAnimType.SCROLL -> {
                 ScrollPageAnimation(this, mTextPageManager)
-
             }
         }
 
@@ -83,6 +82,8 @@ class TextPageView @JvmOverloads constructor(
                 mTextPageManager.pageHeight
             )
         }
+
+        mPageAnimType = type
 
         // 请求刷新
         postInvalidate()

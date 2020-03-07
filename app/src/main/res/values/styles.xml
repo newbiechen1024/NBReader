@@ -30,7 +30,7 @@
     <style name="NBTextAppearance"></style>
     
     <style name="NBTextAppearance.ReadMenu">
-        <item name="android:textColor">@color/text_read_menu</item>
+        <item name="android:textColor">@color/read_menu_text</item>
         <item name="android:textSize">12sp</item>
         <item name="android:gravity">center</item>
     </style>

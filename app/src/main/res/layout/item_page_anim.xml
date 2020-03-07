@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        
+        <variable
+            name="type"
+            type="String" />
+        <variable
+            name="isSelected"
+            type="Boolean" />
+    </data>
+    
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="@dimen/height_read_setting_button"
+            android:background="@drawable/selector_btn_read_setting"
+            android:gravity="center"
+            android:text="@{type}"
+            android:textSize="@dimen/text_size_more_small"
+            android:textColor="@color/read_menu_text"
+            app:selected="@{isSelected}"
+            tools:text="翻页动画" />
+    </FrameLayout>
+</layout>

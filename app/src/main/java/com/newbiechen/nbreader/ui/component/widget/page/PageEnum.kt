@@ -10,7 +10,7 @@ package com.newbiechen.nbreader.ui.component.widget.page
  * 翻页动画类型
  */
 enum class PageAnimType {
-    SIMULATION, COVER, SLIDE, NONE, SCROLL
+    SIMULATION, SCROLL, COVER, SLIDE, NONE
 }
 
 enum class TextAnimType {

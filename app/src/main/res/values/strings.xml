@@ -70,4 +70,10 @@
     <!--read activity-->
     <string name="read_chapter_title">章节 %1$s</string>
     <string name="read_page_tip">%1$d/%2$d</string>
+    
+    <string name="none_page_anim">无</string>
+    <string name="simulation_page_anim">仿真</string>
+    <string name="scroll_page_anim">滚动</string>
+    <string name="cover_page_anim">覆盖</string>
+    <string name="slide_page_anim">滑动</string>
 </resources>

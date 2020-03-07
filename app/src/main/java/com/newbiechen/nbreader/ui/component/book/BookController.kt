@@ -6,10 +6,7 @@ import android.os.HandlerThread
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.widget.page.DefaultActionCallback
-import com.newbiechen.nbreader.ui.component.widget.page.OnPageListener
-import com.newbiechen.nbreader.ui.component.widget.page.PageController
-import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.ui.component.widget.page.*
 import com.newbiechen.nbreader.uilts.FileUtil
 import com.newbiechen.nbreader.uilts.Void
 import io.reactivex.Single

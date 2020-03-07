@@ -14,11 +14,20 @@ import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter
  *  description :
  */
 
-class SpaceDecoration(private val horizonSpace: Int? = null, private val verticalSpace: Int? = null) :
+class SpaceDecoration(
+    private val horizonSpace: Int? = null,
+    private val verticalSpace: Int? = null,
+    private val isBetween: Boolean = false
+) :
     RecyclerView.ItemDecoration() {
 
     // 设置第一行的顶部间距
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
         val layoutManager = parent.layoutManager!!
 
         var headLastPosition = 0
@@ -54,7 +63,8 @@ class SpaceDecoration(private val horizonSpace: Int? = null, private val vertica
                     // 计算这个child 处于第几列
                     val column = (position - headLastPosition) % layoutManager.spanCount
                     outRect.left = (column * horizonSpace / layoutManager.spanCount)
-                    outRect.right = horizonSpace - (column + 1) * horizonSpace / layoutManager.spanCount
+                    outRect.right =
+                        horizonSpace - (column + 1) * horizonSpace / layoutManager.spanCount
                 }
             }
         } else if (layoutManager is LinearLayoutManager) {
@@ -66,10 +76,18 @@ class SpaceDecoration(private val horizonSpace: Int? = null, private val vertica
 
                 // 不处理 HORIZONTAL 情况下的 LRecyclerView
 
-                if (parent.getChildAdapterPosition(view) == 0) {
+                if (parent.getChildAdapterPosition(view) == 0 && !isBetween) {
                     outRect.left = horizonSpace
                 }
+
                 outRect.right = horizonSpace
+
+                if (parent.getChildAdapterPosition(view) == (parent.adapter!!.itemCount - 1) && isBetween) {
+                    outRect.right = 0
+                }
+
+                parent.adapter!!.itemCount
+
             } else {
                 // 如果没有纵向值，则不处理
                 if (verticalSpace == null) {

@@ -53,6 +53,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
 
     // 当前选中的 tag 记录
     private var mLastSelectedTagMap: Map<String, List<Int>>? = null
+
     // 当前选中的 sort 记录
     private var mSelectedSort: Int = 0
 
@@ -159,7 +160,7 @@ class BookListActivity : BaseBindingActivity<ActivityBookListBinding>() {
                     }
                 }
             }
-            addItemDecoration(SpaceDecoration(itemSpace, itemSpace))
+            addItemDecoration(SpaceDecoration(itemSpace, itemSpace, false))
             // 禁止刷新
             setPullRefreshEnabled(false)
             // 加载更多监听

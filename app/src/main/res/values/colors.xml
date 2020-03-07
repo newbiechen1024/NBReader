@@ -42,12 +42,14 @@
     <color name="bg_accent_disable">#59E79F42</color>
     
     <!--read-->
-    <color name="bg_read_menu">#191919</color>
-    <color name="text_read_menu">#CBCBCB</color>
+    <color name="bg_read_menu">#e8101010</color>
+    <color name="read_menu_text">#CBCBCB</color>
     
     <color name="seek_bar_stroke">#1e000000</color>
     
-    <!--read-->
+    <color name="read_catalog_divider">#263d3a3a</color>
+    <color name="read_menu_text_unable">#ff4d4d4d</color>
+    
     <color name="read_background_1">#FFCEC29C</color>
     <color name="read_background_2">#FFCCEBCC</color>
     
@@ -62,7 +64,4 @@
     <!--button-->
     <color name="bg_button_normal">@color/colorWhite</color>
     <color name="bg_button_press">#E3E3E3</color>
-    
-    <!--read activity-->
-    <color name="read_catalog_divider">#263d3a3a</color>
 </resources>

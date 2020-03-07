@@ -11,20 +11,24 @@ import android.widget.TextView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.newbiechen.nbreader.R
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.databinding.ActivityReadBinding
+import com.newbiechen.nbreader.ui.component.adapter.PageAnimAdapter
 import com.newbiechen.nbreader.ui.component.adapter.ReadCatalogAdapter
 import com.newbiechen.nbreader.ui.component.book.BookController
 import com.newbiechen.nbreader.ui.component.book.OnLoadListener
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.decoration.DividerDecoration
+import com.newbiechen.nbreader.ui.component.decoration.SpaceDecoration
 import com.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.newbiechen.nbreader.ui.component.widget.page.DefaultActionCallback
 import com.newbiechen.nbreader.ui.component.widget.page.OnPageListener
+import com.newbiechen.nbreader.ui.component.widget.page.PageAnimType
 import com.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
 import com.newbiechen.nbreader.uilts.SystemBarUtil
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
@@ -88,6 +92,8 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             initPageView()
 
             initSlideView()
+
+            initMenu()
         }
     }
 
@@ -188,6 +194,32 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                     toggleMenu()
                 }
             })
+        }
+    }
+
+    /**
+     * 初始化菜单
+     */
+    private fun initMenu() {
+        // 初始化翻页动画
+        mDataBinding.rvReadAnim.apply {
+            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            adapter = PageAnimAdapter().also {
+                // 添加数据
+                it.refreshItems(PageAnimType.values().toList())
+
+                // 设置点击事件监听
+                it.setOnItemClickListener { pos, value ->
+                    mDataBinding.pvBook.setPageAnim(value)
+                }
+            }
+
+            addItemDecoration(
+                SpaceDecoration(
+                    horizonSpace = context.resources.getDimension(R.dimen.space_read_setting_page_anim)
+                        .toInt(), isBetween = true
+                )
+            )
         }
     }
 
