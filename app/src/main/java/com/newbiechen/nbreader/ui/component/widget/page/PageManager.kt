@@ -119,17 +119,26 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback,
      * 对 page 进行翻页操作
      * @param isNext:是否翻到下一页
      */
-    override fun turnPage(isNext: Boolean) {
+    override fun turnPage(pageType: PageType) {
+        // 如果对自身翻页不处理
+        if (pageType == PageType.CURRENT) {
+            return
+        }
+
         for (i in 0 until BITMAP_SIZE) {
             if (mBitmapTypes[i] == null) {
                 continue
             }
-            mBitmapTypes[i] =
-                if (isNext) mBitmapTypes[i]!!.getPrevious() else mBitmapTypes[i]!!.getNext()
+
+            mBitmapTypes[i] = when (pageType) {
+                PageType.PREVIOUS -> mBitmapTypes[i]!!.getNext()
+                PageType.NEXT -> mBitmapTypes[i]!!.getPrevious()
+                PageType.CURRENT -> mBitmapTypes[i]
+            }
         }
 
         // 通知回调
-        pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
+        pageListener.onTurnPage(pageType)
     }
 
     /**

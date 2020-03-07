@@ -290,8 +290,8 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         // 如果是恢复原样，则不交换页面
         if (mStatus == Status.AutoForward) {
             when (mDirection) {
-                Direction.PREVIOUS -> mPageManager.turnPage(false)
-                Direction.NEXT -> mPageManager.turnPage(true)
+                Direction.PREVIOUS -> mPageManager.turnPage(PageType.PREVIOUS)
+                Direction.NEXT -> mPageManager.turnPage(PageType.NEXT)
             }
         }
 
