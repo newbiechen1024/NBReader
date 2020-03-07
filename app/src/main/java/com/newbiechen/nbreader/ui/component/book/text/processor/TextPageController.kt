@@ -20,6 +20,9 @@ import kotlin.math.min
 // 查找页面的结尾光标
 typealias FindPageEndCursorListener = (width: Int, height: Int, startCursor: TextWordCursor) -> TextWordCursor
 
+
+typealias TextPageListener = (position: PagePosition, progress: PageProgress) -> Unit
+
 class TextPageController(
     private val textModel: TextModel,
     private val pageEndCursorListener: FindPageEndCursorListener
@@ -504,7 +507,10 @@ class TextPageController(
         }
 
         // 通知翻页操作
-        mTextPageListener?.onPageChanged(mCurPageWrapper!!.pageIndex, getCurrentPageCount(), 0f)
+        mTextPageListener?.invoke(
+            getPagePosition(PageType.CURRENT)!!,
+            getPageProgress(PageType.CURRENT)!!
+        )
     }
 
     private fun turnChapter(type: PageType) {
@@ -519,9 +525,6 @@ class TextPageController(
                 if (hasPrevChapter()) {
                     // 走一个 load 逻辑
                 }
-
-                // 通知章节改变
-                mTextPageListener?.onChapterChanged(mCurChapterWrapper!!.chapterIndex)
             }
             PageType.NEXT -> {
                 mPrevChapterWrapper = mCurChapterWrapper
@@ -532,8 +535,6 @@ class TextPageController(
                 if (hasNextChapter()) {
 
                 }
-
-                mTextPageListener?.onChapterChanged(mCurChapterWrapper!!.chapterIndex)
             }
         }
     }
@@ -582,22 +583,6 @@ class TextPageController(
         val pageIndex: Int,
         val textPage: TextPage
     )
-}
-
-interface TextPageListener {
-    /**
-     * 页面改变通知
-     * @param pageIndex:页面索引
-     * @param pageCount:页面总数
-     * @param progress:当前页面相对总进度
-     *
-     */
-    fun onPageChanged(pageIndex: Int, pageCount: Int, progress: Float)
-
-    /**
-     * 章节改变
-     */
-    fun onChapterChanged(chapterIndex: Int)
 }
 
 /**

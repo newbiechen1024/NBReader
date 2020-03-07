@@ -23,10 +23,12 @@ import com.newbiechen.nbreader.ui.component.decoration.DividerDecoration
 import com.newbiechen.nbreader.ui.component.extension.closeDrawer
 import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
 import com.newbiechen.nbreader.ui.component.extension.openDrawer
+import com.newbiechen.nbreader.ui.component.widget.page.DefaultActionCallback
+import com.newbiechen.nbreader.ui.component.widget.page.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.action.TapMenuAction
-import com.newbiechen.nbreader.ui.component.widget.page.action.TurnPageAction
 import com.newbiechen.nbreader.uilts.SystemBarUtil
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
+import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
@@ -159,22 +161,33 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             // 设置顶部和底部
             setHeaderView(pageHeaderView)
             setFooterView(pageFooterView)
-            // 设置行为监听
-            setActionListener(this@ReadActivity::onPageAction)
-
-            // 页面准备监听
-            setOnPreparePageListener { pagePosition, pageProgress ->
-                // TODO:异步加载书籍，会导致异步获取到了章节，但是还没有发送给 catalogAdapter 就回调了。
-                if (mCatalogAdapter.getItem(pagePosition.chapterIndex) == null) {
-                    return@setOnPreparePageListener
-                }
-
-                // TODO:使用 DataBinding 会导致数据更新不及时的问题，所以 headerView 和 footerView 禁止使用
-                onPagePositionChange(pagePosition, pageProgress)
-            }
 
             // 将页面控制器，封装为书籍控制器
             mBookController = BookController(getPageController())
+
+            // 设置页面监听
+            mBookController.setPageListener(object : OnPageListener {
+                override fun onPreparePage(pagePosition: PagePosition, pageProgress: PageProgress) {
+                    // TODO:异步加载书籍，会导致异步获取到了章节，但是还没有发送给 catalogAdapter 就回调了。
+                    if (mCatalogAdapter.getItem(pagePosition.chapterIndex) == null) {
+                        return
+                    }
+
+                    // TODO:使用 DataBinding 会导致数据更新不及时的问题，所以 headerView 和 footerView 禁止使用
+                    onPagePositionChange(pagePosition, pageProgress)
+                }
+
+                override fun onPageChange(pagePosition: PagePosition, pageProgress: PageProgress) {
+                    onPagePositionChange(pagePosition, pageProgress)
+                }
+            })
+
+            // 设置页面事件监听
+            mBookController.setPageActionListener(object : DefaultActionCallback() {
+                override fun onTapMenuAction(action: TapMenuAction) {
+                    toggleMenu()
+                }
+            })
         }
     }
 
@@ -309,18 +322,6 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
                         else -> toggleMenu()
                     }
                 }
-            }
-        }
-    }
-
-    private fun onPageAction(action: Any) {
-        when (action) {
-            is TapMenuAction -> {
-                toggleMenu()
-            }
-            is TurnPageAction -> {
-                // TODO:翻页回调，暂时先这么写(感觉外部继承回调更好，之后优化)
-                onPagePositionChange(action.pagePosition, action.pageProgress)
             }
         }
     }

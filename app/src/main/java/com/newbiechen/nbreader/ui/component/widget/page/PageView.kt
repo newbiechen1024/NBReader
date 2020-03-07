@@ -12,9 +12,10 @@ import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.widget.page.PageManager.OnPageListener
+import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.*
+import com.newbiechen.nbreader.ui.component.widget.page.text.PageActionListener
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageView
 import com.newbiechen.nbreader.uilts.LogHelper
 import java.io.InputStream
@@ -27,8 +28,6 @@ import kotlin.math.abs
  *  description : 页面容器类
  */
 
-typealias OnPreparePageListener = (pagePosition: PagePosition, pageProgress: PageProgress) -> Unit
-
 class PageView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -38,7 +37,7 @@ class PageView @JvmOverloads constructor(
         private const val MAX_CHILD_VIEW = 3
     }
 
-    private val mPageListener = object : OnPageListener {
+    private val mPageManagerListener = object : PageManager.OnPageListener {
         override fun hasPage(type: PageType): Boolean {
             return mPtvContent.hasPage(type)
         }
@@ -53,7 +52,7 @@ class PageView @JvmOverloads constructor(
     }
 
     // 页面管理器
-    private var mPageManager: PageManager = PageManager(mPageListener)
+    private var mPageManager: PageManager = PageManager(mPageManagerListener)
 
     // 页面控制器
     private lateinit var mPageController: PageController
@@ -71,9 +70,9 @@ class PageView @JvmOverloads constructor(
     private var mTextPageAnim: TextPageAnimation? = null
 
     // 页面行为事件监听器
-    private var mPageActionListener: TextActionListener? = null
+    private var mPageActionListener: PageActionListener? = null
 
-    private var mPreparePageListener: OnPreparePageListener? = null
+    private var mPageListener: OnPageListener? = null
 
     // 唤起菜单区域(默认选中区域)
     private var mMenuRatioRect: RectF = RectF(0.2f, 0.3f, 0.8f, 0.7f)
@@ -122,6 +121,12 @@ class PageView @JvmOverloads constructor(
     private fun initTextPageView() {
         mPtvContent = TextPageView(context)
 
+        // 设置页面监听
+        mPtvContent.setPageListener { position, progress ->
+            mPageListener?.onPageChange(position, progress)
+        }
+
+        // 设置点击事件监听
         mPtvContent.setPageActionListener(this::onPageAction)
 
         val contentParams =
@@ -129,9 +134,8 @@ class PageView @JvmOverloads constructor(
 
         // 将页面内容展示添加到容器中
         mFlContent.addView(mPtvContent, contentParams)
-
         // 初始化控制器
-        mPageController = PageController(this, mPtvContent.getTextProcessor())
+        mPageController = PageController(context, TextControllerImpl())
         // 获取配置信息
         mTextConfig = mPtvContent.getTextConfig()
     }
@@ -170,13 +174,6 @@ class PageView @JvmOverloads constructor(
         }
 
         mFlFooter.visibility = View.VISIBLE
-    }
-
-    /**
-     * 设置事件监听
-     */
-    fun setActionListener(pageActionListener: TextActionListener) {
-        mPageActionListener = pageActionListener
     }
 
     /**
@@ -234,71 +231,10 @@ class PageView @JvmOverloads constructor(
         }
     }
 
-    fun setOnPreparePageListener(preparePageListener: OnPreparePageListener) {
-        mPreparePageListener = preparePageListener
-    }
-
     /**
      * 获取页面控制器
      */
     fun getPageController() = mPageController
-
-    /**
-     * 进行翻页操作
-     */
-    internal fun skipPage(type: PageType) {
-        // 通过模拟点击进行翻页操作
-        when (type) {
-            PageType.PREVIOUS -> {
-                mCurDrawType = null
-                startPageAnim(0, height / 2)
-            }
-            PageType.NEXT -> {
-                mCurDrawType = null
-                startPageAnim(width, height / 2)
-            }
-            else -> {
-            }
-        }
-    }
-
-    internal fun skipChapter(type: PageType) {
-        mCurDrawType = null
-        mPtvContent.skipChapter(type)
-        postInvalidate()
-    }
-
-    /**
-     * 跳转章节操作
-     * @param index:章节索引
-     */
-    internal fun skipChapter(index: Int) {
-        mCurDrawType = null
-        // 如果索引存在
-        mPtvContent.skipChapter(index)
-        postInvalidate()
-    }
-
-    /**
-     * 跳转页面操作
-     */
-    internal fun skipPage(chapterIndex: Int = mPtvContent.getCurChapterIndex(), pageIndex: Int) {
-        mCurDrawType = null
-
-        mPtvContent.skipPage(chapterIndex, pageIndex)
-        postInvalidate()
-    }
-
-    /**
-     * 进行跳转页面操作
-     */
-    internal fun skipPage(position: TextFixedPosition) {
-        mCurDrawType = null
-
-        // 调用页面内容 View 进行页面跳转
-        mPtvContent.skipPage(position)
-        postInvalidate()
-    }
 
     /**
      * 监听 PageTextView 返回的点击事件
@@ -474,7 +410,7 @@ class PageView @JvmOverloads constructor(
             val pageProgress = mPtvContent.getPageProgress(type)
 
             if (pagePosition != null && pageProgress != null) {
-                mPreparePageListener?.invoke(pagePosition, pageProgress)
+                mPageListener?.onPreparePage(pagePosition, pageProgress)
             }
 
             mCurDrawType = type
@@ -525,6 +461,119 @@ class PageView @JvmOverloads constructor(
         if (mWallpaperBitmap != null) {
             // 直接绘制图片
             canvas.drawBitmap(mWallpaperBitmap!!, null, mBackgroundRect, null)
+        }
+    }
+
+
+    /**
+     * 进行翻页操作
+     */
+    private fun skipPage(type: PageType) {
+        // 通过模拟点击进行翻页操作
+        when (type) {
+            PageType.PREVIOUS -> {
+                mCurDrawType = null
+                startPageAnim(0, height / 2)
+            }
+            PageType.NEXT -> {
+                mCurDrawType = null
+                startPageAnim(width, height / 2)
+            }
+            else -> {
+            }
+        }
+    }
+
+    private fun skipChapter(type: PageType) {
+        mCurDrawType = null
+        mPtvContent.skipChapter(type)
+        postInvalidate()
+    }
+
+    /**
+     * 跳转章节操作
+     * @param index:章节索引
+     */
+    private fun skipChapter(index: Int) {
+        mCurDrawType = null
+        // 如果索引存在
+        mPtvContent.skipChapter(index)
+        postInvalidate()
+    }
+
+    /**
+     * 跳转页面操作
+     */
+    private fun skipPage(chapterIndex: Int = mPtvContent.getCurChapterIndex(), pageIndex: Int) {
+        mCurDrawType = null
+
+        mPtvContent.skipPage(chapterIndex, pageIndex)
+        postInvalidate()
+    }
+
+    /**
+     * 进行跳转页面操作
+     */
+    private fun skipPage(position: TextFixedPosition) {
+        mCurDrawType = null
+
+        // 调用页面内容 View 进行页面跳转
+        mPtvContent.skipPage(position)
+        postInvalidate()
+    }
+
+    private inner class TextControllerImpl : TextController {
+
+        override fun initController(textModel: TextModel) {
+            mPtvContent.setTextModel(textModel)
+        }
+
+        override fun setPageListener(onPageListener: OnPageListener) {
+            mPageListener = onPageListener
+        }
+
+        override fun setPageActionListener(pageActionListener: PageActionListener) {
+            mPageActionListener = pageActionListener
+        }
+
+        override fun skipPage(type: PageType) {
+            this@PageView.skipPage(type)
+        }
+
+        override fun skipPage(position: TextFixedPosition) {
+            this@PageView.skipPage(position)
+        }
+
+        override fun skipChapter(type: PageType) {
+            this@PageView.skipChapter(type)
+        }
+
+        override fun skipChapter(index: Int) {
+            this@PageView.skipChapter(index)
+        }
+
+        override fun hasPage(type: PageType): Boolean {
+            return mPtvContent.hasPage(type)
+        }
+
+        override fun hasChapter(type: PageType): Boolean {
+            return mPtvContent.hasChapter(type)
+        }
+
+        override fun hasChapter(index: Int): Boolean {
+            return mPtvContent.hasChapter(index)
+        }
+
+        override fun getPagePosition(pageType: PageType): PagePosition? {
+            return mPtvContent.getPagePosition(pageType)
+        }
+
+        override fun getPageProgress(type: PageType): PageProgress? {
+            return mPtvContent.getPageProgress(type)
+        }
+
+        override fun getPageCount(pageType: PageType): Int {
+            return mPtvContent.getPageCount(pageType)
         }
     }
 }

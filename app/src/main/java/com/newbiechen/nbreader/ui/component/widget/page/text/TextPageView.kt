@@ -7,9 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
+import com.newbiechen.nbreader.ui.component.book.text.processor.*
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.ui.component.widget.page.TextAnimType
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
@@ -23,7 +21,7 @@ import com.newbiechen.nbreader.ui.component.widget.page.anim.TextPageAnimation
  *  description :页面文本内容 View
  */
 
-typealias TextActionListener = (action: PageAction) -> Unit
+typealias PageActionListener = (action: PageAction) -> Unit
 
 class TextPageView @JvmOverloads constructor(
     context: Context,
@@ -39,14 +37,12 @@ class TextPageView @JvmOverloads constructor(
     private val mTextPageManager = TextPageManager(TextPageCallback())
 
     // 文本处理器
-    private val mTextProcessor: TextProcessor = TextProcessor(context).also {
-        it.setPageInvalidateListener(this::onPageInvalidate)
-    }
+    private val mTextProcessor: TextProcessor = TextProcessor(context)
 
     // 文本手势探测器
     private var mTextGestureDetector = TextGestureDetector(context, TextGestureCallback())
 
-    private var mPageActionListener: TextActionListener? = null
+    private var mPageActionListener: PageActionListener? = null
 
     // View 使用的翻页动画，默认使用滑动动画
     private var mPageAnimation: TextPageAnimation = ScrollPageAnimation(this, mTextPageManager)
@@ -55,6 +51,16 @@ class TextPageView @JvmOverloads constructor(
     private var mPageAnimType: TextAnimType = TextAnimType.SCROLL
 
     private var isPrepareSize = false
+
+    /**
+     * 初始化
+     */
+    fun setTextModel(textModel: TextModel) {
+        // 初始化
+        mTextProcessor.initProcessor(textModel)
+        // 刷新
+        onPageInvalidate()
+    }
 
     fun setPageAnim(type: TextAnimType): TextPageAnimation {
         if (mPageAnimType == type) {
@@ -84,10 +90,15 @@ class TextPageView @JvmOverloads constructor(
         return mPageAnimation
     }
 
+    fun setPageListener(pageListener: TextPageListener) {
+        // 设置页面监听
+        mTextProcessor.setPageListener(pageListener)
+    }
+
     /**
      * 设置行为监听器
      */
-    fun setPageActionListener(pageActionListener: TextActionListener) {
+    fun setPageActionListener(pageActionListener: PageActionListener) {
         mPageActionListener = pageActionListener
     }
 
@@ -107,7 +118,7 @@ class TextPageView @JvmOverloads constructor(
     }
 
     fun getCurChapterIndex(): Int {
-        return mTextProcessor.getCurChapterIndex()
+        return mTextProcessor.getPagePosition(PageType.CURRENT)?.chapterIndex ?: 0
     }
 
     fun getPagePosition(pageType: PageType): PagePosition? {
@@ -124,10 +135,6 @@ class TextPageView @JvmOverloads constructor(
 
     fun getTextConfig(): TextConfig {
         return mTextProcessor.getTextConfig()
-    }
-
-    fun getTextProcessor(): TextProcessor {
-        return mTextProcessor
     }
 
     fun skipChapter(type: PageType) {
@@ -314,15 +321,6 @@ class TextPageView @JvmOverloads constructor(
                     mTextProcessor.preparePage(type)
                 }
             }*/
-
-            // 发送翻页事件
-            mPageActionListener?.invoke(
-                TurnPageAction(
-                    pageType,
-                    getPagePosition(PageType.CURRENT)!!,
-                    getPageProgress(PageType.CURRENT)!!
-                )
-            )
         }
 
         override fun hasPage(type: PageType): Boolean {

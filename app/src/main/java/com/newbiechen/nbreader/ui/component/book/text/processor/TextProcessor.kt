@@ -50,9 +50,6 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         mTextModel = model
 
         initTextPageController(viewWidth, viewHeight)
-
-        // 通知页面无效
-        pageInvalidate()
     }
 
     private fun initTextPageController(width: Int, height: Int) {
@@ -128,6 +125,18 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         return curChapterCursor?.hasChapter(type) ?: false
     }
 
+    fun getPageCount(type: PageType): Int {
+        return mTextPageController?.getPageCount(type) ?: 0
+    }
+
+    fun getPagePosition(type: PageType): PagePosition? {
+        return mTextPageController?.getPagePosition(type)
+    }
+
+    fun getPageProgress(type: PageType): PageProgress? {
+        return mTextPageController?.getPageProgress(type)
+    }
+
     /**
      * 跳转页面
      */
@@ -173,46 +182,6 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         } else {
             mTextPageController?.getCurrentPage()?.startWordCursor
         }
-    }
-
-    fun getCurPageIndex(): Int {
-        val pageIndex = mTextPageController?.getCurrentPageIndex()
-
-        // TODO：如果失败，暂时全部抛出异常
-        check(pageIndex != null) {
-            "page not exist"
-        }
-
-        return pageIndex!!
-    }
-
-    fun getPageCount(type: PageType): Int {
-        return mTextPageController?.getPageCount(type) ?: 0
-    }
-
-    fun getPagePosition(type: PageType): PagePosition? {
-        return mTextPageController?.getPagePosition(type) ?: null
-    }
-
-    fun getPageProgress(type: PageType): PageProgress? {
-        return mTextPageController?.getPageProgress(type) ?: null
-    }
-
-    fun getCurChapterIndex(): Int {
-        val cursor = getCurPageStartCursor()
-        // TODO：如果失败，暂时全部抛出异常
-        check(cursor != null) {
-            "chapter not exist"
-        }
-
-        return cursor.getChapterIndex()
-    }
-
-    /**
-     * 获取当前页面数
-     */
-    fun getCurPageCount(): Int {
-        return mTextPageController?.getCurrentPageCount() ?: 0
     }
 
     /**

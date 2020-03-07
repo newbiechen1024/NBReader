@@ -19,9 +19,6 @@ import com.newbiechen.nbreader.ui.component.widget.page.PageType
  *  description :文本处理器基础方法封装
  */
 
-// 文本页面无效通知
-typealias OnPageInvalidateListener = () -> Unit
-
 abstract class BaseTextProcessor(private val context: Context) {
     /**
      * 视口宽高
@@ -36,9 +33,6 @@ abstract class BaseTextProcessor(private val context: Context) {
 
     // 文本画笔
     protected var mPaintContext: TextPaintContext = TextPaintContext()
-
-    // 页面无效通知
-    protected var mPageInvalidateListener: OnPageInvalidateListener? = null
 
     // 使用的文本样式
     private var mTextStyle: TextStyle? = null
@@ -59,19 +53,11 @@ abstract class BaseTextProcessor(private val context: Context) {
         onSizeChanged(width, height)
     }
 
-    fun setPageInvalidateListener(listener: OnPageInvalidateListener) {
-        mPageInvalidateListener = listener
-    }
-
     /**
      *  绘制传入的页面
      */
     fun draw(canvas: Canvas, pageType: PageType) {
         drawInternal(TextCanvas(mPaintContext, canvas), pageType)
-    }
-
-    protected fun pageInvalidate() {
-        mPageInvalidateListener?.invoke()
     }
 
     /**

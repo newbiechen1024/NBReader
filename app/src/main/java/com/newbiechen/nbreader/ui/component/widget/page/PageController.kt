@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.widget.page
 
+import android.content.Context
 import com.newbiechen.nbreader.ui.component.book.plugin.BookGroup
 import com.newbiechen.nbreader.ui.component.book.plugin.BookPluginFactory
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
@@ -7,24 +8,21 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.book.type.BookType
 import com.newbiechen.nbreader.uilts.LogHelper
-import java.io.File
 
 /**
  *  author : newbiechen
  *  date : 2019-11-03 20:55
  *  description :页面控制器
- *  @param pageDisplayController：页面显示控制器
- *  @param pageContentController：页面内容控制器
  */
 
 class PageController(
-    private val pageDisplayController: PageView,
-    private val pageContentController: TextProcessor
+    context: Context,
+    textController: TextController
 ) {
-    private var mContext = pageDisplayController.context
+    private var mContext = context
+    private var mTextController = textController
     private var mBookPluginFactory = BookPluginFactory.getInstance(mContext)
 
     // 参数
@@ -69,8 +67,12 @@ class PageController(
     /**
      * 设置页面回调
      */
-    fun setPageListener() {
-        // TODO：回调监听还没想好
+    fun setPageListener(pageListener: OnPageListener) {
+        mTextController.setPageListener(pageListener)
+    }
+
+    fun setPageActionListener(actionCallback: DefaultActionCallback) {
+        mTextController.setPageActionListener(actionCallback)
     }
 
     /**
@@ -96,7 +98,7 @@ class PageController(
 
         // 初始化页面内容控制器
         // TODO：需要传入的是 ChapterModel
-        pageContentController.initProcessor(textModel)
+        mTextController.initController(textModel)
         // TODO：如果 FormatPlugin 先改变，会导致 拿到的数据错误的问题，该怎么解决。
         // TODO：保证每次用的都是新创建的 TextModel，并且异步加载的时候，使用到 TextModel 的地方都需要做同步出离。
     }
@@ -121,21 +123,21 @@ class PageController(
      * 跳转页面
      */
     fun skipPage(type: PageType) {
-        pageDisplayController.skipPage(type)
+        mTextController.skipPage(type)
     }
 
     /**
      * 跳转章节
      */
     fun skipChapter(type: PageType) {
-        pageDisplayController.skipChapter(type)
+        mTextController.skipChapter(type)
     }
 
     /**
      * 跳转章节
      */
     fun skipChapter(index: Int) {
-        pageDisplayController.skipChapter(index)
+        mTextController.skipChapter(index)
     }
 
     /**********************************************返回信息方法**********************************************/
@@ -145,51 +147,6 @@ class PageController(
      */
     fun isOpen(): Boolean {
         return mFormatPlugin != null
-    }
-
-    /**
-     * 获取书籍章节列表
-     */
-    fun getChapters(): Array<TextChapter> {
-        // 检测是否书籍已经打开
-        check(mFormatPlugin != null) {
-            "please invoke open() before getChapters()"
-        }
-
-        // TODO:未处理章节不存在的情况
-        return mFormatPlugin!!.getChapters()!!
-    }
-
-    /**
-     * 获取当前章节，获取当前章节索引
-     */
-    fun getCurChapterIndex(): Int {
-        return pageContentController.getCurChapterIndex()
-    }
-
-    /**
-     * 获取当前页面索引
-     */
-    fun getCurPageIndex(): Int {
-        return pageContentController.getCurPageIndex()
-    }
-
-    /**
-     * 获取当前页面数量
-     */
-    fun getCurPageCount(): Int {
-        return pageContentController.getCurPageCount()
-    }
-
-    /**
-     * 获取当前的定位
-     */
-    fun getCurPosition(): PagePosition? {
-        return pageContentController.getPagePosition(PageType.CURRENT)
-    }
-
-    fun getCurProgress(): PageProgress? {
-        return pageContentController.getPageProgress(PageType.CURRENT)
     }
 
     /**
@@ -207,17 +164,41 @@ class PageController(
     }
 
     /**
+     * 获取书籍章节列表
+     */
+    fun getChapters(): Array<TextChapter> {
+        // 检测是否书籍已经打开
+        check(mFormatPlugin != null) {
+            "please invoke open() before getChapters()"
+        }
+
+        // TODO:未处理章节不存在的情况
+        return mFormatPlugin!!.getChapters()!!
+    }
+
+    /**
+     * 获取当前的定位
+     */
+    fun getCurPosition(): PagePosition? {
+        return mTextController.getPagePosition(PageType.CURRENT)
+    }
+
+    fun getCurProgress(): PageProgress? {
+        return mTextController.getPageProgress(PageType.CURRENT)
+    }
+
+    /**
      * 是否页面存在
      */
     fun hasPage(type: PageType): Boolean {
         // 从内容控制器中判断，是否存在页面
-        return pageContentController.hasPage(type)
+        return mTextController.hasPage(type)
     }
 
     /**
      * 是否章节存在
      */
     fun hasChapter(type: PageType): Boolean {
-        return pageContentController.hasChapter(type)
+        return mTextController.hasChapter(type)
     }
 }

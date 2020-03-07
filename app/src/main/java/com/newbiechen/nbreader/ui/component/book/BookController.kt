@@ -6,6 +6,8 @@ import android.os.HandlerThread
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
+import com.newbiechen.nbreader.ui.component.widget.page.DefaultActionCallback
+import com.newbiechen.nbreader.ui.component.widget.page.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.PageController
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.FileUtil
@@ -32,6 +34,7 @@ class BookController constructor(
 
     companion object {
         private const val TAG = "BookController"
+
         // 章节匹配
         private const val CHAPTER_PATTERN =
             "^(.{0,8})(\u7b2c)([0-9\u96f6\u4e00\u4e8c\u4e24\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u767e\u5343\u4e07\u58f9\u8d30\u53c1\u8086\u4f0d\u9646\u67d2\u634c\u7396\u62fe\u4f70\u4edf]{1,10})([\u7ae0\u8282\u56de\u96c6\u5377])(.{0,30})$"
@@ -47,6 +50,15 @@ class BookController constructor(
 
     private var mLoadListener: OnLoadListener? = null
 
+
+    fun setPageListener(pageListener: OnPageListener) {
+        pageController?.setPageListener(pageListener)
+    }
+
+    fun setPageActionListener(actionCallback: DefaultActionCallback) {
+        pageController?.setPageActionListener(actionCallback)
+    }
+
     fun setOnLoadListener(loadListener: OnLoadListener) {
         mLoadListener = loadListener
     }
@@ -56,13 +68,13 @@ class BookController constructor(
         mLoadListener?.onLoading()
 
         return Single.create<Void> {
-            try {
-                openBookInternal(context, book)
-            } catch (e: Exception) {
-                it.onError(e)
-            }
-            it.onSuccess(Void())
-        }.subscribeOn(Schedulers.newThread())
+                try {
+                    openBookInternal(context, book)
+                } catch (e: Exception) {
+                    it.onError(e)
+                }
+                it.onSuccess(Void())
+            }.subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { _ ->
