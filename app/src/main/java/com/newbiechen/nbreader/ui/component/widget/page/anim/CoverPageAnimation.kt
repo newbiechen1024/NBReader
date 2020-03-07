@@ -30,8 +30,8 @@ class CoverPageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnima
         mBackShadowDrawableLR.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun setup(w: Int, h: Int) {
-        super.setup(w, h)
+    override fun setViewPort(w: Int, h: Int) {
+        super.setViewPort(w, h)
         mSpaceRect.set(0, 0, w, h)
         mBitmapRect.set(0, 0, w, h)
     }
@@ -72,7 +72,7 @@ class CoverPageAnimation(view: View, pageManager: IPageAnimCallback) : PageAnima
         mBackShadowDrawableLR.draw(canvas)
     }
 
-    override fun startAnimInternal() {
+    override fun startAnim() {
         var dx = 0
         when (mDirection) {
             Direction.PREVIOUS -> dx = if (mStatus == Status.AutoBackward) {

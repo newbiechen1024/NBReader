@@ -3,7 +3,6 @@ package com.newbiechen.nbreader.ui.component.widget.page.text
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
@@ -12,9 +11,11 @@ import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
 import com.newbiechen.nbreader.ui.component.book.text.processor.TextProcessor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.ui.component.widget.page.TextAnimType
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
+import com.newbiechen.nbreader.ui.component.widget.page.anim.ControlPageAnimation
 import com.newbiechen.nbreader.ui.component.widget.page.anim.ScrollPageAnimation
-import com.newbiechen.nbreader.uilts.LogHelper
+import com.newbiechen.nbreader.ui.component.widget.page.anim.TextPageAnimation
 
 /**
  *  author : newbiechen
@@ -30,12 +31,6 @@ class TextPageView @JvmOverloads constructor(
 
     companion object {
         private const val TAG = "TextPageView"
-    }
-
-    // 页面模式
-    enum class PageMode {
-        NONE,
-        SCROLL
     }
 
     // 页面管理器
@@ -54,49 +49,39 @@ class TextPageView @JvmOverloads constructor(
 
     private var mPageActionListener: TextActionListener? = null
 
-    // 滑动动画
-    private var mScrollPageAnimation: ScrollPageAnimation? = null
+    // 默认使用滑动动画
+    private var mPageAnimation: TextPageAnimation = ScrollPageAnimation(this, mTextPageManager)
 
-    // 当前页面类型
-    private var mCurPageType: PageType = PageType.CURRENT
+    private var mPageAnimType: TextAnimType = TextAnimType.SCROLL
 
     private var isPrepareSize = false
 
-    fun setPageMode(mode: PageMode) {
-        // 进行配置
-        when (mode) {
-            PageMode.SCROLL -> {
-                if (mScrollPageAnimation == null) {
-                    mScrollPageAnimation = ScrollPageAnimation(this, mTextPageManager)
-                    if (isPrepareSize) {
-                        mScrollPageAnimation!!.setup(
-                            mTextPageManager.pageWidth,
-                            mTextPageManager.pageHeight
-                        )
-                    }
+    fun setPageAnim(type: TextAnimType): TextPageAnimation {
+        if (mPageAnimType == type) {
+            return mPageAnimation
+        }
 
-                    // 请求刷新
-                    postInvalidate()
-                }
+        mPageAnimation = when (type) {
+            TextAnimType.CONTROL -> {
+                ControlPageAnimation(this, mTextPageManager)
             }
-            else -> {
-                if (mScrollPageAnimation != null) {
-                    // 重置
-                    mScrollPageAnimation = null
-                    mCurPageType = PageType.CURRENT
-                    // 请求刷新
-                    postInvalidate()
-                }
+            TextAnimType.SCROLL -> {
+                ScrollPageAnimation(this, mTextPageManager)
+
             }
         }
-    }
 
-    fun getPageMode(): PageMode {
-        return if (mScrollPageAnimation != null) {
-            PageMode.SCROLL
-        } else {
-            PageMode.NONE
+        if (isPrepareSize) {
+            mPageAnimation.setViewPort(
+                mTextPageManager.pageWidth,
+                mTextPageManager.pageHeight
+            )
         }
+
+        // 请求刷新
+        postInvalidate()
+
+        return mPageAnimation
     }
 
     /**
@@ -104,20 +89,6 @@ class TextPageView @JvmOverloads constructor(
      */
     fun setPageActionListener(pageActionListener: TextActionListener) {
         mPageActionListener = pageActionListener
-    }
-
-    /**
-     * 指定要绘制的页面
-     * 如果 mode 为 scroll 则使用无效
-     * @param: 绘制的页面类型
-     */
-    fun preparePage(type: PageType) {
-        if (mScrollPageAnimation != null) {
-            return
-        }
-
-        mCurPageType = type
-        mTextPageManager.preparePage(mCurPageType)
     }
 
     /**
@@ -206,21 +177,6 @@ class TextPageView @JvmOverloads constructor(
     }
 
     /**
-     * 通知翻页
-     */
-    fun turnPage(pageType: PageType) {
-        if (mScrollPageAnimation != null) {
-            return
-        }
-
-        if (pageType == PageType.NEXT) {
-            mTextPageManager.turnPage(true)
-        } else if (pageType == PageType.PREVIOUS) {
-            mTextPageManager.turnPage(false)
-        }
-    }
-
-    /**
      * 页面无效回调
      */
     private fun onPageInvalidate() {
@@ -298,25 +254,7 @@ class TextPageView @JvmOverloads constructor(
      *
      */
     private fun onPageTouchEvent(action: MotionAction): Boolean {
-        if (mScrollPageAnimation == null) {
-            return false
-        }
-
-        when (action.type) {
-            MotionType.PRESS -> {
-                mScrollPageAnimation!!.pressPage(action.event)
-            }
-            MotionType.MOVE -> {
-                mScrollPageAnimation!!.movePage(action.event)
-            }
-            MotionType.RELEASE -> {
-                mScrollPageAnimation!!.releasePage(action.event)
-            }
-            MotionType.CANCEL -> {
-                mScrollPageAnimation!!.cancelPage()
-            }
-        }
-        return true
+        return mPageAnimation.onTouchEvent(action)
     }
 
     /**
@@ -329,11 +267,7 @@ class TextPageView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        if (mScrollPageAnimation == null) {
-            mTextPageManager.onPageSizeChanged(w, h)
-        } else {
-            mScrollPageAnimation!!.setup(w, h)
-        }
+        mPageAnimation!!.setViewPort(w, h)
 
         isPrepareSize = true
     }
@@ -345,25 +279,18 @@ class TextPageView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas?) {
-        if (mScrollPageAnimation == null) {
-            // 从管理器中获取页面内容
-            val picture = mTextPageManager.getPage(mCurPageType)
-            // 进行绘制
-            canvas!!.drawPicture(picture)
-        } else {
-            mScrollPageAnimation!!.draw(canvas!!)
-        }
+        mPageAnimation.draw(canvas!!)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        mScrollPageAnimation?.abortAnim()
+        mPageAnimation.abortAnim()
     }
 
     override fun computeScroll() {
         super.computeScroll()
         // 对滑动动画做处理
-        mScrollPageAnimation?.computeScroll()
+        mPageAnimation.computeScroll()
     }
 
     private inner class PageTextCallback :

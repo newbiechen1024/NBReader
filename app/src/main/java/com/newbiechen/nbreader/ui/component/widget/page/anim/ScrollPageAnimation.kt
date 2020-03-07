@@ -7,6 +7,8 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.ui.component.widget.page.action.MotionAction
+import com.newbiechen.nbreader.ui.component.widget.page.action.MotionType
 import com.newbiechen.nbreader.ui.component.widget.page.text.TextPageManager
 import com.newbiechen.nbreader.uilts.LogHelper
 import kotlin.collections.ArrayList
@@ -17,7 +19,8 @@ import kotlin.math.min
  *  date : 2020/3/3 10:48 PM
  *  description :滚动动画
  */
-class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
+class ScrollPageAnimation(view: View, pageManager: TextPageManager) :
+    TextPageAnimation(view, pageManager) {
     companion object {
         private const val TAG = "ScrollPageAnimation"
 
@@ -27,9 +30,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
 
     val isRunning: Boolean
         get() = mStatus != Status.None
-
-    private val mView = view
-    private val mPageManager = pageManager
 
     // 动画滑动器
     private val mScroller = Scroller(view.context, LinearInterpolator())
@@ -41,7 +41,6 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     private val mPageLayoutArray = Array(2) {
         PageLayout()
     }
-
 
     // 起始点
     private var mStartX: Int = 0
@@ -64,7 +63,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     /**
      * 设置宽高
      */
-    fun setup(w: Int, h: Int) {
+    override fun setViewPort(w: Int, h: Int) {
         if (w == 0 || h == 0 || mViewWidth == w || mViewHeight == h) {
             return
         }
@@ -87,8 +86,38 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         layout()
     }
 
+    override fun onTouchEvent(action: MotionAction): Boolean {
+        var result: Boolean
+
+        action.apply {
+            result = when (type) {
+                MotionType.PRESS -> {
+                    pressPage(event)
+                    true
+                }
+                MotionType.MOVE -> {
+                    movePage(event)
+                    true
+                }
+                MotionType.RELEASE -> {
+                    releasePage(event)
+                    true
+                }
+                MotionType.CANCEL -> {
+                    cancelPage()
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+
+        return result
+    }
+
     // 触碰页面
-    fun pressPage(event: MotionEvent) {
+    private fun pressPage(event: MotionEvent) {
         // 如果当前正在执行动画，先取消动画
         when (mStatus) {
             Status.Fling -> abortAnim()
@@ -105,6 +134,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         }
 
         mVelocity!!.addMovement(event)
+
         // 设置为按下状态
         mStatus = Status.ManualPress
     }
@@ -119,7 +149,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     }
 
     // 滑动页面
-    fun movePage(event: MotionEvent) {
+    private fun movePage(event: MotionEvent) {
         when (mStatus) {
             Status.None, Status.Fling -> pressPage(event)
         }
@@ -149,7 +179,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     }
 
     // 释放页面
-    fun releasePage(event: MotionEvent) {
+    private fun releasePage(event: MotionEvent) {
         when (mStatus) {
             Status.None, Status.Fling -> pressPage(event)
         }
@@ -166,7 +196,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
         mVelocity = null
     }
 
-    fun cancelPage() {
+    private fun cancelPage() {
         if (mVelocity != null) {
             // 删除检测器
             mVelocity!!.recycle()
@@ -214,7 +244,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
             if (it.bottom <= 0) {
                 it.reset()
                 // 如果顶部被删除，则需要 turnPage(true)，通知翻页，说明上一页没了，则下一页就是当前页了
-                mPageManager.turnPage(true)
+                mPageManager.turnPage(PageType.NEXT)
                 // 表示进行翻页操作
                 hasTurnPage = true
             }
@@ -287,7 +317,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 // 只有在如下情况，cur page 才能自动转换为 nextPage
                 if (mPageManager.hasPage(PageType.PREVIOUS)) {
                     // 通知换页，说明下一页被删除了，则向前翻页。则上一页就变成当前页，当前页变成了下一页。
-                    mPageManager.turnPage(false)
+                    mPageManager.turnPage(PageType.PREVIOUS)
                     hasTurnPage = true
                 }
             }
@@ -331,7 +361,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
                 newPageLayout.offset(fillArea - mViewHeight)
 
                 // 通知换页，说明下一页被删除了，则向前翻页。则上一页就变成当前页，当前页变成了下一页。
-                mPageManager.turnPage(false)
+                mPageManager.turnPage(PageType.PREVIOUS)
                 turnPageLayout(PageType.PREVIOUS)
             } else {
                 if (hasActivePageLayout()) {
@@ -436,7 +466,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     /**
      * 绘制操作
      */
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         // 进行匹配操作
         if (isRunning) {
             drawMove(canvas)
@@ -487,7 +517,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     /**
      * 启动动画
      */
-    fun startAnim() {
+    override fun startAnim() {
         mScroller.fling(
             0, mTouchY, 0, mVelocity!!.yVelocity.toInt()
             , 0, 0, Int.MAX_VALUE * -1, Int.MAX_VALUE
@@ -498,7 +528,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     /**
      * 取消动画
      */
-    fun abortAnim() {
+    override fun abortAnim() {
         if (!mScroller.isFinished) {
             mScroller.abortAnimation()
         }
@@ -517,7 +547,7 @@ class ScrollPageAnimation(view: View, pageManager: TextPageManager) {
     /**
      * 计算滑动
      */
-    fun computeScroll() {
+    override fun computeScroll() {
         if (mScroller.computeScrollOffset()) {
             val x = mScroller.currX
             val y = mScroller.currY

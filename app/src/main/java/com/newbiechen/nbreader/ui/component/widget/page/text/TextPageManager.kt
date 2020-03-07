@@ -116,17 +116,26 @@ class TextPageManager(private var pageListener: OnPageListener) {
      * 对 page 进行翻页操作
      * @param isNext:是否翻到下一页
      */
-    fun turnPage(isNext: Boolean) {
+    fun turnPage(pageType: PageType) {
+        // 如果对自身翻页不处理
+        if (pageType == PageType.CURRENT) {
+            return
+        }
+
         for (i in 0 until PICTURE_SIZE) {
             if (mPictureTypes[i] == null) {
                 continue
             }
-            mPictureTypes[i] =
-                if (isNext) mPictureTypes[i]!!.getPrevious() else mPictureTypes[i]!!.getNext()
+
+            mPictureTypes[i] = when (pageType) {
+                PageType.PREVIOUS -> mPictureTypes[i]!!.getNext()
+                PageType.NEXT -> mPictureTypes[i]!!.getPrevious()
+                PageType.CURRENT -> mPictureTypes[i]
+            }
         }
 
         // 通知回调
-        pageListener.onTurnPage(if (isNext) PageType.NEXT else PageType.PREVIOUS)
+        pageListener.onTurnPage(pageType)
     }
 
     /**

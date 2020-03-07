@@ -22,8 +22,8 @@ class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) :
 
     private var mToBitmapRect = Rect()
 
-    override fun setup(w: Int, h: Int) {
-        super.setup(w, h)
+    override fun setViewPort(w: Int, h: Int) {
+        super.setViewPort(w, h)
         // 设置宽高
         mFromSpaceRect.set(0, 0, w, h)
         mFromBitmapRect.set(0, 0, w, h)
@@ -78,7 +78,7 @@ class SlidePageAnimation(view: View, pageManager: IPageAnimCallback) :
         }
     }
 
-    override fun startAnimInternal() {
+    override fun startAnim() {
         var dx = 0
         when (mDirection) {
             Direction.PREVIOUS -> dx = if (mStatus == Status.AutoBackward) {

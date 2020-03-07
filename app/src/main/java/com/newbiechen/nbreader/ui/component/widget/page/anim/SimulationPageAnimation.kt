@@ -172,8 +172,8 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mFrontShadowDrawableHBT.gradientType = GradientDrawable.LINEAR_GRADIENT
     }
 
-    override fun setup(w: Int, h: Int) {
-        super.setup(w, h)
+    override fun setViewPort(w: Int, h: Int) {
+        super.setViewPort(w, h)
         mMaxLength = hypot(w.toDouble(), h.toDouble()).toFloat()
     }
 
@@ -203,7 +203,7 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         }
     }
 
-    override fun startAnimInternal() {
+    override fun startAnim() {
         var dx: Float
         var dy: Float
         // dx 水平方向滑动的距离，负值会使滚动向左滚动

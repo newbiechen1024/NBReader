@@ -47,9 +47,8 @@ class PageView @JvmOverloads constructor(
             onDrawPage(canvas, type)
         }
 
-        override fun onTurnPage(pageType: PageType) {
-            // 请求文本翻页
-            mPtvContent.turnPage(pageType)
+        override fun turnPage(pageType: PageType) {
+            onTurnPage(pageType)
         }
     }
 
@@ -67,6 +66,9 @@ class PageView @JvmOverloads constructor(
 
     // 当前翻页动画
     private var mPageAnim: PageAnimation? = null
+
+    // 内容翻页动画
+    private var mTextPageAnim: TextPageAnimation? = null
 
     // 页面行为事件监听器
     private var mPageActionListener: TextActionListener? = null
@@ -208,6 +210,8 @@ class PageView @JvmOverloads constructor(
      */
     fun setPageAnim(type: PageAnimType) {
         if (mPageAnimType != type) {
+            mPageAnimType = type
+
             mPageAnim = when (type) {
                 PageAnimType.NONE -> NonePageAnimation(this, mPageManager)
                 PageAnimType.COVER -> CoverPageAnimation(this, mPageManager)
@@ -216,22 +220,17 @@ class PageView @JvmOverloads constructor(
                 PageAnimType.SCROLL -> null
             }
 
+
             if (mPageAnim != null) {
                 mPageAnim!!.setAnimationListener(mPageManager)
                 // 重置宽高
-                mPageAnim!!.setup(width, height)
+                mPageAnim!!.setViewPort(width, height)
             }
-
 
             // 设置 TextPageView 的页面模式
-            if (type == PageAnimType.SCROLL) {
-                mPtvContent.setPageMode(TextPageView.PageMode.SCROLL)
-            } else {
-                mPtvContent.setPageMode(TextPageView.PageMode.NONE)
-            }
-
-            mPageAnimType = type
-            invalidate()
+            mTextPageAnim = mPtvContent.setPageAnim(
+                if (mPageAnimType == PageAnimType.SCROLL) TextAnimType.SCROLL else TextAnimType.CONTROL
+            )
         }
     }
 
@@ -252,11 +251,11 @@ class PageView @JvmOverloads constructor(
         when (type) {
             PageType.PREVIOUS -> {
                 mCurDrawType = null
-                releasePage(0, height / 2)
+                startPageAnim(0, height / 2)
             }
             PageType.NEXT -> {
                 mCurDrawType = null
-                releasePage(width, height / 2)
+                startPageAnim(width, height / 2)
             }
             else -> {
             }
@@ -322,14 +321,8 @@ class PageView @JvmOverloads constructor(
         action.apply {
             // 消耗发出的行为事件
             when (type) {
-                MotionType.PRESS -> {
-                    mPageAnim?.pressPage(event.x.toInt(), event.y.toInt())
-                }
-                MotionType.MOVE -> {
-                    mPageAnim?.movePage(event.x.toInt(), event.y.toInt())
-                }
-                MotionType.RELEASE -> {
-                    releasePage(event.x.toInt(), event.y.toInt())
+                MotionType.PRESS, MotionType.MOVE, MotionType.RELEASE -> {
+                    mPageAnim?.onTouchEvent(action)
                 }
                 MotionType.SINGLE_TAP -> {
                     // 如果点击区域在菜单范围内，则发送点击菜单行为事件
@@ -337,16 +330,15 @@ class PageView @JvmOverloads constructor(
                         mPageActionListener?.invoke(TapMenuAction())
                     } else {
                         // 通知点击翻页
-                        releasePage(event.x.toInt(), event.y.toInt())
+                        startPageAnim(event.x.toInt(), event.y.toInt())
                     }
                 }
             }
         }
-
     }
 
-    private fun releasePage(x: Int, y: Int) {
-        mPageAnim?.releasePage(x, y)
+    private fun startPageAnim(x: Int, y: Int) {
+        mPageAnim?.startAnim(x, y)
     }
 
     override fun addView(child: View?) {
@@ -384,7 +376,7 @@ class PageView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         // 设置页面动画大小
-        mPageAnim?.setup(w, h)
+        mPageAnim?.setViewPort(w, h)
 
         // 设置菜单选中区域
         mMenuRect.set(
@@ -393,6 +385,7 @@ class PageView @JvmOverloads constructor(
             mMenuRatioRect.right * width,
             mMenuRatioRect.bottom * height
         )
+
         mBackgroundRect.set(0, 0, w, h)
     }
 
@@ -472,8 +465,8 @@ class PageView @JvmOverloads constructor(
         // 绘制背景信息
         drawBackground(canvas)
 
-        // 准备要绘制的页面
-        mPtvContent.preparePage(type)
+        val textPageAnimation = mTextPageAnim as ControlPageAnimation
+        textPageAnimation.setDrawPage(type)
 
         // 如果绘制新页面，则通知页面准备
         if (mCurDrawType != type) {
@@ -489,6 +482,11 @@ class PageView @JvmOverloads constructor(
 
         // 调用父类分发绘制逻辑
         super.dispatchDraw(canvas)
+    }
+
+    private fun onTurnPage(type: PageType) {
+        val textPageAnimation = mTextPageAnim as ControlPageAnimation
+        textPageAnimation.turnPage(type)
     }
 
     /**

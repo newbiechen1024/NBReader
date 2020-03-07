@@ -2,10 +2,13 @@ package com.newbiechen.nbreader.ui.component.widget.page.anim
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
+import com.newbiechen.nbreader.ui.component.widget.page.action.MotionAction
+import com.newbiechen.nbreader.ui.component.widget.page.action.MotionType
 import kotlin.math.abs
 
 /**
@@ -14,7 +17,7 @@ import kotlin.math.abs
  *  description :页面动画
  */
 
-abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
+abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) : IPageAnimation {
     companion object {
         private const val TAG = "PageAnimation"
         private const val MIN_SCROLL_SLOP = 5
@@ -69,7 +72,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     }
 
     // 设置宽高 ==> 因为宽高可变的
-    open fun setup(w: Int, h: Int) {
+    override fun setViewPort(w: Int, h: Int) {
         if (w == 0 || h == 0
             || mViewWidth == w || mViewHeight == h
         ) {
@@ -85,8 +88,34 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         abortAnim()
     }
 
+    override fun onTouchEvent(action: MotionAction): Boolean {
+        var result: Boolean
+
+        action.apply {
+            result = when (type) {
+                MotionType.PRESS -> {
+                    pressPage(event.x.toInt(), event.y.toInt())
+                    true
+                }
+                MotionType.MOVE -> {
+                    movePage(event.x.toInt(), event.y.toInt())
+                    true
+                }
+                MotionType.RELEASE -> {
+                    releasePage(event.x.toInt(), event.y.toInt())
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+
+        return result
+    }
+
     // 触碰页面
-    fun pressPage(x: Int, y: Int) {
+    private fun pressPage(x: Int, y: Int) {
         // 如果当前正在执行动画，先取消动画
         when (mStatus) {
             Status.AutoForward, Status.AutoBackward -> abortAnim()
@@ -113,7 +142,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
     }
 
     // 滑动页面
-    fun movePage(x: Int, y: Int) {
+    private fun movePage(x: Int, y: Int) {
         when (mStatus) {
             Status.NONE, Status.AutoForward, Status.AutoBackward -> pressPage(x, y)
         }
@@ -183,9 +212,8 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         mTouchY = y
     }
 
-
     // 释放页面
-    fun releasePage(x: Int, y: Int) {
+    private fun releasePage(x: Int, y: Int) {
         when (mStatus) {
             Status.NONE, Status.AutoForward, Status.AutoBackward -> movePage(x, y)
         }
@@ -210,7 +238,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
             else -> {
                 mStatus = if (isCancel) Status.AutoBackward else Status.AutoForward
                 // 启动动画
-                startAnimInternal()
+                startAnim()
                 mView.postInvalidate()
             }
         }
@@ -219,7 +247,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         isCancel = false
     }
 
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         // 如果正在运行，
         if (isRunning) {
             drawMove(canvas)
@@ -238,21 +266,12 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         }
     }
 
-    /**
-     * 启动翻页动画
-     * 注：启动翻页动画前必须重写 [android.view.View.computeScroll] 调用 [computeScroll]
-     */
     fun startAnim(x: Int, y: Int) {
-        mStatus = Status.NONE
-        // 取巧了，releasePage() 附带有启动动画的实现
         releasePage(x, y)
     }
 
-    // 实际翻页处理
-    abstract fun startAnimInternal()
-
     // 取消动画
-    fun abortAnim() {
+    override fun abortAnim() {
         // 如果正在执行动画
         if (!mScroller.isFinished) {
             // 取消执行
@@ -269,7 +288,7 @@ abstract class PageAnimation(view: View, pageManager: IPageAnimCallback) {
         mDirection = Direction.NONE
     }
 
-    fun computeScroll() {
+    override fun computeScroll() {
         if (mScroller.computeScrollOffset()) {
             // 模拟移动点击
             setTouchPoint(mScroller.currX, mScroller.currY)

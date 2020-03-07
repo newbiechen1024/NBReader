@@ -24,7 +24,7 @@ class NonePageAnimation(view: View, pageManager: IPageAnimCallback) :
         canvas.drawBitmap(getFromPage(), 0f, 0f, null)
     }
 
-    override fun startAnimInternal() {
+    override fun startAnim() {
         // TODO:预加载 toPage，更新翻到下一页的页面 (忘记这干啥用的了)
         // getToPage()
 

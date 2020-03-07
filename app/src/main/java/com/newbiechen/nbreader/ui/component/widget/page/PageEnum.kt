@@ -13,6 +13,10 @@ enum class PageAnimType {
     SIMULATION, COVER, SLIDE, NONE, SCROLL
 }
 
+enum class TextAnimType {
+    CONTROL, SCROLL
+}
+
 /**
  * 页面的类型
  */

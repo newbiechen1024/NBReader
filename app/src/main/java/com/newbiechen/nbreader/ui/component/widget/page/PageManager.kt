@@ -138,7 +138,7 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback,
         }
 
         // 通知回调
-        pageListener.onTurnPage(pageType)
+        pageListener.turnPage(pageType)
     }
 
     /**
@@ -159,7 +159,7 @@ class PageManager(private val pageListener: OnPageListener) : IPageAnimCallback,
         fun drawPage(canvas: Canvas, type: PageType)
 
         // 通知翻页
-        fun onTurnPage(pageType: PageType)
+        fun turnPage(pageType: PageType)
     }
 
     override fun onAnimationStart() {
