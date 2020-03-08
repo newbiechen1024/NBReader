@@ -25,8 +25,8 @@ data class CatalogEntity(
     @SerializedName("alias")
     @ColumnInfo(name = "alias")
     val alias: String,
-    @SerializedName("title")
-    @ColumnInfo(name = "title")
+    @SerializedName("name")
+    @ColumnInfo(name = "name")
     val name: String,
     @SerializedName("bookCover")
     @ColumnInfo(name = "bookCover")

@@ -4,13 +4,19 @@ import com.newbiechen.nbreader.data.entity.CatalogEntity
 import com.newbiechen.nbreader.data.entity.CatalogLabelEntity
 import com.newbiechen.nbreader.data.remote.api.BookApi
 import com.newbiechen.nbreader.data.repository.impl.ICatalogRepository
+import com.newbiechen.nbreader.uilts.LogHelper
 import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CatalogRemoteDataSource @Inject constructor(private val bookApi: BookApi) : ICatalogRepository {
+class CatalogRemoteDataSource @Inject constructor(private val bookApi: BookApi) :
+    ICatalogRepository {
+
+    companion object {
+        private const val TAG = "CatalogRemoteDataSource"
+    }
 
     override fun getCatalogItems(): Flowable<List<CatalogEntity>> {
         val catalogFlowable = bookApi.getCatalog()
