@@ -1,6 +1,7 @@
 package com.newbiechen.nbreader.ui.component.widget.page.anim
 
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.View
@@ -76,6 +77,8 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
     private var mFloatTouchX: Float = 0f
     private var mFloatTouchY: Float = 0f
 
+    private var mMaskDrawable: Drawable? = null
+
     // 将 int 类型转换成 float 类型
     override var mTouchX: Int
         get() = mFloatTouchX.toInt()
@@ -126,6 +129,13 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         // 不让x,y为0,否则在点计算时会有问题
         mFloatTouchX = 0.01f
         mFloatTouchY = 0.01f
+    }
+
+    /**
+     * 设置遮罩层
+     */
+    fun setMaskDrawable(drawable:Drawable){
+        mMaskDrawable = drawable
     }
 
     private fun createDrawable() {
@@ -285,15 +295,6 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         }
 
         mPaint.colorFilter = mColorMatrixFilter
-        //对Bitmap进行取色
-        val color = bitmap.getPixel(1, 1)
-        //获取对应的三色
-        val red = color and 0xff0000 shr 16
-        val green = color and 0x00ff00 shr 8
-        val blue = color and 0x0000ff
-        //转换成含有透明度的颜色
-        val tempColor = Color.argb(200, red, green, blue)
-
 
         val dis = hypot(
             (mCornerX - mBezierControl1.x).toDouble(),
@@ -310,8 +311,9 @@ class SimulationPageAnimation(view: View, pageManager: IPageAnimCallback) :
         mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y)
         mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y)
         canvas.drawBitmap(bitmap, mMatrix, mPaint)
-        //背景叠加
-        canvas.drawColor(tempColor)
+
+        // 绘制蒙层
+        mMaskDrawable?.draw(canvas)
 
         mPaint.colorFilter = null
 

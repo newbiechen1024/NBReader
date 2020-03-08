@@ -2,6 +2,8 @@ package com.newbiechen.nbreader.ui.component.widget.page
 
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
@@ -92,6 +94,8 @@ class PageView @JvmOverloads constructor(
     // 壁纸
     private var mWallpaperPath: String? = null
     private var mWallpaperBitmap: Bitmap? = null
+
+    private var mMaskDrawable: Drawable? = null
 
     init {
         // 设置排列方式
@@ -217,12 +221,13 @@ class PageView @JvmOverloads constructor(
                 PageAnimType.SCROLL -> null
             }
 
-
             if (mPageAnim != null) {
                 mPageAnim!!.setAnimationListener(mPageManager)
                 // 重置宽高
                 mPageAnim!!.setViewPort(width, height)
             }
+
+            updateSimulationMask()
 
             // 设置 TextPageView 的页面模式
             mTextPageAnim = mPtvContent.setPageAnim(
@@ -451,6 +456,9 @@ class PageView @JvmOverloads constructor(
                 // 获取图片资源
                 mWallpaperBitmap = BitmapFactory.decodeStream(fileInputStream)
                 mWallpaperPath = wallpaperPath
+                mMaskDrawable = BitmapDrawable(mWallpaperBitmap)
+                // 更新仿真翻页遮罩层
+                updateSimulationMask()
             } catch (e: Exception) {
                 LogHelper.e(TAG, e.toString())
             } finally {
@@ -464,6 +472,22 @@ class PageView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 更新仿真翻页背景蒙层
+     */
+    private fun updateSimulationMask() {
+        if (mMaskDrawable == null || mPageAnim == null) {
+            return
+        }
+
+        if (mPageAnim is SimulationPageAnimation) {
+            // 设置背景透明度
+            mMaskDrawable!!.alpha = 180
+            mMaskDrawable!!.bounds = mBackgroundRect
+            // 设置到 SimulationPageAnimation 中
+            (mPageAnim as SimulationPageAnimation).setMaskDrawable(mMaskDrawable!!)
+        }
+    }
 
     /**
      * 进行翻页操作
