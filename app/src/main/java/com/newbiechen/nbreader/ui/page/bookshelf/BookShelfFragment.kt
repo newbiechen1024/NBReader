@@ -17,11 +17,6 @@ class BookShelfFragment : BaseBindingFragment<FragmentBookShelfBinding>() {
     companion object {
         private const val TAG = "BookShelfFragment"
         fun newInstance() = BookShelfFragment()
-
-        init {
-            System.loadLibrary("nbbook")
-        }
-
     }
 
     @Inject

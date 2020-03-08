@@ -30,8 +30,7 @@ class StatusView @JvmOverloads constructor(
     annotation class Status
 
     companion object {
-
-        private val TAG = "RefreshLayout"
+        private val TAG = "StatusView"
 
         const val STATUS_LOADING = 0
         const val STATUS_EMPTY = 1
@@ -58,11 +57,20 @@ class StatusView @JvmOverloads constructor(
 
     private fun initAttrs(attrs: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.StatusView)
-        mEmptyViewId = typedArray.getResourceId(R.styleable.StatusView_layout_empty, R.layout.layout_common_empty)
+        mEmptyViewId = typedArray.getResourceId(
+            R.styleable.StatusView_layout_empty,
+            R.layout.layout_common_empty
+        )
         mErrorViewId =
-            typedArray.getResourceId(R.styleable.StatusView_layout_error, R.layout.layout_common_error)
+            typedArray.getResourceId(
+                R.styleable.StatusView_layout_error,
+                R.layout.layout_common_error
+            )
         mLoadingViewId =
-            typedArray.getResourceId(R.styleable.StatusView_layout_loading, R.layout.layout_common_loadding)
+            typedArray.getResourceId(
+                R.styleable.StatusView_layout_loading,
+                R.layout.layout_common_loadding
+            )
 
         typedArray.recycle()
     }

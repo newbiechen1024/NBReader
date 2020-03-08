@@ -39,5 +39,6 @@ class NBMainFragFactory @Inject constructor() : MainFragFactory {
         }
     }
 
-    override fun getCount(): Int = 3
+    // 暂时不展示个人中心信息
+    override fun getCount(): Int = 2
 }
