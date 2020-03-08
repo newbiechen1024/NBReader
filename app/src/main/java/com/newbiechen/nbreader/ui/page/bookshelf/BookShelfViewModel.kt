@@ -1,8 +1,10 @@
 package com.newbiechen.nbreader.ui.page.bookshelf
 
 import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableField
 import com.newbiechen.nbreader.data.entity.BookEntity
 import com.newbiechen.nbreader.data.repository.BookRepository
+import com.newbiechen.nbreader.ui.component.widget.StatusView
 import com.newbiechen.nbreader.ui.page.base.BaseViewModel
 import com.newbiechen.nbreader.uilts.LogHelper
 import com.newbiechen.nbreader.uilts.rxbus.CacheBookChangedEvent
@@ -30,6 +32,7 @@ class BookShelfViewModel @Inject constructor(
      * 缓存书籍列表
      */
     val cacheBookList = ObservableArrayList<BookEntity>()
+    val pageStatus = ObservableField<Int>()
 
     init {
         initRxEvent()
@@ -37,13 +40,11 @@ class BookShelfViewModel @Inject constructor(
 
     private fun initRxEvent() {
         // 监听缓存书籍改变的事件
-        addDisposable(
-            rxBus.toObservable(CacheBookChangedEvent::class.java)
-                .subscribe {
-                    // 更新书籍缓存
-                    updateCacheBooks()
-                    LogHelper.i(TAG, "CacheBookChangedEvent")
-                }
+        addDisposable(rxBus.toObservable(CacheBookChangedEvent::class.java)
+            .subscribe {
+                // 更新书籍缓存
+                loadCacheBooks()
+            }
         )
     }
 
@@ -57,23 +58,16 @@ class BookShelfViewModel @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    // 将数据添加到缓冲列表中
-                    cacheBookList.addAll(it)
-                }
-        )
-    }
-
-    private fun updateCacheBooks() {
-        // 从数据库中获取缓存书籍
-        addDisposable(
-            bookRepository.getBooks(true)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
                     // 清空书籍信息
                     cacheBookList.clear()
                     // 将数据添加到缓冲列表中
                     cacheBookList.addAll(it)
+                    // 更新页面展示状态
+                    if (cacheBookList.isNotEmpty()) {
+                        pageStatus.set(StatusView.STATUS_FINISH)
+                    } else {
+                        pageStatus.set(StatusView.STATUS_EMPTY)
+                    }
                 }
         )
     }

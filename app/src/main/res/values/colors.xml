@@ -7,8 +7,8 @@
     <color name="colorWhite">#FFFFFFFF</color>
     <color name="colorTransparent">@android:color/transparent</color>
     
-    <color name="text_orange">#FFFE960E</color>
-    <color name="text_emphasized">#FFFE960E</color>
+    <color name="text_orange">@color/colorPrimary</color>
+    <color name="text_emphasized">@color/colorPrimary</color>
     <color name="text_emphasized_light">#fff5a623</color>
     <color name="text_disable">#59222222</color>
     
@@ -22,13 +22,13 @@
     <color name="common_background">#FCFCFC</color>
     
     <!--book_list-->
-    <color name="bg_book_list_filter_sure">#fffe960e</color>
+    <color name="bg_book_list_filter_sure">@color/colorPrimary</color>
     
     <!--tag-->
     <color name="bg_tag_normal">#EEEEEE</color>
     <color name="bg_book_list_filter">#F8F8F8</color>
     <color name="text_book_list_filter_title">#A7A7A7</color>
-    <color name="stroke_tag_selected">#fffe960e</color>
+    <color name="stroke_tag_selected">@color/colorPrimary</color>
     
     <color name="bg_divider">#F1F1F1</color>
     <color name="text_book_list_sort">#7A7A7A</color>
@@ -64,4 +64,6 @@
     <!--button-->
     <color name="bg_button_normal">@color/colorWhite</color>
     <color name="bg_button_press">#E3E3E3</color>
+    <color name="bg_standard_btn_normal">@color/colorPrimary</color>
+    <color name="bg_standard_btn_press">#fffeca86</color>
 </resources>

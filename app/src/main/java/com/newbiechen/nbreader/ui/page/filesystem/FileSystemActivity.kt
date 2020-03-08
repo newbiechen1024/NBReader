@@ -1,5 +1,7 @@
 package com.newbiechen.nbreader.ui.page.filesystem
 
+import android.content.Context
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
@@ -11,6 +13,8 @@ import com.newbiechen.nbreader.ui.page.filecatalog.FileCatalogFragment
 import com.newbiechen.nbreader.ui.page.smartlookup.SmartLookupFragment
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import com.newbiechen.nbreader.uilts.factory.ViewModelFactory
+import com.yanzhenjie.permission.AndPermission
+import com.yanzhenjie.permission.runtime.Permission
 import javax.inject.Inject
 
 /**
@@ -30,6 +34,21 @@ class FileSystemActivity : BaseBindingActivity<ActivityFileSystemBinding>() {
 
     private lateinit var mCurFragment: Fragment
     private lateinit var mViewModel: FileSystemViewModel
+
+    companion object {
+        fun startActivity(context: Context) {
+            AndPermission.with(context)
+                .runtime()
+                .permission(Permission.Group.STORAGE[0])
+                .onGranted {
+                    context.startActivity(Intent(context, FileSystemActivity::class.java))
+                }
+                .onDenied {
+                    // 暂时不处理
+                }
+                .start()
+        }
+    }
 
     override fun initContentView(): Int = R.layout.activity_file_system
 

@@ -3,21 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <data>
+        
         <variable
             name="viewModel"
             type="com.newbiechen.nbreader.ui.page.bookshelf.BookShelfViewModel" />
     </data>
     
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
         
-        <com.github.jdsjlzx.recyclerview.LRecyclerView
-            android:id="@+id/rv_book"
+        <com.newbiechen.nbreader.ui.component.widget.StatusView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:items="@{viewModel.cacheBookList}" />
-    
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:curStatus="@{viewModel.pageStatus}"
+            app:layout_empty="@layout/layout_book_shelf_empty">
+            
+            <com.github.jdsjlzx.recyclerview.LRecyclerView
+                android:id="@+id/rv_book"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:items="@{viewModel.cacheBookList}" />
+        </com.newbiechen.nbreader.ui.component.widget.StatusView>
+    </FrameLayout>
 </layout>

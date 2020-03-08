@@ -65,7 +65,9 @@
     <string name="file_system_selected">已选  <![CDATA[<font color=#FE960E>%1$d</font>]]>  项
     </string>
     
-    <string name="read_setting_menu_tradition_chinese">繁</string>
+    <!--Book Shelf-->
+    
+    <string name="import_book_from_local">添加本地书籍</string>
     
     <!--read activity-->
     <string name="read_chapter_title">章节 %1$s</string>
@@ -76,4 +78,6 @@
     <string name="scroll_page_anim">滚动</string>
     <string name="cover_page_anim">覆盖</string>
     <string name="slide_page_anim">滑动</string>
+    <string name="read_setting_menu_tradition_chinese">繁</string>
+
 </resources>

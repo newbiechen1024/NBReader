@@ -14,8 +14,6 @@ import com.newbiechen.nbreader.uilts.SystemBarUtil
 import com.newbiechen.nbreader.uilts.factory.MainFragFactory
 import com.newbiechen.nbreader.uilts.factory.ViewModelFactory
 import com.google.android.material.tabs.TabLayout
-import com.yanzhenjie.permission.AndPermission
-import com.yanzhenjie.permission.runtime.Permission
 import com.newbiechen.nbreader.ui.page.base.BaseBindingActivity
 import javax.inject.Inject
 
@@ -28,6 +26,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     // Fragment 工厂
     @Inject
     lateinit var mFragmentFactory: MainFragFactory
+
     // ViewModel 工厂
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
@@ -88,16 +87,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item!!.itemId) {
             R.id.main_add -> {
-                AndPermission.with(this)
-                    .runtime()
-                    .permission(Permission.Group.STORAGE[0])
-                    .onGranted {
-                        startActivity(FileSystemActivity::class)
-                    }
-                    .onDenied {
-                        // 暂时不处理
-                    }
-                    .start()
+                FileSystemActivity.startActivity(this)
                 true
             }
             else -> super.onOptionsItemSelected(item)
