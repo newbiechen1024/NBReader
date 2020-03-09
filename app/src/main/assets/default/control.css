@@ -4,7 +4,9 @@
 /*
  1. fbreader-id 是该样式对应的 fbreader 中的类型
  2. fbreader-name 表示该样式对标的用处名
+ 3. 跟 C++ 中的 TextKind 对应，与 TextControlTag 中的 byte 对应
 */
+
 p {
     fbreader-id: 0;
     fbreader-name: "Regular Paragraph";

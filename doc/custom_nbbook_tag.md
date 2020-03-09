@@ -1,4 +1,4 @@
-# NBBook 标签
+# NBBook 标签 (已重构，暂未更新文档)
 
 该文档是针对 nbbook.so 文件解析文本，生成的中间 nbbook 数据结构文档。
 
