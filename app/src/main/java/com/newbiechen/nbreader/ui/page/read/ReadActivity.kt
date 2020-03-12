@@ -124,7 +124,7 @@ class ReadActivity : BaseBindingActivity<ActivityReadBinding>(), View.OnClickLis
             })
 
             // 设置背景图片
-            val slideBg = Drawable.createFromStream(assets.open("wallpaper/paper.jpg"), null);
+            val slideBg = Drawable.createFromStream(assets.open("wallpaper/paper.jpg"), null)
 
             llSlideContainer.background = slideBg
 
