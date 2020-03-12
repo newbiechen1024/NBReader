@@ -36,7 +36,7 @@ class DefaultConfigure private constructor() : TextConfigure {
     }
 
     override fun getTextColor(): Int {
-        return 0
+        return 0xff000000.toInt()
     }
 
     override fun getBackground(): Drawable? {

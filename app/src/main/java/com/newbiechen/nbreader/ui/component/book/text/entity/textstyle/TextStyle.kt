@@ -7,22 +7,22 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  *  date : 2020/3/11 4:43 PM
  *  description :返回值不为 null 的
  */
-interface TextStyle : NullableTextStyle{
-    override fun getFontSize(metrics: TextMetrics): Int
-    override fun isBold(): Boolean
-    override fun isItalic(): Boolean
-    override fun isUnderline(): Boolean
-    override fun isStrikeThrough(): Boolean
-    override fun getLeftMargin(metrics: TextMetrics): Int
-    override fun getRightMargin(metrics: TextMetrics): Int
-    override fun getLeftPadding(metrics: TextMetrics): Int
-    override fun getRightPadding(metrics: TextMetrics): Int
-    override fun getFirstLineIndent(metrics: TextMetrics): Int
-    override fun getLineSpacePercent(): Int
-    override fun getVerticalAlign(metrics: TextMetrics): Int
-    override fun isVerticallyAligned(): Boolean
-    override fun getSpaceBefore(metrics: TextMetrics): Int
-    override fun getSpaceAfter(metrics: TextMetrics): Int
-    override fun getAlignment(): Byte
-    override fun allowHyphenations(): Boolean
+interface TextStyle {
+    fun getFontSize(metrics: TextMetrics): Int
+    fun isBold(): Boolean
+    fun isItalic(): Boolean
+    fun isUnderline(): Boolean
+    fun isStrikeThrough(): Boolean
+    fun getLeftMargin(metrics: TextMetrics): Int
+    fun getRightMargin(metrics: TextMetrics): Int
+    fun getLeftPadding(metrics: TextMetrics): Int
+    fun getRightPadding(metrics: TextMetrics): Int
+    fun getFirstLineIndent(metrics: TextMetrics): Int
+    fun getLineSpacePercent(): Int
+    fun getVerticalAlign(metrics: TextMetrics): Int
+    fun isVerticallyAligned(): Boolean
+    fun getSpaceBefore(metrics: TextMetrics): Int
+    fun getSpaceAfter(metrics: TextMetrics): Int
+    fun getAlignment(): Byte
+    fun allowHyphenations(): Boolean
 }

@@ -10,9 +10,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
 
 abstract class TreeTextStyle(parentStyle: TreeTextStyle?) : TextStyle {
     // abstract fun getFontEntries(): List<FontEntry>
-    val parent: TreeTextStyle? = parentStyle
-
-    // TODO：需要进行缓存处理
+    open val parent: TreeTextStyle? = parentStyle
 
     fun getLeftIndent(metrics: TextMetrics): Int {
         return getLeftMargin(metrics) + getLeftPadding(metrics)

@@ -1,6 +1,8 @@
-package com.newbiechen.nbreader.ui.component.book.text.entity.textstyle
+package com.newbiechen.nbreader.ui.component.book.text.config
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.BaseTextStyle
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
 
 /**
  *  author : newbiechen
@@ -15,13 +17,14 @@ class DefaultTextStyle private constructor() : BaseTextStyle() {
         @Volatile
         private var instance: DefaultTextStyle? = null
 
-        fun getInstance() = instance ?: synchronized(this) {
-            DefaultTextStyle()
+        fun getInstance() = instance
+            ?: synchronized(this) {
+                DefaultTextStyle()
         }
     }
 
     override fun getFontSize(): Int {
-        return 30
+        return 22
     }
 
     override fun isBold(): Boolean {

@@ -19,11 +19,13 @@ import com.newbiechen.nbreader.ui.component.adapter.PageAnimAdapter
 import com.newbiechen.nbreader.ui.component.adapter.ReadCatalogAdapter
 import com.newbiechen.nbreader.ui.component.book.BookController
 import com.newbiechen.nbreader.ui.component.book.OnLoadListener
-import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
 import com.newbiechen.nbreader.ui.component.decoration.DividerDecoration
 import com.newbiechen.nbreader.ui.component.decoration.SpaceDecoration
+import com.newbiechen.nbreader.ui.component.extension.closeDrawer
+import com.newbiechen.nbreader.ui.component.extension.isDrawerOpen
+import com.newbiechen.nbreader.ui.component.extension.openDrawer
 import com.newbiechen.nbreader.ui.component.widget.page.DefaultActionCallback
 import com.newbiechen.nbreader.ui.component.widget.page.OnPageListener
 import com.newbiechen.nbreader.ui.component.widget.page.PageAnimType

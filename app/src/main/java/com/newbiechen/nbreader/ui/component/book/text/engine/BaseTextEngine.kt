@@ -48,6 +48,8 @@ abstract class BaseTextEngine(private val context: Context, textConfig: TextConf
         viewWidth = width
         viewHeight = height
 
+        // TODO：需要清除缓存
+        mMetrics = null
 
         onSizeChanged(width, height)
     }

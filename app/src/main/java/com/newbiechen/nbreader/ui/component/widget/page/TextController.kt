@@ -1,5 +1,6 @@
 package com.newbiechen.nbreader.ui.component.widget.page
 
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress

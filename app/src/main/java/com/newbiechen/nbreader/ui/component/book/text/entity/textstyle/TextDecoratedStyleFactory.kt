@@ -19,11 +19,9 @@ class TextDecoratedStyleFactory(
     private val cssStyleInterceptor: CSSStyleInterceptor?
 ) {
     fun getControlDecoratedStyle(parent: TreeTextStyle, textKind: Byte): TreeTextStyle {
-
         return ControlDecoratedStyle(
             parent,
-            getControlTextStyle(parent, textKind),
-            getControlInterceptorStyle(textKind)
+            getControlStyle(getControlTextStyle(parent, textKind), textKind)
         )
     }
 
@@ -31,20 +29,26 @@ class TextDecoratedStyleFactory(
         return CSSDecoratedStyle(parent, cssStyle, cssStyleInterceptor)
     }
 
-    private fun getControlInterceptorStyle(textKind: Byte): ControlInterceptorStyle? {
+    /**
+     * 创建带有拦截的 style
+     */
+    private fun getControlStyle(parent: TreeTextStyle, textKind: Byte): TreeTextStyle {
         return if (controlStyleInterceptor != null) {
-            ControlInterceptorStyle(textKind, controlStyleInterceptor)
+            ControlInterceptorStyle(
+                parent,
+                textKind,
+                controlStyleInterceptor
+            )
         } else {
-            null
+            parent
         }
     }
 
-    private fun getControlTextStyle(parent: TreeTextStyle, textKind: Byte): ControlTextStyle? {
-        val desc = controlStyleDescMap[textKind]
-        return if (desc != null) {
-            ControlTextStyle(parent, desc)
-        } else {
-            null
-        }
+    /**
+     * 创建默认的 Control Style
+     */
+    private fun getControlTextStyle(parent: TreeTextStyle, textKind: Byte): TreeTextStyle {
+        val desc = controlStyleDescMap[textKind.toInt()]
+        return if (desc != null) ControlTextStyle(parent, desc) else parent
     }
 }

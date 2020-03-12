@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.annotation.FloatRange
 import com.newbiechen.nbreader.R
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
 import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress

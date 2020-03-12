@@ -7,97 +7,77 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  *  date : 2020/3/11 3:10 PM
  *  description :control style 的装饰 style
  */
-
 class ControlDecoratedStyle(
     // 父对象
     parent: TreeTextStyle,
-    // 控制对象
-    controlStyle: ControlTextStyle?,
-    // 拦截器对象
-    interceptorStyle: ControlInterceptorStyle?
+    private val controlStyle: TreeTextStyle
 ) : TextDecoratedStyle(parent) {
 
-    private var mTextStyleChain: NullableTextStyle
-
-    init {
-        // 创建责任链
-        var chain: NullableTextStyle = parent
-
-        if (controlStyle != null) {
-            chain = TextStyleChain(controlStyle, chain)
-        }
-
-        if (interceptorStyle != null) {
-            chain = TextStyleChain(interceptorStyle, chain)
-        }
-        mTextStyleChain = chain
-    }
-
     override fun getFontSizeInternal(metrics: TextMetrics): Int {
-        return mTextStyleChain.getFontSize(metrics)!!
+        return controlStyle.getFontSize(metrics)
     }
 
-    override fun isBoldInternal(): Boolean {
-        return mTextStyleChain.isBold()!!
+    override fun isBoldInternal(): Boolean? {
+        return controlStyle.isBold()
     }
 
-    override fun isItalicInternal(): Boolean {
-        return mTextStyleChain.isItalic()!!
+    override fun isItalicInternal(): Boolean? {
+        return controlStyle.isItalic()
     }
 
-    override fun isUnderlineInternal(): Boolean {
-        return mTextStyleChain.isUnderline()!!
+    override fun isUnderlineInternal(): Boolean? {
+        return controlStyle.isUnderline()
     }
 
-    override fun isStrikeThroughInternal(): Boolean {
-        return mTextStyleChain.isStrikeThrough()!!
+    override fun isStrikeThroughInternal(): Boolean? {
+        return controlStyle.isStrikeThrough()
     }
 
-    override fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getLeftMargin(metrics)!!
+    override fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getLeftMargin(metrics)
     }
 
-    override fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getRightMargin(metrics)!!
+    override fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getRightMargin(metrics)
     }
 
-    override fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getLeftPadding(metrics)!!
+    override fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getLeftPadding(metrics)
     }
 
-    override fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getRightPadding(metrics)!!
+    override fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getRightPadding(metrics)
     }
 
-    override fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getFirstLineIndent(metrics)!!
+    override fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getFirstLineIndent(metrics)
     }
 
-    override fun getLineSpacePercentInternal(): Int {
-        return mTextStyleChain.getLineSpacePercent()!!
+    override fun getLineSpacePercentInternal(): Int? {
+        return controlStyle.getLineSpacePercent()
     }
 
-    override fun getVerticalAlignInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getVerticalAlign(metrics)!!
+    override fun getVerticalAlignInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getVerticalAlign(metrics)
     }
 
-    override fun isVerticallyAlignedInternal(): Boolean {
-        return mTextStyleChain.isVerticallyAligned()!!
+    override fun isVerticallyAlignedInternal(): Boolean? {
+        return controlStyle.isVerticallyAligned()
     }
 
-    override fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getSpaceBefore(metrics)!!
+    override fun getAlignmentInternal(): Byte? {
+        return controlStyle.getAlignment()
     }
 
-    override fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int {
-        return mTextStyleChain.getSpaceAfter(metrics)!!
+    override fun allowHyphenationsInternal(): Boolean? {
+        return controlStyle.allowHyphenations()
     }
 
-    override fun getAlignment(): Byte {
-        return mTextStyleChain.getAlignment()!!
+    override fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getSpaceBefore(metrics)
     }
 
-    override fun allowHyphenations(): Boolean {
-        return mTextStyleChain.allowHyphenations()!!
+    override fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int? {
+        return controlStyle.getSpaceAfter(metrics)
     }
 }

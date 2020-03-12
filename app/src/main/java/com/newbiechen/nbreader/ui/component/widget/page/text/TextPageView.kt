@@ -38,7 +38,7 @@ class TextPageView @JvmOverloads constructor(
 
     // 文本处理器
     // TODO：设置默认的 TextConfig 暂时先这么写
-    private val mTextEngine: TextEngine = TextEngine(context, TextConfig.Builder().build())
+    private val mTextEngine: TextEngine = TextEngine(context, TextConfig.Builder(context).build())
 
     // 文本手势探测器
     private var mTextGestureDetector = TextGestureDetector(context, TextGestureCallback())

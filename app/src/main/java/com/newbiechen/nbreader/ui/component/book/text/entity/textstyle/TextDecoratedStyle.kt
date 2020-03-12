@@ -15,14 +15,16 @@ abstract class TextDecoratedStyle(parent: TreeTextStyle) : TreeTextStyle(parent)
     private var isUnderline: Boolean = false
     private var isStrikeThrough: Boolean = false
     private var mLineSpacePercent: Int = 0
+    private var mAlignmentType: Byte = TextAlignmentType.ALIGN_LEFT
+    private var allowHyphenations: Boolean = false
 
-    private var isNotCached = true
+    private var isNotCached: Boolean = true
 
     private var mFontSize: Int = 0
     private var mSpaceBefore: Int = 0
     private var mSpaceAfter: Int = 0
     private var mVerticalAlign: Int = 0
-    private var isVerticallyAligned: Boolean? = null
+    private var isVerticallyAligned: Boolean = false
     private var mLeftMargin: Int = 0
     private var mRightMargin: Int = 0
     private var mLeftPadding: Int = 0
@@ -30,30 +32,72 @@ abstract class TextDecoratedStyle(parent: TreeTextStyle) : TreeTextStyle(parent)
     private var mFirstLineIndent: Int = 0
     private var mMetrics: TextMetrics? = null
 
+    // 保证持有数据
+    override val parent: TreeTextStyle get() = super.parent!!
+
     private fun initCache() {
         // mFontEntries = getFontEntriesInternal()
-        isItalic = isItalicInternal()
-        isBold = isBoldInternal()
-        isUnderline = isUnderlineInternal()
-        isStrikeThrough = isStrikeThroughInternal()
-        mLineSpacePercent = getLineSpacePercentInternal()
+        isItalic = isItalicInternal() ?: parent.isItalic()
+        isBold = isBoldInternal() ?: parent.isBold()
+        isUnderline = isUnderlineInternal() ?: parent.isUnderline()
+        isStrikeThrough = isStrikeThroughInternal() ?: parent.isStrikeThrough()
+        mLineSpacePercent = getLineSpacePercentInternal() ?: parent.getLineSpacePercent()
+        isVerticallyAligned = isVerticallyAlignedInternal() ?: parent.isVerticallyAligned()
+        mAlignmentType = getAlignmentInternal() ?: parent.getAlignment()
+        allowHyphenations = allowHyphenationsInternal() ?: parent.allowHyphenations()
 
         isNotCached = false
     }
 
     private fun initMetricsCache(metrics: TextMetrics) {
         mMetrics = metrics
-        mFontSize = getFontSizeInternal(metrics)
-        mSpaceBefore = getSpaceBeforeInternal(metrics, mFontSize)
-        mSpaceAfter = getSpaceAfterInternal(metrics, mFontSize)
-        mVerticalAlign = getVerticalAlignInternal(metrics, mFontSize)
-        mLeftMargin = getLeftMarginInternal(metrics, mFontSize)
-        mRightMargin = getRightMarginInternal(metrics, mFontSize)
-        mLeftPadding = getLeftPaddingInternal(metrics, mFontSize)
-        mRightPadding = getRightPaddingInternal(metrics, mFontSize)
-        mFirstLineIndent = getFirstLineIndentInternal(metrics, mFontSize)
+        mFontSize = getFontSizeInternal(metrics) ?: parent.getFontSize(metrics)
+        mSpaceBefore = getSpaceBeforeInternal(metrics, mFontSize) ?: parent.getSpaceBefore(metrics)
+        mSpaceAfter = getSpaceAfterInternal(metrics, mFontSize) ?: parent.getSpaceAfter(metrics)
+        mVerticalAlign =
+            getVerticalAlignInternal(metrics, mFontSize) ?: parent.getVerticalAlign(metrics)
+        mLeftMargin = getLeftMarginInternal(metrics, mFontSize) ?: parent.getLeftMargin(metrics)
+        mRightMargin = getRightMarginInternal(metrics, mFontSize) ?: parent.getRightMargin(metrics)
+        mLeftPadding = getLeftPaddingInternal(metrics, mFontSize) ?: parent.getLeftPadding(metrics)
+        mRightPadding =
+            getRightPaddingInternal(metrics, mFontSize) ?: parent.getRightPadding(metrics)
+        mFirstLineIndent =
+            getFirstLineIndentInternal(metrics, mFontSize) ?: parent.getFirstLineIndent(metrics)
     }
 
+    protected abstract fun getFontSizeInternal(metrics: TextMetrics): Int?
+
+    protected abstract fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun isItalicInternal(): Boolean?
+
+    protected abstract fun isBoldInternal(): Boolean?
+
+    protected abstract fun isUnderlineInternal(): Boolean?
+
+    protected abstract fun isStrikeThroughInternal(): Boolean?
+
+    protected abstract fun isVerticallyAlignedInternal(): Boolean?
+
+    protected abstract fun getAlignmentInternal(): Byte?
+
+    protected abstract fun allowHyphenationsInternal(): Boolean?
+
+    protected abstract fun getVerticalAlignInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int?
+
+    protected abstract fun getLineSpacePercentInternal(): Int?
 
 /*    fun getFontEntries(): List<FontEntry> {
         if (isNotCached) {
@@ -64,138 +108,137 @@ abstract class TextDecoratedStyle(parent: TreeTextStyle) : TreeTextStyle(parent)
 
     protected abstract fun getFontEntriesInternal(): List<FontEntry>*/
 
-    override fun getFontSize(metrics: TextMetrics): Int {
+    final override fun getFontSize(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mFontSize
     }
 
-    protected abstract fun getFontSizeInternal(metrics: TextMetrics): Int
 
-    override fun getSpaceBefore(metrics: TextMetrics): Int {
+    final override fun getSpaceBefore(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mSpaceBefore
     }
 
-    protected abstract fun getSpaceBeforeInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getSpaceAfter(metrics: TextMetrics): Int {
+    final override fun getSpaceAfter(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mSpaceAfter
     }
 
-    protected abstract fun getSpaceAfterInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun isItalic(): Boolean {
+    final override fun isItalic(): Boolean {
         if (isNotCached) {
             initCache()
         }
         return isItalic
     }
 
-    protected abstract fun isItalicInternal(): Boolean
 
-    override fun isBold(): Boolean {
+    final override fun isBold(): Boolean {
         if (isNotCached) {
             initCache()
         }
         return isBold
     }
 
-    protected abstract fun isBoldInternal(): Boolean
 
-    override fun isUnderline(): Boolean {
+    final override fun isUnderline(): Boolean {
         if (isNotCached) {
             initCache()
         }
         return isUnderline
     }
 
-    protected abstract fun isUnderlineInternal(): Boolean
 
-    override fun isStrikeThrough(): Boolean {
+    final override fun isStrikeThrough(): Boolean {
         if (isNotCached) {
             initCache()
         }
         return isStrikeThrough
     }
 
-    protected abstract fun isStrikeThroughInternal(): Boolean
 
-    override fun getVerticalAlign(metrics: TextMetrics): Int {
+    final override fun getVerticalAlign(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mVerticalAlign
     }
 
-    protected abstract fun getVerticalAlignInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun isVerticallyAligned(): Boolean {
-        if (isVerticallyAligned == null) {
-            isVerticallyAligned = parent!!.isVerticallyAligned() || isVerticallyAlignedInternal()
+    final override fun isVerticallyAligned(): Boolean {
+        if (isNotCached) {
+            initCache()
         }
-        return isVerticallyAligned!!
+        return isVerticallyAligned
     }
 
-    protected abstract fun isVerticallyAlignedInternal(): Boolean
 
-    override fun getLeftMargin(metrics: TextMetrics): Int {
+    final override fun getAlignment(): Byte {
+        if (isNotCached) {
+            initCache()
+        }
+        return mAlignmentType
+    }
+
+    final override fun allowHyphenations(): Boolean {
+        if (isNotCached) {
+            initCache()
+        }
+        return allowHyphenations
+    }
+
+
+    final override fun getLeftMargin(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mLeftMargin
     }
 
-    protected abstract fun getLeftMarginInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getRightMargin(metrics: TextMetrics): Int {
+    final override fun getRightMargin(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mRightMargin
     }
 
-    protected abstract fun getRightMarginInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getLeftPadding(metrics: TextMetrics): Int {
+    final override fun getLeftPadding(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mLeftPadding
     }
 
-    protected abstract fun getLeftPaddingInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getRightPadding(metrics: TextMetrics): Int {
+    final override fun getRightPadding(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mRightPadding
     }
 
-    protected abstract fun getRightPaddingInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getFirstLineIndent(metrics: TextMetrics): Int {
+    final override fun getFirstLineIndent(metrics: TextMetrics): Int {
         if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mFirstLineIndent
     }
 
-    protected abstract fun getFirstLineIndentInternal(metrics: TextMetrics, fontSize: Int): Int
 
-    override fun getLineSpacePercent(): Int {
+    final override fun getLineSpacePercent(): Int {
         if (isNotCached) {
             initCache()
         }
         return mLineSpacePercent
     }
-
-    protected abstract fun getLineSpacePercentInternal(): Int
 }

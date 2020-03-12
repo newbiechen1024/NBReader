@@ -52,11 +52,9 @@ class TextCSSReader {
             } while (line != null)
         } catch (e: IOException) {
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close()
-                } catch (e: IOException) {
-                }
+            try {
+                inputStream.close()
+            } catch (e: IOException) {
             }
         }
         return mDescriptionMap!!
