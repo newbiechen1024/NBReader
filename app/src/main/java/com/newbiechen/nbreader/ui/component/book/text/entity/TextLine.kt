@@ -1,7 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity
 
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TreeTextStyle
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextParagraphCursor
 
 /**
  *  author : newbiechen
@@ -14,7 +14,7 @@ data class TextLine(
     // 指向当前行元素的起始位置
     val startElementIndex: Int,
     val startCharIndex: Int,
-    var startStyle: TextStyle
+    var startStyle: TreeTextStyle
 ) {
 
     val elementCount: Int = paragraphCursor.getElementCount()

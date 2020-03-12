@@ -1,7 +1,6 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.CornerPathEffect
 import android.graphics.EmbossMaskFilter
 import android.graphics.Paint

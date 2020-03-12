@@ -1,4 +1,4 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor.cursor
+package com.newbiechen.nbreader.ui.component.book.text.engine.cursor
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextTag
 

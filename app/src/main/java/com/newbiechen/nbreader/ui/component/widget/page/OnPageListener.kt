@@ -1,7 +1,7 @@
 package com.newbiechen.nbreader.ui.component.widget.page
 
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
+import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
 
 /**
  *  author : newbiechen

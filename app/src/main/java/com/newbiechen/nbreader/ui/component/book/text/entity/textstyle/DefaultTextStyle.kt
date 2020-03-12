@@ -1,41 +1,27 @@
-package com.newbiechen.nbreader.ui.component.book.text.config
+package com.newbiechen.nbreader.ui.component.book.text.entity.textstyle
 
-import android.content.Context
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
 
 /**
  *  author : newbiechen
  *  date : 2019-10-26 16:00
  *  description :文本样式默认实现类
+ *
  */
+class DefaultTextStyle private constructor() : BaseTextStyle() {
 
-class DefaultTextStyle private constructor(context: Context) : TextStyle(null) {
 
     companion object {
-        private var sInstance: DefaultTextStyle? = null
+        @Volatile
+        private var instance: DefaultTextStyle? = null
 
-        fun getInstance(context: Context): DefaultTextStyle {
-            if (sInstance == null) {
-                sInstance = DefaultTextStyle(context.applicationContext)
-            }
-            return sInstance!!
+        fun getInstance() = instance ?: synchronized(this) {
+            DefaultTextStyle()
         }
     }
 
-    private var mSharedPrefs = TextStyleSharedPrefs.getInstance(context)
-
-    fun setFontSize(fontSize: Int) {
-        mSharedPrefs.textSize = fontSize
-    }
-
-    fun getFontSize(): Int {
-        return mSharedPrefs.textSize
-    }
-
-    override fun getFontSize(metrics: TextMetrics): Int {
-        return mSharedPrefs.textSize
+    override fun getFontSize(): Int {
+        return 30
     }
 
     override fun isBold(): Boolean {

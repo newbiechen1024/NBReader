@@ -1,44 +1,24 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.textstyle
 
-import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
-import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextFeature
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextSizeUnit
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
-import java.util.HashMap
 
 /**
  *  author : newbiechen
- *  date : 2019-10-26 17:41
- *  description :自定义的文本装饰样式描述，用于处理在 Book 中添加的自定义的装饰标签时，对应的默认样式。
- *
- *  如：解析在书籍的某一段自己加上了类似 <p>xxx</p> 的标签。那么就需要有对应该标签的样式。
+ *  date : 2020/3/12 12:03 AM
+ *  description :样式信息描述类
  */
-
-/**
- * 结构参考 css:
- * p {
- *    fbreader-id: 0;
- *    fbreader-name: "Regular Paragraph";
- *    text-indent: 10pt;
- *    hyphens: auto;
- * }
- *
- * @param selectorName: 选择器的名字，如 p
- * @param valueMap:选择器包含的值
- */
-class TextDecoratedStyleDescription(
-    private val selectorName: String,
+// TODO:暂时这么设置
+class ControlStyleDescription(
     private val valueMap: Map<String, String>
 ) {
-
     companion object {
         // 自定义 css 具有的属性名
-
         const val ATTR_FONT_FAMILY = "font-family"
         const val ATTR_FONT_SIZE = "font-size"
         const val ATTR_FONT_WEIGHT = "font-weight"
         const val ATTR_FONT_STYLE = "font-style"
-        const val ATTR_TEXT_DESCORATION = "text-decoration"
+        const val ATTR_TEXT_DECORATION = "text-decoration"
         const val ATTR_HYPHENS = "hyphens"
         const val ATTR_MARGIN_TOP = "margin-top"
         const val ATTR_MARGIN_BOTTOM = "margin-bottom"
@@ -50,23 +30,16 @@ class TextDecoratedStyleDescription(
         const val ATTR_LINE_HEIGHT = "line-height"
     }
 
-    fun getFontFamily(): String? {
+    fun getFontFamilyAttr(): String? {
         return valueMap[ATTR_FONT_FAMILY]
     }
 
-    fun getFontSize(metrics: TextMetrics, defaultFontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_FONT_SIZE]) ?: return defaultFontSize
-        return TextStyleTag.compute(
-            length, metrics, defaultFontSize, TextFeature.LENGTH_FONT_SIZE
-        )
+    fun getFontSizeAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_FONT_SIZE])
     }
 
-    fun getVerticalAlign(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_VERTICAL_ALIGN]) ?: return base
-        return TextStyleTag.compute(
-            // TODO: add new length for vertical alignment
-            length, metrics, fontSize, TextFeature.LENGTH_FONT_SIZE
-        )
+    fun getVerticalAlignAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_VERTICAL_ALIGN])
     }
 
     fun hasNonZeroVerticalAlign(): Boolean {
@@ -74,50 +47,35 @@ class TextDecoratedStyleDescription(
         return length != null && length.size != 0.toShort()
     }
 
-    fun getLeftMargin(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_MARGIN_LEFT]) ?: return base
-        return base + TextStyleTag.compute(
-            length, metrics, fontSize, TextFeature.LENGTH_MARGIN_LEFT
-        )
+    fun getLeftMarginAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_MARGIN_LEFT])
     }
 
-    fun getRightMargin(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_MARGIN_RIGHT]) ?: return base
-        return base + TextStyleTag.compute(
-            length, metrics, fontSize, TextFeature.LENGTH_MARGIN_RIGHT
-        )
+    fun getRightMarginAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_MARGIN_RIGHT])
     }
 
-    fun getLeftPadding(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        return base
+    fun getLeftPaddingAttr(): TextStyleTag.Length? {
+        return null
     }
 
-    fun getRightPadding(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        return base
+    fun getRightPaddingAttr(): TextStyleTag.Length? {
+        return null
     }
 
-    fun getFirstLineIndent(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_TEXT_INDENT]) ?: return base
-        return TextStyleTag.compute(
-            length, metrics, fontSize, TextFeature.LENGTH_FIRST_LINE_INDENT
-        )
+    fun getFirstLineIndentAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_TEXT_INDENT])
     }
 
-    fun getSpaceBefore(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_MARGIN_TOP]) ?: return base
-        return TextStyleTag.compute(
-            length, metrics, fontSize, TextFeature.LENGTH_SPACE_BEFORE
-        )
+    fun getSpaceBeforeAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_MARGIN_TOP])
     }
 
-    fun getSpaceAfter(metrics: TextMetrics, base: Int, fontSize: Int): Int {
-        val length = parseLength(valueMap[ATTR_MARGIN_BOTTOM]) ?: return base
-        return TextStyleTag.compute(
-            length, metrics, fontSize, TextFeature.LENGTH_SPACE_AFTER
-        )
+    fun getSpaceAfterAttr(): TextStyleTag.Length? {
+        return parseLength(valueMap[ATTR_MARGIN_BOTTOM])
     }
 
-    fun getLineHeight(): String? {
+    fun getLineHeightAttr(): String? {
         return valueMap[ATTR_LINE_HEIGHT]
     }
 
@@ -138,7 +96,7 @@ class TextDecoratedStyleDescription(
     }
 
     fun isUnderlined(): Boolean? {
-        return when (valueMap[ATTR_TEXT_DESCORATION]) {
+        return when (valueMap[ATTR_TEXT_DECORATION]) {
             "underline" -> true
             "inherit", "" -> null
             else -> false
@@ -146,7 +104,7 @@ class TextDecoratedStyleDescription(
     }
 
     fun isStrikedThrough(): Boolean? {
-        return when (valueMap[ATTR_TEXT_DESCORATION]) {
+        return when (valueMap[ATTR_TEXT_DECORATION]) {
             "line-through" -> true
             "inherit", "" -> null
             else -> false

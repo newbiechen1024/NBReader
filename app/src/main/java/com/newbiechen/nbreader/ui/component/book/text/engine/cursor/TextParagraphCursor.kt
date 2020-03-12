@@ -1,11 +1,11 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor.cursor
+package com.newbiechen.nbreader.ui.component.book.text.engine.cursor
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextParagraph
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.*
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.TextResource
 import com.newbiechen.nbreader.ui.component.book.text.entity.tag.*
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextModel
 import com.newbiechen.nbreader.ui.component.book.text.util.LineBreaker
 import com.newbiechen.nbreader.uilts.LogHelper
 

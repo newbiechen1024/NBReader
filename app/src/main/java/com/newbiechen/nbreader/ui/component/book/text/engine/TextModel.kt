@@ -1,10 +1,10 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import android.util.LruCache
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextContent
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextChapterCursor
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextChapterCursor
 import java.lang.IndexOutOfBoundsException
 
 /**

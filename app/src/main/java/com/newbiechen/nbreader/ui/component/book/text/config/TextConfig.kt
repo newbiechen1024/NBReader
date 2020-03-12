@@ -1,8 +1,10 @@
 package com.newbiechen.nbreader.ui.component.book.text.config
 
 import android.content.Context
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextDecoratedStyleDescription
-import com.newbiechen.nbreader.ui.component.book.text.util.TextCSSReader
+import android.graphics.drawable.Drawable
+import com.newbiechen.nbreader.ui.component.book.text.entity.tag.TextStyleTag
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.*
+import java.io.File
 
 /**
  *  author : newbiechen
@@ -10,64 +12,96 @@ import com.newbiechen.nbreader.ui.component.book.text.util.TextCSSReader
  *  description :TextProcessor 处理器的配置参数信息
  */
 
-class TextConfig private constructor(context: Context) {
+class TextConfig private constructor(builder: Builder) {
 
-    companion object {
-        private var sInstance: TextConfig? = null
+    private val mTextConfigure: TextConfigure
 
-        fun getInstance(context: Context): TextConfig {
-            if (sInstance == null) {
-                sInstance = TextConfig(context.applicationContext)
-            }
-            return sInstance!!
-        }
-    }
-
-    private val mSharedPrefs = TextStyleSharedPrefs.getInstance(context)
-
-    // 将 index 作为 type 的 key
-    // 最大长度为 256 的因为，fbreader 的 type id 是 unsigned char 类型 。
-    private val mDescriptionMap = arrayOfNulls<TextDecoratedStyleDescription>(256)
+    private val mTextDecoratedStyleFactory: TextDecoratedStyleFactory
+    private val mDefaultTextStyle: BaseTextStyle
 
     init {
-        // 获取 asset 资源
-        val resourceInputStream = context.assets.open("default/control.css")
-        val descriptionMap = TextCSSReader()
-            .read(resourceInputStream)
-
-        // 将获取的样式信息 map 转换成数组 array
-        descriptionMap.forEach { entry ->
-            mDescriptionMap[entry.key and 0xFF] = entry.value
-        }
+        mTextConfigure = builder.textConfigure
+        mDefaultTextStyle = builder.defaultStyle
+        mTextDecoratedStyleFactory = TextDecoratedStyleFactory(
+            DefaultControlDescription.getInstance()
+                .getControlDescription(builder.context), // TODO:暂时这么获取
+            builder.controlInterceptor,
+            builder.cssInterceptor
+        )
     }
 
-    val defaultTextStyle = DefaultTextStyle.getInstance(context)
+    fun getMarginLeft(): Int {
+        return mTextConfigure.getMarginLeft()
+    }
 
-    val leftMargin = 0
-    val topMargin = 0
-    val rightMargin = 0
-    val bottomMargin = 0
+    fun getMarginRight(): Int {
+        return mTextConfigure.getMarginRight()
+    }
 
-    var wallpaperPath: String
-        set(value) {
-            mSharedPrefs.wallpaperPath = value
+    fun getMarginTop(): Int {
+        return mTextConfigure.getMarginTop()
+    }
+
+    fun getMarginBottom(): Int {
+        return mTextConfigure.getMarginBottom()
+    }
+
+    fun getBackground(): Drawable? {
+        return mTextConfigure.getBackground()
+    }
+
+    fun getTextColor(): Int {
+        return mTextConfigure.getTextColor()
+    }
+
+    fun getBaseTextStyle(): BaseTextStyle {
+        return mDefaultTextStyle
+    }
+
+    fun getControlDecoratedStyle(parent: TreeTextStyle, textKind: Byte): TreeTextStyle {
+        return mTextDecoratedStyleFactory.getControlDecoratedStyle(parent, textKind)
+    }
+
+    fun getCSSDecoratedStyle(parent: TreeTextStyle, cssStyle: TextStyleTag): TreeTextStyle {
+        return mTextDecoratedStyleFactory.getCSSDecoratedStyle(parent, cssStyle)
+    }
+
+    class Builder(internal var context: Context) {
+        internal var defaultStyle: BaseTextStyle = DefaultTextStyle.getInstance()
+        internal var textConfigure: TextConfigure = DefaultConfigure.getInstance()
+
+        internal var controlCSSFile: File? = null
+        internal var controlInterceptor: ControlStyleInterceptor? = null
+        internal var cssInterceptor: CSSStyleInterceptor? = null
+
+        fun configure(textConfigure: TextConfigure): Builder {
+            this.textConfigure = textConfigure
+            return this
         }
-        get() = mSharedPrefs.wallpaperPath
 
-    var bgColor: Int
-        set(value) {
-            mSharedPrefs.bgColor = value
+        // TODO：暂时不支持设置
+/*        fun defaultControlStyle(file: File): Builder {
+            controlCSSFile = file
+            return this
+        }*/
+
+        fun defaultStyle(textStyle: BaseTextStyle): Builder {
+            defaultStyle = textStyle
+            return this
         }
-        get() = mSharedPrefs.bgColor
 
-    var textColor: Int
-        set(value) {
-            mSharedPrefs.textColor = value
+        fun controlStyleInterceptor(interceptor: ControlStyleInterceptor): Builder {
+            controlInterceptor = interceptor
+            return this
         }
-        get() = mSharedPrefs.textColor
 
-    fun getTextDecoratedStyleDesc(styleType: Byte): TextDecoratedStyleDescription? {
-        // 解决 byte 转 int 导致的问题
-        return mDescriptionMap[styleType.toInt() and 0xFF]
+        fun cssStyleInterceptor(interceptor: CSSStyleInterceptor): Builder {
+            cssInterceptor = interceptor
+            return this
+        }
+
+        fun build(): TextConfig {
+            return TextConfig(this)
+        }
     }
 }

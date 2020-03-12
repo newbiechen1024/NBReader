@@ -1,11 +1,10 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextWordCursor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
-import com.newbiechen.nbreader.uilts.LogHelper
 import kotlin.collections.ArrayList
 import kotlin.math.min
 

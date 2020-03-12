@@ -4,10 +4,11 @@ import android.content.Context
 import com.newbiechen.nbreader.ui.component.book.plugin.BookGroup
 import com.newbiechen.nbreader.ui.component.book.plugin.BookPluginFactory
 import com.newbiechen.nbreader.ui.component.book.plugin.NativeFormatPlugin
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextChapter
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
+import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextModel
 import com.newbiechen.nbreader.ui.component.book.type.BookType
 import com.newbiechen.nbreader.uilts.LogHelper
 
@@ -58,10 +59,11 @@ class PageController(
     }
 
     /**
-     * 设置页面样式
+     * 设置文本配置项，如果不设置默认使用
+     * DefaultTextConfig
      */
-    fun setPageStyle() {
-        // TODO:页面样式配置项，之后设置
+    fun setTextConfig(textConfig: TextConfig) {
+        mTextController.setTextConfig(textConfig)
     }
 
     /**
@@ -71,6 +73,9 @@ class PageController(
         mTextController.setPageListener(pageListener)
     }
 
+    /**
+     * 设置页面事件监听
+     */
     fun setPageActionListener(actionCallback: DefaultActionCallback) {
         mTextController.setPageActionListener(actionCallback)
     }
@@ -140,6 +145,12 @@ class PageController(
         mTextController.skipChapter(index)
     }
 
+    /**
+     * 通知页面重绘
+     */
+    fun invalidate() {
+        mTextController.invalidate()
+    }
     /**********************************************返回信息方法**********************************************/
 
     /**

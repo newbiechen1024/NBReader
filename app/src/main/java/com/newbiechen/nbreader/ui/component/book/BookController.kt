@@ -4,8 +4,8 @@ import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
 import com.newbiechen.nbreader.data.entity.BookEntity
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
+import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
 import com.newbiechen.nbreader.ui.component.widget.page.*
 import com.newbiechen.nbreader.uilts.FileUtil
 import com.newbiechen.nbreader.uilts.Void

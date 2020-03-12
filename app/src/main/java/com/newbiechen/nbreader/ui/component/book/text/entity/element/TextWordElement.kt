@@ -1,6 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity.element
 
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextPaintContext
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextPaintContext
 
 /**
  *  author : newbiechen

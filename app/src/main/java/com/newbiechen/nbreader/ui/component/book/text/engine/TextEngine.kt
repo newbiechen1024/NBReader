@@ -1,6 +1,7 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import android.content.Context
+import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextElementArea
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextLine
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextPage
@@ -12,18 +13,18 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordEle
 import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextAlignmentType
 import com.newbiechen.nbreader.ui.component.book.text.hyphenation.TextHyphenInfo
 import com.newbiechen.nbreader.ui.component.book.text.hyphenation.TextTeXHyphenator
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextParagraphCursor
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextParagraphCursor
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextWordCursor
 import com.newbiechen.nbreader.ui.component.widget.page.PageType
 import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen
  *  date : 2019-10-20 18:50
- *  description :文本处理器，处理与绘制页面
+ *  description :文本渲染引擎
  */
 
-class TextProcessor(context: Context) : BaseTextProcessor(context) {
+class TextEngine(context: Context, textConfig: TextConfig) : BaseTextEngine(context, textConfig) {
 
     companion object {
         private val SPACE = charArrayOf(' ')
@@ -32,8 +33,10 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
 
     // 文本模块
     private var mTextModel: TextModel? = null
+
     // 文本页面控制器
     private var mTextPageController: TextPageController? = null
+
     // 是否页面已经准备
     private var isPagePrepared = false
 
@@ -43,7 +46,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
      * 初始化处理器
      */
     @Synchronized
-    fun initProcessor(model: TextModel) {
+    fun init(model: TextModel) {
         // TODO:需要处理重新初始化的情况
 
         // 创建文本模块
@@ -185,6 +188,18 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
     }
 
     /**
+     * 刷新 Engine，清空缓存
+     */
+    fun invalidate() {
+        // TODO:待实现
+    }
+
+    // TODO:通知章节重新计算的方法
+    fun completeInvalidte() {
+
+    }
+
+    /**
      * 是否支持断句
      */
     private fun isHyphenationPossible(): Boolean {
@@ -207,6 +222,8 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
     }
 
     override fun onSizeChanged(width: Int, height: Int) {
+
+        // TODO:重新渲染操作
         initTextPageController(width, height)
     }
 
@@ -327,7 +344,9 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 findWordCursor.isEndOfParagraph() && findWordCursor.moveToNextParagraph()
 
             // 是否存在剩余空间，是否存在下一段落，下一段落非结束类型段落
-        } while (remainAreaHeight > 0 && hasNextParagraph && !findWordCursor.getParagraphCursor().isEndOfSection())
+        } while (remainAreaHeight > 0 && hasNextParagraph && !findWordCursor.getParagraphCursor()
+                .isEndOfSection()
+        )
 
         // 重置文本样式
         resetTextStyle()
@@ -770,7 +789,8 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
         var realX = x
         var realY = y
         // 根据视口的最大高度取最小值
-        realY = (realY + line.height).coerceAtMost(mTextConfig.topMargin + getPageHeight() - 1)
+        realY =
+            (realY + line.height).coerceAtMost(getTextConfig().getMarginTop() + getPageHeight() - 1)
 
         val context = mPaintContext
         val paragraphCursor = line.paragraphCursor
@@ -978,7 +998,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                             charIndex,
                             -1,
                             false,
-                            mTextConfig.textColor
+                            getTextConfig().getTextColor()
                         )
                     }
                     is TextImageElement -> {
@@ -1026,7 +1046,7 @@ class TextProcessor(context: Context) : BaseTextProcessor(context) {
                 word,
                 start,
                 len,
-                area.addHyphenationSign, mTextConfig.textColor
+                area.addHyphenationSign, getTextConfig().getTextColor()
             )
         }
     }

@@ -10,11 +10,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.annotation.FloatRange
 import com.newbiechen.nbreader.R
-import com.newbiechen.nbreader.ui.component.book.text.config.TextConfig
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
+import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextModel
 import com.newbiechen.nbreader.ui.component.widget.page.action.*
 import com.newbiechen.nbreader.ui.component.widget.page.anim.*
 import com.newbiechen.nbreader.ui.component.widget.page.text.PageActionListener
@@ -58,9 +57,6 @@ class PageView @JvmOverloads constructor(
 
     // 页面控制器
     private lateinit var mPageController: PageController
-
-    // todo：文本配置信息(暂时先放这里，等弄到动态修改文本配置项时再处理，感觉 TextConfig 不应该直接从 TextProcessor 中获取)
-    private lateinit var mTextConfig: TextConfig
 
     // 当前动画类型
     private var mPageAnimType: PageAnimType? = null
@@ -140,8 +136,6 @@ class PageView @JvmOverloads constructor(
         mFlContent.addView(mPtvContent, contentParams)
         // 初始化控制器
         mPageController = PageController(context, TextControllerImpl())
-        // 获取配置信息
-        mTextConfig = mPtvContent.getTextConfig()
     }
 
     /**
@@ -548,6 +542,10 @@ class PageView @JvmOverloads constructor(
 
     private inner class TextControllerImpl : TextController {
 
+        override fun setTextConfig(textConfig: TextConfig) {
+            mPtvContent.setTextConfig(textConfig)
+        }
+
         override fun initController(textModel: TextModel) {
             mPtvContent.setTextModel(textModel)
         }
@@ -598,6 +596,11 @@ class PageView @JvmOverloads constructor(
 
         override fun getPageCount(pageType: PageType): Int {
             return mPtvContent.getPageCount(pageType)
+        }
+
+        override fun invalidate() {
+            // 设置页面重绘
+            mPtvContent.pageInvalidate()
         }
     }
 }

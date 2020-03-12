@@ -17,8 +17,8 @@ data class TextMetrics(val dpi: Int, val fullWidth: Int, val fullHeight: Int, va
         }
         val oo = o as TextMetrics?
         return dpi == oo!!.dpi &&
-                fullWidth == oo!!.fullHeight &&
-                fontSize == oo!!.fontSize
+                fullWidth == oo.fullHeight &&
+                fontSize == oo.fontSize
     }
 
     override fun hashCode(): Int {

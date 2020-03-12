@@ -13,6 +13,8 @@ import kotlin.experimental.or
  */
 open class TextStyleTag(parcel: TextParcel) : TextTag {
     companion object {
+
+
         private fun getFullSize(metrics: TextMetrics, fontSize: Int, featureId: Int): Int {
             return when (featureId) {
                 TextFeature.LENGTH_MARGIN_LEFT, TextFeature.LENGTH_MARGIN_RIGHT,
@@ -27,6 +29,13 @@ open class TextStyleTag(parcel: TextParcel) : TextTag {
             }
         }
 
+        /**
+         * 对长度值进行换算
+         * @param length：带有单位的长度
+         * @param metrics：基础文字指标
+         * @param fontSize：当前标签的字体大小
+         * @param featureId: 长度属性参数
+         */
         fun compute(length: Length, metrics: TextMetrics, fontSize: Int, featureId: Int): Int {
             return when (length.unit) {
                 TextSizeUnit.PIXEL -> length.size.toInt()
@@ -48,19 +57,24 @@ open class TextStyleTag(parcel: TextParcel) : TextTag {
 
     // 样式深度
     private var mDepth: Byte = 0
+
     // 支持的功能标记
     private var mFeatureMask: Short = 0
+
     // 支持的字体样式
     private var mSupportedFontModifiers: Byte = 0
 
     private val mLengths = arrayOfNulls<Length>(TextFeature.NUMBER_OF_LENGTHS)
+
     // 对齐方式
     private var mAlignmentType: Byte = 0
+
     // TODO:暂时不处理字体类型
     // private var mFontEntries: List<FontEntry>? = null
     //
     // 当前的字体样式
     private var mFontModifiers: Byte = 0
+
     // 竖直对齐
     private var mVerticalAlignCode: Byte = 0
 

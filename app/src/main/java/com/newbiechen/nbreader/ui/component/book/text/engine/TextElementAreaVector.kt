@@ -1,4 +1,4 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.*
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextWordElement

@@ -1,7 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.element.TextElement
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextStyle
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TreeTextStyle
 
 /**
  *  author : newbiechen
@@ -31,7 +31,7 @@ class TextElementArea(
     val isLastElement: Boolean,
     val addHyphenationSign: Boolean,
     val isStyleChange: Boolean,
-    val style: TextStyle,
+    val style: TreeTextStyle,
     val element: TextElement,
     val startX: Int,
     val startY: Int,

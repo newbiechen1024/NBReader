@@ -1,9 +1,8 @@
-package com.newbiechen.nbreader.ui.component.book.text.processor
+package com.newbiechen.nbreader.ui.component.book.text.engine
 
 import android.graphics.*
 import android.util.Size
 import com.newbiechen.nbreader.ui.component.book.text.entity.resource.image.TextImage
-import com.newbiechen.nbreader.uilts.LogHelper
 
 /**
  *  author : newbiechen

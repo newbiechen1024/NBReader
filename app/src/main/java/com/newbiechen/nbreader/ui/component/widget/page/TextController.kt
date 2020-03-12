@@ -1,9 +1,9 @@
 package com.newbiechen.nbreader.ui.component.widget.page
 
 import com.newbiechen.nbreader.ui.component.book.text.entity.TextFixedPosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PagePosition
-import com.newbiechen.nbreader.ui.component.book.text.processor.PageProgress
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextModel
+import com.newbiechen.nbreader.ui.component.book.text.engine.PagePosition
+import com.newbiechen.nbreader.ui.component.book.text.engine.PageProgress
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextModel
 import com.newbiechen.nbreader.ui.component.widget.page.text.PageActionListener
 
 /**
@@ -12,6 +12,11 @@ import com.newbiechen.nbreader.ui.component.widget.page.text.PageActionListener
  *  description :
  */
 interface TextController {
+
+    /**
+     * 设置页面配置
+     */
+    fun setTextConfig(textConfig: TextConfig)
 
     /**
      * 初始化控制器
@@ -56,9 +61,14 @@ interface TextController {
 
     /**
      * 是否章节存在
+     * @param type：页面类型
      */
     fun hasChapter(type: PageType): Boolean
 
+    /**
+     * 是否存在章节
+     * @param index：章节索引
+     */
     fun hasChapter(index: Int): Boolean
 
     /**
@@ -75,4 +85,9 @@ interface TextController {
      * 获取页面数
      */
     fun getPageCount(pageType: PageType): Int
+
+    /**
+     * 重新绘制
+     */
+    fun invalidate()
 }

@@ -1,6 +1,6 @@
 package com.newbiechen.nbreader.ui.component.book.text.util
 
-import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.TextDecoratedStyleDescription
+import com.newbiechen.nbreader.ui.component.book.text.entity.textstyle.ControlStyleDescription
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -28,11 +28,12 @@ class TextCSSReader {
     private var mCurrentMap: MutableMap<String, String>? = null
     private var mSelector: String? = null
     private var mName: String? = null
+
     // int 表示 description 对应的 fbreader-id
     // TextDecoratedStyleDescription 表示具体样式
-    private var mDescriptionMap: MutableMap<Int, TextDecoratedStyleDescription>? = null
+    private var mDescriptionMap: MutableMap<Int, ControlStyleDescription>? = null
 
-    fun read(inputStream: InputStream): Map<Int, TextDecoratedStyleDescription> {
+    fun read(inputStream: InputStream): Map<Int, ControlStyleDescription> {
         mDescriptionMap = LinkedHashMap()
         mState = State.EXPECT_SELECTOR
 
@@ -87,7 +88,7 @@ class TextCSSReader {
                 if (mSelector != null) {
                     try {
                         mDescriptionMap!![Integer.valueOf(mCurrentMap!!["fbreader-id"])] =
-                            TextDecoratedStyleDescription(mSelector!!, mCurrentMap!!)
+                            ControlStyleDescription(mCurrentMap!!)
                     } catch (e: Exception) {
                         // ignore
                     }

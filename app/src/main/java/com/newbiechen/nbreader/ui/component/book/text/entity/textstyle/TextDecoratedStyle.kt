@@ -8,9 +8,7 @@ import com.newbiechen.nbreader.ui.component.book.text.entity.TextMetrics
  *  description :对传入的 TextKind 的装饰
  */
 
-abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
-    protected var mBaseStyle: TextStyle
-
+abstract class TextDecoratedStyle(parent: TreeTextStyle) : TreeTextStyle(parent) {
     // private var mFontEntries: List<FontEntry>? = null
     private var isItalic: Boolean = false
     private var isBold: Boolean = false
@@ -31,14 +29,6 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
     private var mRightPadding: Int = 0
     private var mFirstLineIndent: Int = 0
     private var mMetrics: TextMetrics? = null
-
-    init {
-        mBaseStyle = if (baseStyle is TextDecoratedStyle) {
-            baseStyle.mBaseStyle
-        } else {
-            baseStyle
-        }
-    }
 
     private fun initCache() {
         // mFontEntries = getFontEntriesInternal()
@@ -75,7 +65,7 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
     protected abstract fun getFontEntriesInternal(): List<FontEntry>*/
 
     override fun getFontSize(metrics: TextMetrics): Int {
-        if (!metrics.equals(mMetrics)) {
+        if (metrics != mMetrics) {
             initMetricsCache(metrics)
         }
         return mFontSize
@@ -148,7 +138,7 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
 
     override fun isVerticallyAligned(): Boolean {
         if (isVerticallyAligned == null) {
-            isVerticallyAligned = parent.isVerticallyAligned() || isVerticallyAlignedInternal()
+            isVerticallyAligned = parent!!.isVerticallyAligned() || isVerticallyAlignedInternal()
         }
         return isVerticallyAligned!!
     }
@@ -208,5 +198,4 @@ abstract class TextDecoratedStyle(baseStyle: TextStyle) : TextStyle(baseStyle) {
     }
 
     protected abstract fun getLineSpacePercentInternal(): Int
-
 }

@@ -1,7 +1,7 @@
 package com.newbiechen.nbreader.ui.component.book.text.entity
 
-import com.newbiechen.nbreader.ui.component.book.text.processor.TextElementAreaVector
-import com.newbiechen.nbreader.ui.component.book.text.processor.cursor.TextWordCursor
+import com.newbiechen.nbreader.ui.component.book.text.engine.TextElementAreaVector
+import com.newbiechen.nbreader.ui.component.book.text.engine.cursor.TextWordCursor
 
 /**
  *  author : newbiechen
