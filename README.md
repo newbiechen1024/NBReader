@@ -126,7 +126,7 @@ pageController.setTextConfig(textConfig)
 
 ## NBReader 框架图
 
-![框架图](https://raw.githubusercontent.com/newbiechen1024/NBReader/master/doc/image/NBReader%E6%A1%86%E6%9E%B6%E5%A4%A7%E8%87%B4%E7%BB%93%E6%9E%84.png)
+![框架图](https://raw.githubusercontent.com/newbiechen1024/NBReader/master/doc/image/nbreader_framework.png)
 
 ## 采用框架
 
